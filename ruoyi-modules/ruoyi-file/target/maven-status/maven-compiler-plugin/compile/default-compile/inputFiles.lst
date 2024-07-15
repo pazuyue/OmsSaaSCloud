@@ -1,0 +1,9 @@
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\RuoYiFileApplication.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\service\ISysFileService.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\config\MinioConfig.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\service\MinioSysFileServiceImpl.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\utils\FileUploadUtils.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\config\ResourcesConfig.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\service\LocalSysFileServiceImpl.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\service\FastDfsSysFileServiceImpl.java
+D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-file\src\main\java\com\ruoyi\file\controller\SysFileController.java

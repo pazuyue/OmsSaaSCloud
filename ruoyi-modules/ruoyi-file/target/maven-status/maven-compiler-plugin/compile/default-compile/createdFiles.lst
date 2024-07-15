@@ -1,0 +1,9 @@
+com\ruoyi\file\service\FastDfsSysFileServiceImpl.class
+com\ruoyi\file\service\ISysFileService.class
+com\ruoyi\file\config\MinioConfig.class
+com\ruoyi\file\service\MinioSysFileServiceImpl.class
+com\ruoyi\file\service\LocalSysFileServiceImpl.class
+com\ruoyi\file\controller\SysFileController.class
+com\ruoyi\file\config\ResourcesConfig.class
+com\ruoyi\file\utils\FileUploadUtils.class
+com\ruoyi\file\RuoYiFileApplication.class

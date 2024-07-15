@@ -1,0 +1,8 @@
+com\ruoyi\common\swagger\config\SwaggerProperties$Contact.class
+com\ruoyi\common\swagger\config\SwaggerProperties$Authorization.class
+com\ruoyi\common\swagger\config\SwaggerWebConfiguration.class
+com\ruoyi\common\swagger\config\SwaggerAutoConfiguration.class
+com\ruoyi\common\swagger\config\SwaggerBeanPostProcessor.class
+com\ruoyi\common\swagger\annotation\EnableCustomSwagger2.class
+com\ruoyi\common\swagger\config\SwaggerProperties.class
+com\ruoyi\common\swagger\config\SwaggerProperties$AuthorizationScope.class

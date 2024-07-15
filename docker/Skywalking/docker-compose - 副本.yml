@@ -1,0 +1,27 @@
+version: '3' #自定义版本号
+services:
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.0.0 #此处使用8.4.0版本，原先使用8.7.0版本启动有bug，因此选用8.4.0
+    container_name: skywalking-oap #容器名
+    restart: always
+    ports:
+      - 11800:11800 #上报端口
+      - 12800:12800 #ui读取端口
+    environment:
+      JAVA_OPTS: "-Xms512m -Xmx512m" #限制运行大小
+    volumes:
+      - /etc/localtime:/etc/localtime #配置时区与宿主机一致
+  skywalking-ui:
+    image: apache/skywalking-ui:9.0.0 #版本号与oap一致
+    container_name: skywalking-ui #容器名
+    depends_on:
+      - skywalking-oap
+    links:
+      - skywalking-oap #与容器oap建立连接
+    restart: always
+    ports:
+      - 3380:8080 #3380ui界面
+    environment:
+      SW_OAP_ADDRESS: skywalking-oap:12800 #设置读取oap的端口
+    volumes:
+      - /etc/localtime:/etc/localtime #配置时区与宿主机一致

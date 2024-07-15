@@ -1,0 +1,4 @@
+com\ruoyi\common\sensitive\utils\DesensitizedUtil.class
+com\ruoyi\common\sensitive\annotation\Sensitive.class
+com\ruoyi\common\sensitive\enums\DesensitizedType.class
+com\ruoyi\common\sensitive\config\SensitiveJsonSerializer.class

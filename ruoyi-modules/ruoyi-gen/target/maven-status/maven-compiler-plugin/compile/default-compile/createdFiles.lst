@@ -1,0 +1,14 @@
+com\ruoyi\gen\service\GenTableServiceImpl.class
+com\ruoyi\gen\controller\GenController.class
+com\ruoyi\gen\RuoYiGenApplication.class
+com\ruoyi\gen\mapper\GenTableColumnMapper.class
+com\ruoyi\gen\mapper\GenTableMapper.class
+com\ruoyi\gen\service\IGenTableColumnService.class
+com\ruoyi\gen\domain\GenTableColumn.class
+com\ruoyi\gen\domain\GenTable.class
+com\ruoyi\gen\service\GenTableColumnServiceImpl.class
+com\ruoyi\gen\config\GenConfig.class
+com\ruoyi\gen\util\VelocityUtils.class
+com\ruoyi\gen\service\IGenTableService.class
+com\ruoyi\gen\util\VelocityInitializer.class
+com\ruoyi\gen\util\GenUtils.class

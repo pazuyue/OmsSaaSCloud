@@ -1,0 +1,2 @@
+com\ruoyi\common\datascope\annotation\DataScope.class
+com\ruoyi\common\datascope\aspect\DataScopeAspect.class
