@@ -16,6 +16,7 @@ D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\commo
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\exception\file\FileException.java
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\exception\file\FileSizeLimitExceededException.java
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\domain\R.java
+D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\config\MybatisPlusConfig.java
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\utils\ip\IpUtils.java
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\web\page\TableSupport.java
 D:\java\RuoYi-Cloud\ruoyi-common\ruoyi-common-core\src\main\java\com\ruoyi\common\core\exception\file\FileNameLengthLimitExceededException.java

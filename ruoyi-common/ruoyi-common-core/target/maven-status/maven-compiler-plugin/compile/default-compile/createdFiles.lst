@@ -1,5 +1,6 @@
 com\ruoyi\common\core\annotation\Excel$Type.class
 com\ruoyi\common\core\utils\StringUtils.class
+com\ruoyi\common\core\config\MybatisPlusConfig.class
 com\ruoyi\common\core\utils\ServletUtils.class
 com\ruoyi\common\core\exception\PreAuthorizeException.class
 com\ruoyi\common\core\utils\html\HTMLFilter.class

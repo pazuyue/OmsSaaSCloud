@@ -21,6 +21,7 @@ public class MybatisPlusConfig
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor()
     {
+        System.out.println("mybatisPlusInterceptor");
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 分页插件
         interceptor.addInnerInterceptor(paginationInnerInterceptor());

@@ -2,13 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ruoyi-common-datascope" />
-        <module name="oms-goods-administration" />
         <module name="ruoyi-modules-job" />
+        <module name="oms-goods-administration" />
         <module name="ruoyi-modules-system" />
         <module name="ruoyi-common-redis" />
         <module name="ruoyi-api-system" />
@@ -28,6 +29,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="oms-goods-administration" target="1.8" />
+      <module name="oms-omdules" target="1.8" />
       <module name="ruoyi" target="1.8" />
       <module name="ruoyi-api" target="1.8" />
       <module name="ruoyi-api-system" target="1.8" />
