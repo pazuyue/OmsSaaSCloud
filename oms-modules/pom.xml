@@ -10,6 +10,7 @@
 
     <modules>
         <module>oms-goods-administration</module>
+        <module>oms-common-core</module>
     </modules>
 
     <artifactId>oms-omdules</artifactId>

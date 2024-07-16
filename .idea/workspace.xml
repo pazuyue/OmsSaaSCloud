@@ -4,75 +4,80 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS-日志调整">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/pom.xml" afterDir="false" />
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS-字模块集合调整">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/config/EnableOmsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-modules.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-auth/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/config/MybatisPlusConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/config/MybatisPlusConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/ruoyi-common-core-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/ruoyi-common-core-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/ruoyi-common-datascope-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/ruoyi-common-datascope-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/ruoyi-common-datasource-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/ruoyi-common-datasource-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/ruoyi-common-log-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/ruoyi-common-log-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/ruoyi-common-redis-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/ruoyi-common-redis-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/ruoyi-common-seata-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/ruoyi-common-seata-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/ruoyi-common-security-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/ruoyi-common-security-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/ruoyi-common-sensitive-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/ruoyi-common-sensitive-3.6.4.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/ruoyi-common-swagger-3.6.4.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/ruoyi-common-swagger-3.6.4.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/OmsGoodsAdministrationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/OmsGoodsAdministrationApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-auth/ruoyi-auth.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-auth/ruoyi-auth.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-auth/target/ruoyi-auth.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/ruoyi-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/ruoyi-common-core.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/config/MybatisPlusConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/config/MybatisPlusConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/ruoyi-common-core-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/ruoyi-common-datascope.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/ruoyi-common-datascope.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/target/ruoyi-common-datascope-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/ruoyi-common-datasource.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/ruoyi-common-datasource.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/target/ruoyi-common-datasource-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/ruoyi-common-log.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/ruoyi-common-log.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/target/ruoyi-common-log-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/ruoyi-common-redis.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/ruoyi-common-redis.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/target/ruoyi-common-redis-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/ruoyi-common-seata.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/ruoyi-common-seata.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/target/ruoyi-common-seata-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/ruoyi-common-security.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/ruoyi-common-security.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/ruoyi-common-security-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/ruoyi-common-sensitive.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/ruoyi-common-sensitive.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/target/ruoyi-common-sensitive-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/ruoyi-common-swagger.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/ruoyi-common-swagger.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/target/ruoyi-common-swagger-3.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/ruoyi-gateway.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/ruoyi-gateway.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/OmsGoodsAdministrationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/OmsGoodsAdministrationApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/mapper/goods/GoodsSkuSnInfoTmpMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/mapper/GoodsSkuSnInfoTmpMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/model/entity/goods/GoodsSkuSnInfoTmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfoTmp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/model/vo/export/GoodsVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/vo/export/GoodsVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/service/goods/GoodsSkuSnInfoTmpService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoTmpService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/java/com/ruoyi/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/resources/bootstrap.yml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/bootstrap.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/logback.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/bootstrap.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/OmsGoodsAdministrationApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/controller/goods/GoodsController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/mapper/goods/GoodsSkuSnInfoTmpMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/model/entity/goods/GoodsSkuSnInfoTmp.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/model/vo/export/GoodsVO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/service/goods/GoodsSkuSnInfoTmpService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/com/ruoyi/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/oms-goods-administration/target/classes/logback.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-modules.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar.original" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/ruoyi-modules-file.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/ruoyi-modules-file.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-file/target/ruoyi-modules-file.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/ruoyi-modules-gen.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/ruoyi-modules-gen.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-gen/target/ruoyi-modules-gen.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/ruoyi-modules-job.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/ruoyi-modules-job.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/ruoyi-modules-job.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/ruoyi-modules-system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/ruoyi-modules-system.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/ruoyi-visual-monitor.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/ruoyi-visual-monitor.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/target/ruoyi-visual-monitor.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-visual/ruoyi-visual.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-visual/ruoyi-visual.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,6 +89,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -135,27 +141,33 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/pom.xml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
-    <property name="settings.editor.selected.configurable" value="File.Encoding" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.ignored.files" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\com.oms.filter" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-modules\oms-goods-administration\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\java" />
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.oms.filter" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.common.config.filter" />
       <recent name="com.ruoyi.common.core.config" />
       <recent name="com.ruoyi.goods.mapper.goods" />
       <recent name="com.ruoyi.goods.model.entity.goods" />
       <recent name="com.ruoyi.goods.service.goods" />
-      <recent name="com.ruoyi.goods.model.vo.export" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -173,6 +185,14 @@
     </configuration>
     <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
       <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OmsGoodsAdministrationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.goods.OmsGoodsAdministrationApplication" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SHORTEN_COMMAND_LINE" value="NONE" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -280,7 +300,8 @@
       <workItem from="1721010069768" duration="3269000" />
       <workItem from="1721016351919" duration="655000" />
       <workItem from="1721036165581" duration="1116000" />
-      <workItem from="1721037322889" duration="6882000" />
+      <workItem from="1721037322889" duration="18194000" />
+      <workItem from="1721110527963" duration="3302000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -310,7 +331,14 @@
       <option name="project" value="LOCAL" />
       <updated>1718865097308</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="OMS-字模块集合调整">
+      <created>1721093214691</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1721093214691</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -321,7 +349,8 @@
     <MESSAGE value="OMS-微腐败版本商品管理" />
     <MESSAGE value="OMS-微服务版本商品管理" />
     <MESSAGE value="OMS-日志调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS-日志调整" />
+    <MESSAGE value="OMS-字模块集合调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS-字模块集合调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

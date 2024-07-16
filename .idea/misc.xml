@@ -7,11 +7,6 @@
         <option value="$PROJECT_DIR$/oms-modules/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/ruoyi-modules/pom.xml" />
-      </set>
-    </option>
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK" />
 </project>

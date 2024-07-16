@@ -1,5 +1,6 @@
 package com.oms.goods;
 
+import com.oms.common.config.EnableOmsConfig;
 import com.ruoyi.common.security.annotation.EnableCustomConfig;
 import com.ruoyi.common.security.annotation.EnableRyFeignClients;
 import com.ruoyi.common.swagger.annotation.EnableCustomSwagger2;
@@ -11,12 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author ruoyi
  */
-@EnableCustomConfig
+@EnableOmsConfig
+//@EnableCustomConfig
 @EnableCustomSwagger2
 @EnableRyFeignClients
 @SpringBootApplication
-// 指定要扫描的Mapper类的包的路径
-@MapperScan("com.oms.**.mapper")
 public class OmsGoodsAdministrationApplication {
     public static void main(String[] args)
     {

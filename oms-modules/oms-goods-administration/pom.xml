@@ -16,12 +16,18 @@
 
     <dependencies>
 
-        <!-- RuoYi Common Core-->
         <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>oms-common-core</artifactId>
+            <version>3.6.4</version>
+        </dependency>
+
+        <!-- RuoYi Common Core-->
+        <!--<dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!-- SpringCloud Alibaba Nacos -->
         <dependency>
