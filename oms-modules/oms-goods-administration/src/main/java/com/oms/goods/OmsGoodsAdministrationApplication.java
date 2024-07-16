@@ -19,8 +19,6 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableRyFeignClients
 @SpringBootApplication
 @EnableOmsConfig
-@ServletComponentScan("com.oms.**.filter")
-@ComponentScan(basePackages = "com.oms.**")
 public class OmsGoodsAdministrationApplication {
     public static void main(String[] args)
     {

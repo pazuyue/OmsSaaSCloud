@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 @EnableAspectJAutoProxy(exposeProxy = true)
 // 指定要扫描的Mapper类的包的路径
 @MapperScan("com.oms.**.mapper")
+@ServletComponentScan("com.oms.**.**")
 // 开启线程异步执行
 @EnableAsync
 // 自动加载类
