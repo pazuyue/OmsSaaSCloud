@@ -1,19 +1,21 @@
 package com.oms.common.filter;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Order(10)
-@Component // 注册拦截器
+@WebFilter(filterName = "DynamicDatasourceInterceptorFilter", value = {"/*"})
 public class DynamicDatasourceInterceptorFilter implements Filter {
     @Value("${databaseName:false}")
     private String databaseName;
+
+    @Override
+    public void init(FilterConfig filterConfig) {
+        System.out.println("初始化过滤器");
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
