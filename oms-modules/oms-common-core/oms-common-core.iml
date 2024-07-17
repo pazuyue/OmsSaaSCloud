@@ -855,7 +855,6 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-crypto:5.7.11" level="project" />
     <orderEntry type="library" name="Maven: io.github.openfeign:feign-core:11.10" level="project" />
     <orderEntry type="library" name="Maven: io.github.openfeign:feign-slf4j:11.10" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-loadbalancer:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-loadbalancer:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.4.34" level="project" />
@@ -945,6 +944,19 @@
     <orderEntry type="library" name="Maven: io.netty:netty-transport-native-unix-common:4.1.101.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.101.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.101.Final" level="project" />
+    <orderEntry type="module" module-name="ruoyi-common-datasource" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid-spring-boot-starter:1.2.20" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.20" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jaxb:jaxb-runtime:2.3.9" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jaxb:txw2:2.3.9" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-runtime:3.0.12" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.sun.activation:jakarta.activation:1.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring-boot-starter:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring-boot-common:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-creator:4.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-context:3.1.7" level="project" />

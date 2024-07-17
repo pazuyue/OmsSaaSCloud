@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/annotation/EnableOmsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/annotation/EnableOmsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/config/FilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/config/FilterConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/OmsGoodsAdministrationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/OmsGoodsAdministrationApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/config/FilterConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,12 +75,13 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../spring3BaseFrame" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
     <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.runner" />
+    <property name="ts.external.directory.path" value="D:\Program Files (x86)\ideaIU_2021.2.3_64bit_Portable\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="ReactorSettings">
@@ -237,7 +242,8 @@
       <workItem from="1721037322889" duration="18194000" />
       <workItem from="1721110527963" duration="9070000" />
       <workItem from="1721127176918" duration="655000" />
-      <workItem from="1721127876258" duration="2030000" />
+      <workItem from="1721127876258" duration="2552000" />
+      <workItem from="1721208952861" duration="1812000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -295,7 +301,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721129701763</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="OMS-子模块集合调整-Filter">
+      <created>1721130068619</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1721130068619</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -308,7 +321,8 @@
     <MESSAGE value="OMS-日志调整" />
     <MESSAGE value="OMS-字模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS-子模块集合调整" />
+    <MESSAGE value="OMS-子模块集合调整-Filter" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS-子模块集合调整-Filter" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

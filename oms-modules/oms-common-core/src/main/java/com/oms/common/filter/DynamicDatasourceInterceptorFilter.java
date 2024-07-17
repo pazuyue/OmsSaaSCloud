@@ -1,5 +1,6 @@
 package com.oms.common.filter;
 
+import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import org.springframework.beans.factory.annotation.Value;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 @WebFilter(filterName = "DynamicDatasourceInterceptorFilter", value = {"/*"})
 public class DynamicDatasourceInterceptorFilter implements Filter {
-    @Value("${databaseName:false}")
+    @Value("${spring.datasource.dynamic.datasource.master.databaseName:false}")
     private String databaseName;
 
     @Override
@@ -24,13 +25,13 @@ public class DynamicDatasourceInterceptorFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse)servletResponse;
         databaseName = databaseName.toLowerCase();
         System.out.println("databaseName:"+databaseName);
-       /* String companyCode = jwtInfo.getCompanyCode().toLowerCase();
-        databaseName = databaseName.toLowerCase();
-        String dataKey =companyCode+"_"+databaseName;
+
+        String dataKey ="qm_"+databaseName;
         System.out.println("dataKey:"+dataKey);
         DynamicDataSourceContextHolder.clear();
         //切换到对应poolName的数据源
-        DynamicDataSourceContextHolder.push(dataKey);*/
+        DynamicDataSourceContextHolder.push(dataKey);
+
         chain.doFilter(req,resp);
     }
 }

@@ -27,6 +27,12 @@
             <artifactId>ruoyi-common-security</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- RuoYi Common DataSource -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common-datasource</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
