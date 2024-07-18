@@ -32,7 +32,6 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
         if (Objects.isNull(dataKey)) {
             // 创建错误信息
-            //String errorMessage = "{'msg':'company_code is null','code':'"+ HttpStatus.ERROR+"'}";
             AjaxResult errorInfo = error("company_code is null");
             ObjectMapper mapper = new ObjectMapper();
             String jsonInString = mapper.writeValueAsString(errorInfo);
@@ -44,12 +43,16 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             resp.getWriter().write(jsonInString);
             return; // 不再执行后续的过滤器和请求处理
         }
-
         System.out.println("切库dataKey:"+dataKey);
-        DynamicDataSourceContextHolder.clear();
         //切换到对应poolName的数据源
+        DynamicDataSourceContextHolder.clear();
         DynamicDataSourceContextHolder.push(dataKey);
-
         chain.doFilter(req,resp);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("过滤器被销毁了");
+
     }
 }
