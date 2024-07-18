@@ -69,7 +69,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../spring3BaseFrame" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -95,11 +95,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.common.filter" />
       <recent name="com.oms.common.config.filter" />
       <recent name="com.ruoyi.common.core.config" />
       <recent name="com.ruoyi.goods.mapper.goods" />
       <recent name="com.ruoyi.goods.model.entity.goods" />
-      <recent name="com.ruoyi.goods.service.goods" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -237,7 +237,7 @@
       <workItem from="1721110527963" duration="9070000" />
       <workItem from="1721127176918" duration="655000" />
       <workItem from="1721127876258" duration="2552000" />
-      <workItem from="1721208952861" duration="3621000" />
+      <workItem from="1721208952861" duration="6470000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -309,7 +309,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721210813878</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="OMS-子模块集合调整-Filter">
+      <created>1721212688620</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1721212688620</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
