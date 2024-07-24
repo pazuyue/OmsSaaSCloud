@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS-子模块集合调整-Filter">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysUserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysUserMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/mapper/system/SysUserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/mapper/system/SysUserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/model/LoginUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/model/LoginUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/java/com/ruoyi/common/security/service/TokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/java/com/ruoyi/common/security/service/TokenService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/classes/com/ruoyi/common/security/service/TokenService.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/classes/com/ruoyi/common/security/service/TokenService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -243,7 +249,7 @@
       <workItem from="1721208952861" duration="8996000" />
       <workItem from="1721354583457" duration="5126000" />
       <workItem from="1721619085603" duration="104000" />
-      <workItem from="1721810911959" duration="889000" />
+      <workItem from="1721810911959" duration="6625000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -336,7 +342,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721267296753</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="用户列表-新增最后登陆选择的公司编码">
+      <created>1721811967061</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1721811967061</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -350,7 +363,8 @@
     <MESSAGE value="OMS-字模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整-Filter" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS-子模块集合调整-Filter" />
+    <MESSAGE value="用户列表-新增最后登陆选择的公司编码" />
+    <option name="LAST_COMMIT_MESSAGE" value="用户列表-新增最后登陆选择的公司编码" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

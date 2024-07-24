@@ -40,9 +40,9 @@ public class GoodsController extends BaseController {
             String operName = SecurityUtils.getUsername();
 
             LoginUser user = SecurityUtils.getLoginUser();
-            log.debug("operName:{}", operName);
-            log.debug("goodsList:{}", goodsList);
-            log.debug("user.sysUser:{}", user.getSysUser());
+            log.info("operName:{}", operName);
+            log.info("goodsList:{}", goodsList);
+            log.info("user.sysUser:{}", user);
             goodsSkuSnInfoTmpService.export(goodsList);
             return success(goodsList.toString());
         }catch (Exception e){

@@ -21,7 +21,7 @@ import com.ruoyi.system.api.model.LoginUser;
 
 /**
  * token验证处理
- * 
+ *
  * @author ruoyi
  */
 @Component
@@ -50,10 +50,12 @@ public class TokenService
         String token = IdUtils.fastUUID();
         Long userId = loginUser.getSysUser().getUserId();
         String userName = loginUser.getSysUser().getUserName();
+        String companyCode = loginUser.getSysUser().getLoginCompanyCode();
         loginUser.setToken(token);
         loginUser.setUserid(userId);
         loginUser.setUsername(userName);
         loginUser.setIpaddr(IpUtils.getIpAddr());
+        loginUser.setCompanyCode(companyCode);
         refreshToken(loginUser);
 
         // Jwt存储信息

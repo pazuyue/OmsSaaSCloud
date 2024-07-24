@@ -54,6 +54,11 @@ public class LoginUser implements Serializable
     private Set<String> roles;
 
     /**
+     * 公司编码
+     */
+    private String companyCode;
+
+    /**
      * 用户信息
      */
     private SysUser sysUser;
@@ -146,5 +151,29 @@ public class LoginUser implements Serializable
     public void setSysUser(SysUser sysUser)
     {
         this.sysUser = sysUser;
+    }
+
+    public String getCompanyCode() {
+        return companyCode;
+    }
+
+    public void setCompanyCode(String companyCode) {
+        this.companyCode = companyCode;
+    }
+
+    @Override
+    public String toString() {
+        return "LoginUser{" +
+                "token='" + token + '\'' +
+                ", userid=" + userid +
+                ", username='" + username + '\'' +
+                ", loginTime=" + loginTime +
+                ", expireTime=" + expireTime +
+                ", ipaddr='" + ipaddr + '\'' +
+                ", permissions=" + permissions +
+                ", roles=" + roles +
+                ", companyCode='" + companyCode + '\'' +
+                ", sysUser=" + sysUser +
+                '}';
     }
 }

@@ -957,6 +957,7 @@
     <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring-boot-common:4.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring:4.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-creator:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.30" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter:3.1.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-context:3.1.7" level="project" />
