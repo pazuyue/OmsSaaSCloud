@@ -6,16 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/model/LoginUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/model/LoginUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/java/com/ruoyi/common/security/service/TokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/java/com/ruoyi/common/security/service/TokenService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/classes/com/ruoyi/common/security/service/TokenService.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/target/classes/com/ruoyi/common/security/service/TokenService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/resources/logback.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/logback.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,9 +71,9 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/resources" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
     <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.runner" />
@@ -92,6 +85,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\com.oms.filter" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-modules\oms-goods-administration\src\main\resources" />
     </key>
@@ -249,7 +243,7 @@
       <workItem from="1721208952861" duration="8996000" />
       <workItem from="1721354583457" duration="5126000" />
       <workItem from="1721619085603" duration="104000" />
-      <workItem from="1721810911959" duration="6625000" />
+      <workItem from="1721810911959" duration="7741000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -349,7 +343,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721811967061</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="OMS - 根据用户登录公司选择数据库">
+      <created>1721819215193</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1721819215193</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -364,7 +365,8 @@
     <MESSAGE value="OMS-子模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整-Filter" />
     <MESSAGE value="用户列表-新增最后登陆选择的公司编码" />
-    <option name="LAST_COMMIT_MESSAGE" value="用户列表-新增最后登陆选择的公司编码" />
+    <MESSAGE value="OMS - 根据用户登录公司选择数据库" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 根据用户登录公司选择数据库" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

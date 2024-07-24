@@ -32,7 +32,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-        System.out.println("===> DynamicDatasourceInterceptor doFilter");
+        log.info("===> DynamicDatasourceInterceptor doFilter");
         HttpServletRequest req = (HttpServletRequest)servletRequest;
         HttpServletResponse resp = (HttpServletResponse)servletResponse;
         // 获取请求参数
