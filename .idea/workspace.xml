@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS-子模块集合调整-Filter">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysUserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysUserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/mapper/system/SysUserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/mapper/system/SysUserMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +72,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../spring3BaseFrame" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -238,7 +240,10 @@
       <workItem from="1721110527963" duration="9070000" />
       <workItem from="1721127176918" duration="655000" />
       <workItem from="1721127876258" duration="2552000" />
-      <workItem from="1721208952861" duration="6754000" />
+      <workItem from="1721208952861" duration="8996000" />
+      <workItem from="1721354583457" duration="5126000" />
+      <workItem from="1721619085603" duration="104000" />
+      <workItem from="1721810911959" duration="889000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -324,7 +329,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721266995968</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="OMS-子模块集合调整-Filter">
+      <created>1721267296753</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1721267296753</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

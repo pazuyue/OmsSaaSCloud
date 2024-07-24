@@ -14,7 +14,7 @@ import com.ruoyi.common.core.xss.Xss;
 
 /**
  * 用户对象 sys_user
- * 
+ *
  * @author ruoyi
  */
 public class SysUser extends BaseEntity
@@ -65,6 +65,9 @@ public class SysUser extends BaseEntity
     /** 最后登录IP */
     @Excel(name = "最后登录IP", type = Type.EXPORT)
     private String loginIp;
+
+
+    private String loginCompanyCode;
 
     /** 最后登录时间 */
     @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
@@ -296,6 +299,14 @@ public class SysUser extends BaseEntity
     {
         this.roleId = roleId;
     }
+
+    public String getLoginCompanyCode() {
+        return loginCompanyCode;
+    }
+
+    public void setLoginCompanyCode(String loginCompanyCode) {
+        this.loginCompanyCode = loginCompanyCode;
+    }
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -311,6 +322,7 @@ public class SysUser extends BaseEntity
             .append("status", getStatus())
             .append("delFlag", getDelFlag())
             .append("loginIp", getLoginIp())
+            .append("loginCompanyCode", getLoginCompanyCode())
             .append("loginDate", getLoginDate())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
