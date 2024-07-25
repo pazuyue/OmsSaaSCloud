@@ -1,5 +1,6 @@
 package com.oms.goods.service.goods.impl;
 
+import com.oms.common.model.entity.CompanyModelAssociationInfo;
 import com.oms.goods.model.enums.GoodsPluginEnum;
 import com.oms.goods.model.vo.export.GoodsVO;
 import com.oms.goods.service.goods.GoodsSkuSnInfoTmpService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 
 @Service(GoodsPluginEnum.Type.Common)
 public class GoodsPluginServiceImpl implements GoodsPluginService {

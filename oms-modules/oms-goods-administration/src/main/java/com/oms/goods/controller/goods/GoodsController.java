@@ -36,7 +36,7 @@ public class GoodsController extends BaseController {
      */
     @SneakyThrows
     @PostMapping(value = "/export")
-    public AjaxResult export(MultipartFile file,String import_batch) {
+    public AjaxResult export(MultipartFile file,String import_batch,String company_code) {
         try{
             //@Cleanup
             //InputStream inputStream = file.getInputStream();
@@ -45,10 +45,11 @@ public class GoodsController extends BaseController {
             String operName = SecurityUtils.getUsername();
 
             LoginUser user = SecurityUtils.getLoginUser();
+            log.info("company_code:{}", company_code);
             log.info("operName:{}", operName);
             log.info("goodsList:{}", goodsList);
             log.info("user.sysUser:{}", user);
-            goodsPluginFactory.getBean(GoodsPluginEnum.Type.Common).export(goodsList);
+            goodsPluginFactory.getBean(company_code).export(goodsList);
             return success(goodsList.toString());
         }catch (Exception e){
             return error(e.getMessage());

@@ -17,6 +17,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -34,16 +36,17 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         log.info("===> DynamicDatasourceInterceptor doFilter");
         HttpServletRequest req = (HttpServletRequest)servletRequest;
+        CustomHttpServletRequest requestWrapper = new CustomHttpServletRequest(req);
         HttpServletResponse resp = (HttpServletResponse)servletResponse;
         // 获取请求参数
-        String dataKey = req.getParameter("company_code");
-        log.debug("dataKey:"+dataKey);
+        String company_code = req.getParameter("company_code");
+        log.debug("company_code:"+company_code);
 
-        if (Objects.isNull(dataKey)) {
+        if (Objects.isNull(company_code)) {
             LoginUser user = tokenService.getLoginUser();
-            dataKey = user.getCompanyCode();
-            log.debug("获取用户登陆公司:{}",dataKey);
-            if (Objects.isNull(dataKey)) {
+            company_code = user.getCompanyCode();
+            log.debug("获取用户登陆公司:{}",company_code);
+            if (Objects.isNull(company_code)) {
                 // 创建错误信息
                 AjaxResult errorInfo = error("company_code is null");
                 ObjectMapper mapper = new ObjectMapper();
@@ -57,11 +60,15 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
                 return; // 不再执行后续的过滤器和请求处理
             }
         }
-        log.debug("切库dataKey:{}",dataKey);
+        // 获取所有参数集合
+
+        // 将集合存到自定义HttpServletRequestWrapper
+        requestWrapper.addParameter("company_code",company_code);
+        log.debug("parameterMap:{}",requestWrapper);
         //切换到对应poolName的数据源
         DynamicDataSourceContextHolder.clear();
-        DynamicDataSourceContextHolder.push(dataKey);
-        chain.doFilter(req,resp);
+        DynamicDataSourceContextHolder.push(company_code);
+        chain.doFilter(requestWrapper,resp);
     }
 
     @Override
