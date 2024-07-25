@@ -42,7 +42,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         if (Objects.isNull(dataKey)) {
             LoginUser user = tokenService.getLoginUser();
             dataKey = user.getCompanyCode();
-            log.debug("获取用户登陆公司{}:",dataKey);
+            log.debug("获取用户登陆公司:{}",dataKey);
             if (Objects.isNull(dataKey)) {
                 // 创建错误信息
                 AjaxResult errorInfo = error("company_code is null");
@@ -57,7 +57,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
                 return; // 不再执行后续的过滤器和请求处理
             }
         }
-        log.debug("切库dataKey{}:",dataKey);
+        log.debug("切库dataKey:{}",dataKey);
         //切换到对应poolName的数据源
         DynamicDataSourceContextHolder.clear();
         DynamicDataSourceContextHolder.push(dataKey);

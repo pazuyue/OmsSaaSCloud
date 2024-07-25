@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/enums/GoodsPluginEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsPluginServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/plugin/GoodsPluginService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/resources/logback.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +75,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/resources" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -85,6 +89,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\com.oms.filter" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-modules\oms-goods-administration\src\main\resources" />
@@ -243,7 +248,7 @@
       <workItem from="1721208952861" duration="8996000" />
       <workItem from="1721354583457" duration="5126000" />
       <workItem from="1721619085603" duration="104000" />
-      <workItem from="1721810911959" duration="7741000" />
+      <workItem from="1721810911959" duration="10167000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -350,7 +355,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721819215193</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="OMS - 日志输出">
+      <created>1721820077119</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1721820077119</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -366,7 +378,8 @@
     <MESSAGE value="OMS-子模块集合调整-Filter" />
     <MESSAGE value="用户列表-新增最后登陆选择的公司编码" />
     <MESSAGE value="OMS - 根据用户登录公司选择数据库" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 根据用户登录公司选择数据库" />
+    <MESSAGE value="OMS - 日志输出" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 日志输出" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
