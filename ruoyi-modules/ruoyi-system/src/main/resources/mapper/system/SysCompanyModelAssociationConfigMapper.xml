@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCompanyModelAssociationConfigMapper">
+    
+    <resultMap type="SysCompanyModelAssociationConfig" id="SysCompanyModelAssociationConfigResult">
+        <result property="id"    column="id"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="orderTransferModel"    column="order_transfer_model"    />
+        <result property="goodsHandleModel"    column="goods_handle_model"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="modifyTime"    column="modify_time"    />
+    </resultMap>
+
+    <sql id="selectSysCompanyModelAssociationConfigVo">
+        select id, company_code, order_transfer_model, goods_handle_model, create_time, modify_time from sys_company_model_association_config
+    </sql>
+
+    <select id="selectSysCompanyModelAssociationConfigList" parameterType="SysCompanyModelAssociationConfig" resultMap="SysCompanyModelAssociationConfigResult">
+        <include refid="selectSysCompanyModelAssociationConfigVo"/>
+        <where>  
+            <if test="companyCode != null  and companyCode != ''"> and company_code = #{companyCode}</if>
+            <if test="orderTransferModel != null "> and order_transfer_model = #{orderTransferModel}</if>
+            <if test="goodsHandleModel != null "> and goods_handle_model = #{goodsHandleModel}</if>
+            <if test="modifyTime != null "> and modify_time = #{modifyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysCompanyModelAssociationConfigById" parameterType="Integer" resultMap="SysCompanyModelAssociationConfigResult">
+        <include refid="selectSysCompanyModelAssociationConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysCompanyModelAssociationConfig" parameterType="SysCompanyModelAssociationConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_company_model_association_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null and companyCode != ''">company_code,</if>
+            <if test="orderTransferModel != null">order_transfer_model,</if>
+            <if test="goodsHandleModel != null">goods_handle_model,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="modifyTime != null">modify_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null and companyCode != ''">#{companyCode},</if>
+            <if test="orderTransferModel != null">#{orderTransferModel},</if>
+            <if test="goodsHandleModel != null">#{goodsHandleModel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="modifyTime != null">#{modifyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCompanyModelAssociationConfig" parameterType="SysCompanyModelAssociationConfig">
+        update sys_company_model_association_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyCode != null and companyCode != ''">company_code = #{companyCode},</if>
+            <if test="orderTransferModel != null">order_transfer_model = #{orderTransferModel},</if>
+            <if test="goodsHandleModel != null">goods_handle_model = #{goodsHandleModel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="modifyTime != null">modify_time = #{modifyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysCompanyModelAssociationConfigById" parameterType="Integer">
+        delete from sys_company_model_association_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSysCompanyModelAssociationConfigByIds" parameterType="String">
+        delete from sys_company_model_association_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

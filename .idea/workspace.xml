@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/CustomHttpServletRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/CompanyModelAssociationInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/mapper/CompanyModelAssociationInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/controller/SysCompanyModelAssociationConfigController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/domain/SysCompanyModelAssociationConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/mapper/SysCompanyModelAssociationConfigMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/ISysCompanyModelAssociationConfigService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/impl/SysCompanyModelAssociationConfigServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysCompanyModelAssociationConfigMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/system/companyModelAssociationConfig.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/system/companyModelAssociationConfig/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsPluginServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsPluginServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +76,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ruoyi-ui/src/views/system" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -89,10 +90,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\system" />
+      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\system" />
+      <recent name="D:\java\RuoYi-Cloud\ruoyi-modules\ruoyi-system\src\main\resources\mapper\system" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\resources" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\com.oms.filter" />
-      <recent name="D:\java\RuoYi-Cloud\ruoyi-modules\oms-goods-administration\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\java" />
@@ -251,6 +253,8 @@
       <workItem from="1721810911959" duration="10286000" />
       <workItem from="1721875078460" duration="127000" />
       <workItem from="1721901390426" duration="3494000" />
+      <workItem from="1721958647405" duration="579000" />
+      <workItem from="1721984584378" duration="2976000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
