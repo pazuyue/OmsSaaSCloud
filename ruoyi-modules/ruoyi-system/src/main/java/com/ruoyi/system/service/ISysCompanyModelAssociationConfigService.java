@@ -19,6 +19,8 @@ public interface ISysCompanyModelAssociationConfigService
      */
     public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigById(Integer id);
 
+    public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigByCompanyCode(String CompanyCode);
+
     /**
      * 查询公司-OMS系统插件关联列表
      *

@@ -20,6 +20,14 @@ public interface SysCompanyModelAssociationConfigMapper
     public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigById(Integer id);
 
     /**
+     * 根据公司代码查询系统公司模型关联配置。
+     *
+     * @param CompanyCode 公司的唯一标识代码。
+     * @return 返回匹配的系统公司模型关联配置对象，如果找不到，则返回null。
+     */
+    public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigByCompanyCode(String CompanyCode);
+
+    /**
      * 查询公司-OMS系统插件关联列表
      *
      * @param sysCompanyModelAssociationConfig 公司-OMS系统插件关联

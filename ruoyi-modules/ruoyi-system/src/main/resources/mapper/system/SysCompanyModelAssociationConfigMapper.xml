@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysCompanyModelAssociationConfigMapper">
-    
+
     <resultMap type="SysCompanyModelAssociationConfig" id="SysCompanyModelAssociationConfigResult">
         <result property="id"    column="id"    />
         <result property="companyCode"    column="company_code"    />
@@ -19,17 +19,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSysCompanyModelAssociationConfigList" parameterType="SysCompanyModelAssociationConfig" resultMap="SysCompanyModelAssociationConfigResult">
         <include refid="selectSysCompanyModelAssociationConfigVo"/>
-        <where>  
+        <where>
             <if test="companyCode != null  and companyCode != ''"> and company_code = #{companyCode}</if>
             <if test="orderTransferModel != null "> and order_transfer_model = #{orderTransferModel}</if>
             <if test="goodsHandleModel != null "> and goods_handle_model = #{goodsHandleModel}</if>
             <if test="modifyTime != null "> and modify_time = #{modifyTime}</if>
         </where>
     </select>
-    
+
     <select id="selectSysCompanyModelAssociationConfigById" parameterType="Integer" resultMap="SysCompanyModelAssociationConfigResult">
         <include refid="selectSysCompanyModelAssociationConfigVo"/>
         where id = #{id}
+    </select>
+
+    <select id="selectSysCompanyModelAssociationConfigByCompanyCode" parameterType="String" resultMap="SysCompanyModelAssociationConfigResult">
+        <include refid="selectSysCompanyModelAssociationConfigVo"/>
+        where company_code = #{companyCode}
     </select>
 
     <insert id="insertSysCompanyModelAssociationConfig" parameterType="SysCompanyModelAssociationConfig" useGeneratedKeys="true" keyProperty="id">
@@ -67,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSysCompanyModelAssociationConfigByIds" parameterType="String">
-        delete from sys_company_model_association_config where id in 
+        delete from sys_company_model_association_config where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

@@ -8,6 +8,8 @@ import com.ruoyi.system.mapper.SysCompanyModelAssociationConfigMapper;
 import com.ruoyi.system.domain.SysCompanyModelAssociationConfig;
 import com.ruoyi.system.service.ISysCompanyModelAssociationConfigService;
 
+import javax.annotation.Resource;
+
 /**
  * 公司-OMS系统插件关联Service业务层处理
  *
@@ -17,7 +19,7 @@ import com.ruoyi.system.service.ISysCompanyModelAssociationConfigService;
 @Service
 public class SysCompanyModelAssociationConfigServiceImpl implements ISysCompanyModelAssociationConfigService
 {
-    @Autowired
+    @Resource
     private SysCompanyModelAssociationConfigMapper sysCompanyModelAssociationConfigMapper;
 
     /**
@@ -30,6 +32,11 @@ public class SysCompanyModelAssociationConfigServiceImpl implements ISysCompanyM
     public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigById(Integer id)
     {
         return sysCompanyModelAssociationConfigMapper.selectSysCompanyModelAssociationConfigById(id);
+    }
+
+    @Override
+    public SysCompanyModelAssociationConfig selectSysCompanyModelAssociationConfigByCompanyCode(String CompanyCode) {
+        return sysCompanyModelAssociationConfigMapper.selectSysCompanyModelAssociationConfigByCompanyCode(CompanyCode);
     }
 
     /**
