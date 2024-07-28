@@ -1,8 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
-import com.ruoyi.system.domain.SysCompanyModelAssociationConfig;
 
+import com.ruoyi.system.api.domain.SysCompanyModelAssociationConfig;
 /**
  * 公司-OMS系统插件关联Mapper接口
  *

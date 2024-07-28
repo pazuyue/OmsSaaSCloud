@@ -2,10 +2,9 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.core.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ruoyi.system.api.domain.SysCompanyModelAssociationConfig;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SysCompanyModelAssociationConfigMapper;
-import com.ruoyi.system.domain.SysCompanyModelAssociationConfig;
 import com.ruoyi.system.service.ISysCompanyModelAssociationConfigService;
 
 import javax.annotation.Resource;

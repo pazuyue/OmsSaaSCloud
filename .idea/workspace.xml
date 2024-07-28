@@ -4,13 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS - 插件化实现">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/RemoteSysCompanyModelAssociationConfigService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/controller/SysCompanyModelAssociationConfigController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/controller/SysCompanyModelAssociationConfigController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/domain/SysCompanyModelAssociationConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysCompanyModelAssociationConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/mapper/SysCompanyModelAssociationConfigMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/mapper/SysCompanyModelAssociationConfigMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/ISysCompanyModelAssociationConfigService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/ISysCompanyModelAssociationConfigService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/impl/SysCompanyModelAssociationConfigServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/impl/SysCompanyModelAssociationConfigServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysCompanyModelAssociationConfigMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/SysCompanyModelAssociationConfigMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,11 +105,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ruoyi.system.api.domain" />
+      <recent name="com.ruoyi.system.api" />
       <recent name="com.oms.common.filter" />
       <recent name="com.oms.common.config.filter" />
       <recent name="com.ruoyi.common.core.config" />
-      <recent name="com.ruoyi.goods.mapper.goods" />
-      <recent name="com.ruoyi.goods.model.entity.goods" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -251,7 +254,8 @@
       <workItem from="1721875078460" duration="127000" />
       <workItem from="1721901390426" duration="3494000" />
       <workItem from="1721958647405" duration="579000" />
-      <workItem from="1721984584378" duration="6693000" />
+      <workItem from="1721984584378" duration="6781000" />
+      <workItem from="1722132722323" duration="2605000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -379,7 +383,14 @@
       <option name="project" value="LOCAL" />
       <updated>1721987662583</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="OMS - 插件化实现">
+      <created>1722091411759</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1722091411759</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
