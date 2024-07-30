@@ -2,6 +2,7 @@ package com.oms.goods.service.goods.impl;
 
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,7 +28,13 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
 
     @Override
     public boolean export(List<GoodsVO> list, String importBatch) {
-        return false;
+        if (!ObjectUtil.isEmpty(importBatch))
+        {
+            QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("import_batch",importBatch);
+            this.remove(queryWrapper);
+        }
+        return this.saveGoodsSkuSnInfoTmp(list);
     }
 
     @Override

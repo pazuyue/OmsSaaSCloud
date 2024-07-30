@@ -1,5 +1,6 @@
 package com.oms.goods.controller.goods;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.oms.goods.factory.GoodsPluginFactory;
 import com.oms.goods.model.enums.GoodsPluginEnum;
 import com.ruoyi.common.core.domain.R;
@@ -48,8 +49,16 @@ public class GoodsController extends BaseController {
             //InputStream inputStream = file.getInputStream();
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
-            goodsPluginFactory.getBean(company_code).export(goodsList);
-            return success(goodsList.toString());
+            boolean b = false;
+            if (ObjectUtil.isEmpty(import_batch)){
+                b= goodsPluginFactory.getBean(company_code).export(goodsList);
+            }else {
+                b = goodsPluginFactory.getBean(company_code).export(goodsList,import_batch);
+            }
+            if (b){
+                return success("导入成功");
+            }
+            return success("导入失败");
         }catch (Exception e){
             return error(e.getMessage());
         }

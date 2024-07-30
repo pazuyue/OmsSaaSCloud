@@ -6,5 +6,18 @@ import java.util.List;
 
 public interface GoodsPluginService {
     boolean execute(); //插件实现
+
+    /**
+     * 导入
+     * @param list
+     * @return
+     */
     boolean export(List<GoodsVO> list);
+    /**
+     * 重新导入
+     * @param list
+     * @param importBatch
+     * @return
+     */
+    public boolean export(List<GoodsVO> list,String importBatch);
 }

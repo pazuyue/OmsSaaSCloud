@@ -25,4 +25,9 @@ public class GoodsPluginServiceImpl implements GoodsPluginService {
     public boolean export(List<GoodsVO> list) {
         return  goodsSkuSnInfoTmpService.export(list);
     }
+
+    @Override
+    public boolean export(List<GoodsVO> list, String importBatch) {
+        return  goodsSkuSnInfoTmpService.export(list,importBatch);
+    }
 }
