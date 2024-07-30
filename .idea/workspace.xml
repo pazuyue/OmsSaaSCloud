@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/RemoteSysCompanyModelAssociationConfigService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/controller/SysCompanyModelAssociationConfigController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/controller/SysCompanyModelAssociationConfigController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/domain/SysCompanyModelAssociationConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java/com/ruoyi/system/api/domain/SysCompanyModelAssociationConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/mapper/SysCompanyModelAssociationConfigMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/mapper/SysCompanyModelAssociationConfigMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/ISysCompanyModelAssociationConfigService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/ISysCompanyModelAssociationConfigService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/impl/SysCompanyModelAssociationConfigServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java/com/ruoyi/system/service/impl/SysCompanyModelAssociationConfigServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +248,7 @@
       <workItem from="1721901390426" duration="3494000" />
       <workItem from="1721958647405" duration="579000" />
       <workItem from="1721984584378" duration="6781000" />
-      <workItem from="1722132722323" duration="2605000" />
+      <workItem from="1722132722323" duration="4173000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -390,7 +383,14 @@
       <option name="project" value="LOCAL" />
       <updated>1722091411759</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="OMS - 插件化实现">
+      <created>1722135658300</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1722135658300</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -43,24 +43,21 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         log.debug("company_code:"+company_code);
 
         if (Objects.isNull(company_code)) {
-            LoginUser user = tokenService.getLoginUser();
-            company_code = user.getCompanyCode();
-            log.debug("获取用户登陆公司:{}",company_code);
-            if (Objects.isNull(company_code)) {
-                // 创建错误信息
-                AjaxResult errorInfo = error("company_code is null");
-                ObjectMapper mapper = new ObjectMapper();
-                String jsonInString = mapper.writeValueAsString(errorInfo);
-
-                // 设置HTTP状态码为400 Bad Request
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
-                // 输出错误信息
-                resp.getWriter().write(jsonInString);
-                return; // 不再执行后续的过滤器和请求处理
-            }
+          try {
+              company_code = this.getCompanyCode();
+              log.debug("获取用户登陆公司:{}",company_code);
+          }catch (Exception exception){
+              // 创建错误信息
+              AjaxResult errorInfo = error("company_code is null");
+              ObjectMapper mapper = new ObjectMapper();
+              String jsonInString = mapper.writeValueAsString(errorInfo);
+              // 设置HTTP状态码为400 Bad Request
+              resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+              // 输出错误信息
+              resp.getWriter().write(jsonInString);
+              return; // 不再执行后续的过滤器和请求处理
+          }
         }
-        // 获取所有参数集合
 
         // 将集合存到自定义HttpServletRequestWrapper
         requestWrapper.addParameter("company_code",company_code);
@@ -69,6 +66,19 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         DynamicDataSourceContextHolder.clear();
         DynamicDataSourceContextHolder.push(company_code);
         chain.doFilter(requestWrapper,resp);
+    }
+
+
+    public String getCompanyCode(){
+        String company_code;
+        LoginUser user = tokenService.getLoginUser();
+        if (Objects.isNull(user))
+            throw new RuntimeException("用户信息为空");
+        company_code = user.getCompanyCode();
+        if (Objects.isNull(company_code)) {
+            throw new RuntimeException("公司信息为空");
+        }
+        return company_code;
     }
 
     @Override
