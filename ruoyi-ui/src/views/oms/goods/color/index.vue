@@ -1,38 +1,22 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="尺码名称" prop="sizeName">
+      <el-form-item label="颜色" prop="colorName">
         <el-input
-          v-model="queryParams.sizeName"
-          placeholder="请输入尺码名称"
+          v-model="queryParams.colorName"
+          placeholder="请输入颜色"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公司编码" prop="companyCode">
+      <el-form-item label="外部颜色编码" prop="outColorCode">
         <el-input
-          v-model="queryParams.companyCode"
-          placeholder="公司编码"
+          v-model="queryParams.outColorCode"
+          placeholder="请输入外部颜色编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="外部尺码" prop="outSizeCode">
-        <el-input
-          v-model="queryParams.outSizeCode"
-          placeholder="请输入外部尺码编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-<!--      <el-form-item label="修改时间" prop="modifyTime">
-        <el-date-picker clearable
-          v-model="queryParams.modifyTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择修改时间">
-        </el-date-picker>
-      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -47,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:size:add']"
+          v-hasPermi="['oms:color:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -58,7 +42,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:size:edit']"
+          v-hasPermi="['oms:color:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -69,7 +53,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:size:remove']"
+          v-hasPermi="['oms:color:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -79,23 +63,17 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:size:export']"
+          v-hasPermi="['oms:color:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="sizeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="colorList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="尺码名称" align="center" prop="sizeName" />
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="外部尺码" align="center" prop="outSizeCode" />
-      <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="颜色" align="center" prop="colorName" />
+      <el-table-column label="外部颜色编码" align="center" prop="outColorCode" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -103,14 +81,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:size:edit']"
+            v-hasPermi="['oms:color:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:size:remove']"
+            v-hasPermi="['oms:color:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -124,17 +102,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改商品尺码对话框 -->
+    <!-- 添加或修改商品颜色对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="尺码名称" prop="sizeName">
-          <el-input v-model="form.sizeName" placeholder="请输入尺码名称" />
+        <el-form-item label="颜色" prop="colorName">
+          <el-input v-model="form.colorName" placeholder="请输入颜色" />
         </el-form-item>
-<!--        <el-form-item label="公司编码" prop="companyCode">
-          <el-input v-model="form.companyCode" placeholder="请输入公司编码" />
-        </el-form-item>-->
-        <el-form-item label="外部尺码" prop="outSizeCode">
-          <el-input v-model="form.outSizeCode" placeholder="请输入外部尺码编码" />
+        <el-form-item label="外部颜色编码" prop="outColorCode">
+          <el-input v-model="form.outColorCode" placeholder="请输入外部颜色编码" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,10 +121,10 @@
 </template>
 
 <script>
-import { listSize, getSize, delSize, addSize, updateSize } from "@/api/goods/size";
+import { listColor, getColor, delColor, addColor, updateColor } from "@/api/goods/color";
 
 export default {
-  name: "Size",
+  name: "Color",
   data() {
     return {
       // 遮罩层
@@ -164,8 +139,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 商品尺码表格数据
-      sizeList: [],
+      // 商品颜色表格数据
+      colorList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -174,26 +149,24 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        sizeName: null,
-        companyCode: null,
-        outSizeCode: null,
-        modifyTime: null
+        colorName: null,
+        outColorCode: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        sizeName: [
-          { required: true, message: "尺码名称不能为空", trigger: "blur" }
+        colorName: [
+          { required: true, message: "颜色不能为空", trigger: "blur" }
+        ],
+        outColorCode: [
+          { required: true, message: "外部颜色编码不能为空", trigger: "blur" }
         ],
         companyCode: [
           { required: true, message: "公司编码不能为空", trigger: "blur" }
         ],
-        outSizeCode: [
-          { required: true, message: "外部尺码编码不能为空", trigger: "blur" }
-        ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          { required: true, message: "添加时间不能为空", trigger: "blur" }
         ],
         modifyTime: [
           { required: true, message: "修改时间不能为空", trigger: "blur" }
@@ -205,11 +178,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询商品尺码列表 */
+    /** 查询商品颜色列表 */
     getList() {
       this.loading = true;
-      listSize(this.queryParams).then(response => {
-        this.sizeList = response.rows;
+      listColor(this.queryParams).then(response => {
+        this.colorList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -223,9 +196,9 @@ export default {
     reset() {
       this.form = {
         id: null,
-        sizeName: null,
+        colorName: null,
+        outColorCode: null,
         companyCode: null,
-        outSizeCode: null,
         createTime: null,
         modifyTime: null
       };
@@ -251,16 +224,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加商品尺码";
+      this.title = "添加商品颜色";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getSize(id).then(response => {
+      getColor(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改商品尺码";
+        this.title = "修改商品颜色";
       });
     },
     /** 提交按钮 */
@@ -268,13 +241,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateSize(this.form).then(response => {
+            updateColor(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSize(this.form).then(response => {
+            addColor(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -286,8 +259,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除商品尺码编号为"' + ids + '"的数据项？').then(function() {
-        return delSize(ids);
+      this.$modal.confirm('是否确认删除商品颜色编号为"' + ids + '"的数据项？').then(function() {
+        return delColor(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -295,9 +268,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('goods/size/export', {
+      this.download('goods/color/export', {
         ...this.queryParams
-      }, `size_${new Date().getTime()}.xlsx`)
+      }, `color_${new Date().getTime()}.xlsx`)
     }
   }
 };
