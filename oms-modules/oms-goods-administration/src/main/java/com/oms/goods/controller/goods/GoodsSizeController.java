@@ -40,7 +40,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 查询商品尺码列表
      */
-    @RequiresPermissions("oms:size:list")
+    @RequiresPermissions("goods:size:list")
     @GetMapping("/list")
     public TableDataInfo list(GoodsSize goodsSize,String company_code)
     {
@@ -54,7 +54,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 导出商品尺码列表
      */
-    @RequiresPermissions("oms:size:export")
+    @RequiresPermissions("goods:size:export")
     @Log(title = "商品尺码", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, GoodsSize goodsSize)
@@ -67,7 +67,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 获取商品尺码详细信息
      */
-    @RequiresPermissions("oms:size:query")
+    @RequiresPermissions("goods:size:query")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
@@ -77,7 +77,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 新增商品尺码
      */
-    @RequiresPermissions("oms:size:add")
+    @RequiresPermissions("goods:size:add")
     @Log(title = "商品尺码", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody GoodsSize goodsSize)
@@ -88,7 +88,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 修改商品尺码
      */
-    @RequiresPermissions("oms:size:edit")
+    @RequiresPermissions("goods:size:edit")
     @Log(title = "商品尺码", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody GoodsSize goodsSize)
@@ -99,7 +99,7 @@ public class GoodsSizeController extends BaseController
     /**
      * 删除商品尺码
      */
-    @RequiresPermissions("oms:size:remove")
+    @RequiresPermissions("goods:size:remove")
     @Log(title = "商品尺码", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)

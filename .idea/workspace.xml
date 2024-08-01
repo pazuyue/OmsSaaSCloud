@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsColorController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/goods/color.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/color/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsSkuSnInfoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/goods/info.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/info/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsColorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsColorController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsSizeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsSizeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsColorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsColorService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsColorServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsColorServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/size/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/size/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,12 +90,13 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods" />
+      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods\info" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src\main\java\com\oms\goods\service\goods\impl" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src\main\java\com\oms\goods\service\goods" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src\main\java\com\oms\goods\mapper" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core\src\main\java" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-common-core" />
@@ -271,7 +272,8 @@
       <workItem from="1722132722323" duration="4173000" />
       <workItem from="1722301679839" duration="4010000" />
       <workItem from="1722308558326" duration="9000" />
-      <workItem from="1722317828861" duration="14758000" />
+      <workItem from="1722317828861" duration="14855000" />
+      <workItem from="1722478705084" duration="5557000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -441,7 +443,14 @@
       <option name="project" value="LOCAL" />
       <updated>1722336873120</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="OMS - 颜色UI">
+      <created>1722426991870</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1722426991870</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -462,7 +471,8 @@
     <MESSAGE value="OMS - 重新导入" />
     <MESSAGE value="OMS - 尺码" />
     <MESSAGE value="OMS - 尺码UI" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 尺码UI" />
+    <MESSAGE value="OMS - 颜色UI" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 颜色UI" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

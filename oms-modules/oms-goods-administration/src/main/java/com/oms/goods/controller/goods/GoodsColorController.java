@@ -39,7 +39,7 @@ public class GoodsColorController extends BaseController
     /**
      * 查询商品颜色列表
      */
-    @RequiresPermissions("oms:color:list")
+    @RequiresPermissions("goods:color:list")
     @GetMapping("/list")
     public TableDataInfo list(GoodsColor goodsColor)
     {
@@ -51,7 +51,7 @@ public class GoodsColorController extends BaseController
     /**
      * 导出商品颜色列表
      */
-    @RequiresPermissions("oms:color:export")
+    @RequiresPermissions("goods:color:export")
     @Log(title = "商品颜色", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, GoodsColor goodsColor)
@@ -74,7 +74,7 @@ public class GoodsColorController extends BaseController
     /**
      * 新增商品颜色
      */
-    @RequiresPermissions("oms:color:add")
+    @RequiresPermissions("goods:color:add")
     @Log(title = "商品颜色", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody GoodsColor goodsColor)
@@ -85,7 +85,7 @@ public class GoodsColorController extends BaseController
     /**
      * 修改商品颜色
      */
-    @RequiresPermissions("oms:color:edit")
+    @RequiresPermissions("goods:color:edit")
     @Log(title = "商品颜色", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody GoodsColor goodsColor)
@@ -96,7 +96,7 @@ public class GoodsColorController extends BaseController
     /**
      * 删除商品颜色
      */
-    @RequiresPermissions("oms:color:remove")
+    @RequiresPermissions("goods:color:remove")
     @Log(title = "商品颜色", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)
