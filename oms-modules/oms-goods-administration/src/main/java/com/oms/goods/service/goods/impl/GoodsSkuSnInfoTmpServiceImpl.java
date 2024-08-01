@@ -22,12 +22,12 @@ import java.util.Set;
 @Service
 public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpMapper, GoodsSkuSnInfoTmp> implements GoodsSkuSnInfoTmpService {
     @Override
-    public boolean export(List<GoodsVO> list) {
+    public String export(List<GoodsVO> list) {
         return this.saveGoodsSkuSnInfoTmp(list);
     }
 
     @Override
-    public boolean export(List<GoodsVO> list, String importBatch) {
+    public String export(List<GoodsVO> list, String importBatch) {
         if (!ObjectUtil.isEmpty(importBatch))
         {
             QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
@@ -44,7 +44,7 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
         return this.list(queryWrapper);
     }
 
-    public boolean saveGoodsSkuSnInfoTmp(List<GoodsVO> list)
+    public String saveGoodsSkuSnInfoTmp(List<GoodsVO> list)
     {
         List<GoodsSkuSnInfoTmp> goodsSkuSnInfoTmpList = new ArrayList<>();
         String importBatch = IdUtil.simpleUUID();
@@ -66,7 +66,8 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
             goodsSkuSnInfoTmpList.add(goodsSkuSnInfoTmp);
         });
         Console.log(goodsSkuSnInfoTmpList);
-        return this.saveBatch(goodsSkuSnInfoTmpList);
+        this.saveBatch(goodsSkuSnInfoTmpList);
+        return importBatch;
     }
 
     /**

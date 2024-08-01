@@ -12,7 +12,7 @@ public interface GoodsSkuSnInfoTmpService extends IService<GoodsSkuSnInfoTmp> {
      * @param list
      * @return
      */
-    public boolean export(List<GoodsVO> list);
+    public String export(List<GoodsVO> list);
 
     /**
      * 重新导入
@@ -20,7 +20,7 @@ public interface GoodsSkuSnInfoTmpService extends IService<GoodsSkuSnInfoTmp> {
      * @param importBatch
      * @return
      */
-    public boolean export(List<GoodsVO> list,String importBatch);
+    public String export(List<GoodsVO> list,String importBatch);
 
     /**
      * 获取列表

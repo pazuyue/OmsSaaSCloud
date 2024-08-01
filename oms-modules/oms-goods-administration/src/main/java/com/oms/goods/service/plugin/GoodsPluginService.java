@@ -12,12 +12,12 @@ public interface GoodsPluginService {
      * @param list
      * @return
      */
-    boolean export(List<GoodsVO> list);
+    String export(List<GoodsVO> list);
     /**
      * 重新导入
      * @param list
      * @param importBatch
      * @return
      */
-    public boolean export(List<GoodsVO> list,String importBatch);
+    String export(List<GoodsVO> list,String importBatch);
 }
