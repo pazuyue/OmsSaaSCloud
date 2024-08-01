@@ -52,11 +52,12 @@ public class GoodsController extends BaseController {
             //InputStream inputStream = file.getInputStream();
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
+            System.out.println(goodsList);
             String importBatch;
             if (ObjectUtil.isEmpty(import_batch)){
-                importBatch= goodsPluginFactory.getBean(company_code).export(goodsList);
+                importBatch= goodsPluginFactory.getBean(company_code).export(goodsList,company_code);
             }else {
-                importBatch = goodsPluginFactory.getBean(company_code).export(goodsList,import_batch);
+                importBatch = goodsPluginFactory.getBean(company_code).export(goodsList,import_batch,company_code);
             }
             if (!ObjectUtil.isEmpty(importBatch)){
                 return success(importBatch);

@@ -3,8 +3,11 @@ package com.oms.goods.model.vo.export;
 import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 @Data
@@ -37,5 +40,14 @@ public class GoodsVO {
     @Excel(name = "有效期(填写整数，需≥0，单位：天)", width = 20)
     private Integer validity;
     @Excel(name = "商品描述(非必填)", width = 20)
-    private String description;
+    private String goodsDesc;
+    @Excel(name = "是否福袋", width = 20)
+    @PositiveOrZero
+    @Max(1)
+    private Integer isFd;
+    @Excel(name = "是否赠品", width = 20)
+    @PositiveOrZero
+    @Max(1)
+    private Integer isGift;
+
 }

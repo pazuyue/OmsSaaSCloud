@@ -22,12 +22,12 @@ public class GoodsPluginServiceImpl implements GoodsPluginService {
     }
 
     @Override
-    public String export(List<GoodsVO> list) {
-        return  goodsSkuSnInfoTmpService.export(list);
+    public String export(List<GoodsVO> list,String companyCode) {
+        return  goodsSkuSnInfoTmpService.export(list,companyCode);
     }
 
     @Override
-    public String export(List<GoodsVO> list, String importBatch) {
-        return  goodsSkuSnInfoTmpService.export(list,importBatch);
+    public String export(List<GoodsVO> list, String importBatch,String companyCode) {
+        return  goodsSkuSnInfoTmpService.export(list,importBatch,companyCode);
     }
 }

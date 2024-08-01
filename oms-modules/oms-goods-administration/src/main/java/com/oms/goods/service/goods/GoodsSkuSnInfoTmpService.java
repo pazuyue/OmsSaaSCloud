@@ -12,7 +12,7 @@ public interface GoodsSkuSnInfoTmpService extends IService<GoodsSkuSnInfoTmp> {
      * @param list
      * @return
      */
-    public String export(List<GoodsVO> list);
+    public String export(List<GoodsVO> list,String companyCode);
 
     /**
      * 重新导入
@@ -20,7 +20,7 @@ public interface GoodsSkuSnInfoTmpService extends IService<GoodsSkuSnInfoTmp> {
      * @param importBatch
      * @return
      */
-    public String export(List<GoodsVO> list,String importBatch);
+    public String export(List<GoodsVO> list,String importBatch,String companyCode);
 
     /**
      * 获取列表

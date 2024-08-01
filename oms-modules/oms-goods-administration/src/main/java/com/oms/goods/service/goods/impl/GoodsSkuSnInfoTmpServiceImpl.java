@@ -22,19 +22,19 @@ import java.util.Set;
 @Service
 public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpMapper, GoodsSkuSnInfoTmp> implements GoodsSkuSnInfoTmpService {
     @Override
-    public String export(List<GoodsVO> list) {
-        return this.saveGoodsSkuSnInfoTmp(list);
+    public String export(List<GoodsVO> list,String companyCode) {
+        return this.saveGoodsSkuSnInfoTmp(list,companyCode);
     }
 
     @Override
-    public String export(List<GoodsVO> list, String importBatch) {
+    public String export(List<GoodsVO> list, String importBatch,String companyCode) {
         if (!ObjectUtil.isEmpty(importBatch))
         {
             QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("import_batch",importBatch);
             this.remove(queryWrapper);
         }
-        return this.saveGoodsSkuSnInfoTmp(list);
+        return this.saveGoodsSkuSnInfoTmp(list,companyCode);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
         return this.list(queryWrapper);
     }
 
-    public String saveGoodsSkuSnInfoTmp(List<GoodsVO> list)
+    public String saveGoodsSkuSnInfoTmp(List<GoodsVO> list,String companyCode)
     {
         List<GoodsSkuSnInfoTmp> goodsSkuSnInfoTmpList = new ArrayList<>();
         String importBatch = IdUtil.simpleUUID();
@@ -60,9 +60,11 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
             goodsSkuSnInfoTmp.setColorCode(vo.getColorName());
             goodsSkuSnInfoTmp.setSizeCode(vo.getSizeName());
             goodsSkuSnInfoTmp.setMarketPrice(vo.getMarketPrice());
-            goodsSkuSnInfoTmp.setGoodsDesc(vo.getDescription());
+            goodsSkuSnInfoTmp.setGoodsDesc(vo.getGoodsDesc());
             goodsSkuSnInfoTmp.setNotes(s);
-            goodsSkuSnInfoTmp.setCompanyCode("ECCO");
+            goodsSkuSnInfoTmp.setCompanyCode(companyCode);
+            goodsSkuSnInfoTmp.setIsFd(vo.getIsFd());
+            goodsSkuSnInfoTmp.setIsGift(vo.getIsGift());
             goodsSkuSnInfoTmpList.add(goodsSkuSnInfoTmp);
         });
         Console.log(goodsSkuSnInfoTmpList);

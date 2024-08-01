@@ -12,12 +12,12 @@ public interface GoodsPluginService {
      * @param list
      * @return
      */
-    String export(List<GoodsVO> list);
+    String export(List<GoodsVO> list,String companyCode);
     /**
      * 重新导入
      * @param list
      * @param importBatch
      * @return
      */
-    String export(List<GoodsVO> list,String importBatch);
+    String export(List<GoodsVO> list,String importBatch,String companyCode);
 }

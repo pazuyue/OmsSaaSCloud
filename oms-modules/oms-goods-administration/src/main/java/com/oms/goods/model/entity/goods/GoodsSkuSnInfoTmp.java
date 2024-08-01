@@ -80,12 +80,12 @@ public class GoodsSkuSnInfoTmp implements Serializable {
     /**
      * 是否福袋,
      */
-    private Byte isFd;
+    private Integer isFd;
 
     /**
      * 是否赠品
      */
-    private Byte isGift;
+    private Integer isGift;
 
     /**
      * 批次号
