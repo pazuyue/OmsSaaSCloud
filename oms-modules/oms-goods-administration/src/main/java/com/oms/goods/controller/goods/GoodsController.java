@@ -14,6 +14,7 @@ import com.oms.goods.model.vo.export.GoodsVO;
 import com.oms.goods.service.goods.GoodsSkuSnInfoTmpService;
 import com.ruoyi.system.api.RemoteSysCompanyModelAssociationConfigService;
 import com.ruoyi.system.api.domain.SysCompanyModelAssociationConfig;
+import com.ruoyi.system.api.domain.SysUser;
 import com.ruoyi.system.api.model.LoginUser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -42,14 +45,14 @@ public class GoodsController extends BaseController {
      * @return
      */
     @SneakyThrows
-    @PostMapping(value = "/export")
+    @PostMapping(value = "/import")
     public AjaxResult export(MultipartFile file,String import_batch,String company_code) {
         try{
             //@Cleanup
             //InputStream inputStream = file.getInputStream();
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
-            boolean b = false;
+            boolean b;
             if (ObjectUtil.isEmpty(import_batch)){
                 b= goodsPluginFactory.getBean(company_code).export(goodsList);
             }else {
@@ -83,5 +86,12 @@ public class GoodsController extends BaseController {
     public AjaxResult goodsTest() {
         R<SysCompanyModelAssociationConfig> qm = remoteSysCompanyModelAssociationConfigService.getInfoByCompanyCode("qm");
         return success(qm);
+    }
+
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) throws IOException
+    {
+        ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
+        util.importTemplateExcel(response, "商品导入模板数据");
     }
 }

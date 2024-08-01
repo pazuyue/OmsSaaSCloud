@@ -27,7 +27,10 @@
 ## 系统模块
 
 ~~~
-com.ruoyi     
+com.ruoyi
+├── oms-modules           // mos系统模块
+│       └── oms-common-core                           // 公共配置
+│       └── oms-goods-administration                 // 商品管理                  
 ├── ruoyi-ui              // 前端框架 [80]
 ├── ruoyi-gateway         // 网关模块 [8080]
 ├── ruoyi-auth            // 认证中心 [9200]
