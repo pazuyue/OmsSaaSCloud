@@ -403,8 +403,8 @@
         @pagination="getList"
       />
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
+        <el-button type="primary" @click="">确 定</el-button>
+        <el-button @click="upload.exportOpen = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>

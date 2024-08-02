@@ -270,7 +270,7 @@
       <workItem from="1722317828861" duration="14855000" />
       <workItem from="1722478705084" duration="13452000" />
       <workItem from="1722569268287" duration="2677000" />
-      <workItem from="1722585182061" duration="2522000" />
+      <workItem from="1722585182061" duration="2606000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -496,7 +496,14 @@
       <option name="project" value="LOCAL" />
       <updated>1722587709368</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="OMS - 商品管理 - 导入信息展示">
+      <created>1722587742648</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1722587742648</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
