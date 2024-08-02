@@ -360,7 +360,7 @@
       </div>
     </el-dialog>
     <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.exportOpen" width="800px" append-to-body>
+    <el-dialog :title="upload.title" :visible.sync="upload.exportOpen" width="80%" append-to-body>
       <el-table v-loading="loading" :data="this.upload.exportInfoList">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="ID" align="center" prop="id" />
@@ -396,6 +396,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        v-show="upload.exportTotal>0"
+        :total="upload.exportTotal"
+        :page.sync="upload.queryExportParams.pageNum"
+        :limit.sync="upload.queryExportParams.pageSize"
+        @pagination="getList"
+      />
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFileForm">确 定</el-button>
         <el-button @click="upload.open = false">取 消</el-button>
