@@ -362,7 +362,6 @@
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.exportOpen" width="80%" append-to-body>
       <el-table v-loading="loading" :data="this.upload.exportInfoList">
-        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="ID" align="center" prop="id" />
         <el-table-column label="sku" align="center" prop="skuSn" />
         <el-table-column label="货号" align="center" prop="goodsSn" />
@@ -648,7 +647,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       if (response.code==200){
-        this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入成功</div>", "导入结果", { dangerouslyUseHTMLString: true });
+        //this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入成功</div>", "导入结果", { dangerouslyUseHTMLString: true });
         this.showImportList(response.msg)
       }else {
         this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入失败</div>", "导入结果", { dangerouslyUseHTMLString: true });
