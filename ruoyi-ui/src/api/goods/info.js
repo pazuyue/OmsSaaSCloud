@@ -9,6 +9,15 @@ export function listInfo(query) {
   })
 }
 
+// 查询产品信息列表
+export function exportListInfo(query) {
+  return request({
+    url: '/goods/goodsAdministration/list',
+    method: 'post',
+    params: query
+  })
+}
+
 // 查询产品信息详细
 export function getInfo(id) {
   return request({

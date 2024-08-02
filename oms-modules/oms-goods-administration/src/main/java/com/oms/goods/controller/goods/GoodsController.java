@@ -48,8 +48,6 @@ public class GoodsController extends BaseController {
     @PostMapping(value = "/import")
     public AjaxResult export(MultipartFile file,String import_batch,String company_code) {
         try{
-            //@Cleanup
-            //InputStream inputStream = file.getInputStream();
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
             System.out.println(goodsList);
