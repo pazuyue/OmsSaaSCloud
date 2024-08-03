@@ -16,6 +16,8 @@ public class GoodsPluginServiceImpl implements GoodsPluginService {
 
     @Resource
     private GoodsSkuSnInfoTmpService goodsSkuSnInfoTmpService;
+    @Resource
+    private GoodsSkuSnInfoServiceImpl goodsSkuSnInfoService;
     @Override
     public boolean execute() {
         return false;
@@ -30,4 +32,11 @@ public class GoodsPluginServiceImpl implements GoodsPluginService {
     public String export(List<GoodsVO> list, String importBatch,String companyCode) {
         return  goodsSkuSnInfoTmpService.export(list,importBatch,companyCode);
     }
+
+    @Override
+    public Boolean toExamine(String importBatch, String companyCode) {
+        return goodsSkuSnInfoService.toExamine(importBatch,companyCode);
+    }
+
+
 }

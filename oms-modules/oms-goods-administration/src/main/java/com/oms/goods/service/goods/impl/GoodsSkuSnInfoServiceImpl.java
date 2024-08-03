@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.goods.mapper.GoodsSkuSnInfoMapper;
 import com.oms.goods.model.entity.goods.GoodsSkuSnInfo;
+import com.oms.goods.model.entity.goods.GoodsSkuSnInfoTmp;
 import com.oms.goods.service.goods.GoodsSkuSnInfoService;
 import com.ruoyi.common.core.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +27,48 @@ import java.util.List;
 @Service
 public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper, GoodsSkuSnInfo> implements GoodsSkuSnInfoService {
 
-    @Override
-    public boolean toExamine(String importBatch) {
-        return false;
+    @Resource
+    private GoodsColorServiceImpl goodsColorService;
+    @Resource
+    private GoodsSizeServiceImpl goodsSizeService;
+    @Resource
+    private GoodsSkuSnInfoTmpServiceImpl goodsSkuSnInfoTmpService;
+
+    public boolean toExamine(String importBatch,String companyCode){
+        QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("notes","正常");
+        GoodsSkuSnInfoTmp infoTmp = goodsSkuSnInfoTmpService.getOne(queryWrapper);
+        if (ObjectUtil.isEmpty(infoTmp)){
+            throw new RuntimeException("审核失败，请先处理异常导入信息");
+        }
+        List<GoodsSkuSnInfoTmp> list = goodsSkuSnInfoTmpService.list(queryWrapper);
+        List<GoodsSkuSnInfo> goodsSkuSnInfoArrayList = new ArrayList<>();
+        for(GoodsSkuSnInfoTmp tmp:list) {
+            Integer colorCode = goodsColorService.selectOrSaveByColorName(tmp.getColorCode(),companyCode);
+            if (ObjectUtil.isEmpty(colorCode))
+                throw new RuntimeException("审核失败，色号处理异常");
+            Integer sizeCode = goodsSizeService.selectOrSaveBySizeName(tmp.getSizeCode(),companyCode);
+            if (ObjectUtil.isEmpty(sizeCode))
+                throw new RuntimeException("审核失败，尺码处理异常");
+            GoodsSkuSnInfo goods = new GoodsSkuSnInfo();
+            goods.setSkuSn(tmp.getSkuSn());
+            goods.setGoodsSn(tmp.getGoodsSn());
+            goods.setBarcodeSn(tmp.getBarcodeSn());
+            goods.setGoodsName(tmp.getGoodsName());
+            goods.setCategoryCode(tmp.getCategoryCode());
+            goods.setColorCode(colorCode);
+            goods.setSizeCode(sizeCode);
+            goods.setMarketPrice(tmp.getMarketPrice());
+            goods.setValidity(tmp.getValidity());
+            goods.setGoodsDesc(tmp.getGoodsDesc());
+            goods.setIsFd(tmp.getIsFd());
+            goods.setIsGift(tmp.getIsGift());
+            goods.setDescription(tmp.getNotes());
+            goods.setCompanyCode(companyCode);
+            goodsSkuSnInfoArrayList.add(goods);
+        }
+
+        return this.saveBatch(goodsSkuSnInfoArrayList);
     }
 
     @Override

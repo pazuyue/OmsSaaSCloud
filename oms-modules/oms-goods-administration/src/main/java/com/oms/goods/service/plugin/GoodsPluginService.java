@@ -20,4 +20,6 @@ public interface GoodsPluginService {
      * @return
      */
     String export(List<GoodsVO> list,String importBatch,String companyCode);
+
+    Boolean toExamine(String importBatch,String companyCode);
 }

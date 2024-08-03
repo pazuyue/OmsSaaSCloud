@@ -7,11 +7,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.goods.mapper.GoodsSkuSnInfoTmpMapper;
+import com.oms.goods.model.entity.goods.GoodsSkuSnInfo;
 import com.oms.goods.model.entity.goods.GoodsSkuSnInfoTmp;
 import com.oms.goods.model.vo.export.GoodsVO;
 import com.oms.goods.service.goods.GoodsSkuSnInfoTmpService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,6 +23,7 @@ import java.util.Set;
 
 @Service
 public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpMapper, GoodsSkuSnInfoTmp> implements GoodsSkuSnInfoTmpService {
+
     @Override
     public String export(List<GoodsVO> list,String companyCode) {
         return this.saveGoodsSkuSnInfoTmp(list,companyCode);

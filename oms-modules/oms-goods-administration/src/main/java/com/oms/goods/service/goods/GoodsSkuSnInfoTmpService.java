@@ -29,6 +29,4 @@ public interface GoodsSkuSnInfoTmpService extends IService<GoodsSkuSnInfoTmp> {
      */
     public List<GoodsSkuSnInfoTmp> exportList(String importBatch);
 
-
-
 }

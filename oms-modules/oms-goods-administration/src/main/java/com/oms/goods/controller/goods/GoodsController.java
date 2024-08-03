@@ -8,6 +8,8 @@ import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.web.page.TableDataInfo;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import com.oms.goods.model.entity.goods.GoodsSkuSnInfoTmp;
 import com.oms.goods.model.vo.export.GoodsVO;
@@ -64,6 +66,14 @@ public class GoodsController extends BaseController {
         }catch (Exception e){
             return error(e.getMessage());
         }
+    }
+
+    @SneakyThrows
+    @PostMapping(value = "/toExamine")
+    @ResponseBody
+    public AjaxResult toExamine(String importBatch,String company_code){
+        boolean b = goodsPluginFactory.getBean(company_code).toExamine(importBatch,company_code);
+        return b ? success() : error("审核失败");
     }
 
     /**

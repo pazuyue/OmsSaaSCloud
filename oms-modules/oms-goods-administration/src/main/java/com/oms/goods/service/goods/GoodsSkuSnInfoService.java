@@ -20,7 +20,7 @@ public interface GoodsSkuSnInfoService extends IService<GoodsSkuSnInfo> {
      * @param importBatch
      * @return
      */
-    public boolean toExamine(String importBatch);
+    public boolean toExamine(String importBatch,String companyCode);
 
     /**
      * 查询产品信息
