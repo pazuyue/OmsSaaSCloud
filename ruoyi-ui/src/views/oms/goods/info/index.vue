@@ -681,6 +681,9 @@ export default {
       console.log(this.upload.queryExportParams.import_batch)
       toExamine(this.upload.queryExportParams).then(response => {
         this.$modal.msgSuccess("审核成功");
+        this.upload.exportOpen = false;
+        this.upload.exportInfoList = []
+        this.upload.queryExportParams.import_batch =''
         this.getList();
       });
     },

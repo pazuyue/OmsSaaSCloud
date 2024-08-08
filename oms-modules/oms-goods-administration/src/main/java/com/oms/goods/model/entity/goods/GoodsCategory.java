@@ -25,11 +25,6 @@ public class GoodsCategory implements Serializable {
     private Integer id;
 
     /**
-     * 关联品牌
-     */
-    private String brandCode;
-
-    /**
      * 公司code
      */
     private String companyCode;

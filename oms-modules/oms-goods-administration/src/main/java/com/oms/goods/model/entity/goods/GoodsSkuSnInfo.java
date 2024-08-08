@@ -48,7 +48,7 @@ public class GoodsSkuSnInfo implements Serializable {
     /**
      * 类目code
      */
-    private String categoryCode;
+    private Integer categoryCode;
 
     /**
      * 颜色编码
@@ -108,7 +108,7 @@ public class GoodsSkuSnInfo implements Serializable {
     /**
      * 创建套装的用户编码
      */
-    private String createPackageUser;
+    private String createUser;
 
     /**
      * 商品描述

@@ -10,6 +10,7 @@ import com.oms.goods.model.entity.goods.GoodsSkuSnInfoTmp;
 import com.oms.goods.service.goods.GoodsCategoryService;
 import com.oms.goods.service.goods.GoodsSkuSnInfoService;
 import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -50,6 +51,7 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
         queryWrapper2.eq("notes","正常");
         List<GoodsSkuSnInfoTmp> list = goodsSkuSnInfoTmpService.list(queryWrapper2);
         List<GoodsSkuSnInfo> goodsSkuSnInfoArrayList = new ArrayList<>();
+        String operName = SecurityUtils.getUsername();
         for(GoodsSkuSnInfoTmp tmp:list) {
             Integer colorCode = goodsColorService.selectOrSaveByColorName(tmp.getColorCode(),companyCode);
             if (ObjectUtil.isEmpty(colorCode))
@@ -65,7 +67,7 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
             goods.setGoodsSn(tmp.getGoodsSn());
             goods.setBarcodeSn(tmp.getBarcodeSn());
             goods.setGoodsName(tmp.getGoodsName());
-            goods.setCategoryCode(tmp.getCategoryCode());
+            goods.setCategoryCode(categoryCode);
             goods.setColorCode(colorCode);
             goods.setSizeCode(sizeCode);
             goods.setMarketPrice(tmp.getMarketPrice());
@@ -75,6 +77,7 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
             goods.setIsGift(tmp.getIsGift());
             goods.setDescription(tmp.getNotes());
             goods.setCompanyCode(companyCode);
+            goods.setCreateUser(operName);
             goodsSkuSnInfoArrayList.add(goods);
         }
 
