@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.goods.mapper.GoodsSkuSnInfoMapper;
 import com.oms.goods.model.entity.goods.GoodsSkuSnInfo;
 import com.oms.goods.model.entity.goods.GoodsSkuSnInfoTmp;
+import com.oms.goods.service.goods.GoodsCategoryService;
 import com.oms.goods.service.goods.GoodsSkuSnInfoService;
 import com.ruoyi.common.core.utils.StringUtils;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,8 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
     private GoodsSizeServiceImpl goodsSizeService;
     @Resource
     private GoodsSkuSnInfoTmpServiceImpl goodsSkuSnInfoTmpService;
+    @Resource
+    GoodsCategoryService goodsCategoryService;
 
     public boolean toExamine(String importBatch,String companyCode){
         QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
@@ -54,6 +57,9 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
             Integer sizeCode = goodsSizeService.selectOrSaveBySizeName(tmp.getSizeCode(),companyCode);
             if (ObjectUtil.isEmpty(sizeCode))
                 throw new RuntimeException("审核失败，尺码处理异常");
+            Integer categoryCode = goodsCategoryService.selectCategoryCode(tmp.getCategoryCode());
+            if (ObjectUtil.isEmpty(categoryCode))
+                throw new RuntimeException("审核失败，类名不存在");
             GoodsSkuSnInfo goods = new GoodsSkuSnInfo();
             goods.setSkuSn(tmp.getSkuSn());
             goods.setGoodsSn(tmp.getGoodsSn());
