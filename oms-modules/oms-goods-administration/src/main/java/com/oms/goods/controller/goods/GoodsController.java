@@ -49,6 +49,7 @@ public class GoodsController extends BaseController {
     @SneakyThrows
     @PostMapping(value = "/import")
     public AjaxResult export(MultipartFile file,String import_batch,String company_code) {
+        System.out.println("export:"+company_code);
         try{
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
@@ -70,8 +71,8 @@ public class GoodsController extends BaseController {
 
     @SneakyThrows
     @PostMapping(value = "/toExamine")
-    @ResponseBody
-    public AjaxResult toExamine(String importBatch,String company_code){
+    public AjaxResult toExamine(@RequestParam("import_batch") String importBatch,String company_code){
+        System.out.println("toExamine:"+importBatch+":"+company_code);
         boolean b = goodsPluginFactory.getBean(company_code).toExamine(importBatch,company_code);
         return b ? success() : error("审核失败");
     }

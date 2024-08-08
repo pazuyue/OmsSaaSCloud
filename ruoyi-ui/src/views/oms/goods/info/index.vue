@@ -403,7 +403,7 @@
         @pagination="getList"
       />
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="">确 定</el-button>
+        <el-button type="primary" @click="toExamine">确 定</el-button>
         <el-button @click="upload.exportOpen = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -411,7 +411,7 @@
 </template>
 
 <script>
-import { listInfo,exportListInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/goods/info";
+import {listInfo, exportListInfo, getInfo, delInfo, addInfo, updateInfo, toExamine} from "@/api/goods/info";
 import {getToken} from "@/utils/auth";
 
 export default {
@@ -675,6 +675,14 @@ export default {
     importTemplate() {
       this.download('goods/goodsAdministration/importTemplate', {
       }, `goods_template_${new Date().getTime()}.xlsx`)
+    },
+
+    toExamine(){
+      console.log(this.upload.queryExportParams.import_batch)
+      toExamine(this.upload.queryExportParams).then(response => {
+        this.$modal.msgSuccess("审核成功");
+        this.getList();
+      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {

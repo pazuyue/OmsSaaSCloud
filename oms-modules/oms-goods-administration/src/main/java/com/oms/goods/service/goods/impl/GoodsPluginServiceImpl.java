@@ -33,6 +33,12 @@ public class GoodsPluginServiceImpl implements GoodsPluginService {
         return  goodsSkuSnInfoTmpService.export(list,importBatch,companyCode);
     }
 
+    /**
+     * 审核
+     * @param importBatch
+     * @param companyCode
+     * @return
+     */
     @Override
     public Boolean toExamine(String importBatch, String companyCode) {
         return goodsSkuSnInfoService.toExamine(importBatch,companyCode);

@@ -23,7 +23,7 @@ public class GoodsSizeServiceImpl extends ServiceImpl<GoodsSizeMapper, GoodsSize
     public Integer selectOrSaveBySizeName(String size_name,String company_code) {
         QueryWrapper<GoodsSize> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("size_name",size_name);
-        GoodsSize goodsSize = this.getBaseMapper().selectOne(queryWrapper);
+        GoodsSize goodsSize = this.baseMapper.selectOne(queryWrapper);
         if (ObjectUtil.isEmpty(goodsSize)){
             GoodsSize size = new GoodsSize();
             size.setSizeName(size_name);

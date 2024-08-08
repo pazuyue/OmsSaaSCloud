@@ -18,6 +18,14 @@ export function exportListInfo(query) {
   })
 }
 
+export function toExamine(data) {
+  return request({
+    url: '/goods/goodsAdministration/toExamine',
+    method: 'post',
+    params: data
+  })
+}
+
 // 查询产品信息详细
 export function getInfo(id) {
   return request({
@@ -51,3 +59,4 @@ export function delInfo(id) {
     method: 'delete'
   })
 }
+

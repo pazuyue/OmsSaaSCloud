@@ -36,12 +36,16 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
 
     public boolean toExamine(String importBatch,String companyCode){
         QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("notes","正常");
+        queryWrapper.eq("import_batch",importBatch);
+        queryWrapper.ne("notes","正常");
         GoodsSkuSnInfoTmp infoTmp = goodsSkuSnInfoTmpService.getOne(queryWrapper);
-        if (ObjectUtil.isEmpty(infoTmp)){
+        if (!ObjectUtil.isEmpty(infoTmp)){
             throw new RuntimeException("审核失败，请先处理异常导入信息");
         }
-        List<GoodsSkuSnInfoTmp> list = goodsSkuSnInfoTmpService.list(queryWrapper);
+        QueryWrapper<GoodsSkuSnInfoTmp> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.eq("import_batch",importBatch);
+        queryWrapper2.eq("notes","正常");
+        List<GoodsSkuSnInfoTmp> list = goodsSkuSnInfoTmpService.list(queryWrapper2);
         List<GoodsSkuSnInfo> goodsSkuSnInfoArrayList = new ArrayList<>();
         for(GoodsSkuSnInfoTmp tmp:list) {
             Integer colorCode = goodsColorService.selectOrSaveByColorName(tmp.getColorCode(),companyCode);

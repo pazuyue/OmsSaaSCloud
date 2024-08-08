@@ -21,5 +21,10 @@ public interface GoodsPluginService {
      */
     String export(List<GoodsVO> list,String importBatch,String companyCode);
 
+    /**
+     * 审核
+     * @param importBatch
+     * @return
+     */
     Boolean toExamine(String importBatch,String companyCode);
 }
