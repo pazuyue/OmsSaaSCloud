@@ -8,6 +8,7 @@ import com.oms.goods.service.goods.GoodsCategoryService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class GoodsCategoryServiceImpl implements GoodsCategoryService {
@@ -46,5 +47,21 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
             return 0;
         }
         return goodsCategoryMapper.selectOne(queryWrapper).getId();
+    }
+
+    /**
+     * 查询商品类目列表
+     *
+     * @param goodsCategory 商品类目
+     * @return 商品类目
+     */
+    @Override
+    public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory)
+    {
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper();
+        queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getId()),"id",goodsCategory.getId());
+        queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getPid()),"pid",goodsCategory.getPid());
+        queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getCompanyCode()),"company_code",goodsCategory.getCompanyCode());
+        return goodsCategoryMapper.selectList(queryWrapper);
     }
 }

@@ -2,6 +2,8 @@ package com.oms.goods.service.goods;
 
 import com.oms.goods.model.entity.goods.GoodsCategory;
 
+import java.util.List;
+
 public interface GoodsCategoryService {
     /**
      * 保存
@@ -23,4 +25,6 @@ public interface GoodsCategoryService {
      * @return
      */
     public Integer selectCategoryCode(String categoryName);
+
+    public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
 }

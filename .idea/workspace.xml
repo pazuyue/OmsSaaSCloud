@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/info/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/info/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsCategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsCategoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsCategoryServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +71,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_ruoyi_vue" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -266,7 +264,8 @@
       <workItem from="1722569268287" duration="2677000" />
       <workItem from="1722585182061" duration="10221000" />
       <workItem from="1723079066844" duration="1948000" />
-      <workItem from="1723081647820" duration="1015000" />
+      <workItem from="1723081647820" duration="1207000" />
+      <workItem from="1723425884667" duration="2353000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -527,7 +526,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723081331529</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="OMS - 商品管理 - 导入信息审核">
+      <created>1723082754180</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1723082754180</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
