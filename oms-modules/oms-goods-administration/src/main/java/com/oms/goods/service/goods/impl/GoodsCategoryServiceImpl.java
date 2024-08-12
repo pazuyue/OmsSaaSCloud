@@ -8,6 +8,7 @@ import com.oms.goods.service.goods.GoodsCategoryService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,6 +39,11 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         return goodsCategoryMapper.deleteById(id);
     }
 
+    @Override
+    public int deleteGoodsCategoryByIds(Integer[] ids) {
+        return goodsCategoryMapper.deleteBatchIds(Arrays.asList(ids));
+    }
+
     public Integer selectCategoryCode(String categoryName)
     {
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper();
@@ -48,6 +54,12 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         }
         return goodsCategoryMapper.selectOne(queryWrapper).getId();
     }
+
+    @Override
+    public GoodsCategory selectGoodsCategoryById(Integer id) {
+        return goodsCategoryMapper.selectById(id);
+    }
+
 
     /**
      * 查询商品类目列表
@@ -63,5 +75,10 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getPid()),"pid",goodsCategory.getPid());
         queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getCompanyCode()),"company_code",goodsCategory.getCompanyCode());
         return goodsCategoryMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public int updateGoodsCategory(GoodsCategory goodsCategory) {
+        return goodsCategoryMapper.updateById(goodsCategory);
     }
 }
