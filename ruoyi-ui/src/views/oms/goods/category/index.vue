@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="公司code" prop="companyCode">
+      <el-form-item label="公司CODE" prop="companyCode">
         <el-input
           v-model="queryParams.companyCode"
           placeholder="请输入公司code"
@@ -33,10 +33,10 @@
                         placeholder="请选择修改时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="1级别，2级别，3级别" prop="level">
+      <el-form-item label="级别" prop="level">
         <el-input
           v-model="queryParams.level"
-          placeholder="请输入1级别，2级别，3级别"
+          placeholder="请输入级别"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -71,17 +71,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:category:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -93,18 +82,23 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
-      <el-table-column label="公司code" align="center" prop="companyCode" />
+    <el-table  v-if="refreshTable"
+               v-loading="loading"
+               :data="categoryList"
+               row-key="id"
+               :default-expand-all="isExpandAll"
+               :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+               @selection-change="handleSelectionChange">
+      <el-table-column label="ID" align="center" prop="id" />
+      <el-table-column label="公司" align="center" prop="companyCode" />
       <el-table-column label="分类名称" align="center" prop="name" />
-      <el-table-column label="父id" align="center" prop="pid" />
+      <el-table-column label="父ID" align="center" prop="pid" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="1级别，2级别，3级别" align="center" prop="level" />
+      <el-table-column label="级别" align="center" prop="level" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,6 +108,13 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:category:edit']"
           >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
+            @click="handleAdd(scope.row)"
+            v-hasPermi="['system:dept:add']"
+          >新增</el-button>
           <el-button
             size="mini"
             type="text"
@@ -136,25 +137,11 @@
     <!-- 添加或修改商品类目对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="公司code" prop="companyCode">
-          <el-input v-model="form.companyCode" placeholder="请输入公司code" />
+        <el-form-item label="上级部门" prop="pid">
+          <treeselect v-model="form.pid" :options="categoryOptions" :normalizer="normalizer" placeholder="选择上级部门" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入分类名称" />
-        </el-form-item>
-        <el-form-item label="父id" prop="pid">
-          <el-input v-model="form.pid" placeholder="请输入父id" />
-        </el-form-item>
-        <el-form-item label="修改时间" prop="modifyTime">
-          <el-date-picker clearable
-                          v-model="form.modifyTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择修改时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="1级别，2级别，3级别" prop="level">
-          <el-input v-model="form.level" placeholder="请输入1级别，2级别，3级别" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -167,15 +154,21 @@
 
 <script>
 import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/goods/category";
-
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "Category",
+  components: { Treeselect },
   data() {
     return {
       // 遮罩层
       loading: true,
-      // 选中数组
-      ids: [],
+      // 是否展开，默认全部展开
+      isExpandAll: true,
+      // 重新渲染表格状态
+      refreshTable: true,
+      // 类目树选项
+      categoryOptions: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -220,7 +213,7 @@ export default {
           { required: true, message: "修改时间不能为空", trigger: "blur" }
         ],
         level: [
-          { required: true, message: "1级别，2级别，3级别不能为空", trigger: "blur" }
+          { required: true, message: "级别不能为空", trigger: "blur" }
         ]
       }
     };
@@ -233,7 +226,8 @@ export default {
     getList() {
       this.loading = true;
       listCategory(this.queryParams).then(response => {
-        this.categoryList = response.rows;
+        this.categoryList = this.handleTree(response.rows,"id","pid");
+        //this.categoryList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -273,10 +267,16 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
+      if (row != undefined) {
+        this.form.pid = row.id;
+      }
       this.open = true;
       this.title = "添加商品类目";
+      listCategory().then(response => {
+        this.categoryOptions = this.handleTree(response.rows,"id","pid");
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -286,6 +286,9 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改商品类目";
+      });
+      listCategory().then(response => {
+        this.categoryOptions = this.handleTree(response.rows,"id","pid");
       });
     },
     /** 提交按钮 */
@@ -320,10 +323,22 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/category/export', {
+      this.download('goods/category/export', {
         ...this.queryParams
       }, `category_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 转换类目数据结构 */
+    normalizer(node) {
+      console.log(node)
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.id,
+        label: node.name,
+        children: node.children
+      };
+    },
   }
 };
 </script>
