@@ -74,6 +74,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getId()),"id",goodsCategory.getId());
         queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getPid()),"pid",goodsCategory.getPid());
         queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getCompanyCode()),"company_code",goodsCategory.getCompanyCode());
+        queryWrapper.eq(ObjectUtil.isNotEmpty(goodsCategory.getLevel()),"level",goodsCategory.getLevel());
         return goodsCategoryMapper.selectList(queryWrapper);
     }
 
