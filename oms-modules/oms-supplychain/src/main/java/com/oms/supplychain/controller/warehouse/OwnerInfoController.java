@@ -6,18 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.model.vo.warehouse.OwnerInfoVO;
 import com.oms.supplychain.service.warehouse.OwnerInfoService;
+import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.web.page.TableDataInfo;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.security.annotation.RequiresPermissions;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -26,8 +28,6 @@ public class OwnerInfoController extends BaseController {
 
     @Resource
     private OwnerInfoService ownerInfoService;
-    @Value("${pageable.page.size:10}")
-    private Integer pageSize;
 
     @SneakyThrows
     @PostMapping(value = "/save")
@@ -38,11 +38,74 @@ public class OwnerInfoController extends BaseController {
         return error("保存失败");
     }
 
-    @SneakyThrows
-    @PostMapping(value = "/list")
-    public TableDataInfo list(@RequestParam(required = false) String owner_code, @RequestParam(value = "page",defaultValue = "1") Integer page){
-        List<OwnerInfo> list = ownerInfoService.list(owner_code, page, pageSize);
+
+    /**
+     * 查询货主基础信息列表
+     */
+    @RequiresPermissions("warehouse:info:list")
+    @GetMapping("/list")
+    public TableDataInfo list(OwnerInfo ownerInfo)
+    {
+        startPage();
+        List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
         return getDataTable(list);
     }
+
+    /**
+     * 导出货主基础信息列表
+     */
+    @RequiresPermissions("warehouse:info:export")
+    @Log(title = "货主基础信息", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, OwnerInfo ownerInfo)
+    {
+        List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
+        ExcelUtil<OwnerInfo> util = new ExcelUtil<OwnerInfo>(OwnerInfo.class);
+        util.exportExcel(response, list, "货主基础信息数据");
+    }
+
+    /**
+     * 获取货主基础信息详细信息
+     */
+    @RequiresPermissions("warehouse:info:query")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Integer id)
+    {
+        return success(ownerInfoService.selectOwnerInfoById(id));
+    }
+
+    /**
+     * 新增货主基础信息
+     */
+    @RequiresPermissions("warehouse:info:add")
+    @Log(title = "货主基础信息", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody OwnerInfo ownerInfo)
+    {
+        return toAjax(ownerInfoService.insertOwnerInfo(ownerInfo));
+    }
+
+    /**
+     * 修改货主基础信息
+     */
+    @RequiresPermissions("warehouse:info:edit")
+    @Log(title = "货主基础信息", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody OwnerInfo ownerInfo)
+    {
+        return toAjax(ownerInfoService.updateOwnerInfo(ownerInfo));
+    }
+
+    /**
+     * 删除货主基础信息
+     */
+    @RequiresPermissions("warehouse:info:remove")
+    @Log(title = "货主基础信息", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Integer[] ids)
+    {
+        return toAjax(ownerInfoService.deleteOwnerInfoByIds(ids));
+    }
+
 }
 

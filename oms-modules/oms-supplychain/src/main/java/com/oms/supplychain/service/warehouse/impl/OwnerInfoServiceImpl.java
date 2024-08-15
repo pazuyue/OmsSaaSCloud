@@ -10,9 +10,11 @@ import com.oms.supplychain.mapper.warehouse.OwnerInfoMapper;
 import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.model.vo.warehouse.OwnerInfoVO;
 import com.oms.supplychain.service.warehouse.OwnerInfoService;
+import com.ruoyi.common.core.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -42,14 +44,38 @@ public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo
     }
 
     @Override
-    public List<OwnerInfo> list(String owner_code, Integer page, Integer pageSize) {
+    public OwnerInfo selectOwnerInfoById(Integer id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public List<OwnerInfo> selectOwnerInfoList(OwnerInfo ownerInfo) {
         QueryWrapper<OwnerInfo> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.isBlank(owner_code)){
-            queryWrapper.eq("owner_code",owner_code);
+        if (!StrUtil.isBlank(ownerInfo.getOwnerCode())){
+            queryWrapper.eq("owner_code",ownerInfo.getOwnerCode());
         }
         queryWrapper.orderByDesc("modify_time");
         return this.list(queryWrapper);
-
     }
 
+    @Override
+    public int insertOwnerInfo(OwnerInfo ownerInfo) {
+        ownerInfo.setCreateTime(DateUtils.getNowDate());
+        return this.baseMapper.insert(ownerInfo);
+    }
+
+    @Override
+    public boolean updateOwnerInfo(OwnerInfo ownerInfo) {
+        return this.updateById(ownerInfo);
+    }
+
+    @Override
+    public int deleteOwnerInfoByIds(Integer[] ids) {
+        return this.baseMapper.deleteBatchIds(Arrays.asList(ids));
+    }
+
+    @Override
+    public int deleteOwnerInfoById(Integer id) {
+        return this.baseMapper.deleteById(id);
+    }
 }
