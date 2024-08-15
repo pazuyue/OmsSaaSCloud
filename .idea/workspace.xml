@@ -4,10 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS - 商品管理 - 分类管理">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/OmsSupplyChainApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/OwnerInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/dto/warehouse/OwnerInfoDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/OwnerInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/OwnerInfoVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/resources/bootstrap.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsCategoryServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/category/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/goods/category/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,10 +34,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Vue Single File Component" />
         <option value="JavaScript File" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -42,13 +59,13 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoTmpService.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/pom.xml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/page/PageDomain.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/controller/BaseController.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/pom.xml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/pom.xml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/utils/PageUtils.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/pom.xml" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MavenRunner">
     <option name="delegateBuildToMaven" value="true" />
@@ -72,7 +89,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_cloud" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -86,11 +103,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain" />
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods\info" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src\main\java\com\oms\goods\service\goods\impl" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-goods-administration\src\main\java\com\oms\goods\service\goods" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
@@ -103,11 +120,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.oms.goods.mapper" />
-      <recent name="com.oms.goods.service.goods.impl" />
-      <recent name="com.oms.goods.model.entity.goods" />
-      <recent name="com.oms.goods.service.goods" />
-      <recent name="" />
+      <recent name="com.oms.supplychain.model.entity.warehouse" />
+      <recent name="com.oms.supplychain.model.dto.warehouse" />
+      <recent name="com.oms.supplychain.mapper.warehouse" />
+      <recent name="com.oms.supplychain.service.warehouse.impl" />
+      <recent name="com.oms.supplychain.model.vo.warehouse" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -117,7 +134,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.GeberatorUIServer">
+  <component name="RunManager" selected="Spring Boot.OmsSupplyChainApplication">
     <configuration name="GeberatorUIServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GeberatorUIServer" />
       <module name="oms-goods-administration" />
@@ -141,6 +158,19 @@
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.goods.OmsGoodsAdministrationApplication" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OmsSupplyChainApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="oms-supplychain" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.oms.supplychain.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.supplychain.OmsSupplyChainApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -208,9 +238,11 @@
       <item itemvalue="Spring Boot.RuoYiJobApplication" />
       <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
+      <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Application.GeberatorUIServer" />
       </list>
     </recent_temporary>
@@ -268,7 +300,9 @@
       <workItem from="1723081647820" duration="1207000" />
       <workItem from="1723425884667" duration="3677000" />
       <workItem from="1723520587290" duration="27000" />
-      <workItem from="1723627399956" duration="3504000" />
+      <workItem from="1723627399956" duration="4593000" />
+      <workItem from="1723710483627" duration="1325000" />
+      <workItem from="1723711882883" duration="3843000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -557,7 +591,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723630707906</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="OMS - 商品管理 - 分类管理">
+      <created>1723631413481</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1723631413481</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

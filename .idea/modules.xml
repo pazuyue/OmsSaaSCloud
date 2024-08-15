@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" filepath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" filepath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-omdules.iml" filepath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" filepath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi.iml" filepath="$PROJECT_DIR$/ruoyi.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" filepath="$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" filepath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" />

@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.ruoyi</groupId>
         <artifactId>oms-omdules</artifactId>
+        <groupId>com.ruoyi</groupId>
         <version>3.6.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>oms-goods-administration</artifactId>
+    <artifactId>oms-supplychain</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
     <description>
-        OMS商品管理模块
+        OMS供应链管理模块
     </description>
 
     <dependencies>
@@ -103,5 +109,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

@@ -17,6 +17,7 @@
         <module name="ruoyi-common-core" />
         <module name="ruoyi-common-security" />
         <module name="oms-common-core" />
+        <module name="oms-supplychain" />
         <module name="ruoyi-common-sensitive" />
         <module name="ruoyi-common-datasource" />
         <module name="ruoyi-gateway" />
@@ -32,6 +33,7 @@
       <module name="oms-common-core" target="1.8" />
       <module name="oms-goods-administration" target="1.8" />
       <module name="oms-omdules" target="1.8" />
+      <module name="oms-supplychain" target="1.8" />
       <module name="ruoyi" target="1.8" />
       <module name="ruoyi-api" target="1.8" />
       <module name="ruoyi-api-system" target="1.8" />
