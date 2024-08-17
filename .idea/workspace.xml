@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/owner/owner.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/owner/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsColor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSize.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSize.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/OwnerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/OwnerInfo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,10 +22,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Vue Single File Component" />
-        <option value="JavaScript File" />
         <option value="Class" />
         <option value="Interface" />
+        <option value="Vue Single File Component" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -214,8 +218,8 @@
     </configuration>
     <list>
       <item itemvalue="Application.GeberatorUIServer" />
-      <item itemvalue="Spring Boot.OmsGoodsAdministrationApplication" />
       <item itemvalue="Spring Boot.RuoYiAuthApplication" />
+      <item itemvalue="Spring Boot.OmsGoodsAdministrationApplication" />
       <item itemvalue="Spring Boot.RuoYiFileApplication" />
       <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiGenApplication" />
@@ -286,7 +290,8 @@
       <workItem from="1723520587290" duration="27000" />
       <workItem from="1723627399956" duration="4593000" />
       <workItem from="1723710483627" duration="1325000" />
-      <workItem from="1723711882883" duration="5738000" />
+      <workItem from="1723711882883" duration="7876000" />
+      <workItem from="1723871798940" duration="1688000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -589,7 +594,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723723367085</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="OMS - 供应链 - 货主管理">
+      <created>1723725256402</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1723725256402</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

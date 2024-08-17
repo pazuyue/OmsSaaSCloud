@@ -3,6 +3,7 @@ package com.oms.goods.model.entity.goods;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -32,6 +33,7 @@ public class GoodsCategory implements Serializable {
     /**
      * 分类名称
      */
+    @Excel(name = "分类名称")
     private String name;
 
     /**
@@ -52,6 +54,7 @@ public class GoodsCategory implements Serializable {
     /**
      * 1级别，2级别，3级别
      */
+    @Excel(name = "级别")
     private Byte level;
 
 }

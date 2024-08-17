@@ -3,6 +3,7 @@ package com.oms.goods.model.entity.goods;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class GoodsSize implements Serializable {
     /**
      * 尺码名称
      */
+    @Excel(name = "尺码名称")
     private String sizeName;
 
     /**
@@ -37,6 +39,7 @@ public class GoodsSize implements Serializable {
     /**
      * 外部尺码编码
      */
+    @Excel(name = "尺码编码")
     private String outSizeCode;
 
     /**

@@ -3,6 +3,7 @@ package com.oms.supplychain.model.entity.warehouse;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,21 +28,25 @@ public class OwnerInfo implements Serializable {
     /**
      * 编主编码
      */
+    @Excel(name = "货主编码")
     private String ownerCode;
 
     /**
      * 编主名称
      */
+    @Excel(name = "货主名称")
     private String ownerName;
 
     /**
      * 1需同步商品资料给仓库，2不需同步商品资料给仓库
      */
+    @Excel(name = "同步商品资料")
     private Byte isSync;
 
     /**
      * 2启用，1不启用
      */
+    @Excel(name = "同步资料")
     private Byte isEnable;
 
     /**

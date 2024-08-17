@@ -3,6 +3,7 @@ package com.oms.goods.model.entity.goods;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,61 +29,73 @@ public class GoodsSkuSnInfo implements Serializable {
     /**
      * sku
      */
+    @Excel(name = "SKU")
     private String skuSn;
 
     /**
      * 货号
      */
+    @Excel(name = "货号")
     private String goodsSn;
 
     /**
      * 条形码
      */
+    @Excel(name = "条形码")
     private String barcodeSn;
 
     /**
      * 商品名称
      */
+    @Excel(name = "商品名称")
     private String goodsName;
 
     /**
      * 类目code
      */
+    @Excel(name = "类目")
     private Integer categoryCode;
 
     /**
      * 颜色编码
      */
+    @Excel(name = "颜色编码")
     private Integer colorCode;
 
     /**
      * 尺码,goods_size.id
      */
+    @Excel(name = "尺码编码")
     private Integer sizeCode;
 
     /**
      * 市场价（吊牌价）
      */
+    @Excel(name = "市场价")
     private BigDecimal marketPrice;
 
     /**
      * 有效期
      */
+    @Excel(name = "有效期")
     private String validity;
 
     /**
      * 商品描述
      */
+    @Excel(name = "商品描述")
     private String goodsDesc;
 
     /**
      * 是否福袋,0 不是福袋，1是福袋
      */
+    @Excel(name = "是否福袋")
     private Integer isFd;
 
     /**
-     * 0为非赠口，1为赠品
+     * 0为非赠品，1为赠品
      */
+    @Excel(name = "是否赠品")
     private Integer isGift;
 
     /**
@@ -103,15 +116,18 @@ public class GoodsSkuSnInfo implements Serializable {
     /**
      * 0正常商品，1套装商品
      */
+    @Excel(name = "是否套装")
     private Integer isPackage;
 
     /**
      * 创建套装的用户编码
      */
+    @Excel(name = "创建用户")
     private String createUser;
 
     /**
      * 商品描述
      */
+    @Excel(name = "商品描述")
     private String description;
 }

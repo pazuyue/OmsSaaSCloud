@@ -3,6 +3,7 @@ package com.oms.goods.model.entity.goods;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,11 +28,13 @@ public class GoodsColor implements Serializable {
     /**
      * 颜色
      */
+    @Excel(name = "颜色名称")
     private String colorName;
 
     /**
      * 外部颜色编码
      */
+    @Excel(name = "颜色编码")
     private String outColorCode;
 
     /**
