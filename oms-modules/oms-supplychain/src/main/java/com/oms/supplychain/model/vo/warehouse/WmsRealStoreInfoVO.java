@@ -7,6 +7,8 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class WmsRealStoreInfoVO {
+
+    private Long id;
     /**
      * 1:电商仓，2：门店仓，3：零售仓
      */

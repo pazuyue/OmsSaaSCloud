@@ -264,14 +264,6 @@
         <el-form-item label="公司编码" prop="companyCode">
           <el-input v-model="form.companyCode" placeholder="请输入公司编码" />
         </el-form-item>
-        <el-form-item label="修改时间" prop="modifyTime">
-          <el-date-picker clearable
-                          v-model="form.modifyTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择修改时间">
-          </el-date-picker>
-        </el-form-item>
         <el-form-item label="是否真实出库" prop="actualWarehouse">
           <el-select v-model="form.actualWarehouse" placeholder="请选择是否真实出库">
             <el-option
@@ -283,7 +275,15 @@
           </el-select>
         </el-form-item>
         <el-form-item label="货主编码" prop="ownerCode">
-          <el-input v-model="form.ownerCode" placeholder="请输入货主" />
+<!--          <el-input v-model="form.ownerCode" placeholder="请输入货主" />-->
+              <el-select v-model="form.ownerCode" placeholder="请选择">
+                <el-option
+                  v-for="item in ownerCodeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -296,6 +296,7 @@
 
 <script>
 import { listWmsRealStoreInfo, getWmsRealStoreInfo, delWmsRealStoreInfo, addWmsRealStoreInfo, updateWmsRealStoreInfo } from "@/api/wmsRealStore/wmsRealStore";
+import { listOwner } from "@/api/owner/owner.js";
 
 export default {
   name: "WmsRealStoreInfo",
@@ -320,6 +321,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      ownerCodeOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -402,6 +404,7 @@ export default {
     },
     // 表单重置
     reset() {
+      this.getOwnerCodeOptions();
       this.form = {
         id: null,
         status: null,
@@ -489,6 +492,17 @@ export default {
       this.download('supplychain/realStore/export', {
         ...this.queryParams
       }, `WmsRealStoreInfo_${new Date().getTime()}.xlsx`)
+    },
+    getOwnerCodeOptions(){
+      this.ownerCodeOptions = [];
+      listOwner().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.ownerCodeOptions.push({
+            label: response.data[i].ownerName,
+            value: response.data[i].ownerCode
+          })
+        }
+      });
     }
   }
 };

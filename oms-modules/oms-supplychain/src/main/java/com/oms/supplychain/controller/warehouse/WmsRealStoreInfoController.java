@@ -32,7 +32,7 @@ public class WmsRealStoreInfoController extends BaseController {
     @RequiresPermissions("warehouse:WmsRealStoreInfo:add")
     @Log(title = "实仓", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult save(@Validated WmsRealStoreInfoVO wmsRealStoreInfoVO, @RequestParam(value = "company_code",required = false) String companyCode){
+    public AjaxResult save(@Validated WmsRealStoreInfoVO wmsRealStoreInfoVO, @RequestParam(value = "company_code") String companyCode){
         if (wmsRealStoreInfoService.save(wmsRealStoreInfoVO,companyCode))
             return success();
         return error("保存失败");

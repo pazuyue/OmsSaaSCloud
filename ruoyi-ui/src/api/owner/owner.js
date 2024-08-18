@@ -9,6 +9,15 @@ export function listInfo(query) {
   })
 }
 
+// 查询货主基础信息列表
+export function listOwner(query) {
+  return request({
+    url: '/supplychain/owner/listOwner',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询货主基础信息详细
 export function getInfo(id) {
   return request({

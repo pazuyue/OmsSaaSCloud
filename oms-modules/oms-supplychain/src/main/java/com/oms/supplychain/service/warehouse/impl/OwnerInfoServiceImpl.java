@@ -59,6 +59,15 @@ public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo
     }
 
     @Override
+    public List<OwnerInfo> listOwner(String companyCode) {
+        QueryWrapper<OwnerInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_code",companyCode);
+        queryWrapper.orderByDesc("modify_time");
+        queryWrapper.select("owner_code","owner_name"); // 选择 owner_code 字段
+        return this.list(queryWrapper);
+    }
+
+    @Override
     public int insertOwnerInfo(OwnerInfo ownerInfo) {
         ownerInfo.setCreateTime(DateUtils.getNowDate());
         return this.baseMapper.insert(ownerInfo);

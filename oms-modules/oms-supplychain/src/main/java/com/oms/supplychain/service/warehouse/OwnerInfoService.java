@@ -28,6 +28,8 @@ public interface OwnerInfoService  extends IService<OwnerInfo> {
      */
     public List<OwnerInfo> selectOwnerInfoList(OwnerInfo ownerInfo);
 
+    public List<OwnerInfo> listOwner(String companyCode);
+
     /**
      * 新增货主基础信息
      *

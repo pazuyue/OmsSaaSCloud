@@ -5,15 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsRealStoreInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsRealStoreInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsRealStoreInfoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/wmsRealStore/wmsRealStore.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/owner/owner.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/owner/owner.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,7 +291,7 @@
       <workItem from="1723627399956" duration="4593000" />
       <workItem from="1723710483627" duration="1325000" />
       <workItem from="1723711882883" duration="7876000" />
-      <workItem from="1723871798940" duration="6511000" />
+      <workItem from="1723871798940" duration="8180000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -609,7 +608,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723873539706</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="OMS - 供应链 - 实仓管理">
+      <created>1723986456737</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1723986456737</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -648,7 +654,8 @@
     <MESSAGE value="OMS - 商品管理 - 导入信息审核" />
     <MESSAGE value="OMS - 商品管理 - 分类管理" />
     <MESSAGE value="OMS - 供应链 - 货主管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 货主管理" />
+    <MESSAGE value="OMS - 供应链 - 实仓管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 实仓管理" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

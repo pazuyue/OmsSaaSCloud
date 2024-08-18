@@ -31,7 +31,7 @@ public class OwnerInfoController extends BaseController {
 
     @SneakyThrows
     @PostMapping(value = "/save")
-    public AjaxResult save(@Validated OwnerInfoVO ownerInfoVO, @RequestParam(value = "company_code",required = false) String companyCode){
+    public AjaxResult save(@Validated OwnerInfoVO ownerInfoVO, @RequestParam(value = "company_code") String companyCode){
         Console.log(ownerInfoVO.toString());
         if (ownerInfoService.save(ownerInfoVO,companyCode))
             return success();
@@ -49,6 +49,13 @@ public class OwnerInfoController extends BaseController {
         startPage();
         List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
         return getDataTable(list);
+    }
+
+    @RequiresPermissions("warehouse:info:listOwner")
+    @GetMapping("/listOwner")
+    public AjaxResult listOwner(@RequestParam(value = "company_code",required = false) String companyCode){
+        List<OwnerInfo> list = ownerInfoService.listOwner(companyCode);
+        return success(list);
     }
 
     /**
