@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/owner/owner.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/owner/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsRealStoreInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsRealStoreInfoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsRealStoreInfoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/wmsRealStore/wmsRealStore.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsColor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSize.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSize.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/model/entity/goods/GoodsSkuSnInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/OwnerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/OwnerInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,11 +109,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.oms.supplychain.model.entity.warehouse" />
-      <recent name="com.oms.supplychain.model.dto.warehouse" />
       <recent name="com.oms.supplychain.mapper.warehouse" />
       <recent name="com.oms.supplychain.service.warehouse.impl" />
+      <recent name="com.oms.supplychain.service.warehouse" />
       <recent name="com.oms.supplychain.model.vo.warehouse" />
+      <recent name="com.oms.supplychain.controller.warehouse" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -291,7 +292,7 @@
       <workItem from="1723627399956" duration="4593000" />
       <workItem from="1723710483627" duration="1325000" />
       <workItem from="1723711882883" duration="7876000" />
-      <workItem from="1723871798940" duration="1688000" />
+      <workItem from="1723871798940" duration="6511000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -601,7 +602,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723725256402</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="OMS - 供应链 - 货主管理">
+      <created>1723873539706</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1723873539706</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
