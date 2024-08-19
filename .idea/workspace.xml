@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsSimulationStoreInfoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/simulationStore/simulationStore.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/simulationStore/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsSimulationStoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsSimulationStoreInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsSimulationStoreInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsSimulationStoreInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsSimulationStoreInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsSimulationStoreInfoServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +20,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
         <option value="Vue Single File Component" />
         <option value="JavaScript File" />
       </list>
@@ -286,7 +290,7 @@
       <workItem from="1723710483627" duration="1325000" />
       <workItem from="1723711882883" duration="7876000" />
       <workItem from="1723871798940" duration="14149000" />
-      <workItem from="1724054541971" duration="4444000" />
+      <workItem from="1724054541971" duration="6119000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -624,7 +628,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724060743889</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="OMS - 供应链 - 虚仓管理">
+      <created>1724065753008</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1724065753008</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
