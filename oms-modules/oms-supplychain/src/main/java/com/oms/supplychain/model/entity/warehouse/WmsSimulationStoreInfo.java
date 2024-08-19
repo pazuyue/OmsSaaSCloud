@@ -3,6 +3,7 @@ package com.oms.supplychain.model.entity.warehouse;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,40 +28,48 @@ public class WmsSimulationStoreInfo implements Serializable {
     /**
      * 1: 未开启，2:开启
      */
+    @Excel(name = "是否开启")
     private Byte status;
 
     /**
      * 虚仓编码
      */
+    @Excel(name = "虚仓编码")
     private String wmsSimulationCode;
 
     /**
      * 虚仓名称
      */
+    @Excel(name = "虚仓名称")
     private String wmsSimulationName;
 
     /**
      * 货主编码
      */
+    @Excel(name = "货主编码")
     private String ownerCode;
 
     /**
      * 货主名称
      */
+    @Excel(name = "货主名称")
     private String ownerName;
 
     /**
      * 公司编码
      */
+    @Excel(name = "公司编码")
     private String companyCode;
 
     /**
      * 创建时间
      */
+    @Excel(name = "创建时间")
     private Date createTime;
 
     /**
      * 修改时间
      */
+    @Excel(name = "修改时间")
     private Date modifyTime;
 }

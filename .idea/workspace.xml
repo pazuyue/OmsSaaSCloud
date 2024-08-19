@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsSimulationStoreInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/dto/warehouse/SimulationStoreInfoDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsSimulationStoreInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsSimulationStoreInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsSimulationStoreInfoServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsSimulationStoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsSimulationStoreInfo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,7 +286,7 @@
       <workItem from="1723710483627" duration="1325000" />
       <workItem from="1723711882883" duration="7876000" />
       <workItem from="1723871798940" duration="14149000" />
-      <workItem from="1724054541971" duration="2877000" />
+      <workItem from="1724054541971" duration="4444000" />
     </task>
     <task id="LOCAL-00001" summary="微服务版本初始化">
       <created>1718260180793</created>
@@ -621,7 +617,14 @@
       <option name="project" value="LOCAL" />
       <updated>1723988068873</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="OMS - 供应链 - 虚仓管理">
+      <created>1724060743889</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1724060743889</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -661,7 +664,8 @@
     <MESSAGE value="OMS - 商品管理 - 分类管理" />
     <MESSAGE value="OMS - 供应链 - 货主管理" />
     <MESSAGE value="OMS - 供应链 - 实仓管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 实仓管理" />
+    <MESSAGE value="OMS - 供应链 - 虚仓管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 虚仓管理" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
