@@ -37,14 +37,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="公司编码" prop="companyCode">
-        <el-input
-          v-model="queryParams.companyCode"
-          placeholder="请输入公司编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"

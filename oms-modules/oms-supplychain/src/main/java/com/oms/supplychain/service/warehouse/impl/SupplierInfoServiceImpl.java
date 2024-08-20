@@ -9,6 +9,7 @@ import com.oms.supplychain.mapper.warehouse.SupplierInfoMapper;
 import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 import com.oms.supplychain.service.warehouse.SupplierInfoService;
 import com.ruoyi.common.core.utils.DateUtils;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -48,6 +49,22 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
         if (!StrUtil.isBlank(supplierInfo.getSupplierName())){
             queryWrapper.eq("supplier_name",supplierInfo.getSupplierName());
         }
+        if (!StrUtil.isBlank(supplierInfo.getCompanyName())){
+            queryWrapper.eq("company_name",supplierInfo.getCompanyName());
+        }
+        if (!StrUtil.isBlank(supplierInfo.getSupplierSn())){
+            queryWrapper.eq("supplier_sn",supplierInfo.getSupplierSn());
+        }
+        if (!StrUtil.isBlank(supplierInfo.getPerationUser())){
+            queryWrapper.eq("peration_user",supplierInfo.getPerationUser());
+        }
+        if (!ObjectUtil.isEmpty(supplierInfo.getCreateTime())){
+            queryWrapper.ge("create_time",supplierInfo.getCreateTime());
+        }
+        if (!ObjectUtil.isEmpty(supplierInfo.getModifyTime())){
+            queryWrapper.ge("modify_time",supplierInfo.getModifyTime());
+        }
+
         queryWrapper.orderByDesc("modify_time");
         return this.list(queryWrapper);
     }
@@ -56,16 +73,20 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
     public int insertSupplierInfo(SupplierInfo supplierInfo, String companyCode) {
         SupplierInfo one = findOneBySupplierInfo(supplierInfo);
         if (!ObjectUtil.isEmpty(one))
-            throw new RuntimeException("供应商主表"+one.getSupplierSn()+"已存在");
+            throw new RuntimeException("供应商主表"+one.getSupplierName()+"已存在");
         String po_sn =  IdUtil.simpleUUID();
         supplierInfo.setSupplierSn(po_sn);
         supplierInfo.setCompanyCode(companyCode);
+        String operName = SecurityUtils.getUsername();
+        supplierInfo.setPerationUser(operName);
         return this.baseMapper.insert(supplierInfo);
     }
 
     @Override
     public int updateSupplierInfo(SupplierInfo supplierInfo) {
         supplierInfo.setModifyTime(DateUtils.getNowDate());
+        String operName = SecurityUtils.getUsername();
+        supplierInfo.setPerationUser(operName);
         supplierInfo.setCreateTime(null);
         return this.baseMapper.updateById(supplierInfo);
     }

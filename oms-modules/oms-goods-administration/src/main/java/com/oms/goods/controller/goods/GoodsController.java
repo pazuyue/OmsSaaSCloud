@@ -53,7 +53,6 @@ public class GoodsController extends BaseController {
         try{
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
             List<GoodsVO> goodsList = util.importExcel(file.getInputStream());
-            System.out.println(goodsList);
             String importBatch;
             if (ObjectUtil.isEmpty(import_batch)){
                 importBatch= goodsPluginFactory.getBean(company_code).export(goodsList,company_code);

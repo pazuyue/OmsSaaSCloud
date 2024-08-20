@@ -70,7 +70,6 @@ public class GoodsSkuSnInfoTmpServiceImpl extends ServiceImpl<GoodsSkuSnInfoTmpM
             goodsSkuSnInfoTmp.setIsGift(vo.getIsGift());
             goodsSkuSnInfoTmpList.add(goodsSkuSnInfoTmp);
         });
-        Console.log(goodsSkuSnInfoTmpList);
         this.saveBatch(goodsSkuSnInfoTmpList);
         return importBatch;
     }

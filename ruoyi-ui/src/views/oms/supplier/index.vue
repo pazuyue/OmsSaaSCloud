@@ -25,54 +25,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="联系人" prop="contactUser">
-        <el-input
-          v-model="queryParams.contactUser"
-          placeholder="请输入联系人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="联系电话" prop="contactTel">
-        <el-input
-          v-model="queryParams.contactTel"
-          placeholder="请输入联系电话"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="省" prop="contactProvince">
-        <el-input
-          v-model="queryParams.contactProvince"
-          placeholder="请输入省"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="市" prop="contactCity">
-        <el-input
-          v-model="queryParams.contactCity"
-          placeholder="请输入市"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="区" prop="contactArea">
-        <el-input
-          v-model="queryParams.contactArea"
-          placeholder="请输入区"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="联系人地址" prop="contactAddress">
-        <el-input
-          v-model="queryParams.contactAddress"
-          placeholder="请输入联系人地址"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="操作用户" prop="perationUser">
         <el-input
           v-model="queryParams.perationUser"
@@ -96,14 +48,6 @@
                         value-format="yyyy-MM-dd"
                         placeholder="请选择修改时间">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item label="公司编码" prop="companyCode">
-        <el-input
-          v-model="queryParams.companyCode"
-          placeholder="请输入公司编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
