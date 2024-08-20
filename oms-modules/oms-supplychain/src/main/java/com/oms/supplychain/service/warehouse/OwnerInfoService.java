@@ -8,9 +8,7 @@ import java.util.List;
 
 public interface OwnerInfoService  extends IService<OwnerInfo> {
 
-    public boolean save(OwnerInfoVO vo,String companyCode);
-
-    public OwnerInfo findOneByOwnerInfoVO(OwnerInfoVO vo);
+    public OwnerInfo findOneByOwnerInfo(OwnerInfo vo);
 
     /**
      * 查询货主基础信息
@@ -36,7 +34,7 @@ public interface OwnerInfoService  extends IService<OwnerInfo> {
      * @param ownerInfo 货主基础信息
      * @return 结果
      */
-    public int insertOwnerInfo(OwnerInfo ownerInfo);
+    public int insertOwnerInfo(OwnerInfo ownerInfo,String companyCode);
 
     /**
      * 修改货主基础信息

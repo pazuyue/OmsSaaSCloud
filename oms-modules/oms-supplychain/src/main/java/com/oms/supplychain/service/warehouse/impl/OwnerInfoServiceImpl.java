@@ -20,21 +20,9 @@ import java.util.List;
 @Service
 public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo> implements OwnerInfoService {
 
-    @Override
-    public boolean save(OwnerInfoVO vo,String companyCode) {
-        OwnerInfo ownerInfo = new OwnerInfo();
-        OwnerInfo one = findOneByOwnerInfoVO(vo);
-        if (!ObjectUtil.isEmpty(one))
-            throw new RuntimeException("货主编码"+one.getOwnerCode()+"已存在");
-        BeanUtil.copyProperties(vo,ownerInfo);
-        ownerInfo.setCompanyCode(companyCode);
-        if (this.save(ownerInfo))
-            return true;
-        return false;
-    }
 
     @Override
-    public OwnerInfo findOneByOwnerInfoVO(OwnerInfoVO vo) {
+    public OwnerInfo findOneByOwnerInfo(OwnerInfo vo) {
         String ownerCode = vo.getOwnerCode();
         QueryWrapper<OwnerInfo> queryWrapper = new <OwnerInfo>QueryWrapper();
         if (!StrUtil.isBlank(ownerCode)){
@@ -79,13 +67,18 @@ public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo
     }
 
     @Override
-    public int insertOwnerInfo(OwnerInfo ownerInfo) {
+    public int insertOwnerInfo(OwnerInfo ownerInfo,String companyCode) {
+        OwnerInfo one = findOneByOwnerInfo(ownerInfo);
+        if (!ObjectUtil.isEmpty(one))
+            throw new RuntimeException("货主编码"+one.getOwnerCode()+"已存在");
         ownerInfo.setCreateTime(DateUtils.getNowDate());
+        ownerInfo.setCompanyCode(companyCode);
         return this.baseMapper.insert(ownerInfo);
     }
 
     @Override
     public boolean updateOwnerInfo(OwnerInfo ownerInfo) {
+        ownerInfo.setModifyTime(DateUtils.getNowDate());
         return this.updateById(ownerInfo);
     }
 

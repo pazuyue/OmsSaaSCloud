@@ -29,16 +29,6 @@ public class OwnerInfoController extends BaseController {
     @Resource
     private OwnerInfoService ownerInfoService;
 
-    @SneakyThrows
-    @PostMapping(value = "/save")
-    public AjaxResult save(@Validated OwnerInfoVO ownerInfoVO, @RequestParam(value = "company_code") String companyCode){
-        Console.log(ownerInfoVO.toString());
-        if (ownerInfoService.save(ownerInfoVO,companyCode))
-            return success();
-        return error("保存失败");
-    }
-
-
     /**
      * 查询货主基础信息列表
      */
@@ -87,9 +77,9 @@ public class OwnerInfoController extends BaseController {
     @RequiresPermissions("warehouse:owner:add")
     @Log(title = "货主基础信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody OwnerInfo ownerInfo)
+    public AjaxResult add(@RequestBody OwnerInfo ownerInfo, @RequestParam(value = "company_code") String companyCode)
     {
-        return toAjax(ownerInfoService.insertOwnerInfo(ownerInfo));
+        return toAjax(ownerInfoService.insertOwnerInfo(ownerInfo,companyCode));
     }
 
     /**
