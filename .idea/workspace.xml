@@ -4,18 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS - 供应链 - 虚仓管理-调整">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/SupplierInfoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/SupplierInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/SupplierInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/SupplierInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/SupplierInfoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/supplier/supplier.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/supplier/index.vue" afterDir="false" />
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/OwnerInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/OwnerInfoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/OwnerInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/SupplierInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/SupplierInfoServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -296,14 +287,7 @@
       <workItem from="1723711882883" duration="7876000" />
       <workItem from="1723871798940" duration="14149000" />
       <workItem from="1724054541971" duration="6119000" />
-      <workItem from="1724120126006" duration="5824000" />
-    </task>
-    <task id="LOCAL-00002" summary="OMS-微腐败版本商品管理">
-      <created>1718782691657</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1718782691657</updated>
+      <workItem from="1724120126006" duration="6287000" />
     </task>
     <task id="LOCAL-00003" summary="OMS-微服务版本商品管理">
       <created>1718855091948</created>
@@ -641,7 +625,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724119512035</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="OMS - 供应链 - 虚仓管理-调整">
+      <created>1724133906129</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1724133906129</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

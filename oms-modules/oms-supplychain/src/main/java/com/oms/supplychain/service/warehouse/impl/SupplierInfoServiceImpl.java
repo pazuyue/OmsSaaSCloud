@@ -8,9 +8,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.SupplierInfoMapper;
 import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 import com.oms.supplychain.service.warehouse.SupplierInfoService;
+import com.ruoyi.common.core.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,6 +65,8 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
 
     @Override
     public int updateSupplierInfo(SupplierInfo supplierInfo) {
+        supplierInfo.setModifyTime(DateUtils.getNowDate());
+        supplierInfo.setCreateTime(null);
         return this.baseMapper.updateById(supplierInfo);
     }
 
