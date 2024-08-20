@@ -42,7 +42,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 查询货主基础信息列表
      */
-    @RequiresPermissions("warehouse:info:list")
+    @RequiresPermissions("warehouse:owner:list")
     @GetMapping("/list")
     public TableDataInfo list(OwnerInfo ownerInfo)
     {
@@ -51,7 +51,7 @@ public class OwnerInfoController extends BaseController {
         return getDataTable(list);
     }
 
-    @RequiresPermissions("warehouse:info:listOwner")
+    @RequiresPermissions("warehouse:owner:listOwner")
     @GetMapping("/listOwner")
     public AjaxResult listOwner(@RequestParam(value = "company_code",required = false) String companyCode){
         List<OwnerInfo> list = ownerInfoService.listOwner(companyCode);
@@ -61,7 +61,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 导出货主基础信息列表
      */
-    @RequiresPermissions("warehouse:info:export")
+    @RequiresPermissions("warehouse:owner:export")
     @Log(title = "货主基础信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, OwnerInfo ownerInfo)
@@ -74,7 +74,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 获取货主基础信息详细信息
      */
-    @RequiresPermissions("warehouse:info:query")
+    @RequiresPermissions("warehouse:owner:query")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
@@ -84,7 +84,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 新增货主基础信息
      */
-    @RequiresPermissions("warehouse:info:add")
+    @RequiresPermissions("warehouse:owner:add")
     @Log(title = "货主基础信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody OwnerInfo ownerInfo)
@@ -95,7 +95,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 修改货主基础信息
      */
-    @RequiresPermissions("warehouse:info:edit")
+    @RequiresPermissions("warehouse:owner:edit")
     @Log(title = "货主基础信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody OwnerInfo ownerInfo)
@@ -106,7 +106,7 @@ public class OwnerInfoController extends BaseController {
     /**
      * 删除货主基础信息
      */
-    @RequiresPermissions("warehouse:info:remove")
+    @RequiresPermissions("warehouse:owner:remove")
     @Log(title = "货主基础信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)

@@ -44,6 +44,8 @@ public class WmsSimulationStoreInfoServiceImpl extends ServiceImpl<WmsSimulation
         QueryWrapper<WmsSimulationStoreInfo> queryWrapper = new QueryWrapper();
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsSimulationStoreInfo.getWmsSimulationCode()),"wms_simulation_code",wmsSimulationStoreInfo.getWmsSimulationCode());
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsSimulationStoreInfo.getWmsSimulationName()),"wms_simulation_name",wmsSimulationStoreInfo.getWmsSimulationName());
+        queryWrapper.eq(ObjectUtil.isNotEmpty(wmsSimulationStoreInfo.getOwnerCode()),"owner_code",wmsSimulationStoreInfo.getOwnerCode());
+        queryWrapper.eq(ObjectUtil.isNotEmpty(wmsSimulationStoreInfo.getOwnerName()),"owner_name",wmsSimulationStoreInfo.getOwnerName());
         queryWrapper.eq(ObjectUtil.isNotNull(wmsSimulationStoreInfo.getStatus()),"status",wmsSimulationStoreInfo.getStatus());
         return this.baseMapper.selectList(queryWrapper);
     }

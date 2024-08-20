@@ -54,6 +54,16 @@ public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo
         if (!StrUtil.isBlank(ownerInfo.getOwnerCode())){
             queryWrapper.eq("owner_code",ownerInfo.getOwnerCode());
         }
+        if (!StrUtil.isBlank(ownerInfo.getOwnerName()))
+        {
+            queryWrapper.like("owner_name",ownerInfo.getOwnerName());
+        }
+        if (!ObjectUtil.isNull(ownerInfo.getIsEnable())){
+            queryWrapper.eq("is_enable",ownerInfo.getIsEnable());
+        }
+        if (!ObjectUtil.isNull(ownerInfo.getIsSync())){
+            queryWrapper.eq("is_sync",ownerInfo.getIsSync());
+        }
         queryWrapper.orderByDesc("modify_time");
         return this.list(queryWrapper);
     }
@@ -62,6 +72,7 @@ public class OwnerInfoServiceImpl extends ServiceImpl<OwnerInfoMapper, OwnerInfo
     public List<OwnerInfo> listOwner(String companyCode) {
         QueryWrapper<OwnerInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_code",companyCode);
+        queryWrapper.eq("is_enable",1);
         queryWrapper.orderByDesc("modify_time");
         queryWrapper.select("owner_code","owner_name"); // 选择 owner_code 字段
         return this.list(queryWrapper);
