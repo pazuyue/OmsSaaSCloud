@@ -43,6 +43,13 @@ public class SupplierInfoController extends BaseController
         return getDataTable(list);
     }
 
+    @RequiresPermissions("warehouse:supplier:listSupplier")
+    @GetMapping("/listSupplier")
+    public AjaxResult listSupplier(@RequestParam(value = "company_code",required = false) String companyCode)
+    {
+        return success(supplierInfoService.listSupplier(companyCode));
+    }
+
     /**
      * 导出供应商主列表
      */

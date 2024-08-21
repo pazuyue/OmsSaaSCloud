@@ -9,6 +9,16 @@ export function listSupplierIinfo(query) {
   })
 }
 
+// 查询供应商主列表
+export function listSupplier(query) {
+  return request({
+    url: '/supplychain/supplier/listSupplier',
+    method: 'get',
+    params: query
+  })
+}
+
+
 // 查询供应商主详细
 export function getSupplierIinfo(id) {
   return request({

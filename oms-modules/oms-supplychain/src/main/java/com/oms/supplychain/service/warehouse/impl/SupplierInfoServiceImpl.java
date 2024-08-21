@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.SupplierInfoMapper;
+import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 import com.oms.supplychain.service.warehouse.SupplierInfoService;
 import com.ruoyi.common.core.utils.DateUtils;
@@ -66,6 +67,15 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
         }
 
         queryWrapper.orderByDesc("modify_time");
+        return this.list(queryWrapper);
+    }
+
+    @Override
+    public List<SupplierInfo> listSupplier(String companyCode) {
+        QueryWrapper<SupplierInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_code",companyCode);
+        queryWrapper.orderByDesc("modify_time");
+        queryWrapper.select("supplier_sn","supplier_name"); // 选择 owner_code 字段
         return this.list(queryWrapper);
     }
 

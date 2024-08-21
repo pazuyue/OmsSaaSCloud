@@ -236,8 +236,15 @@
         <el-form-item label="采购单名称" prop="poName">
           <el-input v-model="form.poName" placeholder="请输入采购单名称" />
         </el-form-item>
-        <el-form-item label="状态" prop="poState">
-          <el-input v-model="form.poState" placeholder="请输入状态" />
+        <el-form-item label="货主编码" prop="ownerCode">
+          <el-select v-model="form.supplierSn" placeholder="请选择">
+            <el-option
+              v-for="item in supplierSnCodeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" placeholder="请输入备注" />
@@ -253,6 +260,7 @@
 
 <script>
 import { listPoInfo, getPoInfo, delPoInfo, addPoInfo, updatePoInfo } from "@/api/poInfo/poInfo";
+import {listSupplier} from "@/api/supplier/supplier";
 
 export default {
   name: "PoInfo",
@@ -272,6 +280,7 @@ export default {
       total: 0,
       // 采购单表格数据
       poInfoList: [],
+      supplierSnCodeOptions:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -306,9 +315,6 @@ export default {
         poName: [
           { required: true, message: "采购单名称不能为空", trigger: "blur" }
         ],
-        poState: [
-          { required: true, message: "状态不能为空", trigger: "blur" }
-        ],
         supplierSn: [
           { required: true, message: "供应商编码不能为空", trigger: "change" }
         ],
@@ -341,27 +347,14 @@ export default {
     },
     // 表单重置
     reset() {
+      this.getSupplierCodeOptions();
       this.form = {
         id: null,
-        poSn: null,
         poName: null,
-        poState: null,
         supplierSn: null,
         departmentCode: null,
         wmsSimulationCode: null,
-        numberExpected: null,
-        numberActually: null,
-        numberDifference: null,
-        perationUser: null,
-        createTime: null,
-        modifyTime: null,
-        companyCode: null,
-        remarks: null,
-        wmsUpdatedAt: null,
-        moneyExpected: null,
-        moneyActually: null,
-        comeFrom: null,
-        actualWarehouse: null
+        remarks: null
       };
       this.resetForm("form");
     },
@@ -432,6 +425,17 @@ export default {
       this.download('supplychain/poInfo/export', {
         ...this.queryParams
       }, `poInfo_${new Date().getTime()}.xlsx`)
+    },
+    getSupplierCodeOptions(){
+      this.supplierSnCodeOptions = [];
+      listSupplier().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.supplierSnCodeOptions.push({
+            label: response.data[i].supplierName,
+            value: response.data[i].supplierSn
+          })
+        }
+      });
     }
   }
 };

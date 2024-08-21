@@ -1,6 +1,7 @@
 package com.oms.supplychain.service.warehouse;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface SupplierInfoService extends IService<SupplierInfo> {
      * @return 供应商主集合
      */
     public List<SupplierInfo> selectSupplierInfoList(SupplierInfo supplierInfo);
+
+    public List<SupplierInfo> listSupplier(String companyCode);
 
     /**
      * 新增供应商主
