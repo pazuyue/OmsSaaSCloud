@@ -51,6 +51,15 @@ public class WmsSimulationStoreInfoServiceImpl extends ServiceImpl<WmsSimulation
     }
 
     @Override
+    public List<WmsSimulationStoreInfo> listSimulationStore(String companyCode) {
+        QueryWrapper<WmsSimulationStoreInfo> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("company_code",companyCode);
+        queryWrapper.eq("status",1);
+        queryWrapper.select("wms_simulation_code","wms_simulation_name"); // 选择  字段
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
     public int insertWmsSimulationStoreInfo(WmsSimulationStoreInfo wmsSimulationStoreInfo, String companyCode) {
         wmsSimulationStoreInfo.setCompanyCode(companyCode);
         return this.baseMapper.insert(wmsSimulationStoreInfo);

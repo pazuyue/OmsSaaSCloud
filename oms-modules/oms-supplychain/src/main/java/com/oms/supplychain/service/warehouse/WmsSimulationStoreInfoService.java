@@ -31,6 +31,7 @@ public interface WmsSimulationStoreInfoService extends IService<WmsSimulationSto
      */
     public List<WmsSimulationStoreInfo> selectWmsSimulationStoreInfoList(WmsSimulationStoreInfo wmsSimulationStoreInfo);
 
+    public List<WmsSimulationStoreInfo> listSimulationStore(String companyCode);
     /**
      * 新增虚仓
      *

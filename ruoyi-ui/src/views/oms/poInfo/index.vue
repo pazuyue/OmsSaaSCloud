@@ -231,12 +231,12 @@
     />
 
     <!-- 添加或修改采购单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="采购单名称" prop="poName">
           <el-input v-model="form.poName" placeholder="请输入采购单名称" />
         </el-form-item>
-        <el-form-item label="货主编码" prop="ownerCode">
+        <el-form-item label="供应商" prop="ownerCode">
           <el-select v-model="form.supplierSn" placeholder="请选择">
             <el-option
               v-for="item in supplierSnCodeOptions"
@@ -244,6 +244,29 @@
               :label="item.label"
               :value="item.value">
             </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="采购部门" prop="departmentName">
+          <el-input v-model="form.departmentName" placeholder="采购部门" readonly/>
+        </el-form-item>
+        <el-form-item label="虚仓" prop="wmsSimulationCode">
+          <el-select v-model="form.wmsSimulationCode" placeholder="请选择">
+            <el-option
+              v-for="item in wmsSimulationCodeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否真实出库" prop="actualWarehouse">
+          <el-select v-model="form.actualWarehouse" placeholder="请选择是否真实出库">
+            <el-option
+              v-for="dict in dict.type.oms_yes_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
@@ -261,9 +284,11 @@
 <script>
 import { listPoInfo, getPoInfo, delPoInfo, addPoInfo, updatePoInfo } from "@/api/poInfo/poInfo";
 import {listSupplier} from "@/api/supplier/supplier";
+import {listSimulationStore} from "@/api/simulationStore/simulationStore";
 
 export default {
   name: "PoInfo",
+  dicts: ['oms_yes_no'],
   data() {
     return {
       // 遮罩层
@@ -281,6 +306,7 @@ export default {
       // 采购单表格数据
       poInfoList: [],
       supplierSnCodeOptions:[],
+      wmsSimulationCodeOptions:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -328,6 +354,8 @@ export default {
     };
   },
   created() {
+    this.getSupplierCodeOptions();
+    this.getWmsSimulationCodeOptions();
     this.getList();
   },
   methods: {
@@ -347,12 +375,12 @@ export default {
     },
     // 表单重置
     reset() {
-      this.getSupplierCodeOptions();
       this.form = {
         id: null,
         poName: null,
         supplierSn: null,
         departmentCode: null,
+        departmentName: null,
         wmsSimulationCode: null,
         remarks: null
       };
@@ -377,6 +405,9 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      var user = this.$store.state.user;
+      this.form.departmentCode = user.deptId
+      this.form.departmentName = user.dept.deptName
       this.open = true;
       this.title = "添加采购单";
     },
@@ -436,7 +467,18 @@ export default {
           })
         }
       });
-    }
+    },
+    getWmsSimulationCodeOptions(){
+      this.wmsSimulationCodeOptions = [];
+      listSimulationStore().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.wmsSimulationCodeOptions.push({
+            label: response.data[i].wmsSimulationName,
+            value: response.data[i].wmsSimulationCode
+          })
+        }
+      });
+    },
   }
 };
 </script>

@@ -42,6 +42,13 @@ public class WmsSimulationStoreInfoController extends BaseController
         return getDataTable(list);
     }
 
+    @RequiresPermissions("warehouse:simulationStoreInfo:listSimulationStore")
+    @GetMapping("/listSimulationStore")
+    public AjaxResult listSimulationStore(@RequestParam(value = "company_code",required = false) String companyCode)
+    {
+        return success(wmsSimulationStoreInfoService.listSimulationStore(companyCode));
+    }
+
     /**
      * 导出虚仓列表
      */

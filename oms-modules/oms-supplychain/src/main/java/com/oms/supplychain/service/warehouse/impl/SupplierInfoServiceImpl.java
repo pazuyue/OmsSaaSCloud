@@ -75,7 +75,7 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
         QueryWrapper<SupplierInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_code",companyCode);
         queryWrapper.orderByDesc("modify_time");
-        queryWrapper.select("supplier_sn","supplier_name"); // 选择 owner_code 字段
+        queryWrapper.select("supplier_sn","supplier_name"); // 选择  字段
         return this.list(queryWrapper);
     }
 

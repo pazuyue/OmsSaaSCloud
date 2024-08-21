@@ -5,10 +5,12 @@ const user = {
   state: {
     token: getToken(),
     id: '',
+    deptId:'',
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    dept: []
   },
 
   mutations: {
@@ -20,6 +22,12 @@ const user = {
     },
     SET_ID: (state, id) => {
       state.id = id
+    },
+    SET_DEPTID: (state, deptId) => {
+      state.deptId = deptId
+    },
+    SET_DEPT: (state, dept) => {
+      state.dept = dept
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -68,6 +76,8 @@ const user = {
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
+          commit('SET_DEPT',user.dept)
+          commit('SET_DEPTID',user.deptId)
           commit('SET_ID', user.userId)
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
@@ -90,7 +100,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

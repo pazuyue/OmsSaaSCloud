@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/SupplierInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/SupplierInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/SupplierInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/SupplierInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsSimulationStoreInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsSimulationStoreInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsSimulationStoreInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/WmsSimulationStoreInfoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/SupplierInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/SupplierInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/supplier/supplier.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/supplier/supplier.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsSimulationStoreInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsSimulationStoreInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/simulationStore/simulationStore.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/simulationStore/simulationStore.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/store/modules/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/store/modules/user.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -293,14 +295,7 @@
       <workItem from="1724054541971" duration="6119000" />
       <workItem from="1724120126006" duration="6696000" />
       <workItem from="1724145532413" duration="13000" />
-      <workItem from="1724149040719" duration="8498000" />
-    </task>
-    <task id="LOCAL-00006" summary="OMS-字模块集合调整">
-      <created>1721113920760</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1721113920762</updated>
+      <workItem from="1724149040719" duration="13554000" />
     </task>
     <task id="LOCAL-00007" summary="OMS-子模块集合调整">
       <created>1721124413017</created>
@@ -638,7 +633,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724207436941</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="OMS - 供应链 - 采购单-调整">
+      <created>1724209392958</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1724209392958</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

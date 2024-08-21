@@ -42,3 +42,11 @@ export function delSimulationStoreInfo(id) {
     method: 'delete'
   })
 }
+
+export function listSimulationStore(query) {
+  return request({
+    url: '/supplychain/simulationStore/listSimulationStore',
+    method: 'get',
+    params: query
+  })
+}
