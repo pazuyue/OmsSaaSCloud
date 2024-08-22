@@ -38,7 +38,7 @@ public class PoInfo implements Serializable {
     /**
      * 1 新建 2 待收货 3 收货中 4 已完结 -1 已作废
      */
-    private Byte poState;
+    private Integer poState;
 
     /**
      * 供应商编码
@@ -66,9 +66,8 @@ public class PoInfo implements Serializable {
     private Integer numberActually;
 
     /**
-     * 计划入库差异（不落库处理，用number_expected-number_actually）实时计算
+     * 操作人
      */
-    private Integer numberDifference;
     private String perationUser;
 
     /**
@@ -90,11 +89,6 @@ public class PoInfo implements Serializable {
      * 备注
      */
     private String remarks;
-
-    /**
-     * 最近入库时间
-     */
-    private Date wmsUpdatedAt;
 
     /**
      * 计划入库货值

@@ -57,8 +57,14 @@ public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> impleme
         if (!ObjectUtil.isEmpty(poInfo.getModifyTime())){
             queryWrapper.ge("modify_time",poInfo.getModifyTime());
         }
+        if (!ObjectUtil.isEmpty(poInfo.getPoState())){
+            queryWrapper.eq("po_state",poInfo.getPoState());
+        }
+        if (!ObjectUtil.isEmpty(poInfo.getActualWarehouse())){
+            queryWrapper.eq("actual_warehouse",poInfo.getActualWarehouse());
+        }
         queryWrapper.orderByDesc("modify_time");
-        return this.list();
+        return this.list(queryWrapper);
     }
 
     @Override
@@ -77,7 +83,7 @@ public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> impleme
     @Override
     public boolean deletePoInfoById(Integer id) {
         PoInfo poInfo = new PoInfo();
-        poInfo.setPoState((byte) -1);
+        poInfo.setPoState(-1);
         poInfo.setId(id);
         return this.updateById(poInfo);
     }
@@ -87,7 +93,7 @@ public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> impleme
         List<PoInfo> poInfoList = new ArrayList<>();
         for (Integer id : ids) {
             PoInfo poInfo = new PoInfo();
-            poInfo.setPoState((byte) -1);
+            poInfo.setPoState(-1);
             poInfo.setId(id);
             poInfoList.add(poInfo);
         }

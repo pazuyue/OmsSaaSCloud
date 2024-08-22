@@ -41,14 +41,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="计划入库差异" prop="numberDifference">
-        <el-input
-          v-model="queryParams.numberDifference"
-          placeholder="请输入计划入库差异"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="操作人" prop="perationUser">
         <el-input
           v-model="queryParams.perationUser"
@@ -81,14 +73,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="最近入库时间" prop="wmsUpdatedAt">
-        <el-date-picker clearable
-                        v-model="queryParams.wmsUpdatedAt"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择最近入库时间">
-        </el-date-picker>
-      </el-form-item>
       <el-form-item label="计划入库货值" prop="moneyExpected">
         <el-input
           v-model="queryParams.moneyExpected"
@@ -105,21 +89,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="来源" prop="comeFrom">
-        <el-input
-          v-model="queryParams.comeFrom"
-          placeholder="请输入来源"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="单据状态" prop="comeFrom">
+        <el-select v-model="queryParams.poState" placeholder="请选择单据状态">
+          <el-option
+            v-for="dict in dict.type.po_state"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="1 真实出库 2 虚拟出库" prop="actualWarehouse">
-        <el-input
-          v-model="queryParams.actualWarehouse"
-          placeholder="请输入1 真实出库 2 虚拟出库"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="出入库类型" prop="actualWarehouse">
+        <el-select v-model="queryParams.actualWarehouse" placeholder="请选择是否真实出库">
+          <el-option
+            v-for="dict in dict.type.actual_warehouse"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -178,13 +166,16 @@
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="采购单号" align="center" prop="poSn" />
       <el-table-column label="采购单名称" align="center" prop="poName" />
-      <el-table-column label="状态" align="center" prop="poState" />
+      <el-table-column label="状态" align="center" prop="poState" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.po_state" :value="scope.row.poState"/>
+        </template>
+      </el-table-column>
       <el-table-column label="供应商编码" align="center" prop="supplierSn" />
       <el-table-column label="采购部门" align="center" prop="departmentCode" />
       <el-table-column label="虚仓编码" align="center" prop="wmsSimulationCode" />
       <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
       <el-table-column label="实际入库数量" align="center" prop="numberActually" />
-      <el-table-column label="计划入库差异" align="center" prop="numberDifference" />
       <el-table-column label="操作人" align="center" prop="perationUser" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
@@ -193,15 +184,14 @@
       </el-table-column>
       <el-table-column label="公司编码" align="center" prop="companyCode" />
       <el-table-column label="备注" align="center" prop="remarks" />
-      <el-table-column label="最近入库时间" align="center" prop="wmsUpdatedAt" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.wmsUpdatedAt, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="计划入库货值" align="center" prop="moneyExpected" />
       <el-table-column label="实际入库货值" align="center" prop="moneyActually" />
       <el-table-column label="来源" align="center" prop="comeFrom" />
-      <el-table-column label="1 真实出库 2 虚拟出库" align="center" prop="actualWarehouse" />
+      <el-table-column label="出入库类型" align="center" prop="actualWarehouse">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -259,14 +249,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否真实出库" prop="actualWarehouse">
+        <el-form-item label="出入库类型" prop="actualWarehouse">
           <el-select v-model="form.actualWarehouse" placeholder="请选择是否真实出库">
             <el-option
-              v-for="dict in dict.type.oms_yes_no"
+              v-for="dict in dict.type.actual_warehouse"
               :key="dict.value"
               :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
+              :value="dict.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
@@ -288,7 +278,7 @@ import {listSimulationStore} from "@/api/simulationStore/simulationStore";
 
 export default {
   name: "PoInfo",
-  dicts: ['oms_yes_no'],
+  dicts: ['po_state','actual_warehouse'],
   data() {
     return {
       // 遮罩层
@@ -323,12 +313,10 @@ export default {
         wmsSimulationCode: null,
         numberExpected: null,
         numberActually: null,
-        numberDifference: null,
         perationUser: null,
         modifyTime: null,
         companyCode: null,
         remarks: null,
-        wmsUpdatedAt: null,
         moneyExpected: null,
         moneyActually: null,
         comeFrom: null,
