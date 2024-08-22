@@ -88,7 +88,7 @@
       <el-form-item label="是否真实出库" prop="actualWarehouse">
         <el-select v-model="queryParams.actualWarehouse" placeholder="请选择是否真实出库" clearable>
           <el-option
-            v-for="dict in dict.type.oms_yes_no"
+            v-for="dict in dict.type.actual_warehouse"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -184,7 +184,7 @@
       </el-table-column>
       <el-table-column label="是否真实出库" align="center" prop="actualWarehouse">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.actualWarehouse"/>
+          <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
         </template>
       </el-table-column>
       <el-table-column label="货主" align="center" prop="ownerCode" />
@@ -267,7 +267,7 @@
         <el-form-item label="是否真实出库" prop="actualWarehouse">
           <el-select v-model="form.actualWarehouse" placeholder="请选择是否真实出库">
             <el-option
-              v-for="dict in dict.type.oms_yes_no"
+              v-for="dict in dict.type.actual_warehouse"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.value)"
@@ -300,7 +300,7 @@ import { listOwner } from "@/api/owner/owner.js";
 
 export default {
   name: "WmsRealStoreInfo",
-  dicts: ['wms_type', 'oms_yes_no'],
+  dicts: ['wms_type', 'oms_yes_no','actual_warehouse'],
   data() {
     return {
       // 遮罩层
