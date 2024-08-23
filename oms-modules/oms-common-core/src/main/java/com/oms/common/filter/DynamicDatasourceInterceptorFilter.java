@@ -36,7 +36,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
     @Resource
     TokenService tokenService;
     // 设置排除路径
-    private final List<String> excludeUrls = Collections.singletonList("/druid/**");
+    private final List<String> excludeUrls =  Arrays.asList("/druid/**","/actuator/**");
 
     @Override
     public void init(FilterConfig filterConfig) {
