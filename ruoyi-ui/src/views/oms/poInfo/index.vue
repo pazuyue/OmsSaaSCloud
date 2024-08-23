@@ -198,15 +198,22 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="handleSelect(scope.row)"
+            v-hasPermi="['warehouse:poInfo:query']"
+          >查看</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['PoInfo:poInfo:edit']"
+            v-hasPermi="['warehouse:poInfo:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['PoInfo:poInfo:remove']"
+            v-hasPermi="['warehouse:poInfo:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -268,6 +275,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <selectOne :open="open2" :poInfo="form"></selectOne>
   </div>
 </template>
 
@@ -275,12 +284,15 @@
 import { listPoInfo, getPoInfo, delPoInfo, addPoInfo, updatePoInfo } from "@/api/poInfo/poInfo";
 import {listSupplier} from "@/api/supplier/supplier";
 import {listSimulationStore} from "@/api/simulationStore/simulationStore";
+import selectOne from "./selectOne"
 
 export default {
   name: "PoInfo",
+  components:{selectOne},
   dicts: ['po_state','actual_warehouse'],
   data() {
     return {
+      name: "PoInfo",
       // 遮罩层
       loading: true,
       // 选中数组
@@ -301,6 +313,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      open2: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -409,6 +422,16 @@ export default {
         this.title = "修改采购单";
       });
     },
+    handleSelect(row){
+      this.reset();
+      const id = row.id
+      getPoInfo(id).then(response => {
+        this.form = response.data;
+        this.open2 = true;
+        this.title = "查看采购单";
+      });
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {

@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS - 供应链 - 实仓调整">
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsRealStoreInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/vo/warehouse/WmsRealStoreInfoVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsRealStore/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -291,14 +293,9 @@
       <workItem from="1724054541971" duration="6119000" />
       <workItem from="1724120126006" duration="6696000" />
       <workItem from="1724145532413" duration="13000" />
-      <workItem from="1724149040719" duration="18300000" />
-    </task>
-    <task id="LOCAL-00009" summary="OMS-子模块集合调整-Filter">
-      <created>1721130068619</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1721130068619</updated>
+      <workItem from="1724149040719" duration="21527000" />
+      <workItem from="1724319685506" duration="4473000" />
+      <workItem from="1724385628681" duration="3843000" />
     </task>
     <task id="LOCAL-00010" summary="OMS-子模块集合调整-Filter">
       <created>1721210813878</created>
@@ -636,7 +633,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724293419770</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="OMS - 供应链 - 实仓调整">
+      <created>1724313482957</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1724313482958</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -654,7 +658,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS-微腐败版本商品管理" />
     <MESSAGE value="OMS-微服务版本商品管理" />
     <MESSAGE value="OMS-日志调整" />
     <MESSAGE value="OMS-字模块集合调整" />
@@ -679,7 +682,8 @@
     <MESSAGE value="OMS - 供应链 - 虚仓管理-调整" />
     <MESSAGE value="OMS - 供应链 - 供应商-调整" />
     <MESSAGE value="OMS - 供应链 - 采购单-调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 采购单-调整" />
+    <MESSAGE value="OMS - 供应链 - 实仓调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 实仓调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
