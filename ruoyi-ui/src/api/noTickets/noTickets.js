@@ -1,0 +1,44 @@
+import request from '@/utils/request'
+
+// 查询采购入库通知单列表
+export function listTickets(query) {
+  return request({
+    url: '/supplychain/noTickets/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询采购入库通知单详细
+export function getTickets(id) {
+  return request({
+    url: '/supplychain/noTickets/' + id,
+    method: 'get'
+  })
+}
+
+// 新增采购入库通知单
+export function addTickets(data) {
+  return request({
+    url: '/supplychain/tickets',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改采购入库通知单
+export function updateTickets(data) {
+  return request({
+    url: '/supplychain/noTickets',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除采购入库通知单
+export function delTickets(id) {
+  return request({
+    url: '/supplychain/noTickets/' + id,
+    method: 'delete'
+  })
+}

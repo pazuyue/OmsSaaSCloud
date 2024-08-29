@@ -276,7 +276,7 @@
       </div>
     </el-dialog>
 
-    <selectOne :open="open2" :poInfo="form"></selectOne>
+    <selectOne ref="selectOne" :open2="open2" :poInfo="form" v-if="open2"></selectOne>
   </div>
 </template>
 
@@ -305,6 +305,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      selectOne:false,
       // 采购单表格数据
       poInfoList: [],
       supplierSnCodeOptions:[],
@@ -428,6 +429,7 @@ export default {
       getPoInfo(id).then(response => {
         this.form = response.data;
         this.open2 = true;
+        this.selectOne = true;
         this.title = "查看采购单";
       });
     },

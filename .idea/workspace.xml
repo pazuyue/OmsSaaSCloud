@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/NoTicketsMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/NoTickets.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/DynamicDatasourceInterceptorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,10 +23,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
-        <option value="JavaScript File" />
-        <option value="Class" />
         <option value="Vue Single File Component" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -76,6 +83,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
+    <property name="service.view.auto.scroll.to.source" value="true" />
     <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.runner" />
     <property name="ts.external.directory.path" value="D:\Program Files (x86)\ideaIU_2021.2.3_64bit_Portable\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
@@ -102,10 +110,10 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.supplychain.model.entity.warehouse" />
       <recent name="com.oms.supplychain.service.warehouse.impl" />
       <recent name="com.oms.supplychain.service.warehouse" />
       <recent name="com.oms.supplychain.mapper.warehouse" />
-      <recent name="com.oms.supplychain.model.entity.warehouse" />
       <recent name="com.oms.supplychain.model.dto.warehouse" />
     </key>
   </component>
@@ -291,14 +299,9 @@
       <workItem from="1724145532413" duration="13000" />
       <workItem from="1724149040719" duration="21527000" />
       <workItem from="1724319685506" duration="4473000" />
-      <workItem from="1724385628681" duration="5026000" />
-    </task>
-    <task id="LOCAL-00011" summary="OMS-子模块集合调整-Filter">
-      <created>1721212688620</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1721212688620</updated>
+      <workItem from="1724385628681" duration="6281000" />
+      <workItem from="1724591887222" duration="5012000" />
+      <workItem from="1724638486739" duration="3236000" />
     </task>
     <task id="LOCAL-00012" summary="OMS-子模块集合调整-Filter">
       <created>1721266995968</created>
@@ -636,7 +639,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724397034954</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="OMS - 监控系统兼容 - 调整拦截器">
+      <created>1724398231473</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1724398231473</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -654,7 +664,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS-日志调整" />
     <MESSAGE value="OMS-字模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整" />
     <MESSAGE value="OMS-子模块集合调整-Filter" />
@@ -679,7 +688,8 @@
     <MESSAGE value="OMS - 供应链 - 采购单-调整" />
     <MESSAGE value="OMS - 供应链 - 实仓调整" />
     <MESSAGE value="OMS - 供应链 - 调整拦截器" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 供应链 - 调整拦截器" />
+    <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 监控系统兼容 - 调整拦截器" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

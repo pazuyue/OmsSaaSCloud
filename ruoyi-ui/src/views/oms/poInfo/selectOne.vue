@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible.sync="open" width="90%" append-to-body>
+  <el-dialog :title="title" :visible.sync="open2" width="90%" append-to-body @close="handleClose">
     <el-collapse v-model="activeName" accordion>
       <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
         <el-descriptions>
@@ -20,101 +20,267 @@
       </el-collapse-item>
     </el-collapse>
     <el-row>
-      <el-table
-        :data="tableData"
-        style="width: 100%"
-        max-height="250">
-        <el-table-column
-          prop="noName"
-          label="入库通知单名称"
-          width="120">
+      <el-table v-loading="loading" :data="ticketsList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="${comment}" align="center" prop="id" />
+        <el-table-column label="入库单号" align="center" prop="noSn" />
+        <el-table-column label="关联采购单号" align="center" prop="poSn" />
+        <el-table-column label="关联单号" align="center" prop="relationSn" />
+        <el-table-column label="入库单名称" align="center" prop="noName" />
+        <el-table-column label="指派虚仓编码" align="center" prop="wmsSimulationCode" />
+        <el-table-column label="批次编号" align="center" prop="batchCode" />
+        <el-table-column label="计划到货时间" align="center" prop="expectedCallbackTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.expectedCallbackTime, '{y}-{m}-{d}') }}</span>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="noSn"
-          label="入库通知单号"
-          width="120">
+        <el-table-column label="实际入库时间" align="center" prop="actuallyCallbackTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.actuallyCallbackTime, '{y}-{m}-{d}') }}</span>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="batchCode"
-          label="批次号"
-          >
+        <el-table-column label="-1 已作废 1 新建，2 待审核 3 待入库 4 已入库" align="center" prop="noState" />
+        <el-table-column label="备注" align="center" prop="remarks" />
+        <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
+        <el-table-column label="实际入库数量" align="center" prop="numberActually" />
+        <el-table-column label="计划入库货值" align="center" prop="priceExpected" />
+        <el-table-column label="实际入库货值" align="center" prop="priceActually" />
+        <el-table-column label="入库货值差" align="center" prop="priceDifference" />
+        <el-table-column label="公司编码" align="center" prop="companyCode" />
+        <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="poSn"
-          label="关联采购单号"
-          width="120">
+        <el-table-column label="创建者" align="center" prop="createdUser" />
+        <el-table-column label="审核者" align="center" prop="reviewerUser" />
+        <el-table-column label="审核时间" align="center" prop="reviewerTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.reviewerTime, '{y}-{m}-{d}') }}</span>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="relationSn"
-          label="关联下游单据">
-        </el-table-column>
-        <el-table-column
-          prop="noState"
-          label="单据状态">
-        </el-table-column>
-        <el-table-column
-          prop="noState"
-          label="单据状态">
-        </el-table-column>
-        <el-table-column
-          prop="numberExpected"
-          label="计划入库数量">
-        </el-table-column>
-        <el-table-column
-          prop="numberActually"
-          label="实际入库数量">
-        </el-table-column>
-        <el-table-column
-          prop="priceExpected"
-          label="计划入库数量">
-        </el-table-column>
-        <el-table-column
-          prop="priceActually"
-          label="实际入库货值">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="120">
-          <template slot-scope="">
+        <el-table-column label="来源" align="center" prop="comeFrom" />
+        <el-table-column label="0正常流程，1收货申请单" align="center" prop="comeFromType" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
             <el-button
-              @click.native.prevent=""
+              size="mini"
               type="text"
-              size="small">
-              移除
-            </el-button>
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:tickets:edit']"
+            >修改</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['system:tickets:remove']"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
     </el-row>
   </el-dialog>
 </template>
 
 <script>
+import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "@/api/noTickets/noTickets";
 export default {
   name: "selectOne",
   dicts: ['po_state','actual_warehouse'],
-  data() {
-    return {
-      title: "查看采购单",
-      activeName: '1',
-      tableData: [],
-      rules: {
-        poName: [
-          { required: true, message: "采购单名称不能为空", trigger: "blur" }
-        ],
-      }
-    }
-  },
   props: {
-    open: {
+    open2: {
       type: Boolean,
-      default: ""
+      default: false
     },
     poInfo: {
       type: Object,
       default: null
     }
+  },
+  created() {
+    this.getList();
+  },
+  data() {
+    return {
+      title: "查看采购单",
+      activeName: '1',
+      tableData: [],
+      // 遮罩层
+      loading: true,
+      // 选中数组
+      ids: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+      // 总条数
+      total: 0,
+      // 采购入库通知单表格数据
+      ticketsList: [],
+      // 是否显示弹出层
+      open: false,
+      localOpen2: this.open2,
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        noSn: null,
+        poSn: this.poInfo.poSn,
+        relationSn: null,
+        noName: null,
+        wmsSimulationCode: null,
+        batchCode: null,
+        expectedCallbackTime: null,
+        actuallyCallbackTime: null,
+        noState: null,
+        remarks: null,
+        numberExpected: null,
+        numberActually: null,
+        priceExpected: null,
+        priceActually: null,
+        companyCode: null,
+        modifyTime: null,
+        createdUser: null,
+        reviewerUser: null,
+        reviewerTime: null,
+        comeFrom: null,
+        comeFromType: null
+      },
+      // 表单参数
+      form: {},
+      // 表单校验
+      rules: {
+        noSn: [
+          { required: true, message: "入库单号不能为空", trigger: "blur" }
+        ],
+        poSn: [
+          { required: true, message: "关联采购单号不能为空", trigger: "blur" }
+        ],
+        noName: [
+          { required: true, message: "入库单名称不能为空", trigger: "blur" }
+        ],
+        expectedCallbackTime: [
+          { required: true, message: "计划到货时间不能为空", trigger: "blur" }
+        ]
+      }
+    }
+  },
+
+  methods: {
+    /** 查询采购入库通知单列表 */
+    getList() {
+      this.loading = true;
+      listTickets(this.queryParams).then(response => {
+        this.ticketsList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        noSn: null,
+        poSn: null,
+        relationSn: null,
+        noName: null,
+        wmsSimulationCode: null,
+        batchCode: null,
+        noState: null,
+        remarks: null
+      };
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length!==1
+      this.multiple = !selection.length
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = "添加采购入库通知单";
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset();
+      const id = row.id || this.ids
+      getTickets(id).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改采购入库通知单";
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateTickets(this.form).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addTickets(this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除采购入库通知单编号为"' + ids + '"的数据项？').then(function() {
+        return delTickets(ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.download('system/tickets/export', {
+        ...this.queryParams
+      }, `tickets_${new Date().getTime()}.xlsx`)
+    },
+    handleClose(){
+      console.log("关闭")
+      this.$emit('update:open2', this.localOpen2);
+    }
+
   }
 };
 </script>
