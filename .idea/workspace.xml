@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="OMS - 采购入库单">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +71,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_ruoyi_vue" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -301,14 +299,7 @@
       <workItem from="1724981617839" duration="696000" />
       <workItem from="1724989138945" duration="50000" />
       <workItem from="1724989274194" duration="214000" />
-      <workItem from="1724997212719" duration="4708000" />
-    </task>
-    <task id="LOCAL-00013" summary="OMS-子模块集合调整-Filter">
-      <created>1721267296753</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1721267296753</updated>
+      <workItem from="1724997212719" duration="7488000" />
     </task>
     <task id="LOCAL-00014" summary="用户列表-新增最后登陆选择的公司编码">
       <created>1721811967061</created>
@@ -646,7 +637,14 @@
       <option name="project" value="LOCAL" />
       <updated>1724927205476</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="OMS - 采购入库单-UI 调整">
+      <created>1725002536564</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1725002536564</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -664,7 +662,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS-子模块集合调整-Filter" />
     <MESSAGE value="用户列表-新增最后登陆选择的公司编码" />
     <MESSAGE value="OMS - 根据用户登录公司选择数据库" />
     <MESSAGE value="OMS - 日志输出" />
@@ -689,7 +686,8 @@
     <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
     <MESSAGE value="OMS - 入库单" />
     <MESSAGE value="OMS - 采购入库单" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单" />
+    <MESSAGE value="OMS - 采购入库单-UI 调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI 调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

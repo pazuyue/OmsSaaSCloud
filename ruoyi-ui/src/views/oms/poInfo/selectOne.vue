@@ -1,95 +1,185 @@
 <template>
-  <el-dialog :title="title" :visible.sync="localOpen2" width="90%" append-to-body @close="handleClose">
-    <el-collapse v-model="activeName" accordion>
-      <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
-        <el-descriptions>
-          <el-descriptions-item label="采购单名称">{{poInfo.poName}}</el-descriptions-item>
-          <el-descriptions-item label="供应商编码">{{poInfo.supplierSn}}</el-descriptions-item>
-          <el-descriptions-item label="虚仓编码">{{poInfo.wmsSimulationCode}}</el-descriptions-item>
-          <el-descriptions-item label="状态">
-            <dict-tag :options="dict.type.po_state" :value="poInfo.poState"/>
-          </el-descriptions-item>
-          <el-descriptions-item label="出入库类型"><dict-tag :options="dict.type.actual_warehouse" :value="poInfo.actualWarehouse"/></el-descriptions-item>
-          <el-descriptions-item label="计划入库数量">{{poInfo.numberExpected}}</el-descriptions-item>
-          <el-descriptions-item label="实际入库数量">{{poInfo.numberActually}}</el-descriptions-item>
-          <el-descriptions-item label="计划入库货值">{{poInfo.moneyExpected}}</el-descriptions-item>
-          <el-descriptions-item label="实际入库货值">{{poInfo.moneyActually}}</el-descriptions-item>
-          <el-descriptions-item label="操作人">{{poInfo.operator}}</el-descriptions-item>
-          <el-descriptions-item label="备注">{{poInfo.remarks}}</el-descriptions-item>
-        </el-descriptions>
-      </el-collapse-item>
-    </el-collapse>
-    <el-row>
-      <el-table v-loading="loading" :data="ticketsList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="${comment}" align="center" prop="id" />
-        <el-table-column label="入库单号" align="center" prop="noSn" />
-        <el-table-column label="关联采购单号" align="center" prop="poSn" />
-        <el-table-column label="关联单号" align="center" prop="relationSn" />
-        <el-table-column label="入库单名称" align="center" prop="noName" />
-        <el-table-column label="指派虚仓编码" align="center" prop="wmsSimulationCode" />
-        <el-table-column label="批次编号" align="center" prop="batchCode" />
-        <el-table-column label="计划到货时间" align="center" prop="expectedCallbackTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.expectedCallbackTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="实际入库时间" align="center" prop="actuallyCallbackTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.actuallyCallbackTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="-1 已作废 1 新建，2 待审核 3 待入库 4 已入库" align="center" prop="noState" />
-        <el-table-column label="备注" align="center" prop="remarks" />
-        <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
-        <el-table-column label="实际入库数量" align="center" prop="numberActually" />
-        <el-table-column label="计划入库货值" align="center" prop="priceExpected" />
-        <el-table-column label="实际入库货值" align="center" prop="priceActually" />
-        <el-table-column label="入库货值差" align="center" prop="priceDifference" />
-        <el-table-column label="公司编码" align="center" prop="companyCode" />
-        <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建者" align="center" prop="createdUser" />
-        <el-table-column label="审核者" align="center" prop="reviewerUser" />
-        <el-table-column label="审核时间" align="center" prop="reviewerTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.reviewerTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="来源" align="center" prop="comeFrom" />
-        <el-table-column label="0正常流程，1收货申请单" align="center" prop="comeFromType" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:tickets:edit']"
-            >修改</el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              v-hasPermi="['system:tickets:remove']"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+  <dev>
+    <el-dialog :title="title" :visible.sync="localOpen2" width="90%" append-to-body @close="handleClose">
+      <el-collapse v-model="activeName" accordion>
+        <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
+          <el-descriptions>
+            <el-descriptions-item label="采购单名称">{{poInfo.poName}}</el-descriptions-item>
+            <el-descriptions-item label="供应商编码">{{poInfo.supplierSn}}</el-descriptions-item>
+            <el-descriptions-item label="虚仓编码">{{poInfo.wmsSimulationCode}}</el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <dict-tag :options="dict.type.po_state" :value="poInfo.poState"/>
+            </el-descriptions-item>
+            <el-descriptions-item label="出入库类型"><dict-tag :options="dict.type.actual_warehouse" :value="poInfo.actualWarehouse"/></el-descriptions-item>
+            <el-descriptions-item label="计划入库数量">{{poInfo.numberExpected}}</el-descriptions-item>
+            <el-descriptions-item label="实际入库数量">{{poInfo.numberActually}}</el-descriptions-item>
+            <el-descriptions-item label="计划入库货值">{{poInfo.moneyExpected}}</el-descriptions-item>
+            <el-descriptions-item label="实际入库货值">{{poInfo.moneyActually}}</el-descriptions-item>
+            <el-descriptions-item label="操作人">{{poInfo.operator}}</el-descriptions-item>
+            <el-descriptions-item label="备注">{{poInfo.remarks}}</el-descriptions-item>
+          </el-descriptions>
+        </el-collapse-item>
+      </el-collapse>
 
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
-    </el-row>
-  </el-dialog>
+      <el-row :gutter="10" class="mb8">
+        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
+          <el-form-item label="入库单号" prop="noSn">
+            <el-input
+              v-model="queryParams.noSn"
+              placeholder="请输入入库单号"
+              clearable
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="关联入库单号" prop="relationSn">
+            <el-input
+              v-model="queryParams.relationSn"
+              placeholder="请输入关联单号"
+              clearable
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['system:tickets:add']"
+          >新增</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="success"
+            plain
+            icon="el-icon-edit"
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['system:tickets:edit']"
+          >修改</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:tickets:remove']"
+          >删除</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            @click="handleExport"
+            v-hasPermi="['system:tickets:export']"
+          >导出</el-button>
+        </el-col>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
+      <el-row>
+        <el-table v-loading="loading" :data="ticketsList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column label="ID" align="center" prop="id" />
+          <el-table-column label="入库单号" align="center" prop="noSn" />
+          <el-table-column label="关联采购单号" align="center" prop="poSn" />
+          <el-table-column label="关联单号" align="center" prop="relationSn" />
+          <el-table-column label="入库单名称" align="center" prop="noName" />
+          <el-table-column label="指派虚仓编码" align="center" prop="wmsSimulationCode" />
+          <el-table-column label="批次编号" align="center" prop="batchCode" />
+          <el-table-column label="计划到货时间" align="center" prop="expectedCallbackTime" width="180">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.expectedCallbackTime, '{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="实际入库时间" align="center" prop="actuallyCallbackTime" width="180">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.actuallyCallbackTime, '{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="-1 已作废 1 新建，2 待审核 3 待入库 4 已入库" align="center" prop="noState" />
+          <el-table-column label="备注" align="center" prop="remarks" />
+          <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
+          <el-table-column label="实际入库数量" align="center" prop="numberActually" />
+          <el-table-column label="计划入库货值" align="center" prop="priceExpected" />
+          <el-table-column label="实际入库货值" align="center" prop="priceActually" />
+          <el-table-column label="入库货值差" align="center" prop="priceDifference" />
+          <el-table-column label="公司编码" align="center" prop="companyCode" />
+          <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建者" align="center" prop="createdUser" />
+          <el-table-column label="审核者" align="center" prop="reviewerUser" />
+          <el-table-column label="审核时间" align="center" prop="reviewerTime" width="180">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.reviewerTime, '{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="来源" align="center" prop="comeFrom" />
+          <el-table-column label="0正常流程，1收货申请单" align="center" prop="comeFromType" />
+          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="handleUpdate(scope.row)"
+                v-hasPermi="['system:tickets:edit']"
+              >修改</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
+                v-hasPermi="['system:tickets:remove']"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <pagination
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+      </el-row>
+    </el-dialog>
+    <!-- 添加或修改采购入库通知单对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="入库单名称" prop="noName">
+          <el-input v-model="form.noName" placeholder="请输入入库单名称" />
+        </el-form-item>
+        <el-form-item label="指派虚仓编码" prop="wmsSimulationCode">
+          <el-input v-model="form.wmsSimulationCode" placeholder="请输入指派虚仓编码" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="form.remarks" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </dev>
 </template>
 
 <script>
@@ -139,7 +229,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         noSn: null,
-        poSn: this.poId,
+        poSn: null,
         relationSn: null,
         noName: null,
         wmsSimulationCode: null,
@@ -190,7 +280,6 @@ export default {
     /** 查询采购入库通知单列表 */
     getList() {
       this.loading = true;
-      console.log(this.queryParams)
       listTickets(this.queryParams).then(response => {
         this.ticketsList = response.rows;
         this.total = response.total;
@@ -199,9 +288,11 @@ export default {
     },
     getTickets(){
       console.log("localOpen2:",this.localOpen2)
+      console.log("poId:",this.poId)
       if (this.poId>0){
         getPoInfo(this.poId).then(response => {
           this.poInfo = response.data;
+          this.queryParams.poSn = this.poInfo.poSn;
           this.getList();
         });
       }
@@ -217,7 +308,6 @@ export default {
       this.form = {
         id: null,
         noSn: null,
-        poSn: null,
         relationSn: null,
         noName: null,
         wmsSimulationCode: null,
