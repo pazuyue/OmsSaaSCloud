@@ -276,7 +276,7 @@
       </div>
     </el-dialog>
 
-    <selectOne ref="selectOne" :open2="open2" :poInfo="form" v-if="open2"></selectOne>
+    <selectOne ref="selectOne" :poId="poId" :open2="open2" @update:open2="updateOpen2"></selectOne>
   </div>
 </template>
 
@@ -297,6 +297,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      poId: 0,
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -305,7 +306,6 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      selectOne:false,
       // 采购单表格数据
       poInfoList: [],
       supplierSnCodeOptions:[],
@@ -424,16 +424,14 @@ export default {
       });
     },
     handleSelect(row){
-      this.reset();
-      const id = row.id
-      getPoInfo(id).then(response => {
-        this.form = response.data;
-        this.open2 = true;
-        this.selectOne = true;
-        this.title = "查看采购单";
-      });
+      this.poId =  row.id;
+      this.open2 = true;
+      this.title = "查看采购单";
     },
-
+    updateOpen2(value) {
+      console.log("updateOpen2:",value)
+      this.open2 = value;
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {

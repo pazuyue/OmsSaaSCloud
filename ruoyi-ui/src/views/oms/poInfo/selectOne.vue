@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible.sync="open2" width="90%" append-to-body @close="handleClose">
+  <el-dialog :title="title" :visible.sync="localOpen2" width="90%" append-to-body @close="handleClose">
     <el-collapse v-model="activeName" accordion>
       <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
         <el-descriptions>
@@ -94,6 +94,7 @@
 
 <script>
 import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "@/api/noTickets/noTickets";
+import {getPoInfo} from "@/api/poInfo/poInfo";
 export default {
   name: "selectOne",
   dicts: ['po_state','actual_warehouse'],
@@ -102,13 +103,13 @@ export default {
       type: Boolean,
       default: false
     },
-    poInfo: {
-      type: Object,
-      default: null
+    poId: {
+      type: Number,
+      default: 0
     }
   },
   created() {
-    this.getList();
+    this.getTickets()
   },
   data() {
     return {
@@ -132,12 +133,13 @@ export default {
       // 是否显示弹出层
       open: false,
       localOpen2: this.open2,
+      poInfo:{},
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         noSn: null,
-        poSn: this.poInfo.poSn,
+        poSn: this.poId,
         relationSn: null,
         noName: null,
         wmsSimulationCode: null,
@@ -177,16 +179,33 @@ export default {
       }
     }
   },
-
+  watch: {
+    open2(newValue) {
+      console.log('open2:', newValue)
+      this.localOpen2 = newValue;
+      this.getTickets()
+    }
+  },
   methods: {
     /** 查询采购入库通知单列表 */
     getList() {
       this.loading = true;
+      console.log(this.queryParams)
       listTickets(this.queryParams).then(response => {
         this.ticketsList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
+    },
+    getTickets(){
+      console.log("localOpen2:",this.localOpen2)
+      if (this.poId>0){
+        getPoInfo(this.poId).then(response => {
+          this.poInfo = response.data;
+          this.getList();
+        });
+      }
+
     },
     // 取消按钮
     cancel() {
@@ -277,8 +296,8 @@ export default {
       }, `tickets_${new Date().getTime()}.xlsx`)
     },
     handleClose(){
-      console.log("关闭")
-      this.$emit('update:open2', this.localOpen2);
+      console.log("关闭");
+      this.$emit('update:open2', false); // 通知父组件关闭
     }
 
   }

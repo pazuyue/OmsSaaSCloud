@@ -25,6 +25,9 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         if (!StrUtil.isBlank(noTickets.getNoSn())){
             queryWrapper.eq("no_sn",noTickets.getNoSn());
         }
+        if (!StrUtil.isBlank(noTickets.getPoSn())){
+            queryWrapper.eq("po_sn",noTickets.getPoSn());
+        }
         if (!StrUtil.isBlank(noTickets.getNoName())){
             queryWrapper.eq("no_name",noTickets.getNoName());
         }
