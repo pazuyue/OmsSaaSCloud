@@ -20,7 +20,7 @@ export function getTickets(id) {
 // 新增采购入库通知单
 export function addTickets(data) {
   return request({
-    url: '/supplychain/tickets',
+    url: '/supplychain/noTickets',
     method: 'post',
     data: data
   })

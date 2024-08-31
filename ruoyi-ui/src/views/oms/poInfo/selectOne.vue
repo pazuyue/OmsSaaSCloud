@@ -1,5 +1,5 @@
 <template>
-  <dev>
+  <dev class="el-divider">
     <el-dialog :title="title" :visible.sync="localOpen2" width="90%" append-to-body @close="handleClose">
       <el-collapse v-model="activeName" accordion>
         <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
@@ -94,8 +94,8 @@
         <el-table v-loading="loading" :data="ticketsList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="ID" align="center" prop="id" />
+          <el-table-column label="采购单号" align="center" prop="poSn" />
           <el-table-column label="入库单号" align="center" prop="noSn" />
-          <el-table-column label="关联采购单号" align="center" prop="poSn" />
           <el-table-column label="关联单号" align="center" prop="relationSn" />
           <el-table-column label="入库单名称" align="center" prop="noName" />
           <el-table-column label="指派虚仓编码" align="center" prop="wmsSimulationCode" />
@@ -110,7 +110,11 @@
               <span>{{ parseTime(scope.row.actuallyCallbackTime, '{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="-1 已作废 1 新建，2 待审核 3 待入库 4 已入库" align="center" prop="noState" />
+          <el-table-column label="状态" align="center" prop="noState">
+            <template slot-scope="scope">
+              <dict-tag :options="dict.type.no_state" :value="scope.row.noState"/>
+            </template>
+          </el-table-column>
           <el-table-column label="备注" align="center" prop="remarks" />
           <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
           <el-table-column label="实际入库数量" align="center" prop="numberActually" />
@@ -131,22 +135,30 @@
             </template>
           </el-table-column>
           <el-table-column label="来源" align="center" prop="comeFrom" />
-          <el-table-column label="0正常流程，1收货申请单" align="center" prop="comeFromType" />
-          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
             <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-plus"
+                @click="handleImport"
+                v-hasPermi="['warehouse:noTickets:import']"
+              >导入</el-button>
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:tickets:edit']"
+                v-hasPermi="['warehouse:noTickets:edit']"
+                v-if="scope.row.noState==1 || scope.row.noState==2"
               >修改</el-button>
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-                v-hasPermi="['system:tickets:remove']"
+                v-if="scope.row.noState==1 || scope.row.noState==2"
+                v-hasPermi="['warehouse:noTickets:remove']"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -162,16 +174,31 @@
       </el-row>
     </el-dialog>
     <!-- 添加或修改采购入库通知单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="70%" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="入库单名称" prop="noName">
           <el-input v-model="form.noName" placeholder="请输入入库单名称" />
         </el-form-item>
-        <el-form-item label="指派虚仓编码" prop="wmsSimulationCode">
-          <el-input v-model="form.wmsSimulationCode" placeholder="请输入指派虚仓编码" />
+        <el-form-item label="虚仓编码" prop="wmsSimulationCode">
+          <el-select v-model="form.wmsSimulationCode" placeholder="请选择">
+            <el-option
+              v-for="item in wimulationCodeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="计划到货时间" prop="expectedCallbackTime">
+          <el-date-picker clearable
+                          v-model="form.expectedCallbackTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择计划到货时间">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" placeholder="请输入备注" />
+          <el-input type="textarea" v-model="form.remarks" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -179,15 +206,21 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <upload ref="upload" :title="this.upload.title" :open="this.upload.open"></upload>
   </dev>
 </template>
 
 <script>
 import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "@/api/noTickets/noTickets";
 import {getPoInfo} from "@/api/poInfo/poInfo";
+import {listSimulationStore} from "@/api/simulationStore/simulationStore";
+import upload from "./upload";
+
 export default {
   name: "selectOne",
-  dicts: ['po_state','actual_warehouse'],
+  components: {upload},
+  dicts: ['po_state','actual_warehouse','no_state'],
   props: {
     open2: {
       type: Boolean,
@@ -199,12 +232,13 @@ export default {
     }
   },
   created() {
-    this.getTickets()
+    this.getTickets();
+    this.getwimulationCodeOptions();
   },
   data() {
     return {
       title: "查看采购单",
-      activeName: '1',
+      activeName: '0',
       tableData: [],
       // 遮罩层
       loading: true,
@@ -222,8 +256,15 @@ export default {
       ticketsList: [],
       // 是否显示弹出层
       open: false,
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题
+        title:'',
+      },
       localOpen2: this.open2,
       poInfo:{},
+      wimulationCodeOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -287,8 +328,6 @@ export default {
       });
     },
     getTickets(){
-      console.log("localOpen2:",this.localOpen2)
-      console.log("poId:",this.poId)
       if (this.poId>0){
         getPoInfo(this.poId).then(response => {
           this.poInfo = response.data;
@@ -296,7 +335,10 @@ export default {
           this.getList();
         });
       }
-
+    },
+    handleImport() {
+      this.upload.title = "产品导入";
+      this.upload.open = true;
     },
     // 取消按钮
     cancel() {
@@ -351,6 +393,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      this.form.poSn = this.poInfo.poSn;
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
@@ -388,7 +431,18 @@ export default {
     handleClose(){
       console.log("关闭");
       this.$emit('update:open2', false); // 通知父组件关闭
-    }
+    },
+    getwimulationCodeOptions(){
+      this.wimulationCodeOptions = [];
+      listSimulationStore().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.wimulationCodeOptions.push({
+            label: response.data[i].wmsSimulationName,
+            value: response.data[i].wmsSimulationCode
+          })
+        }
+      });
+    },
 
   }
 };

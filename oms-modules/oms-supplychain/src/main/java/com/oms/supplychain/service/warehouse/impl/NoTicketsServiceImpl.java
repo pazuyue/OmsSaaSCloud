@@ -1,5 +1,6 @@
 package com.oms.supplychain.service.warehouse.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,6 +37,8 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
     @Override
     public int insertNoTickets(NoTickets noTickets) {
+        String batchCode = IdUtil.simpleUUID();
+        noTickets.setBatchCode(batchCode);
         return this.baseMapper.insert(noTickets);
     }
 
