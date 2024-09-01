@@ -428,7 +428,6 @@ export default {
       this.title = "查看采购单";
     },
     updateOpen2(value) {
-      console.log("updateOpen2:",value)
       this.open2 = value;
     },
     /** 提交按钮 */
