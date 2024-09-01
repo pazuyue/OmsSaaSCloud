@@ -206,9 +206,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <noTicketsUpload :title="upload.title" :open="upload.open" @update:open="updateOpen"/>
   </el-row>
-
-<!--    <noTicketsUpload ref="upload" :title="this.upload.title" :open="this.upload.open"></noTicketsUpload>-->
 </template>
 <script>
 import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "@/api/noTickets/noTickets";
@@ -311,7 +310,6 @@ export default {
   },
   watch: {
     open2(newValue) {
-      console.log('open2:', newValue)
       this.localOpen2 = newValue;
       this.getTickets()
     }
@@ -336,7 +334,8 @@ export default {
       }
     },
     handleImport() {
-      this.upload.title = "产品导入";
+      console.log("商品导入")
+      this.upload.title = "商品导入";
       this.upload.open = true;
     },
     // 取消按钮
@@ -428,7 +427,6 @@ export default {
       }, `tickets_${new Date().getTime()}.xlsx`)
     },
     handleClose(){
-      console.log("关闭");
       this.$emit('update:open2', false); // 通知父组件关闭
     },
     getwimulationCodeOptions(){
@@ -442,7 +440,9 @@ export default {
         }
       });
     },
-
+    updateOpen(value){
+      this.upload.open = value;
+    }
   }
 };
 </script>

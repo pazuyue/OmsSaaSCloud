@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" afterDir="false" />
     </list>
@@ -221,8 +220,8 @@
       <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiGenApplication" />
       <item itemvalue="Spring Boot.RuoYiJobApplication" />
-      <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
+      <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
     </list>
     <recent_temporary>
@@ -303,21 +302,8 @@
       <workItem from="1724989274194" duration="214000" />
       <workItem from="1724997212719" duration="10870000" />
       <workItem from="1725097269853" duration="601000" />
-      <workItem from="1725097937562" duration="7282000" />
-    </task>
-    <task id="LOCAL-00016" summary="OMS - 日志输出">
-      <created>1721820077119</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1721820077119</updated>
-    </task>
-    <task id="LOCAL-00017" summary="OMS - 插件化实现">
-      <created>1721873559105</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1721873559105</updated>
+      <workItem from="1725097937562" duration="8797000" />
+      <workItem from="1725193776804" duration="1509000" />
     </task>
     <task id="LOCAL-00018" summary="OMS - 插件化实现">
       <created>1721987662583</created>
@@ -648,7 +634,21 @@
       <option name="project" value="LOCAL" />
       <updated>1725122328470</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="OMS - 采购入库单-UI 调整">
+      <created>1725180961328</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1725180961328</updated>
+    </task>
+    <task id="LOCAL-00066" summary="OMS - 采购入库单-UI 调整">
+      <created>1725183140887</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1725183140887</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -689,9 +689,9 @@
     <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
     <MESSAGE value="OMS - 入库单" />
     <MESSAGE value="OMS - 采购入库单" />
-    <MESSAGE value="OMS - 采购入库单-UI 调整" />
     <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI-导入 调整" />
+    <MESSAGE value="OMS - 采购入库单-UI 调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI 调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

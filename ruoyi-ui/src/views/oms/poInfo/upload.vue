@@ -1,7 +1,8 @@
 <template>
+<el-row>
   <el-card class="app-container" style="margin: 5px">
     <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body @close="handleClose">
       <el-upload
         ref="upload"
         :limit="1"
@@ -23,6 +24,7 @@
       </el-upload>
     </el-dialog>
   </el-card>
+</el-row>
 </template>
 
 <script>
@@ -39,6 +41,11 @@ export default {
       type: Boolean,
       default: false
     },
+  },
+  watch: {
+    open(newValue) {
+      this.upload.open = newValue;
+    }
   },
   data: function() {
     return {
@@ -66,28 +73,35 @@ export default {
           import_batch:'',
         },
       },
-      // 文件上传中处理
-      handleFileUploadProgress(event, file, fileList) {
-        this.upload.isUploading = true;
-      },
-
-      // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
-        this.upload.open = false;
-        this.upload.isUploading = false;
-        this.$refs.upload.clearFiles();
-        if (response.code==200){
-          this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入成功</div>", "导入结果", { dangerouslyUseHTMLString: true });
-          this.showImportList(response.msg)
-        }else {
-          this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入失败</div>", "导入结果", { dangerouslyUseHTMLString: true });
-        }
-      },
-      importTemplate() {
-        this.download('supplychain/noTickets/importTemplate', {
-        }, `noTickets_template_${new Date().getTime()}.xlsx`)
-      },
     }
+  },
+  created() {
+  },
+  methods: {
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      if (response.code==200){
+        this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入成功</div>", "导入结果", { dangerouslyUseHTMLString: true });
+        this.showImportList(response.msg)
+      }else {
+        this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入失败</div>", "导入结果", { dangerouslyUseHTMLString: true });
+      }
+    },
+    importTemplate() {
+      this.download('supplychain/noTickets/importTemplate', {
+      }, `noTickets_template_${new Date().getTime()}.xlsx`)
+    },
+    handleClose() {
+      this.$emit('update:open', false); // 通知父组件关闭
+    },
   }
 }
 </script>
