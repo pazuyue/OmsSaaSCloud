@@ -1,5 +1,5 @@
 <template>
-  <dev class="el-divider">
+  <el-row>
     <el-dialog :title="title" :visible.sync="localOpen2" width="90%" append-to-body @close="handleClose">
       <el-collapse v-model="activeName" accordion>
         <el-collapse-item :title="'采购信息 ' + poInfo.poSn" name="1">
@@ -206,20 +206,19 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+  </el-row>
 
-    <upload ref="upload" :title="this.upload.title" :open="this.upload.open"></upload>
-  </dev>
+<!--    <noTicketsUpload ref="upload" :title="this.upload.title" :open="this.upload.open"></noTicketsUpload>-->
 </template>
-
 <script>
 import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "@/api/noTickets/noTickets";
 import {getPoInfo} from "@/api/poInfo/poInfo";
 import {listSimulationStore} from "@/api/simulationStore/simulationStore";
-import upload from "./upload";
+import noTicketsUpload from "./upload";
 
 export default {
-  name: "selectOne",
-  components: {upload},
+  name: "SelectOne",
+  components: {noTicketsUpload},
   dicts: ['po_state','actual_warehouse','no_state'],
   props: {
     open2: {

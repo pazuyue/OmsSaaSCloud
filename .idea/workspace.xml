@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -305,14 +303,7 @@
       <workItem from="1724989274194" duration="214000" />
       <workItem from="1724997212719" duration="10870000" />
       <workItem from="1725097269853" duration="601000" />
-      <workItem from="1725097937562" duration="4579000" />
-    </task>
-    <task id="LOCAL-00015" summary="OMS - 根据用户登录公司选择数据库">
-      <created>1721819215193</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1721819215193</updated>
+      <workItem from="1725097937562" duration="7282000" />
     </task>
     <task id="LOCAL-00016" summary="OMS - 日志输出">
       <created>1721820077119</created>
@@ -650,7 +641,14 @@
       <option name="project" value="LOCAL" />
       <updated>1725007973775</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="OMS - 采购入库单-UI-导入 调整">
+      <created>1725122328470</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1725122328470</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -668,7 +666,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="用户列表-新增最后登陆选择的公司编码" />
     <MESSAGE value="OMS - 根据用户登录公司选择数据库" />
     <MESSAGE value="OMS - 日志输出" />
     <MESSAGE value="OMS - 插件化实现" />
@@ -693,7 +690,8 @@
     <MESSAGE value="OMS - 入库单" />
     <MESSAGE value="OMS - 采购入库单" />
     <MESSAGE value="OMS - 采购入库单-UI 调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI 调整" />
+    <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI-导入 调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

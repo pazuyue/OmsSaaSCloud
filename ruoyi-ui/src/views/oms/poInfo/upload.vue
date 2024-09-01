@@ -29,7 +29,7 @@
 import {getToken} from "@/utils/auth";
 
 export default {
-  name: "upload",
+  name: "noTicketsUpload",
   props: {
     title: {
       type: String,
@@ -45,11 +45,11 @@ export default {
       loading:false,
       upload: {
         // 是否显示弹出层（用户导入）
-        open: false,
+        open: this.open,
         // 是否显示弹出层（用户导入）
         exportOpen: false,
         // 弹出层标题（用户导入）
-        title: "",
+        title: this.title,
         // 是否禁用上传
         isUploading: false,
         // 设置上传的请求头部
