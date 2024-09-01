@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,13 @@ public class NoTicketsController extends BaseController
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
         return toAjax(noTicketsService.deleteNoTicketsByIds(ids));
+    }
+
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) throws IOException
+    {
+        ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
+        util.importTemplateExcel(response, "商品导入模板数据");
     }
 }
 
