@@ -172,12 +172,24 @@
         <el-form-item label="虚仓名称" prop="wmsSimulationName">
           <el-input v-model="form.wmsSimulationName" placeholder="请输入虚仓名称" />
         </el-form-item>
-        <el-form-item label="货主编码" prop="ownerCode">
+<!--        <el-form-item label="货主编码" prop="ownerCode">
           <el-input v-model="form.ownerCode" placeholder="请输入货主编码" />
         </el-form-item>
         <el-form-item label="货主名称" prop="ownerName">
           <el-input v-model="form.ownerName" placeholder="请输入货主名称" />
+        </el-form-item>-->
+
+        <el-form-item label="货主编码" prop="ownerCode">
+          <el-select v-model="form.ownerCode" placeholder="请选择" @change="dataScopeSelectChange">
+            <el-option
+              v-for="item in ownerCodeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -189,6 +201,7 @@
 
 <script>
 import { listSimulationStoreInfo, getSimulationStoreInfo, delSimulationStoreInfo, addSimulationStoreInfo, updateSimulationStoreInfo } from "@/api/simulationStore/simulationStore";
+import {listOwner} from "@/api/owner/owner";
 
 export default {
   name: "SimulationStoreInfo",
@@ -209,6 +222,7 @@ export default {
       total: 0,
       // 虚仓表格数据
       simulationStoreInfoList: [],
+      ownerCodeOptions:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -258,6 +272,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getOwnerCodeOptions();
   },
   methods: {
     /** 查询虚仓列表 */
@@ -356,7 +371,28 @@ export default {
       this.download('supplychain/simulationStore/export', {
         ...this.queryParams
       }, `simulationStoreInfo_${new Date().getTime()}.xlsx`)
-    }
+    },
+    getOwnerCodeOptions(){
+      this.ownerCodeOptions = [];
+      listOwner().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.ownerCodeOptions.push({
+            label: response.data[i].ownerName,
+            value: response.data[i].ownerCode
+          })
+        }
+      });
+    },
+    dataScopeSelectChange(value) {
+      // 根据 value 找到对应的 label
+      const selectedOption = this.ownerCodeOptions.find(item => item.value === value);
+      if (selectedOption) {
+        console.log('选中的 label:', selectedOption.label);
+        this.form.ownerName = selectedOption.label;
+      } else {
+        console.log('未找到对应项');
+      }
+    },
   }
 };
 </script>

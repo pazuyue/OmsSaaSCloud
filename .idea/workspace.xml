@@ -5,29 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteGoodsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/api/goods/RemoteGoodsSkuSnInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsSkuSnInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsSkuSnInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/OmsSupplyChainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/OmsSupplyChainApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/ruoyi-api-oms.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/src/main/java/com/ruoyi/goods/api/RemoteGoodsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/src/main/java/com/ruoyi/goods/api/factory/RemoteGoodsFallbackFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/factory/RemoteGoodsFallbackFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/src/main/java/com/ruoyi/goods/api/model/GoodsSkuSnInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/GoodsSkuSnInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/goods/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/goods/info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/simulationStore/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/simulationStore/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -327,13 +306,6 @@
       <workItem from="1725240378753" duration="8756000" />
       <workItem from="1725249396158" duration="115000" />
       <workItem from="1725266067514" duration="314000" />
-    </task>
-    <task id="LOCAL-00022" summary="OMS - 重新导入">
-      <created>1722303318433</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1722303318433</updated>
     </task>
     <task id="LOCAL-00023" summary="OMS - 尺码">
       <created>1722336087887</created>
@@ -671,7 +643,14 @@
       <option name="project" value="LOCAL" />
       <updated>1725268236514</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="OMS-api - 商品服务调用">
+      <created>1725273503371</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1725273503371</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -689,7 +668,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 插件化实现" />
     <MESSAGE value="OMS - 重新导入" />
     <MESSAGE value="OMS - 尺码" />
     <MESSAGE value="OMS - 尺码UI" />
@@ -714,7 +692,8 @@
     <MESSAGE value="OMS - 采购入库单-UI 调整" />
     <MESSAGE value="OMS - 采购入库单-导入-UI 调整" />
     <MESSAGE value="OMS-api - 代码提交 调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS-api - 代码提交 调整" />
+    <MESSAGE value="OMS-api - 商品服务调用" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS-api - 商品服务调用" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
