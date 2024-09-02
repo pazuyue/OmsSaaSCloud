@@ -5,13 +5,12 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.hutool.core.util.ObjectUtil;
+import com.oms.common.api.RemoteGoodsService;
+import com.oms.common.model.entity.GoodsSkuSnInfo;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.goods.api.RemoteGoodsService;
-import com.ruoyi.goods.api.model.GoodsSkuSnInfo;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -134,8 +133,10 @@ public class NoTicketsController extends BaseController
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
-            R<GoodsSkuSnInfo> list = remoteGoodsService.list(new GoodsSkuSnInfo());
-            logger.debug("list"+list.toString());
+            R<GoodsSkuSnInfo> list = remoteGoodsService.selectGoodsSkuSnInfo(new GoodsSkuSnInfo(), company_code);
+            logger.debug("getCode:"+list.getCode());
+            logger.debug("getMsg:"+list.getMsg());
+            logger.debug("getData:"+list.getData().toString());
             return success("导入失败");
         }catch (Exception e){
             return error(e.getMessage());

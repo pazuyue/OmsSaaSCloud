@@ -81,7 +81,6 @@
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus:3.5.1" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-extension:3.5.1" level="project" />
     <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.7.9" level="project" />
-    <orderEntry type="module" module-name="ruoyi-api-oms" />
     <orderEntry type="module" module-name="ruoyi-common-security" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.33" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.33" level="project" />

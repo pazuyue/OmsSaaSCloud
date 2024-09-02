@@ -35,7 +35,7 @@ public class GoodsSkuSnInfoController extends BaseController
      * 查询产品信息列表
      */
     @RequiresPermissions("goods:info:list")
-    @GetMapping("/list")
+    @PostMapping("/list")
     public TableDataInfo list(GoodsSkuSnInfo goodsSkuSnInfo)
     {
         startPage();

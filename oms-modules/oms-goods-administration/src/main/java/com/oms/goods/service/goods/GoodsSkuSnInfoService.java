@@ -31,6 +31,14 @@ public interface GoodsSkuSnInfoService extends IService<GoodsSkuSnInfo> {
     public GoodsSkuSnInfo selectGoodsSkuSnInfoById(Long id);
 
     /**
+     * 查询产品信息
+     *
+     *@param goodsSkuSnInfo 产品信息
+     * @return 产品信息
+     */
+    public GoodsSkuSnInfo selectGoodsSkuSnInfo(GoodsSkuSnInfo goodsSkuSnInfo);
+
+    /**
      * 查询产品信息列表
      *
      * @param goodsSkuSnInfo 产品信息

@@ -1,4 +1,4 @@
-package com.ruoyi.goods.api.model;
+package com.oms.common.model.entity;
 
 import lombok.Data;
 

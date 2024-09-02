@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询产品信息列表
-export function listInfo(query) {
+export function listInfo(data) {
   return request({
     url: '/goods/info/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: data
   })
 }
 
@@ -14,7 +14,7 @@ export function exportListInfo(query) {
   return request({
     url: '/goods/goodsAdministration/list',
     method: 'post',
-    params: query
+    data: query
   })
 }
 

@@ -22,7 +22,6 @@
         <module name="ruoyi-common-datasource" />
         <module name="ruoyi-gateway" />
         <module name="ruoyi-modules-gen" />
-        <module name="ruoyi-api-oms" />
         <module name="ruoyi-visual-monitor" />
         <module name="ruoyi-common-seata" />
         <module name="ruoyi-auth" />

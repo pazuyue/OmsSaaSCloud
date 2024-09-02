@@ -90,6 +90,18 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
     }
 
     @Override
+    public GoodsSkuSnInfo selectGoodsSkuSnInfo(GoodsSkuSnInfo goodsSkuSnInfo) {
+        QueryWrapper<GoodsSkuSnInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getCompanyCode()),"company_code", goodsSkuSnInfo.getCompanyCode());
+        queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getSkuSn()),"sku_sn",goodsSkuSnInfo.getSkuSn());
+        queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getGoodsSn()),"goods_sn",goodsSkuSnInfo.getGoodsSn());
+        queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getBarcodeSn()),"barcode_sn",goodsSkuSnInfo.getBarcodeSn());
+        if (ObjectUtil.isNotEmpty(goodsSkuSnInfo.getId()))
+            queryWrapper.eq("id",goodsSkuSnInfo.getId());
+        return this.baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public List<GoodsSkuSnInfo> selectGoodsSkuSnInfoList(GoodsSkuSnInfo goodsSkuSnInfo) {
         QueryWrapper<GoodsSkuSnInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getCompanyCode()),"company_code", goodsSkuSnInfo.getCompanyCode());
