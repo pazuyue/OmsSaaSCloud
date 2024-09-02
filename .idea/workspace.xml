@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/NoTicketExcel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -303,14 +303,8 @@
       <workItem from="1724997212719" duration="10870000" />
       <workItem from="1725097269853" duration="601000" />
       <workItem from="1725097937562" duration="8797000" />
-      <workItem from="1725193776804" duration="2341000" />
-    </task>
-    <task id="LOCAL-00019" summary="OMS - 插件化实现">
-      <created>1722091411759</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1722091411759</updated>
+      <workItem from="1725193776804" duration="2474000" />
+      <workItem from="1725240378753" duration="1065000" />
     </task>
     <task id="LOCAL-00020" summary="OMS - 插件化实现">
       <created>1722135658300</created>
@@ -648,7 +642,14 @@
       <option name="project" value="LOCAL" />
       <updated>1725195550258</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="OMS - 采购入库单-导入-UI 调整">
+      <created>1725197681676</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1725197681676</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -666,7 +667,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 根据用户登录公司选择数据库" />
     <MESSAGE value="OMS - 日志输出" />
     <MESSAGE value="OMS - 插件化实现" />
     <MESSAGE value="OMS - 重新导入" />
@@ -691,7 +691,8 @@
     <MESSAGE value="OMS - 采购入库单" />
     <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
     <MESSAGE value="OMS - 采购入库单-UI 调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-UI 调整" />
+    <MESSAGE value="OMS - 采购入库单-导入-UI 调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS - 采购入库单-导入-UI 调整" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

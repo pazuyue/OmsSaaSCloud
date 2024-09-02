@@ -5,9 +5,11 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,7 @@ import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 采购入库通知单Controller
@@ -111,6 +114,26 @@ public class NoTicketsController extends BaseController
     {
         ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
         util.importTemplateExcel(response, "商品导入模板数据");
+    }
+
+
+    /**
+     * 商品导入
+     * @param file
+     * @return
+     */
+    @SneakyThrows
+    @PostMapping(value = "/import")
+    public AjaxResult export(MultipartFile file, String import_batch, String company_code) {
+        System.out.println("export:"+company_code);
+        try{
+            ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
+            List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
+            logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
+            return success("导入失败");
+        }catch (Exception e){
+            return error(e.getMessage());
+        }
     }
 }
 

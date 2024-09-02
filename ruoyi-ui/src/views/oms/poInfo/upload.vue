@@ -22,6 +22,10 @@
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
         </div>
       </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
     </el-dialog>
   </el-card>
 </el-row>
@@ -101,6 +105,10 @@ export default {
     },
     handleClose() {
       this.$emit('update:open', false); // 通知父组件关闭
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     },
   }
 }
