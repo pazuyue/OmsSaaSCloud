@@ -24,6 +24,12 @@
 
         <dependency>
             <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-api-oms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-security</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -39,6 +45,7 @@
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
         </dependency>
+
     </dependencies>
 
 </project>

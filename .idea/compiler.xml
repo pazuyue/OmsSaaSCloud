@@ -22,6 +22,7 @@
         <module name="ruoyi-common-datasource" />
         <module name="ruoyi-gateway" />
         <module name="ruoyi-modules-gen" />
+        <module name="ruoyi-api-oms" />
         <module name="ruoyi-visual-monitor" />
         <module name="ruoyi-common-seata" />
         <module name="ruoyi-auth" />
@@ -36,6 +37,7 @@
       <module name="oms-supplychain" target="1.8" />
       <module name="ruoyi" target="1.8" />
       <module name="ruoyi-api" target="1.8" />
+      <module name="ruoyi-api-oms" target="1.8" />
       <module name="ruoyi-api-system" target="1.8" />
       <module name="ruoyi-auth" target="1.8" />
       <module name="ruoyi-common" target="1.8" />

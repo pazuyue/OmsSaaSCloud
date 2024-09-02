@@ -9,8 +9,10 @@ import cn.hutool.core.util.ObjectUtil;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.goods.api.RemoteGoodsService;
+import com.ruoyi.goods.api.model.GoodsSkuSnInfo;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +42,8 @@ public class NoTicketsController extends BaseController
 {
     @Resource
     private INoTicketsService noTicketsService;
+    @Resource
+    private RemoteGoodsService remoteGoodsService;
 
     /**
      * 查询采购入库通知单列表
@@ -130,6 +134,8 @@ public class NoTicketsController extends BaseController
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
+            R<GoodsSkuSnInfo> list = remoteGoodsService.list(new GoodsSkuSnInfo());
+            logger.debug("list"+list.toString());
             return success("导入失败");
         }catch (Exception e){
             return error(e.getMessage());

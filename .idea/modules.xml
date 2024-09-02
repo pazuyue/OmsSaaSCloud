@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" filepath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi.iml" filepath="$PROJECT_DIR$/ruoyi.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" filepath="$PROJECT_DIR$/ruoyi-api/ruoyi-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/ruoyi-api-oms.iml" filepath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-oms/ruoyi-api-oms.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" filepath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/ruoyi-api-system.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-auth/ruoyi-auth.iml" filepath="$PROJECT_DIR$/ruoyi-auth/ruoyi-auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common.iml" filepath="$PROJECT_DIR$/ruoyi-common/ruoyi-common.iml" />
