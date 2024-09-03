@@ -9,6 +9,7 @@
         accept=".xlsx, .xls"
         :headers="upload.headers"
         :action="upload.url"
+        :data="additionalData"
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
@@ -41,14 +42,29 @@ export default {
       type: String,
       default: ''
     },
+    noTicket: {
+      type: Object,
+      default: ''
+    },
     open: {
       type: Boolean,
       default: false
     },
   },
+  computed: {
+    additionalData() {
+      console.log("additionalData", this.upload.noTicket)
+      return {
+        no_sn: this.upload.noTicket.noSn,
+      };
+    }
+  },
   watch: {
     open(newValue) {
       this.upload.open = newValue;
+    },
+    noTicket(newnoTicket){
+      this.upload.noTicket = newnoTicket;
     }
   },
   data: function() {
@@ -63,6 +79,7 @@ export default {
         title: this.title,
         // 是否禁用上传
         isUploading: false,
+        noTicket:this.noTicket,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址

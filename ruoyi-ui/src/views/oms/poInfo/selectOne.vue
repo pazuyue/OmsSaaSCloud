@@ -141,7 +141,7 @@
                 size="mini"
                 type="text"
                 icon="el-icon-plus"
-                @click="handleImport"
+                @click="handleImport(scope.row)"
                 v-hasPermi="['warehouse:noTickets:import']"
               >导入</el-button>
               <el-button
@@ -206,7 +206,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <noTicketsUpload :title="upload.title" :open="upload.open" @update:open="updateOpen"/>
+    <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" v-if="upload.open"/>
   </el-row>
 </template>
 <script>
@@ -333,9 +333,14 @@ export default {
         });
       }
     },
-    handleImport() {
+    handleImport(row) {
       console.log("商品导入")
       this.upload.title = "商品导入";
+      this.reset();
+      const id = row.id
+      getTickets(id).then(response => {
+        this.form = response.data;
+      });
       this.upload.open = true;
     },
     // 取消按钮

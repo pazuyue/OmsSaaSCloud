@@ -1,25 +1,24 @@
 package com.oms.supplychain.controller.warehouse;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oms.common.api.RemoteGoodsService;
 import com.oms.common.model.entity.GoodsSkuSnInfo;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
+import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
+import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
 import com.ruoyi.common.core.domain.R;
 import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
@@ -43,6 +42,8 @@ public class NoTicketsController extends BaseController
     private INoTicketsService noTicketsService;
     @Resource
     private RemoteGoodsService remoteGoodsService;
+    @Resource
+    private INoTicketsGoodsTmpService noTicketsGoodsTmpService;
 
     /**
      * 查询采购入库通知单列表
@@ -127,20 +128,65 @@ public class NoTicketsController extends BaseController
      */
     @SneakyThrows
     @PostMapping(value = "/import")
-    public AjaxResult export(MultipartFile file, String import_batch, String company_code) {
-        System.out.println("export:"+company_code);
+    public AjaxResult export(MultipartFile file,@RequestParam(value = "no_sn") String noSn,@RequestParam(value = "company_code") String companyCode) {
+        logger.debug("noSn:"+noSn);
+        logger.debug("companyCode:"+companyCode);
         try{
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
-            R<GoodsSkuSnInfo> list = remoteGoodsService.selectGoodsSkuSnInfo(new GoodsSkuSnInfo(), company_code);
-            logger.debug("getCode:"+list.getCode());
-            logger.debug("getMsg:"+list.getMsg());
-            logger.debug("getData:"+list.getData().toString());
-            return success("导入失败");
+            // 轮询 noTicketGoodsList
+            List<NoTicketsGoodsTmp> tmpList = new ArrayList<>();
+            for (NoTicketExcel item : noTicketGoodsList) {
+                // 在这里处理每一个 item
+                // 例如打印每个对象的信息
+                logger.debug("Processing item: " + item);
+                NoTicketsGoodsTmp tmp = formatNoTicketsGoodsTmp(item, noSn,companyCode);
+                logger.debug("formatNoTicketsGoodsTmp item: " + tmp);
+                tmpList.add(tmp);
+            }
+            logger.debug("tmpList:"+tmpList.toString());
+            boolean b = noTicketsGoodsTmpService.batchInsertNoTicketsGoodsTmp(tmpList);
+            if (b){
+                return success("导入成功");
+            }
+            return error("导入失败");
         }catch (Exception e){
+            logger.error("导入失败",e);
             return error(e.getMessage());
         }
+    }
+
+    /**
+     * 格式化导入信息
+     * @param noTicketExcel
+     * @param noSn
+     * @param companyCode
+     * @return
+     */
+    public NoTicketsGoodsTmp formatNoTicketsGoodsTmp(NoTicketExcel noTicketExcel, String noSn,String companyCode) {
+        NoTicketsGoodsTmp tmp = new NoTicketsGoodsTmp();
+        String skuSn = noTicketExcel.getSkuSn();
+        BigDecimal purchasePrice = noTicketExcel.getPurchasePrice();
+        int zpNumberExpected = noTicketExcel.getNumberExpected();
+        GoodsSkuSnInfo goodsSkuSnInfo = new GoodsSkuSnInfo();
+        goodsSkuSnInfo.setSkuSn(skuSn);
+        R<GoodsSkuSnInfo> goodsSkuSnInfoR = remoteGoodsService.selectGoodsSkuSnInfo(goodsSkuSnInfo, companyCode);
+        // 执行其他操作...
+        if (!R.isSuccess(goodsSkuSnInfoR)){
+            tmp.setErrorInfo("导入商品不存在");
+        }else {
+            GoodsSkuSnInfo one = goodsSkuSnInfoR.getData();
+            tmp.setGoodsSn(one.getGoodsSn());
+            tmp.setBarcodeSn(one.getBarcodeSn());
+            tmp.setGoodsName(one.getGoodsName());
+        }
+        tmp.setCompanyCode(companyCode);
+        tmp.setNoSn(noSn);
+        tmp.setSkuSn(skuSn);
+        tmp.setPurchasePrice(purchasePrice);
+        tmp.setZpNumberExpected(zpNumberExpected);
+        return tmp;
     }
 }
 
