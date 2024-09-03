@@ -1,6 +1,7 @@
 package com.oms.supplychain.service.warehouse;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public interface INoTicketsGoodsTmpService extends IService<NoTicketsGoodsTmp>
      */
     public int insertNoTicketsGoodsTmp(NoTicketsGoodsTmp noTicketsGoodsTmp);
 
-    public boolean batchInsertNoTicketsGoodsTmp(List<NoTicketsGoodsTmp> noTicketsGoodsTmpList);
+    public boolean batchInsertNoTicketsGoodsTmp(List<NoTicketExcel> noTicketGoodsList,String noSn,String companyCode);
 
     /**
      * 修改入库通知单明细-未送审

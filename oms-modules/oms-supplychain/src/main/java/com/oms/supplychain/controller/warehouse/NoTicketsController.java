@@ -41,8 +41,6 @@ public class NoTicketsController extends BaseController
     @Resource
     private INoTicketsService noTicketsService;
     @Resource
-    private RemoteGoodsService remoteGoodsService;
-    @Resource
     private INoTicketsGoodsTmpService noTicketsGoodsTmpService;
 
     /**
@@ -135,18 +133,7 @@ public class NoTicketsController extends BaseController
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
-            // 轮询 noTicketGoodsList
-            List<NoTicketsGoodsTmp> tmpList = new ArrayList<>();
-            for (NoTicketExcel item : noTicketGoodsList) {
-                // 在这里处理每一个 item
-                // 例如打印每个对象的信息
-                logger.debug("Processing item: " + item);
-                NoTicketsGoodsTmp tmp = formatNoTicketsGoodsTmp(item, noSn,companyCode);
-                logger.debug("formatNoTicketsGoodsTmp item: " + tmp);
-                tmpList.add(tmp);
-            }
-            logger.debug("tmpList:"+tmpList.toString());
-            boolean b = noTicketsGoodsTmpService.batchInsertNoTicketsGoodsTmp(tmpList);
+            boolean b = noTicketsGoodsTmpService.batchInsertNoTicketsGoodsTmp(noTicketGoodsList, noSn, companyCode);
             if (b){
                 return success("导入成功");
             }
@@ -155,38 +142,6 @@ public class NoTicketsController extends BaseController
             logger.error("导入失败",e);
             return error(e.getMessage());
         }
-    }
-
-    /**
-     * 格式化导入信息
-     * @param noTicketExcel
-     * @param noSn
-     * @param companyCode
-     * @return
-     */
-    public NoTicketsGoodsTmp formatNoTicketsGoodsTmp(NoTicketExcel noTicketExcel, String noSn,String companyCode) {
-        NoTicketsGoodsTmp tmp = new NoTicketsGoodsTmp();
-        String skuSn = noTicketExcel.getSkuSn();
-        BigDecimal purchasePrice = noTicketExcel.getPurchasePrice();
-        int zpNumberExpected = noTicketExcel.getNumberExpected();
-        GoodsSkuSnInfo goodsSkuSnInfo = new GoodsSkuSnInfo();
-        goodsSkuSnInfo.setSkuSn(skuSn);
-        R<GoodsSkuSnInfo> goodsSkuSnInfoR = remoteGoodsService.selectGoodsSkuSnInfo(goodsSkuSnInfo, companyCode);
-        // 执行其他操作...
-        if (!R.isSuccess(goodsSkuSnInfoR)){
-            tmp.setErrorInfo("导入商品不存在");
-        }else {
-            GoodsSkuSnInfo one = goodsSkuSnInfoR.getData();
-            tmp.setGoodsSn(one.getGoodsSn());
-            tmp.setBarcodeSn(one.getBarcodeSn());
-            tmp.setGoodsName(one.getGoodsName());
-        }
-        tmp.setCompanyCode(companyCode);
-        tmp.setNoSn(noSn);
-        tmp.setSkuSn(skuSn);
-        tmp.setPurchasePrice(purchasePrice);
-        tmp.setZpNumberExpected(zpNumberExpected);
-        return tmp;
     }
 }
 

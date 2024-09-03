@@ -1,14 +1,21 @@
 package com.oms.supplychain.service.warehouse.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.oms.common.api.RemoteGoodsService;
+import com.oms.common.model.entity.GoodsSkuSnInfo;
 import com.oms.supplychain.mapper.warehouse.NoTicketsGoodsTmpMapper;
+import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
+import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +32,9 @@ import javax.annotation.Resource;
 @Service
 public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpMapper, NoTicketsGoodsTmp> implements INoTicketsGoodsTmpService
 {
+
+    @Resource
+    private RemoteGoodsService remoteGoodsService;
 
     @Override
     public NoTicketsGoodsTmp selectNoTicketsGoodsTmpById(Long id) {
@@ -57,9 +67,22 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
 
     @Override
     @Transactional
-    public boolean batchInsertNoTicketsGoodsTmp(List<NoTicketsGoodsTmp> noTicketsGoodsTmpList) {
-        log.debug("noTicketsGoodsTmpList:"+noTicketsGoodsTmpList);
-        return this.saveBatch(noTicketsGoodsTmpList);
+    public boolean batchInsertNoTicketsGoodsTmp(List<NoTicketExcel> noTicketGoodsList,String noSn,String companyCode) {
+        log.debug("noTicketsGoodsTmpList:"+noTicketGoodsList);
+        QueryWrapper<NoTicketsGoodsTmp> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("no_sn", noSn);
+        this.remove(queryWrapper);
+        // 轮询 noTicketGoodsList
+        List<NoTicketsGoodsTmp> tmpList = new ArrayList<>();
+        for (NoTicketExcel item : noTicketGoodsList) {
+            // 在这里处理每一个 item
+            // 例如打印每个对象的信息
+            log.debug("Processing item: " + item);
+            NoTicketsGoodsTmp tmp = formatNoTicketsGoodsTmp(item, noSn,companyCode);
+            log.debug("formatNoTicketsGoodsTmp item: " + tmp);
+            tmpList.add(tmp);
+        }
+        return this.saveBatch(tmpList);
     }
 
     @Override
@@ -75,6 +98,45 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
     @Override
     public int deleteNoTicketsGoodsTmpById(Long id) {
         return this.baseMapper.deleteById(id);
+    }
+
+
+    /**
+     * 格式化导入信息
+     * @param noTicketExcel
+     * @param noSn
+     * @param companyCode
+     * @return
+     */
+    public NoTicketsGoodsTmp formatNoTicketsGoodsTmp(NoTicketExcel noTicketExcel, String noSn,String companyCode) {
+        NoTicketsGoodsTmp tmp = new NoTicketsGoodsTmp();
+        String skuSn = noTicketExcel.getSkuSn();
+        BigDecimal purchasePrice = noTicketExcel.getPurchasePrice();
+        int zpNumberExpected = noTicketExcel.getNumberExpected();
+        GoodsSkuSnInfo goodsSkuSnInfo = new GoodsSkuSnInfo();
+        goodsSkuSnInfo.setSkuSn(skuSn);
+        R<GoodsSkuSnInfo> goodsSkuSnInfoR = remoteGoodsService.selectGoodsSkuSnInfo(goodsSkuSnInfo, companyCode);
+
+        // 执行其他操作...
+        if (!R.isSuccess(goodsSkuSnInfoR)){
+            tmp.setErrorInfo("商品服务异常");
+        }else {
+            GoodsSkuSnInfo one = goodsSkuSnInfoR.getData();
+            if (ObjectUtil.isEmpty(one)){
+                tmp.setErrorInfo("导入商品不存在");
+            }else {
+                tmp.setGoodsSn(one.getGoodsSn());
+                tmp.setBarcodeSn(one.getBarcodeSn());
+                tmp.setGoodsName(one.getGoodsName());
+            }
+
+        }
+        tmp.setCompanyCode(companyCode);
+        tmp.setNoSn(noSn);
+        tmp.setSkuSn(skuSn);
+        tmp.setPurchasePrice(purchasePrice);
+        tmp.setZpNumberExpected(zpNumberExpected);
+        return tmp;
     }
 }
 

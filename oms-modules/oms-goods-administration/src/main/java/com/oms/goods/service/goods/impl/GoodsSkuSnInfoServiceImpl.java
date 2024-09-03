@@ -91,6 +91,7 @@ public class GoodsSkuSnInfoServiceImpl extends ServiceImpl<GoodsSkuSnInfoMapper,
 
     @Override
     public GoodsSkuSnInfo selectGoodsSkuSnInfo(GoodsSkuSnInfo goodsSkuSnInfo) {
+        log.debug("selectGoodsSkuSnInfo "+goodsSkuSnInfo);
         QueryWrapper<GoodsSkuSnInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getCompanyCode()),"company_code", goodsSkuSnInfo.getCompanyCode());
         queryWrapper.eq(StringUtils.isNotEmpty(goodsSkuSnInfo.getSkuSn()),"sku_sn",goodsSkuSnInfo.getSkuSn());

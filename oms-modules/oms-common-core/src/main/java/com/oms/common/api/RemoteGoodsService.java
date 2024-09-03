@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(contextId = "remoteGoodsService", value = ServiceNameConstants.OMS_GOODS_SERVICE, fallbackFactory = RemoteGoodsFallbackFactory.class)
@@ -19,5 +20,5 @@ public interface RemoteGoodsService {
      * @return
      */
     @PostMapping(value = "/api/goods/getOne")
-    public R<GoodsSkuSnInfo> selectGoodsSkuSnInfo(GoodsSkuSnInfo goodsSkuSnInfo,@RequestParam("company_code") String company_code);
+    public R<GoodsSkuSnInfo> selectGoodsSkuSnInfo(@RequestBody GoodsSkuSnInfo goodsSkuSnInfo, @RequestParam("company_code") String company_code);
 }
