@@ -1,22 +1,13 @@
 package com.oms.supplychain.controller.warehouse;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.oms.common.api.RemoteGoodsService;
-import com.oms.common.model.entity.GoodsSkuSnInfo;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
-import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
-import com.ruoyi.common.core.domain.R;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.log.annotation.Log;
@@ -42,6 +33,9 @@ public class NoTicketsController extends BaseController
     private INoTicketsService noTicketsService;
     @Resource
     private INoTicketsGoodsTmpService noTicketsGoodsTmpService;
+
+    private static final int AUDIT = 2;
+    private static final int CREATE = 1;
 
     /**
      * 查询采购入库通知单列表
@@ -130,11 +124,21 @@ public class NoTicketsController extends BaseController
         logger.debug("noSn:"+noSn);
         logger.debug("companyCode:"+companyCode);
         try{
+            NoTickets s = new NoTickets();
+            s.setNoState(CREATE);
+            s.setNoSn(noSn);
+            List<NoTickets> noTickets = noTicketsService.selectNoTicketsList(s);
+            if (noTickets.isEmpty()){
+                return error("有效入库通知单不存在");
+            }
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
             boolean b = noTicketsGoodsTmpService.batchInsertNoTicketsGoodsTmp(noTicketGoodsList, noSn, companyCode);
             if (b){
+                NoTickets tickets = noTickets.get(0);
+                tickets.setNoState(AUDIT);
+                noTicketsService.updateNoTickets(tickets);
                 return success("导入成功");
             }
             return error("导入失败");
