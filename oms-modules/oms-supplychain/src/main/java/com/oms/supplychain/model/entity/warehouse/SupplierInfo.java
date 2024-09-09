@@ -3,6 +3,7 @@ package com.oms.supplychain.model.entity.warehouse;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,51 +28,61 @@ public class SupplierInfo implements Serializable {
     /**
      * 供应商编码
      */
+    @Excel(name = "供应商编码")
     private String supplierSn;
 
     /**
      * 供应商简称
      */
+    @Excel(name = "供应商简称")
     private String supplierName;
 
     /**
      * 公司全称
      */
+    @Excel(name = "公司全称")
     private String companyName;
 
     /**
      * 联系人
      */
+    @Excel(name = "联系人")
     private String contactUser;
 
     /**
      * 联系电话
      */
+    @Excel(name = "联系电话")
     private String contactTel;
 
     /**
      * 省
      */
+    @Excel(name = "省")
     private String contactProvince;
 
     /**
      * 市
      */
+    @Excel(name = "市")
     private String contactCity;
 
     /**
      * 区
      */
+    @Excel(name = "区")
     private String contactArea;
 
     /**
      * 联系人地址
      */
+    @Excel(name = "联系人地址")
     private String contactAddress;
 
     /**
      * 操作用户
      */
+    @Excel(name = "操作用户")
     private String perationUser;
     private Date createTime;
 

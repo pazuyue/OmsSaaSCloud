@@ -215,7 +215,7 @@
     </el-dialog>
     <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" v-if="upload.open"/>
 
-    <noTicketsTmpList :data="noTicketsTmp.data" :title="noTicketsTmp.title" :open="noTicketsTmp.open" @update:open="updateOpen2" v-if="noTicketsTmp.open"/>
+    <noTicketsTmpList :data="noTicketsTmp.data" :noTicketsTmpTitle="noTicketsTmp.title" :noTicketsTmpOpen="noTicketsTmp.open" @update:noTicketsTmpOpen="updateOpen2" v-if="noTicketsTmp.open"/>
   </el-row>
 </template>
 <script>
@@ -452,7 +452,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/tickets/export', {
+      this.download('supplychain/noTickets/export', {
         ...this.queryParams
       }, `tickets_${new Date().getTime()}.xlsx`)
     },

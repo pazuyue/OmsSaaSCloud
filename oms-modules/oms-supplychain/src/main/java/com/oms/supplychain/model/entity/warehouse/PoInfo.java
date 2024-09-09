@@ -3,6 +3,7 @@ package com.oms.supplychain.model.entity.warehouse;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,56 +29,67 @@ public class PoInfo implements Serializable {
     /**
      * 采购单号
      */
+    @Excel(name = "采购单号")
     private String poSn;
 
     /**
      * 采购单名称
      */
+    @Excel(name = "采购单名称")
     private String poName;
 
     /**
      * 1 新建 2 待收货 3 收货中 4 已完结 -1 已作废
      */
+    @Excel(name = "状态【1 新建 2 待收货 3 收货中 4 已完结 -1 已作废】")
     private Integer poState;
 
     /**
      * 供应商编码
      */
+    @Excel(name = "供应商编码")
     private String supplierSn;
 
     /**
      * 采购部门
      */
+    @Excel(name = "采购部门")
     private String departmentCode;
 
     /**
      * 入库仓库编码
      */
+    @Excel(name = "入库仓库编码")
     private String wmsSimulationCode;
 
     /**
      * 计划入库数量
      */
+    @Excel(name = "计划入库数量")
     private Integer numberExpected;
 
     /**
      * 实际入库数量
      */
+    @Excel(name = "实际入库数量")
     private Integer numberActually;
 
     /**
      * 操作人
      */
+    @Excel(name = "操作人")
     private String perationUser;
 
     /**
      * 创建时间
      */
+    @Excel(name = "创建时间")
     private Date createTime;
 
     /**
      * 修改时间
      */
+    @Excel(name = "修改时间")
     private Date modifyTime;
 
     /**
@@ -88,25 +100,30 @@ public class PoInfo implements Serializable {
     /**
      * 备注
      */
+    @Excel(name = "备注")
     private String remarks;
 
     /**
      * 计划入库货值
      */
+    @Excel(name = "计划入库货值")
     private BigDecimal moneyExpected;
 
     /**
      * 实际入库货值
      */
+    @Excel(name = "实际入库货值")
     private BigDecimal moneyActually;
 
     /**
      * 来源
      */
+    @Excel(name = "来源")
     private String comeFrom;
 
     /**
      * 1 真实出库 2 虚拟出库
      */
+    @Excel(name = "出入库状态【1 真实出库 2 虚拟出库】")
     private Byte actualWarehouse;
 }
