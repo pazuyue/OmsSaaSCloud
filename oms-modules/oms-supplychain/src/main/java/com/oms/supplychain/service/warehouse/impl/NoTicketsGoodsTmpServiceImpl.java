@@ -17,6 +17,7 @@ import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,8 +87,17 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
     }
 
     @Override
-    public int updateNoTicketsGoodsTmp(NoTicketsGoodsTmp noTicketsGoodsTmp) {
-        return this.baseMapper.updateById(noTicketsGoodsTmp);
+    public int updateNoTicketsGoodsTmp(NoTicketsGoodsTmp noTicketsGoodsTmp,String companyCode) {
+        GoodsSkuSnInfo goodsSkuSnInfo = new GoodsSkuSnInfo();
+        goodsSkuSnInfo.setSkuSn(noTicketsGoodsTmp.getSkuSn());
+        String noSn = noTicketsGoodsTmp.getNoSn();
+        NoTicketExcel noTicketExcel = new NoTicketExcel();
+        noTicketExcel.setSkuSn(noTicketsGoodsTmp.getSkuSn());
+        noTicketExcel.setPurchasePrice(noTicketsGoodsTmp.getPurchasePrice());
+        noTicketExcel.setNumberExpected(noTicketsGoodsTmp.getZpNumberExpected());
+        NoTicketsGoodsTmp tmp = formatNoTicketsGoodsTmp(noTicketExcel, noSn,companyCode);
+        tmp.setId(noTicketsGoodsTmp.getId());
+        return this.baseMapper.updateById(tmp);
     }
 
     @Override
@@ -123,11 +133,15 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
         }else {
             GoodsSkuSnInfo one = goodsSkuSnInfoR.getData();
             if (ObjectUtil.isEmpty(one)){
+                tmp.setGoodsSn("");
+                tmp.setBarcodeSn("");
+                tmp.setGoodsSn("");
                 tmp.setErrorInfo("导入商品不存在");
             }else {
                 tmp.setGoodsSn(one.getGoodsSn());
                 tmp.setBarcodeSn(one.getBarcodeSn());
                 tmp.setGoodsName(one.getGoodsName());
+                tmp.setErrorInfo("");
             }
 
         }

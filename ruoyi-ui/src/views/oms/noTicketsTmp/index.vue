@@ -93,7 +93,6 @@
         <el-table-column label="ID" align="center" prop="id" />
         <el-table-column label="入库单号" align="center" prop="noSn" />
         <el-table-column label="sku_sn" align="center" prop="skuSn" />
-        <el-table-column label="批次" align="center" prop="batchCode" />
         <el-table-column label="条形码" align="center" prop="barcodeSn" />
         <el-table-column label="货号" align="center" prop="goodsSn" />
         <el-table-column label="产品名称" align="center" prop="goodsName" />
@@ -138,42 +137,16 @@
       <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
         <el-form ref="form" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="入库单号" prop="noSn">
-            <el-input v-model="form.noSn" placeholder="请输入入库单号" />
+            <el-input v-model="form.noSn" placeholder="请输入入库单号" readonly />
           </el-form-item>
           <el-form-item label="sku_sn" prop="skuSn">
             <el-input v-model="form.skuSn" placeholder="请输入sku_sn" />
-          </el-form-item>
-          <el-form-item label="批次" prop="batchCode">
-            <el-input v-model="form.batchCode" placeholder="请输入批次" />
-          </el-form-item>
-          <el-form-item label="条形码" prop="barcodeSn">
-            <el-input v-model="form.barcodeSn" placeholder="请输入条形码" />
-          </el-form-item>
-          <el-form-item label="货号" prop="goodsSn">
-            <el-input v-model="form.goodsSn" placeholder="请输入货号" />
-          </el-form-item>
-          <el-form-item label="产品名称" prop="goodsName">
-            <el-input v-model="form.goodsName" placeholder="请输入产品名称" />
           </el-form-item>
           <el-form-item label="采购价格" prop="purchasePrice">
             <el-input v-model="form.purchasePrice" placeholder="请输入采购价格" />
           </el-form-item>
           <el-form-item label="计划入库-正品数量" prop="zpNumberExpected">
             <el-input v-model="form.zpNumberExpected" placeholder="请输入计划入库-正品数量" />
-          </el-form-item>
-          <el-form-item label="公司编码" prop="companyCode">
-            <el-input v-model="form.companyCode" placeholder="请输入公司编码" />
-          </el-form-item>
-          <el-form-item label="错误信息" prop="errorInfo">
-            <el-input v-model="form.errorInfo" placeholder="请输入错误信息" />
-          </el-form-item>
-          <el-form-item label="修改时间" prop="modifyTime">
-            <el-date-picker clearable
-                            v-model="form.modifyTime"
-                            type="date"
-                            value-format="yyyy-MM-dd"
-                            placeholder="请选择修改时间">
-            </el-date-picker>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -230,7 +203,6 @@ export default {
         pageSize: 10,
         noSn: null,
         skuSn: null,
-        batchCode: null,
         barcodeSn: null,
         goodsSn: null,
         goodsName: null,
@@ -249,9 +221,6 @@ export default {
         ],
         skuSn: [
           { required: true, message: "sku_sn不能为空", trigger: "blur" }
-        ],
-        batchCode: [
-          { required: true, message: "批次不能为空", trigger: "blur" }
         ],
         barcodeSn: [
           { required: true, message: "条形码不能为空", trigger: "blur" }
@@ -298,7 +267,6 @@ export default {
         id: null,
         noSn: null,
         skuSn: null,
-        batchCode: null,
         barcodeSn: null,
         goodsSn: null,
         goodsName: null,

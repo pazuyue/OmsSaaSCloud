@@ -4,17 +4,12 @@ import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
@@ -73,7 +68,7 @@ public class NoTicketsTmpController extends BaseController
      * 新增入库通知单明细-未送审
      */
     @RequiresPermissions("warehouse:noTicketsTmp:add")
-    @Log(title = "入库通知单明细-未送审", businessType = BusinessType.INSERT)
+    @Log(title = "新增入库通知单明细-未送审", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody NoTicketsGoodsTmp noTicketsGoodsTmp)
     {
@@ -84,11 +79,11 @@ public class NoTicketsTmpController extends BaseController
      * 修改入库通知单明细-未送审
      */
     @RequiresPermissions("warehouse:noTicketsTmp:edit")
-    @Log(title = "入库通知单明细-未送审", businessType = BusinessType.UPDATE)
+    @Log(title = "修改入库通知单明细-未送审", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody NoTicketsGoodsTmp noTicketsGoodsTmp)
+    public AjaxResult edit(@RequestBody NoTicketsGoodsTmp noTicketsGoodsTmp,@RequestParam(value = "company_code") String companyCode)
     {
-        return toAjax(noTicketsGoodsTmpService.updateNoTicketsGoodsTmp(noTicketsGoodsTmp));
+        return toAjax(noTicketsGoodsTmpService.updateNoTicketsGoodsTmp(noTicketsGoodsTmp,companyCode));
     }
 
     /**

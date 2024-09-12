@@ -46,7 +46,7 @@ public interface INoTicketsGoodsTmpService extends IService<NoTicketsGoodsTmp>
      * @param noTicketsGoodsTmp 入库通知单明细-未送审
      * @return 结果
      */
-    public int updateNoTicketsGoodsTmp(NoTicketsGoodsTmp noTicketsGoodsTmp);
+    public int updateNoTicketsGoodsTmp(NoTicketsGoodsTmp noTicketsGoodsTmp,String companyCode);
 
     /**
      * 批量删除入库通知单明细-未送审

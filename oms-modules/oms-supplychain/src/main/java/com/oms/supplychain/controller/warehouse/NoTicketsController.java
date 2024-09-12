@@ -131,13 +131,13 @@ public class NoTicketsController extends BaseController
             if (noTickets.isEmpty()){
                 return error("有效入库通知单不存在");
             }
+
             ExcelUtil<NoTicketExcel> util = new ExcelUtil<>(NoTicketExcel.class);
             List<NoTicketExcel> noTicketGoodsList = util.importExcel(file.getInputStream());
             logger.debug("noTicketGoodsList:"+noTicketGoodsList.toString());
             boolean b = noTicketsGoodsTmpService.batchInsertNoTicketsGoodsTmp(noTicketGoodsList, noSn, companyCode);
             if (b){
                 NoTickets tickets = noTickets.get(0);
-                tickets.setNoState(AUDIT);
                 noTicketsService.updateNoTickets(tickets);
                 return success("导入成功");
             }
