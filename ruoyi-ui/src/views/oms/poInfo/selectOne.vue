@@ -144,13 +144,13 @@
                 @click="handleImport(scope.row)"
                 v-hasPermi="['warehouse:noTickets:import']"
               >导入</el-button>
-              <el-button
+<!--              <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-check"
                 @click="handleToExamine(scope.row)"
                 v-hasPermi="['warehouse:noTicketsTmp:list']"
-              >审核</el-button>
+              >审核</el-button>-->
               <el-button
                 size="mini"
                 type="text"
@@ -213,9 +213,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" v-if="upload.open"/>
+    <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" @update:open2="updateOpen2" v-if="upload.open2"  />
 
-    <noTicketsTmpList :data="noTicketsTmp.data" :noTicketsTmpTitle="noTicketsTmp.title" :noTicketsTmpOpen="noTicketsTmp.open" @update:noTicketsTmpOpen="updateOpen2" v-if="noTicketsTmp.open"/>
   </el-row>
 </template>
 <script>
@@ -223,11 +222,10 @@ import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "
 import {getPoInfo} from "@/api/poInfo/poInfo";
 import {listSimulationStore} from "@/api/simulationStore/simulationStore";
 import noTicketsUpload from "./upload";
-import noTicketsTmpList from "./../noTicketsTmp/index"
 
 export default {
   name: "SelectOne",
-  components: {noTicketsUpload,noTicketsTmpList},
+  components: {noTicketsUpload},
   dicts: ['po_state','actual_warehouse','no_state'],
   props: {
     open2: {
@@ -267,15 +265,9 @@ export default {
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
+        open2:false,
         // 弹出层标题
         title:'',
-      },
-      noTicketsTmp: {
-        // 是否显示弹出层（用户导入）
-        open: false,
-        // 弹出层标题
-        title:'',
-        data: {}
       },
       localOpen2: this.open2,
       poInfo:{},
@@ -359,14 +351,10 @@ export default {
         this.form = response.data;
       });
       this.upload.open = true;
+      this.upload.open2 = true;
     },
     handleToExamine(row){
-      const no_sn = row.noSn
-      this.noTicketsTmp.open = true
-      this.noTicketsTmp.data = {
-        noSn: no_sn
-      }
-      this.noTicketsTmp.title = "导入商品信息"
+
     },
     // 取消按钮
     cancel() {
@@ -474,8 +462,9 @@ export default {
       this.upload.open = value;
     },
     updateOpen2(value){
-      this.noTicketsTmp.open = value;
-    }
+      this.upload.open2 = value;
+    },
+
   }
 };
 </script>

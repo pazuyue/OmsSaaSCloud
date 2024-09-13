@@ -29,14 +29,16 @@
       </div>
     </el-dialog>
   </el-card>
+  <noTicketsTmpList :data="noTicketsTmp.data" :noTicketsTmpTitle="noTicketsTmp.title" :noTicketsTmpOpen="noTicketsTmp.open" @update:noTicketsTmpOpen="updateOpen2" v-if="noTicketsTmp.open"/>
 </el-row>
 </template>
 
 <script>
 import {getToken} from "@/utils/auth";
-
+import noTicketsTmpList from "./../noTicketsTmp/index"
 export default {
   name: "noTicketsUpload",
+  components: {noTicketsTmpList},
   props: {
     title: {
       type: String,
@@ -59,9 +61,6 @@ export default {
     }
   },
   watch: {
-    open(newValue) {
-      this.upload.open = newValue;
-    },
     noTicket(newnoTicket){
       this.upload.noTicket = newnoTicket;
     }
@@ -69,6 +68,13 @@ export default {
   data: function() {
     return {
       loading:false,
+      noTicketsTmp: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题
+        title:'',
+        data: {}
+      },
       upload: {
         // 是否显示弹出层（用户导入）
         open: this.open,
@@ -109,6 +115,12 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       if (response.code===200){
+        const no_sn = this.upload.noTicket.noSn
+        this.noTicketsTmp.open = true
+        this.noTicketsTmp.data = {
+          noSn: no_sn
+        }
+        this.noTicketsTmp.title = "导入商品信息"
         this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>导入成功</div>", "导入结果", { dangerouslyUseHTMLString: true });
       }else {
         this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>"+response.msg+"</div>", "导入结果", { dangerouslyUseHTMLString: true });
@@ -121,10 +133,15 @@ export default {
     handleClose() {
       this.$emit('update:open', false); // 通知父组件关闭
     },
+    updateOpen2(value){
+      this.noTicketsTmp.open = value;
+      this.$emit('update:open2', false); // 通知父组件关闭
+    },
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
     },
+
   }
 }
 </script>
