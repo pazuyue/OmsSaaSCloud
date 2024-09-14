@@ -3,6 +3,7 @@ package com.oms.supplychain.service.warehouse.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.NoTicketsMapper;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
@@ -18,6 +19,11 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public NoTickets selectNoTicketsById(Integer id) {
         return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public NoTickets getOne(QueryWrapper queryWrapper) {
+        return this.baseMapper.selectOne(queryWrapper);
     }
 
     @Override
@@ -48,6 +54,11 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public int updateNoTickets(NoTickets noTickets) {
         return this.baseMapper.updateById(noTickets);
+    }
+
+    @Override
+    public boolean updateNoTicketsByWrapper(NoTickets noTickets, UpdateWrapper updateWrapper) {
+        return this.baseMapper.update(noTickets,updateWrapper) > 0;
     }
 
     @Override

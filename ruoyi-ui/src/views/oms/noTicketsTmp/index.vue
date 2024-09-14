@@ -133,6 +133,12 @@
         @pagination="getList"
       />
 
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitExamine">提交审核</el-button>
+        <el-button @click="cancelM">取 消</el-button>
+      </div>
+
+
       <!-- 添加或修改入库通知单明细-未送审对话框 -->
       <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
         <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -256,10 +262,18 @@ export default {
         this.loading = false;
       });
     },
+    // 提交审核
+    submitExamine(){
+
+    },
     // 取消按钮
     cancel() {
       this.open = false;
       this.reset();
+    },
+    // 取消按钮
+    cancelM() {
+      this.$emit('update:noTicketsTmpOpen', false); // 通知父组件关闭
     },
     // 表单重置
     reset() {

@@ -63,5 +63,8 @@ public interface INoTicketsGoodsTmpService extends IService<NoTicketsGoodsTmp>
      * @return 结果
      */
     public int deleteNoTicketsGoodsTmpById(Long id);
+
+
+    public boolean submitExamine(String noSn,String companyCode);
 }
 

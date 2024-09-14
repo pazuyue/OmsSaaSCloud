@@ -4,10 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="入库通知单数据导入-维护">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/NoTicketsGoodsMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/enmus/DocumentState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/NoTicketsGoods.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsGoodsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsGoodsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/selectOne.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/poInfo/upload.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsTmpController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsTmpController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsGoodsTmpService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsGoodsTmpService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsGoodsTmpServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsGoodsTmpServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTicketsTmp/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTicketsTmp/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,11 +113,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.oms.common.factory" />
-      <recent name="com.oms.common.model.entity" />
-      <recent name="com.ruoyi.goods.api.model" />
-      <recent name="com.oms.common.constant" />
-      <recent name="com.oms.remote.model.goods" />
+      <recent name="com.oms.supplychain.model.enmus" />
+      <recent name="com.oms.supplychain.mapper.warehouse" />
+      <recent name="com.oms.supplychain.service.warehouse.impl" />
+      <recent name="com.oms.supplychain.service.warehouse" />
+      <recent name="com.oms.supplychain.model.entity.warehouse" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -311,14 +320,8 @@
       <workItem from="1725519971589" duration="6779000" />
       <workItem from="1725529221273" duration="23000" />
       <workItem from="1725870683382" duration="145808000" />
-      <workItem from="1726120998487" duration="7559000" />
-    </task>
-    <task id="LOCAL-00031" summary="OMS - 商品管理 - 导入信息展示">
-      <created>1722577422287</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1722577422287</updated>
+      <workItem from="1726120998487" duration="8326000" />
+      <workItem from="1726277889702" duration="3179000" />
     </task>
     <task id="LOCAL-00032" summary="OMS - 商品管理 - 导入信息展示">
       <created>1722587709368</created>
@@ -656,7 +659,14 @@
       <option name="project" value="LOCAL" />
       <updated>1726135683064</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="入库通知单数据导入-维护">
+      <created>1726194539890</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1726194539890</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -674,7 +684,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 商品管理" />
     <MESSAGE value="OMS - 商品管理 - 导入" />
     <MESSAGE value="OMS - 商品管理 - 导入信息展示" />
     <MESSAGE value="OMS - 商品管理 - 导入信息审核" />
@@ -699,7 +708,8 @@
     <MESSAGE value="入库通知单数据导入" />
     <MESSAGE value="入库通知单数据导入-审核" />
     <MESSAGE value="入库通知单数据导入-更新" />
-    <option name="LAST_COMMIT_MESSAGE" value="入库通知单数据导入-更新" />
+    <MESSAGE value="入库通知单数据导入-维护" />
+    <option name="LAST_COMMIT_MESSAGE" value="入库通知单数据导入-维护" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

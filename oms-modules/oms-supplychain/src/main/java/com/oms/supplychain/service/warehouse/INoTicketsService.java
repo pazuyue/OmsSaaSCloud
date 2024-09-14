@@ -2,6 +2,8 @@ package com.oms.supplychain.service.warehouse;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 
 /**
@@ -20,6 +22,8 @@ public interface INoTicketsService
      */
     public NoTickets selectNoTicketsById(Integer id);
 
+
+    public NoTickets getOne(QueryWrapper queryWrapper);
     /**
      * 查询采购入库通知单列表
      *
@@ -43,6 +47,8 @@ public interface INoTicketsService
      * @return 结果
      */
     public int updateNoTickets(NoTickets noTickets);
+
+    public boolean updateNoTicketsByWrapper(NoTickets noTickets, UpdateWrapper updateWrapper);
 
     /**
      * 批量删除采购入库通知单

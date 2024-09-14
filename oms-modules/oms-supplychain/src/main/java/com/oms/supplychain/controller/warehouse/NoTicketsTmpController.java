@@ -4,6 +4,7 @@ import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -95,6 +96,20 @@ public class NoTicketsTmpController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(noTicketsGoodsTmpService.deleteNoTicketsGoodsTmpByIds(ids));
+    }
+
+
+    /**
+     * 提交审核
+     * @param noSn
+     * @return
+     */
+    @SneakyThrows
+    @PostMapping(value = "/submitExamine")
+    public AjaxResult submitExamine(@RequestParam(value = "no_sn") String noSn,@RequestParam(value = "company_code") String companyCode){
+        if (noTicketsGoodsTmpService.submitExamine(noSn,companyCode))
+            return success();
+        return error("审核失败");
     }
 }
 
