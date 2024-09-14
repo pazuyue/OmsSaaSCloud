@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import {listTmp, getTmp, delTmp, addTmp, updateTmp} from "@/api/noTicketTmp/noTicketTmp";
+import {listTmp, getTmp, delTmp, addTmp, updateTmp,submitExamine} from "@/api/noTicketTmp/noTicketTmp";
 
 export default {
   name: "noTicketsTmpList",
@@ -264,7 +264,11 @@ export default {
     },
     // 提交审核
     submitExamine(){
-
+      submitExamine(this.data.noSn).then(response => {
+        this.$message.success(response.msg);
+        this.open = false;
+        this.$emit('update:noTicketsTmpOpen', false); // 通知父组件关闭
+      });
     },
     // 取消按钮
     cancel() {

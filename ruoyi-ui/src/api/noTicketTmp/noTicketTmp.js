@@ -35,6 +35,13 @@ export function updateTmp(data) {
   })
 }
 
+export function submitExamine(no_sn) {
+  return request({
+    url: '/supplychain/tmp/submitExamine?no_sn=' + no_sn,
+    method: 'get'
+  })
+}
+
 // 删除入库通知单明细-未送审
 export function delTmp(id) {
   return request({
