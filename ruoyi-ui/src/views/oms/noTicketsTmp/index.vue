@@ -268,6 +268,8 @@ export default {
         this.$message.success(response.msg);
         this.open = false;
         this.$emit('update:noTicketsTmpOpen', false); // 通知父组件关闭
+        this.$emit('update:open', false); // 通知父组件关闭
+        this.$emit('update:open2', false); // 通知父组件关闭
       });
     },
     // 取消按钮

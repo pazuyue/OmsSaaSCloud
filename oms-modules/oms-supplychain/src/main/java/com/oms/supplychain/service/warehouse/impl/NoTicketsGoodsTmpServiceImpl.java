@@ -124,11 +124,11 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
     public boolean submitExamine(String noSn,String companyCode) {
         QueryWrapper<NoTicketsGoodsTmp> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("no_sn", noSn);
-        queryWrapper.isNull("error_info");
+        queryWrapper.eq("error_info","");
         List<NoTicketsGoodsTmp> list = this.list(queryWrapper);
         if (ObjectUtil.isEmpty(list))
             return false;
-        NoTickets noTickets = noTicketsService.getOne(new QueryWrapper<NoTickets>().eq("sn", noSn));
+        NoTickets noTickets = noTicketsService.getOne(new QueryWrapper<NoTickets>().eq("no_sn", noSn));
         if (ObjectUtil.isEmpty(noTickets))
             throw new RuntimeException("未找到入库单"+noSn+"信息");
         if (noTickets.getNoState() != DocumentState.CREATE.getCode()){

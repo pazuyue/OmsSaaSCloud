@@ -105,7 +105,7 @@ public class NoTicketsTmpController extends BaseController
      * @return
      */
     @SneakyThrows
-    @PostMapping(value = "/submitExamine")
+    @GetMapping(value = "/submitExamine")
     public AjaxResult submitExamine(@RequestParam(value = "no_sn") String noSn,@RequestParam(value = "company_code") String companyCode){
         if (noTicketsGoodsTmpService.submitExamine(noSn,companyCode))
             return success();

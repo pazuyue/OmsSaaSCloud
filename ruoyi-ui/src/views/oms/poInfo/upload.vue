@@ -132,6 +132,7 @@ export default {
     },
     handleClose() {
       this.$emit('update:open', false); // 通知父组件关闭
+      this.$emit('update:open2', false); // 通知父组件关闭
     },
     updateOpen2(value){
       this.noTicketsTmp.open = value;
