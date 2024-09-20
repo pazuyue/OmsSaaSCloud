@@ -47,6 +47,8 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public int insertNoTickets(NoTickets noTickets) {
         String batchCode = IdUtil.simpleUUID();
+        String noSn = "NO"+batchCode;
+        noTickets.setNoSn(noSn);
         noTickets.setBatchCode(batchCode);
         return this.baseMapper.insert(noTickets);
     }

@@ -29,7 +29,12 @@
       </div>
     </el-dialog>
   </el-card>
-  <noTicketsTmpList :data="noTicketsTmp.data" :noTicketsTmpTitle="noTicketsTmp.title" :noTicketsTmpOpen="noTicketsTmp.open" @update:noTicketsTmpOpen="updateOpen2" v-if="noTicketsTmp.open"/>
+  <noTicketsTmpList :noTicketsTmpData="noTicketsTmp.data"
+                    :noTicketsTmpTitle="noTicketsTmp.title"
+                    :noTicketsTmpOpen="noTicketsTmp.open"
+                    @update:noTicketsTmpOpen="updateOpen2"
+                    v-if="noTicketsTmp.open"
+                    />
 </el-row>
 </template>
 
@@ -111,7 +116,7 @@ export default {
 
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
-      this.upload.open = false;
+      //this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       if (response.code===200){
@@ -132,11 +137,12 @@ export default {
     },
     handleClose() {
       this.$emit('update:open', false); // 通知父组件关闭
-      this.$emit('update:open2', false); // 通知父组件关闭
+      //this.$emit('update:open2', false); // 通知父组件关闭
     },
     updateOpen2(value){
       this.noTicketsTmp.open = value;
-      this.$emit('update:open2', false); // 通知父组件关闭
+      //this.$emit('update:open2', false); // 通知父组件关闭
+      this.$emit('update:open', false); // 通知父组件关闭
     },
     // 提交上传文件
     submitFileForm() {

@@ -142,6 +142,7 @@
                 type="text"
                 icon="el-icon-upload"
                 @click="handleImport(scope.row)"
+                v-if="scope.row.noState==1"
                 v-hasPermi="['warehouse:noTickets:import']"
               >导入</el-button>
 <!--              <el-button
@@ -164,7 +165,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-                v-if="scope.row.noState==1 || scope.row.noState==2"
+                v-if="scope.row.noState==1"
                 v-hasPermi="['warehouse:noTickets:remove']"
               >删除</el-button>
             </template>
@@ -213,7 +214,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" @update:open2="updateOpen2" v-if="upload.open2"  />
+    <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" @update:open2="updateOpen2" v-if="upload.open"  />
 
   </el-row>
 </template>
@@ -460,6 +461,10 @@ export default {
     },
     updateOpen(value){
       this.upload.open = value;
+      if (this.upload.open === false)
+      {
+        this.getList();
+      }
     },
     updateOpen2(value){
       this.upload.open2 = value;

@@ -14,13 +14,11 @@ import com.oms.common.api.RemoteGoodsService;
 import com.oms.common.model.entity.GoodsSkuSnInfo;
 import com.oms.supplychain.mapper.warehouse.NoTicketsGoodsTmpMapper;
 import com.oms.supplychain.model.enmus.DocumentState;
-import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
-import com.oms.supplychain.model.entity.warehouse.NoTickets;
-import com.oms.supplychain.model.entity.warehouse.NoTicketsGoods;
-import com.oms.supplychain.model.entity.warehouse.NoTicketsGoodsTmp;
+import com.oms.supplychain.model.entity.warehouse.*;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsService;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
+import com.oms.supplychain.service.warehouse.PoInfoService;
 import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +44,8 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
     private INoTicketsService noTicketsService;
     @Resource
     private INoTicketsGoodsService noTicketsGoodsService;
+    @Resource
+    private PoInfoService poInfoService;
 
     @Override
     public NoTicketsGoodsTmp selectNoTicketsGoodsTmpById(Long id) {
@@ -145,7 +145,7 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
             priceExpected = priceExpected.add(noTicketsGoods.getPurchasePrice());
         }
 
-        return saveNoTicketsGoods(ticketsGoodsList,numberExpected,priceExpected,noSn);
+        return saveNoTicketsGoods(ticketsGoodsList,numberExpected,priceExpected,noTickets);
     }
 
     /**
@@ -185,19 +185,22 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
      * @param ticketsGoodsList
      * @param numberExpected
      * @param priceExpected
-     * @param noSn
+     * @param noTicket
      * @return
      */
-    @Transactional
-    public boolean saveNoTicketsGoods(List<NoTicketsGoods> ticketsGoodsList,int numberExpected,BigDecimal priceExpected,String noSn){
+    @Transactional(rollbackFor = Exception.class)
+    public boolean saveNoTicketsGoods(List<NoTicketsGoods> ticketsGoodsList,int numberExpected,BigDecimal priceExpected,NoTickets noTicket){
         noTicketsGoodsService.saveBatch(ticketsGoodsList);
-        NoTickets noTickets = new NoTickets();
-        noTickets.setNumberExpected(numberExpected);
-        noTickets.setPriceExpected(priceExpected);
-        noTickets.setNoState(DocumentState.AUDIT.getCode());
-        UpdateWrapper<NoTickets> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("no_sn",noSn);
-        return noTicketsService.updateNoTicketsByWrapper(noTickets,updateWrapper);
+        noTicket.setNumberExpected(numberExpected);
+        noTicket.setPriceExpected(priceExpected);
+        noTicket.setNoState(DocumentState.AUDIT.getCode());
+        noTicketsService.updateNoTickets(noTicket);
+        UpdateWrapper<PoInfo> poInfoUpdateWrapper = new UpdateWrapper<>();
+        poInfoUpdateWrapper.eq("po_sn",noTicket.getPoSn());
+        poInfoUpdateWrapper.eq("po_state",DocumentState.CREATE.getCode());
+        poInfoUpdateWrapper.set("po_state",DocumentState.AUDIT.getCode());
+        poInfoService.update(poInfoUpdateWrapper);
+        return true;
     }
 
 

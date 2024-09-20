@@ -174,7 +174,7 @@ export default {
       type: String,
       default: ''
     },
-    data: {
+    noTicketsTmpData: {
       type: Object,
       default: ''
     },
@@ -207,7 +207,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        noSn: null,
+        noSn: this.noTicketsTmpData.noSn,
         skuSn: null,
         barcodeSn: null,
         goodsSn: null,
@@ -222,9 +222,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        noSn: [
-          { required: true, message: "入库单号不能为空", trigger: "blur" }
-        ],
         skuSn: [
           { required: true, message: "sku_sn不能为空", trigger: "blur" }
         ],
@@ -255,6 +252,8 @@ export default {
   methods: {
     /** 查询入库通知单明细-未送审列表 */
     getList() {
+      console.log(this.noTicketsTmpData)
+      this.queryParams.noSn = this.noTicketsTmpData.noSn
       this.loading = true;
       listTmp(this.queryParams).then(response => {
         this.tmpList = response.rows;
@@ -264,12 +263,12 @@ export default {
     },
     // 提交审核
     submitExamine(){
-      submitExamine(this.data.noSn).then(response => {
+      submitExamine(this.noTicketsTmpData.noSn).then(response => {
         this.$message.success(response.msg);
         this.open = false;
         this.$emit('update:noTicketsTmpOpen', false); // 通知父组件关闭
-        this.$emit('update:open', false); // 通知父组件关闭
-        this.$emit('update:open2', false); // 通知父组件关闭
+        //this.$emit('update:open', false); // 通知父组件关闭
+        //this.$emit('update:open2', false); // 通知父组件关闭
       });
     },
     // 取消按钮
@@ -285,7 +284,7 @@ export default {
     reset() {
       this.form = {
         id: null,
-        noSn: null,
+        //noSn: null,
         skuSn: null,
         barcodeSn: null,
         goodsSn: null,
