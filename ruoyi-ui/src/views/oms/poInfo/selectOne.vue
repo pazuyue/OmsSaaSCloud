@@ -354,9 +354,6 @@ export default {
       this.upload.open = true;
       this.upload.open2 = true;
     },
-    handleToExamine(row){
-
-    },
     // 取消按钮
     cancel() {
       this.open = false;

@@ -78,8 +78,9 @@ public class NoTicketsController extends BaseController
     @RequiresPermissions("warehouse:noTickets:add")
     @Log(title = "采购入库通知单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody NoTickets noTickets)
+    public AjaxResult add(@RequestBody NoTickets noTickets,@RequestParam(value = "company_code") String companyCode)
     {
+        noTickets.setCompanyCode(companyCode);
         return toAjax(noTicketsService.insertNoTickets(noTickets));
     }
 

@@ -86,16 +86,6 @@ public class NoTicketsGoods implements Serializable {
     private Integer cpNumberActually;
 
     /**
-     * 入库差异-正品
-     */
-    private Integer zpDifNumberActually;
-
-    /**
-     * 实际入库-次品
-     */
-    private Integer cpDifNumberActually;
-
-    /**
      * 公司编码
      */
     private String companyCode;
