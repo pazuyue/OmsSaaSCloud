@@ -142,7 +142,7 @@
                 type="text"
                 icon="el-icon-upload"
                 @click="handleImport(scope.row)"
-                v-if="scope.row.noState==1"
+                v-if="scope.row.noState===1"
                 v-hasPermi="['warehouse:noTickets:import']"
               >导入</el-button>
 <!--              <el-button
@@ -158,14 +158,14 @@
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['warehouse:noTickets:edit']"
-                v-if="scope.row.noState==1 || scope.row.noState==2"
+                v-if="scope.row.noState===1 || scope.row.noState===2"
               >修改</el-button>
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-                v-if="scope.row.noState==1"
+                v-if="scope.row.noState===1"
                 v-hasPermi="['warehouse:noTickets:remove']"
               >删除</el-button>
             </template>

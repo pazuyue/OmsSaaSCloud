@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.PoInfoMapper;
 import com.oms.supplychain.model.entity.warehouse.PoInfo;
 import com.oms.supplychain.service.warehouse.PoInfoService;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,8 +71,11 @@ public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> impleme
     @Override
     public int insertPoInfo(PoInfo poInfo, String companyCode) {
         String poSn = "PO"+ IdUtil.simpleUUID();
+        String operName = SecurityUtils.getUsername();
         poInfo.setPoSn(poSn);
+        poInfo.setPerationUser(operName);
         poInfo.setCompanyCode(companyCode);
+
         return this.baseMapper.insert(poInfo);
     }
 

@@ -9,6 +9,7 @@ import com.oms.supplychain.mapper.warehouse.NoTicketsMapper;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -47,9 +48,11 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public int insertNoTickets(NoTickets noTickets) {
         String batchCode = IdUtil.simpleUUID();
+        String operName = SecurityUtils.getUsername();
         String noSn = "NO"+batchCode;
         noTickets.setNoSn(noSn);
         noTickets.setBatchCode(batchCode);
+        noTickets.setCreatedUser(operName);
         return this.baseMapper.insert(noTickets);
     }
 

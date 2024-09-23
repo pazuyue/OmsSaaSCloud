@@ -138,13 +138,7 @@ public class NoTickets implements Serializable {
      */
     @Excel(name = "审核时间")
     private Date reviewerTime;
-
-    /**
-     * 来源
-     */
-    @Excel(name = "来源")
-    private String comeFrom;
-
+    
     /**
      * 0正常流程，1收货申请单
      */
