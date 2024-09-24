@@ -145,13 +145,13 @@
                 v-if="scope.row.noState===1"
                 v-hasPermi="['warehouse:noTickets:import']"
               >导入</el-button>
-<!--              <el-button
+              <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-check"
-                @click="handleToExamine(scope.row)"
+                @click="handleSelect(scope.row)"
                 v-hasPermi="['warehouse:noTicketsTmp:list']"
-              >审核</el-button>-->
+              >查看</el-button>
               <el-button
                 size="mini"
                 type="text"
@@ -215,7 +215,7 @@
       </div>
     </el-dialog>
     <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" @update:open2="updateOpen2" v-if="upload.open"  />
-
+    <noTicketDetailed :title="noTicket.title" :no_sn="noTicket.noSn" :open="noTicket.open" v-if="noTicket.title" @noTicket:open="updatenoTicketOpen"></noTicketDetailed>
   </el-row>
 </template>
 <script>
@@ -223,10 +223,11 @@ import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "
 import {getPoInfo} from "@/api/poInfo/poInfo";
 import {listSimulationStore} from "@/api/simulationStore/simulationStore";
 import noTicketsUpload from "./upload";
+import noTicketDetailed from "./../noTickets/one";
 
 export default {
   name: "SelectOne",
-  components: {noTicketsUpload},
+  components: {noTicketsUpload,noTicketDetailed},
   dicts: ['po_state','actual_warehouse','no_state'],
   props: {
     open2: {
@@ -268,6 +269,11 @@ export default {
         open: false,
         open2:false,
         // 弹出层标题
+        title:'',
+      },
+      noTicket:{
+        noSn: null,
+        open: false,
         title:'',
       },
       localOpen2: this.open2,
@@ -353,6 +359,11 @@ export default {
       });
       this.upload.open = true;
       this.upload.open2 = true;
+    },
+    handleSelect(row){
+      this.noTicket.open = true;
+      this.noTicket.noSn = row.noSn;
+      this.noTicket.title = "查看商品信息";
     },
     // 取消按钮
     cancel() {
@@ -466,7 +477,9 @@ export default {
     updateOpen2(value){
       this.upload.open2 = value;
     },
-
+    updatenoTicketOpen(value){
+      this.noTicket.open = true;
+    }
   }
 };
 </script>
