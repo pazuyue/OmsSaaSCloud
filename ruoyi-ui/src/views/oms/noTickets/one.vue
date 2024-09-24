@@ -65,7 +65,7 @@ export default {
       noTicket:{
         noSn: this.noSn,
         title: this.title,
-        open: this.open
+        open: this.open,
       },
       info: {},
       activeName: '0',
@@ -74,7 +74,7 @@ export default {
   methods: {
     handleClose() {
       this.noTicket.open = false;
-      this.$emit('noTicket:open', this.noTicket.open); // 通知父组件关闭
+      this.$emit('noTicket:open', false); // 通知父组件关闭
     },
     getnoTicketsInfo(noSn) {
       getOne(noSn).then(response => {
