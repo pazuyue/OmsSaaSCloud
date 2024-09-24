@@ -4,6 +4,8 @@ import java.util.List;
 import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oms.supplychain.model.entity.warehouse.NoTicketExcel;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.service.warehouse.INoTicketsGoodsTmpService;
@@ -70,6 +72,14 @@ public class NoTicketsController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
         return success(noTicketsService.selectNoTicketsById(id));
+    }
+
+    @RequiresPermissions("warehouse:noTickets:query")
+    @GetMapping(value = "/one")
+    public AjaxResult getOne(@RequestParam("no_sn") String noSn,@RequestParam(value = "company_code") String companyCode)
+    {
+        NoTickets one = noTicketsService.getOne(new QueryWrapper<NoTickets>().eq("no_sn", noSn));
+        return success(one);
     }
 
     /**

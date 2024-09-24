@@ -215,7 +215,7 @@
       </div>
     </el-dialog>
     <noTicketsUpload :noTicket="form" :title="upload.title" :open="upload.open" @update:open="updateOpen" @update:open2="updateOpen2" v-if="upload.open"  />
-    <noTicketDetailed :title="noTicket.title" :no_sn="noTicket.noSn" :open="noTicket.open" v-if="noTicket.title" @noTicket:open="updatenoTicketOpen"></noTicketDetailed>
+    <noTicketDetailed :title="noTicket.title" :noSn="noTicket.noSn" :open="noTicket.open" v-if="noTicket.title" @noTicket:open="updatenoTicketOpen"></noTicketDetailed>
   </el-row>
 </template>
 <script>

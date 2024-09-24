@@ -17,6 +17,14 @@ export function getTickets(id) {
   })
 }
 
+// 查询采购入库通知单详细
+export function getOne(noSn) {
+  return request({
+    url: '/supplychain/noTickets/one?no_sn=' + noSn,
+    method: 'get'
+  })
+}
+
 // 新增采购入库通知单
 export function addTickets(data) {
   return request({
