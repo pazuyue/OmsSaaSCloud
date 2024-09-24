@@ -318,14 +318,7 @@
       <workItem from="1726724349019" duration="5402000" />
       <workItem from="1726811076965" duration="7464000" />
       <workItem from="1727076946286" duration="1964000" />
-      <workItem from="1727142303522" duration="6585000" />
-    </task>
-    <task id="LOCAL-00040" summary="OMS - 商品管理 - 分类管理">
-      <created>1723460471253</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1723460471253</updated>
+      <workItem from="1727142303522" duration="7860000" />
     </task>
     <task id="LOCAL-00041" summary="OMS - 商品管理 - 分类管理">
       <created>1723630707906</created>
@@ -663,7 +656,14 @@
       <option name="project" value="LOCAL" />
       <updated>1727172355928</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="入库通知单数据导入- 审核或查看">
+      <created>1727172869302</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1727172869302</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

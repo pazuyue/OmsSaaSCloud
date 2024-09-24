@@ -95,7 +95,7 @@
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="ID" align="center" prop="id" />
           <el-table-column label="采购单号" align="center" prop="poSn" />
-          <el-table-column label="入库单号" align="center" prop="noSn" />
+          <el-table-column label="入库通知单号" align="center" prop="noSn" />
           <el-table-column label="关联单号" align="center" prop="relationSn" />
           <el-table-column label="入库单名称" align="center" prop="noName" />
           <el-table-column label="指派虚仓编码" align="center" prop="wmsSimulationCode" />
@@ -480,7 +480,6 @@ export default {
     ticketOpen(value){
       this.noTicket.noSn = null;
       this.noTicket.open = value;
-      console.log(this.noTicket)
     }
   }
 };

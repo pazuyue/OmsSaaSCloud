@@ -9,7 +9,7 @@
               <el-descriptions-item label="状态">
                 <dict-tag :options="dict.type.no_state" :value="info.noState"/>
               </el-descriptions-item>
-              <el-descriptions-item label="入库单名称">{{info.noName}}</el-descriptions-item>
+              <el-descriptions-item label="入库通知单名称">{{info.noName}}</el-descriptions-item>
               <el-descriptions-item label="关联采购单号">{{info.poSn}}</el-descriptions-item>
               <el-descriptions-item label="关联单号">{{info.relationSn}}</el-descriptions-item>
               <el-descriptions-item label="指派虚仓编码">{{info.wmsSimulationCode}}</el-descriptions-item>
@@ -68,7 +68,7 @@ export default {
         open: this.open,
       },
       info: {},
-      activeName: '0',
+      activeName: '1',
     }
   },
   methods: {
