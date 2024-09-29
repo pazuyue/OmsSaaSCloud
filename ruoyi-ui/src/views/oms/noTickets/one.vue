@@ -26,8 +26,6 @@
               <el-descriptions-item label="审核者">{{info.reviewerUser}}</el-descriptions-item>
               <el-descriptions-item label="审核时间">{{info.reviewerTime}}</el-descriptions-item>
               <el-descriptions-item label="备注">{{info.remarks}}</el-descriptions-item>
-
-
             </el-descriptions>
           </el-collapse-item>
         </el-collapse>

@@ -41,16 +41,6 @@ public class NoTicketsGoods implements Serializable {
     private String barcodeSn;
 
     /**
-     * 批次
-     */
-    private String batchCode;
-
-    /**
-     * 品牌编码
-     */
-    private String brandCode;
-
-    /**
      * 货号
      */
     private String goodsSn;
