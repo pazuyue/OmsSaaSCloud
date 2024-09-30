@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsGoodsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/NoTicketsGoods.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/NoTicketsGoods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsGoodsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsGoodsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsGoodsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsGoodsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsGoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsGoodsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTickets/one.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTickets/one.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -322,14 +320,8 @@
       <workItem from="1726811076965" duration="7464000" />
       <workItem from="1727076946286" duration="1964000" />
       <workItem from="1727142303522" duration="8328000" />
-      <workItem from="1727599221975" duration="1815000" />
-    </task>
-    <task id="LOCAL-00042" summary="OMS - 商品管理 - 分类管理">
-      <created>1723631413481</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1723631413481</updated>
+      <workItem from="1727599221975" duration="2461000" />
+      <workItem from="1727681936966" duration="2142000" />
     </task>
     <task id="LOCAL-00043" summary="OMS - 供应链 - 货主管理">
       <created>1723723367085</created>
@@ -667,7 +659,14 @@
       <option name="project" value="LOCAL" />
       <updated>1727175622265</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="入库通知单数据导入- 审核或查看">
+      <created>1727601162997</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1727601162997</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

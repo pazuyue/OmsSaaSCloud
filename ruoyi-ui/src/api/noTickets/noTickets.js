@@ -18,6 +18,15 @@ export function getTickets(id) {
 }
 
 // 查询采购入库通知单详细
+export function getTicketsGoods(query) {
+  return request({
+    url: '/supplychain/noTicketsGoods/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询采购入库通知单详细
 export function getOne(noSn) {
   return request({
     url: '/supplychain/noTickets/one?no_sn=' + noSn,

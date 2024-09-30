@@ -29,14 +29,34 @@
             </el-descriptions>
           </el-collapse-item>
         </el-collapse>
+
+
+        <el-table v-loading="loading" :data="ticketsGoodsList">
+          <el-table-column label="入库通知单号" align="center" prop="noSn" />
+          <el-table-column label="产品名称" align="center" prop="goodsName" />
+          <el-table-column label="货号" align="center" prop="goodsSn" />
+          <el-table-column label="SKU" align="center" prop="skuSn" />
+          <el-table-column label="条形码" align="center" prop="barcodeSn" />
+          <el-table-column label="采购价格" align="center" prop="purchasePrice" />
+          <el-table-column label="正品计划入库数量" align="center" prop="zpNumberExpected" />
+          <el-table-column label="次品计划入库数量" align="center" prop="cpNumberExpected" />
+          <el-table-column label="正品实际入库数量" align="center" prop="zpNumberActually" />
+          <el-table-column label="次品实际入库数量" align="center" prop="cpNumberActually" />
+        </el-table>
+        <pagination
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
       </el-dialog>
     </el-card>
-
   </el-row>
 </template>
 
 <script>
-import {getOne} from "@/api/noTickets/noTickets";
+import {getOne, getTicketsGoods} from "@/api/noTickets/noTickets";
 
 export default {
   name: "noTicketDetailed",
@@ -60,12 +80,23 @@ export default {
   },
   data() {
     return {
+      // 总条数
+      total: 0,
+      // 遮罩层
+      loading: true,
       noTicket:{
         noSn: this.noSn,
         title: this.title,
         open: this.open,
       },
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        noSn: null,
+      },
       info: {},
+      // 采购入库通知单表格数据
+      ticketsGoodsList: [],
       activeName: '1',
     }
   },
@@ -78,8 +109,19 @@ export default {
       getOne(noSn).then(response => {
         console.log(response)
         this.info = response.data;
+        this.queryParams.noSn = noSn;
+        this.getList();
       })
-    }
+    },
+    /** 查询采购入库通知单列表 */
+    getList() {
+      this.loading = true;
+      getTicketsGoods(this.queryParams).then(response => {
+        this.ticketsGoodsList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
   }
 
 }
