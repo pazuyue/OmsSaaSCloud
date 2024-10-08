@@ -158,5 +158,13 @@ public class NoTicketsController extends BaseController
             return error(e.getMessage());
         }
     }
+
+    @SneakyThrows
+    @PostMapping(value = "/examine")
+    public AjaxResult examine(String noSn) {
+        if (noTicketsService.examine(noSn))
+            return success();
+        return error("审核失败");
+    }
 }
 

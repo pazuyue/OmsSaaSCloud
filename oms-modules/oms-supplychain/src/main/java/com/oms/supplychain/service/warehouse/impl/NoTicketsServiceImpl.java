@@ -2,10 +2,12 @@ package com.oms.supplychain.service.warehouse.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.NoTicketsMapper;
+import com.oms.supplychain.model.enmus.DocumentState;
 import com.oms.supplychain.model.entity.warehouse.NoTickets;
 import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
@@ -74,5 +76,18 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public int deleteNoTicketsById(Integer id) {
         return this.baseMapper.deleteById(id);
+    }
+
+    @Override
+    public boolean examine(String noSn) {
+        QueryWrapper<NoTickets> query = new QueryWrapper<>();
+        query.eq("no_sn", noSn);
+        NoTickets noTickets = this.getOne((Wrapper<NoTickets>) query);
+        Integer state = noTickets.getNoState();
+        if (state != DocumentState.AUDIT.getCode()) {
+            throw new RuntimeException("采购入库单非待审核状态");
+        }
+        //createWarehousingNotificationOrder(noSn);
+        return false;
     }
 }

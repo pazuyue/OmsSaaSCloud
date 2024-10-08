@@ -65,5 +65,12 @@ public interface INoTicketsService
      * @return 结果
      */
     public int deleteNoTicketsById(Integer id);
+
+    /**
+     * 审核
+     * @param noSn
+     * @return
+     */
+    public boolean examine(String noSn);
 }
 

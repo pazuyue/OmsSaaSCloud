@@ -50,6 +50,10 @@
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
         />
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="handleClose">取 消</el-button>
+        </div>
       </el-dialog>
     </el-card>
   </el-row>
@@ -122,6 +126,9 @@ export default {
         this.loading = false;
       });
     },
+    submitForm() {
+      //this.$emit('noTicket:open', false); // 通知父组件关闭
+    }
   }
 
 }
