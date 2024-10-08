@@ -59,3 +59,11 @@ export function delTickets(id) {
     method: 'delete'
   })
 }
+
+export function noTicketsExamine(noSn) {
+  return request({
+    url: '/supplychain/noTickets/examine?no_sn=' + noSn,
+    method: 'post'
+  })
+}
+

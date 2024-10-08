@@ -82,7 +82,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     public boolean examine(String noSn) {
         QueryWrapper<NoTickets> query = new QueryWrapper<>();
         query.eq("no_sn", noSn);
-        NoTickets noTickets = this.getOne((Wrapper<NoTickets>) query);
+        NoTickets noTickets = getOne((Wrapper<NoTickets>) query);
         Integer state = noTickets.getNoState();
         if (state != DocumentState.AUDIT.getCode()) {
             throw new RuntimeException("采购入库单非待审核状态");

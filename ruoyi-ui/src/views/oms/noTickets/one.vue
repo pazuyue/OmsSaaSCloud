@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import {getOne, getTicketsGoods} from "@/api/noTickets/noTickets";
+import {getOne, getTicketsGoods, noTicketsExamine} from "@/api/noTickets/noTickets";
 
 export default {
   name: "noTicketDetailed",
@@ -127,7 +127,10 @@ export default {
       });
     },
     submitForm() {
-      //this.$emit('noTicket:open', false); // 通知父组件关闭
+      noTicketsExamine(this.noSn).then(response => {
+        this.$message.success(response.msg)
+        this.handleClose()
+      })
     }
   }
 
