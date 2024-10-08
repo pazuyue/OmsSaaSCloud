@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTickets.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTicketsGoods.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/noTickets/noTickets.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTickets/one.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/noTickets/one.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +73,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_cloud" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -89,11 +88,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain\model\entity\warehouse" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods" />
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods\info" />
-      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
@@ -323,14 +322,7 @@
       <workItem from="1727142303522" duration="8328000" />
       <workItem from="1727599221975" duration="2461000" />
       <workItem from="1727681936966" duration="4772000" />
-      <workItem from="1728357665023" duration="2364000" />
-    </task>
-    <task id="LOCAL-00045" summary="OMS - 供应链 - 货主管理">
-      <created>1723873539706</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1723873539706</updated>
+      <workItem from="1728357665023" duration="4025000" />
     </task>
     <task id="LOCAL-00046" summary="OMS - 供应链 - 实仓管理">
       <created>1723986456737</created>
@@ -668,7 +660,14 @@
       <option name="project" value="LOCAL" />
       <updated>1728357726139</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="入库通知单数据导入- 审核或查看">
+      <created>1728367588595</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1728367588595</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,24 +1,36 @@
 package com.oms.supplychain.service.warehouse.impl;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.supplychain.mapper.warehouse.NoTicketsMapper;
+import com.oms.supplychain.mapper.warehouse.WmsSimulationStoreInfoMapper;
+import com.oms.supplychain.model.dto.warehouse.SimulationStoreInfoDto;
 import com.oms.supplychain.model.enmus.DocumentState;
-import com.oms.supplychain.model.entity.warehouse.NoTickets;
-import com.oms.supplychain.model.entity.warehouse.OwnerInfo;
+import com.oms.supplychain.model.entity.warehouse.*;
+import com.oms.supplychain.service.warehouse.INoTicketsGoodsService;
 import com.oms.supplychain.service.warehouse.INoTicketsService;
+import com.oms.supplychain.service.warehouse.WmsSimulationStoreInfoService;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets> implements INoTicketsService {
+
+    @Resource
+    private INoTicketsGoodsService noTicketsGoodsService;
+    @Resource
+    private WmsSimulationStoreInfoMapper simulationStoreInfoMapper;
+
     @Override
     public NoTickets selectNoTicketsById(Integer id) {
         return this.baseMapper.selectById(id);
@@ -87,7 +99,47 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         if (state != DocumentState.AUDIT.getCode()) {
             throw new RuntimeException("采购入库单非待审核状态");
         }
-        //createWarehousingNotificationOrder(noSn);
+        createWarehousingNotificationOrder(noTickets);
         return false;
+    }
+
+    private void createWarehousingNotificationOrder(NoTickets noTickets) {
+        String sn = "CG" + IdUtil.simpleUUID();
+        SimulationStoreInfoDto simulationStoreInfo = simulationStoreInfoMapper.selectSimulationStoreInfoWtihOwnerInfo(noTickets.getWmsSimulationCode());
+
+        if (ObjectUtil.isEmpty(simulationStoreInfo))
+            throw new RuntimeException("虚仓:" + noTickets.getWmsSimulationCode() + "信息不存在");
+        WmsTickets tickets = new WmsTickets();
+        tickets.setSn(sn);
+        tickets.setTicketType(DocumentState.WAREHOUSING.getCode());
+        tickets.setRelationSn(noTickets.getNoSn());
+        tickets.setOriginalSn(noTickets.getPoSn());
+        tickets.setWmsSimulationCode(simulationStoreInfo.getWmsSimulationCode());
+        tickets.setWmsSimulationName(simulationStoreInfo.getWmsSimulationName());
+        tickets.setStoreType(DocumentState.E_COMMERCE_WAREHOUSE.getCode());
+        tickets.setRemark(noTickets.getRemarks());
+        tickets.setCompanyCode(noTickets.getCompanyCode());
+        tickets.setUserName(noTickets.getReviewerUser());
+        tickets.setActualWarehouse(simulationStoreInfo.getOwnerInfo().getRealStoreInfo().getActualWarehouse());
+
+
+        NoTicketsGoods noTicketsGood = new NoTicketsGoods();
+        noTicketsGood.setNoSn(noTickets.getNoSn());
+        List<NoTicketsGoods> list = noTicketsGoodsService.selectNoTicketsGoodsList(noTicketsGood);
+        ArrayList<WmsTicketsGoods> wmsTicketsGoodsArrayList = new ArrayList<>();
+        for (NoTicketsGoods noTicketsGoods : list) {
+            WmsTicketsGoods wmsTicketsGoods = new WmsTicketsGoods();
+            wmsTicketsGoods.setSn(sn);
+            wmsTicketsGoods.setInventoryType("ZP");
+            wmsTicketsGoods.setSkuSn(noTicketsGoods.getSkuSn());
+            wmsTicketsGoods.setGoodsSn(noTicketsGoods.getGoodsSn());
+            wmsTicketsGoods.setBarcodeSn(noTicketsGoods.getBarcodeSn());
+            wmsTicketsGoods.setGoodsName(noTicketsGoods.getGoodsName());
+            wmsTicketsGoods.setBatchCode(noTickets.getBatchCode());
+            wmsTicketsGoods.setPurchasePrice(noTicketsGoods.getPurchasePrice());
+            wmsTicketsGoods.setNumberExpected(noTicketsGoods.getZpNumberExpected());
+            wmsTicketsGoods.setCompanyCode(noTicketsGoods.getCompanyCode());
+            wmsTicketsGoodsArrayList.add(wmsTicketsGoods);
+        }
     }
 }
