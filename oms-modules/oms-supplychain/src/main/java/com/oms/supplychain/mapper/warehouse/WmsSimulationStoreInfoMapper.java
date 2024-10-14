@@ -23,7 +23,7 @@ public interface WmsSimulationStoreInfoMapper extends BaseMapper<WmsSimulationSt
     @Results({
             @Result(property = "ownerCode", column = "owner_code"),
             @Result(property = "ownerInfo", column = "owner_code", javaType = OwnerInfoDto.class,
-                    one = @One(select = "com.oms.saas.commodity.mapper.Warehouse.OwnerInfoMapper.selectOwnerInfoByOwnerCodeWithRealStore"))
+                    one = @One(select = "com.oms.supplychain.mapper.warehouse.OwnerInfoMapper.selectOwnerInfoByOwnerCodeWithRealStore"))
     })
     SimulationStoreInfoDto selectSimulationStoreInfoWtihOwnerInfo(String wms_simulation_code);
 }
