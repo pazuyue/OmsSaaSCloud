@@ -67,7 +67,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     public int insertNoTickets(NoTickets noTickets) {
         String batchCode = IdUtil.simpleUUID();
         String operName = SecurityUtils.getUsername();
-        String noSn = "NO"+batchCode;
+        String noSn = "NO_"+batchCode;
         noTickets.setNoSn(noSn);
         noTickets.setBatchCode(batchCode);
         noTickets.setCreatedUser(operName);
@@ -121,7 +121,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         log.info("开始创建入库通知单");
 
         // 生成入库通知单的唯一编号，前缀为"CG"
-        String sn = "CG" + IdUtil.simpleUUID();
+        String sn = "CG_" + IdUtil.simpleUUID();
 
         // 根据采购单中的模拟仓库编码查询模拟仓库信息
         SimulationStoreInfoDto simulationStoreInfo = simulationStoreInfoMapper.selectSimulationStoreInfoWtihOwnerInfo(noTickets.getWmsSimulationCode());

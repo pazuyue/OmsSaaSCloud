@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsTicketsGoodsMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsTicketsMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/dto/warehouse/WmsTicketsDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsGoodsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTickets.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTickets.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTicketsGoods.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTicketsGoods.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -330,14 +323,7 @@
       <workItem from="1728357665023" duration="4770000" />
       <workItem from="1728530822208" duration="58000" />
       <workItem from="1728699722726" duration="2588000" />
-      <workItem from="1728885956101" duration="4707000" />
-    </task>
-    <task id="LOCAL-00048" summary="OMS - 供应链 - 虚仓管理">
-      <created>1724060743889</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1724060743889</updated>
+      <workItem from="1728885956101" duration="6027000" />
     </task>
     <task id="LOCAL-00049" summary="OMS - 供应链 - 虚仓管理">
       <created>1724065753008</created>
@@ -675,7 +661,14 @@
       <option name="project" value="LOCAL" />
       <updated>1728887685285</updated>
     </task>
-    <option name="localTasksCounter" value="97" />
+    <task id="LOCAL-00097" summary="入库通知单- 审核">
+      <created>1728891035897</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1728891035897</updated>
+    </task>
+    <option name="localTasksCounter" value="98" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -693,7 +686,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 商品管理 - 导入信息审核" />
     <MESSAGE value="OMS - 商品管理 - 分类管理" />
     <MESSAGE value="OMS - 供应链 - 货主管理" />
     <MESSAGE value="OMS - 供应链 - 实仓管理" />
@@ -718,7 +710,8 @@
     <MESSAGE value="入库通知单数据导入-维护" />
     <MESSAGE value="入库通知单数据导入- 提交审核" />
     <MESSAGE value="入库通知单数据导入- 审核或查看" />
-    <option name="LAST_COMMIT_MESSAGE" value="入库通知单数据导入- 审核或查看" />
+    <MESSAGE value="入库通知单- 审核" />
+    <option name="LAST_COMMIT_MESSAGE" value="入库通知单- 审核" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
