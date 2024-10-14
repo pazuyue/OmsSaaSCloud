@@ -129,7 +129,11 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         // 如果找不到指定编码的模拟仓库信息，抛出异常
         if (ObjectUtil.isEmpty(simulationStoreInfo))
             throw new RuntimeException("虚仓:" + noTickets.getWmsSimulationCode() + "信息不存在");
-
+        QueryWrapper<WmsTickets> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("relation_sn",noTickets.getNoSn() );
+        WmsTickets one = wmsTicketsService.getOne(queryWrapper);
+        if (ObjectUtil.isNotEmpty(one))
+            throw new RuntimeException("采购单:" + noTickets.getNoSn() + "已生成入库通知单");
         // 初始化入库通知单对象
         WmsTickets tickets = new WmsTickets();
         // 设置通知单编号

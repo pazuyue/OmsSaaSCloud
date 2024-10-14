@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/IWmsTicketsGoodsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/IWmsTicketsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsTicketsGoodsMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsTicketsMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/dto/warehouse/WmsTicketsDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsGoodsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/OwnerInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/OwnerInfoMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsSimulationStoreInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/mapper/warehouse/WmsSimulationStoreInfoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTickets.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTickets.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTicketsGoods.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/model/entity/warehouse/WmsTicketsGoods.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,11 +110,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.supplychain.service.warehouse.impl" />
+      <recent name="com.oms.supplychain.mapper.warehouse" />
+      <recent name="com.oms.supplychain.model.dto.warehouse" />
       <recent name="com.oms.supplychain.service.warehouse" />
       <recent name="com.oms.supplychain.model.enmus" />
-      <recent name="com.oms.supplychain.mapper.warehouse" />
-      <recent name="com.oms.supplychain.service.warehouse.impl" />
-      <recent name="com.oms.supplychain.model.entity.warehouse" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -327,14 +330,7 @@
       <workItem from="1728357665023" duration="4770000" />
       <workItem from="1728530822208" duration="58000" />
       <workItem from="1728699722726" duration="2588000" />
-      <workItem from="1728885956101" duration="1662000" />
-    </task>
-    <task id="LOCAL-00047" summary="OMS - 供应链 - 实仓管理">
-      <created>1723988068873</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1723988068873</updated>
+      <workItem from="1728885956101" duration="4707000" />
     </task>
     <task id="LOCAL-00048" summary="OMS - 供应链 - 虚仓管理">
       <created>1724060743889</created>
@@ -672,7 +668,14 @@
       <option name="project" value="LOCAL" />
       <updated>1728369081309</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="入库通知单数据导入- 审核或查看">
+      <created>1728887685284</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1728887685285</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

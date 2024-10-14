@@ -3,6 +3,8 @@ package com.oms.supplychain.model.entity.warehouse;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,229 +24,120 @@ import java.util.Date;
 public class WmsTickets implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**  */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 单据编号
-     */
+    /** 单据编号 */
+    @Excel(name = "单据编号")
     private String sn;
 
-    /**
-     * 出入库类型，0：出库，1：入库
-     */
+    /** 出入库类型 1：入库 2：出库 */
+    @Excel(name = "出入库类型 1：入库 2：出库")
     private Integer ticketType;
 
-    /**
-     * 关联单据号
-     */
+    /** 关联单据号 */
+    @Excel(name = "关联单据号")
     private String relationSn;
 
-    /**
-     * 源单号
-     */
+    /** 源单号 */
+    @Excel(name = "源单号")
     private String originalSn;
 
-    /**
-     * 指派的仓库编码
-     */
+    /** 指派的虚仓编码 */
+    @Excel(name = "指派的虚仓编码")
     private String wmsSimulationCode;
 
-    /**
-     * 指派的仓库名称
-     */
+    /** 指派的虚仓名称 */
+    @Excel(name = "指派的虚仓名称")
     private String wmsSimulationName;
 
-    /**
-     * 1电商仓，2门店
-     */
+    /** 1电商仓，2门店（未实现） */
+    @Excel(name = "1电商仓，2门店", readConverterExp = "未=实现")
     private Integer storeType;
 
-    /**
-     * 配送方式代码(批派到WMS)
-     */
-    private String shippingCode;
-
-    /**
-     * 配送方式名称
-     */
-    private String shippingName;
-
-    /**
-     * 快递单号
-     */
-    private String invoiceSn;
-
-    /**
-     * 收货人姓名
-     */
-    private String receiverName;
-
-    /**
-     * 收货人地址
-     */
-    private String receiverAddress;
-
-    /**
-     * 收货人手机
-     */
-    private String receiverMobile;
-
-    /**
-     * 收货人电话
-     */
-    private String receiverTelephone;
-
-    /**
-     * 收货人邮编
-     */
-    private String receiverZipcode;
-
-    /**
-     * 省
-     */
-    private String province;
-
-    /**
-     * 市
-     */
-    private String city;
-
-    /**
-     * 区
-     */
-    private String district;
-
-    /**
-     * 实际重量
-     */
-    private BigDecimal actuallyWeight;
-
-    /**
-     * 实际运费
-     */
-    private BigDecimal actuallyShippingFee;
-
-    /**
-     * 结算数量
-     */
-    private Integer numberSettlement;
-
-    /**
-     * 单据状态，0：待确认，1：已确认待处理，2：已处理完成，3：处理失败，4：待废弃，5：已废弃完成，6：废弃失败
-     */
+    /** 单据状态，0：待确认，1：已确认待处理，2：已处理完成，3：处理失败，4：待废弃，5：已废弃完成，6：废弃失败  */
+    @Excel(name = "单据状态，0：待确认，1：已确认待处理，2：已处理完成，3：处理失败，4：待废弃，5：已废弃完成，6：废弃失败 ")
     private Integer statusTicket;
 
-    /**
-     * 1:ACCEPT=仓库接单;  2：PRINT = 打印; 3：PICK=拣货; 4:CHECK = 复核; 5:PACKAGE= 打包；6：WEIGH= 称重; 7：READY=待提货;
-     */
-    private Byte processStatus;
-
-    /**
-     * 8:DELIVERED=已发货;9:DELIVERY_TIMEOUT=发货超时;10:PICK_TIMEOUT=拣货超时;11:PACKAGE_COLLECT=包裹揽收;12:PACKAGE_LOST=包裹丢失;13:PACKAGE_FOUND=包裹找回;14:DDELIVERY=客户签收;15:FDELIVERY=客户拒收
-     */
-    private Byte inAcShopStatus;
-
-    /**
-     * 通知状态， 0：待通知，1：通知成功，2：通知失败 3.已通知待确认
-     */
+    /** 通知状态， 0：待通知，1：通知成功，2：通知失败 3.已通知待确认 */
+    @Excel(name = "通知状态， 0：待通知，1：通知成功，2：通知失败 3.已通知待确认")
     private Integer statusNotify;
 
-    /**
-     * 查询状态，0：全部待查询，1：全部查询成功，2：部分查询成功，3：全部查询失败
-     */
+    /** 查询状态，0：全部待查询，1：全部查询成功，2：部分查询成功，3：全部查询失败 */
+    @Excel(name = "查询状态，0：全部待查询，1：全部查询成功，2：部分查询成功，3：全部查询失败")
     private Integer statusQuery;
 
-    /**
-     * 通知重试次数
-     */
-    private Short retryNotifyCount;
-
-    /**
-     * 查询重试次数
-     */
-    private Short retryQueryCount;
-
-    /**
-     * 处理尝试次数
-     */
-    private Short retryProcessCount;
-
-    /**
-     * 通知成功时间
-     */
+    /** 通知成功时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "通知成功时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date timeNotify;
 
-    /**
-     * 收到反馈完成出入库时间
-     */
+    /** 收到反馈完成出入库时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "收到反馈完成出入库时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date timeQuery;
 
-    /**
-     * 作废成功时间
-     */
+    /** 作废成功时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "作废成功时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date timeCancel;
 
-    /**
-     * 实际出库时间
-     */
+    /** 实际出库时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "实际出库时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date actuallyOutTime;
 
-    /**
-     * 备注
-     */
-    private String remark;
+    /** 快递名称 */
+    @Excel(name = "快递名称")
+    private String shippingName;
 
-    /**
-     * 最终发货仓库编码(实仓)
-     */
+    /** 快递编码 */
+    @Excel(name = "快递编码")
+    private String shippingCode;
+
+    /** 最终发货仓库编码(实仓) */
+    @Excel(name = "最终发货仓库编码(实仓)")
     private String realStoreCode;
 
-    /**
-     * 修改时间
-     */
+    /** 修改时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "修改时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date modifyTime;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 公司编码
-     */
-    private String companyCode;
-
-    /**
-     * wms的出入库时间
-     */
+    /** wms的出入库时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "wms的出入库时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date wmsActuallyTime;
-    private Date deletedAt;
 
-    /**
-     * 创建人的用户名称
-     */
+    /** 创建人的用户名称 */
+    @Excel(name = "创建人的用户名称")
     private String userName;
 
-    /**
-     * 客户编码（仓库需要）
-     */
+    /** 客户编码（仓库需要） */
+    @Excel(name = "客户编码", readConverterExp = "仓=库需要")
     private String customerNo;
 
-    /**
-     * 门店发货（也就是store_type = 2）,填写真实发货门店编码
-     */
-    private String shippingStoreCode;
+    @Excel(name = "备注")
+    private String remark;
 
-    /**
-     * WMS仓库接单时间
-     */
+    /** WMS仓库接单时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "WMS仓库接单时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date acceptTime;
 
-    /**
-     * WMS仓库接单回调到OMS时间
-     */
+    /** WMS仓库接单回调到OMS时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "WMS仓库接单回调到OMS时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date acceptCallbackTime;
 
+    /** 1 真实出库 2 虚拟出库  */
+    @Excel(name = "1 真实出库 2 虚拟出库 ")
     private Integer actualWarehouse;
+
+    /** 公司编码 */
+    @Excel(name = "公司编码")
+    private String companyCode;
+
 }
