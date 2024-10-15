@@ -157,7 +157,7 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
 
 
     /**
-     * 入库单处理
+     * 虚拟出入库单处理
      * @param sn
      * @return
      */

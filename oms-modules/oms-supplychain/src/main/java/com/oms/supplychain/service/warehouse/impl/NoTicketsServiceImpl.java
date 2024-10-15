@@ -124,8 +124,8 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
         // 如果采购入库通知单的实际入库状态为虚拟入库，则进行库存回调
         if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode()){
-            // 开始处理库存前，先执行WMS票证货物处理逻辑
             String sn = tickets.getSn();
+            // 开始处理库存前，先执行WMS票证货物处理逻辑
             if (wmsTicketsService.wmsTicketsGoodsHandle(sn)){
                 boolean b = wmsTicketsService.cGInventoryCallback(sn);
                 // 如果库存回调成功，则更新采购入库单状态为入库完成

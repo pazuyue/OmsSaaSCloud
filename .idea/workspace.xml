@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/IWmsTicketsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/IWmsTicketsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" afterDir="false" />
     </list>
@@ -327,14 +326,7 @@
       <workItem from="1728699722726" duration="2588000" />
       <workItem from="1728885956101" duration="11807000" />
       <workItem from="1728961952583" duration="5386000" />
-      <workItem from="1728978830166" duration="6652000" />
-    </task>
-    <task id="LOCAL-00054" summary="OMS - 供应链 - 采购单-调整">
-      <created>1724207436941</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1724207436941</updated>
+      <workItem from="1728978830166" duration="7292000" />
     </task>
     <task id="LOCAL-00055" summary="OMS - 供应链 - 采购单-调整">
       <created>1724209392958</created>
@@ -672,7 +664,14 @@
       <option name="project" value="LOCAL" />
       <updated>1728985281261</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="库存回调">
+      <created>1728985631894</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1728985631894</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
