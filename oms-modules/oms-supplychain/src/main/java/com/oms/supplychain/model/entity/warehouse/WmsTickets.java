@@ -84,11 +84,6 @@ public class WmsTickets implements Serializable {
     @Excel(name = "作废成功时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date timeCancel;
 
-    /** 实际出库时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "实际出库时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date actuallyOutTime;
-
     /** 快递名称 */
     @Excel(name = "快递名称")
     private String shippingName;

@@ -33,7 +33,7 @@
                         placeholder="请选择通知成功时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="收到反馈完成出入库时间" prop="timeQuery">
+      <el-form-item label="查询时间" prop="timeQuery">
         <el-date-picker clearable
                         v-model="queryParams.timeQuery"
                         type="date"
@@ -130,7 +130,7 @@
           <span>{{ parseTime(scope.row.timeNotify, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="收到反馈完成出入库时间" align="center" prop="timeQuery" width="180">
+      <el-table-column label="查询时间" align="center" prop="timeQuery" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.timeQuery, '{y}-{m}-{d}') }}</span>
         </template>
@@ -138,11 +138,6 @@
       <el-table-column label="作废成功时间" align="center" prop="timeCancel" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.timeCancel, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="实际出库时间" align="center" prop="actuallyOutTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.actuallyOutTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="快递名称" align="center" prop="shippingName" />
@@ -356,7 +351,6 @@ export default {
         timeNotify: null,
         timeQuery: null,
         timeCancel: null,
-        actuallyOutTime: null,
         shippingName: null,
         shippingCode: null,
         remark: null,

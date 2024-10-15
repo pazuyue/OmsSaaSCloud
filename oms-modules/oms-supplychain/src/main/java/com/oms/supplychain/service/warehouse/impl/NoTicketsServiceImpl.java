@@ -18,9 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,17 +51,17 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public List<NoTickets> selectNoTicketsList(NoTickets noTickets) {
         QueryWrapper<NoTickets> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.isBlank(noTickets.getNoSn())){
-            queryWrapper.eq("no_sn",noTickets.getNoSn());
+        if (!StrUtil.isBlank(noTickets.getNoSn())) {
+            queryWrapper.eq("no_sn", noTickets.getNoSn());
         }
-        if (!StrUtil.isBlank(noTickets.getPoSn())){
-            queryWrapper.eq("po_sn",noTickets.getPoSn());
+        if (!StrUtil.isBlank(noTickets.getPoSn())) {
+            queryWrapper.eq("po_sn", noTickets.getPoSn());
         }
-        if (!StrUtil.isBlank(noTickets.getNoName())){
-            queryWrapper.eq("no_name",noTickets.getNoName());
+        if (!StrUtil.isBlank(noTickets.getNoName())) {
+            queryWrapper.eq("no_name", noTickets.getNoName());
         }
-        if (noTickets.getNoState() != null){
-            queryWrapper.eq("no_state",noTickets.getNoState());
+        if (noTickets.getNoState() != null) {
+            queryWrapper.eq("no_state", noTickets.getNoState());
         }
         return this.list(queryWrapper);
     }
@@ -67,7 +70,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     public int insertNoTickets(NoTickets noTickets) {
         String batchCode = IdUtil.simpleUUID();
         String operName = SecurityUtils.getUsername();
-        String noSn = "NO_"+batchCode;
+        String noSn = "NO_" + batchCode;
         noTickets.setNoSn(noSn);
         noTickets.setBatchCode(batchCode);
         noTickets.setCreatedUser(operName);
@@ -81,7 +84,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
     @Override
     public boolean updateNoTicketsByWrapper(NoTickets noTickets, UpdateWrapper updateWrapper) {
-        return this.baseMapper.update(noTickets,updateWrapper) > 0;
+        return this.baseMapper.update(noTickets, updateWrapper) > 0;
     }
 
     @Override
@@ -121,17 +124,15 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
         // 创建采购入库通知单
         WmsTickets tickets = createWarehousingNotificationOrder(noTickets);
-
         // 如果采购入库通知单的实际入库状态为虚拟入库，则进行库存回调
-        if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode()){
+        if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode()) {
             String sn = tickets.getSn();
             // 开始处理库存前，先执行WMS票证货物处理逻辑
-            if (wmsTicketsService.wmsTicketsGoodsHandle(sn)){
+            if (wmsTicketsService.wmsTicketsGoodsHandle(sn)) {
                 boolean b = wmsTicketsService.cGInventoryCallback(sn);
                 // 如果库存回调成功，则更新采购入库单状态为入库完成
-                if (b){
-                    noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
-                    return this.baseMapper.updateById(noTickets);
+                if (b) {
+                    return this.end(noTickets,sn);
                 }
             }
             return 0;
@@ -143,13 +144,62 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     }
 
 
+    /**
+     * 完结票证
+     *
+     * 此方法用于更新票证和相关货物的状态，确保仓库中实际数量与票证相符
+     * 它首先获取与票证关联的所有货物信息，然后根据仓库中的实际货物数量更新每个货物的记录
+     * 最后，更新票证的状态为“入库完成”
+     *
+     * @param noTickets 票证对象，包含票证的详细信息
+     * @param sn 票证编号，用于唯一标识一个票证
+     * @return 返回更新操作的结果，通常表示成功与否
+     */
+    public int end(NoTickets noTickets, String sn) {
+        // 根据票证编号查询仓库中对应的货物信息，并将其收集到一个Map中以便快速访问
+        QueryWrapper<WmsTicketsGoods> wrapper = new QueryWrapper<>();
+        wrapper.eq("sn", sn);
+        Map<String, WmsTicketsGoods> WmsTicketsGoodsMap = wmsTicketsGoodsService.list(wrapper).stream().collect(Collectors.toMap(obj -> obj.getSkuSn() + "_" + obj.getInventoryType(), obj -> obj));
+        log.info("WmsTicketsGoodsMap:{}", WmsTicketsGoodsMap);
+        // 创建一个新的NoTicketsGoods对象并设置其票证编号，用于查询没有票证的货物列表
+        NoTicketsGoods noTicketsGood = new NoTicketsGoods();
+        noTicketsGood.setNoSn(noTickets.getNoSn());
+        List<NoTicketsGoods> lists = noTicketsGoodsService.selectNoTicketsGoodsList(noTicketsGood);
+        int allNumberActually = 0;
+        BigDecimal AllPriceActually = new BigDecimal(0);
+        // 遍历货物列表，根据仓库中的实际数量更新每个货物的记录
+        for (NoTicketsGoods noTicketsGoods : lists) {
+            if (WmsTicketsGoodsMap.containsKey(noTicketsGoods.getSkuSn() + "_ZP")) {
+                WmsTicketsGoods wmsTicketsGoods = WmsTicketsGoodsMap.get(noTicketsGoods.getSkuSn() + "_ZP");
+                noTicketsGoods.setZpNumberActually(wmsTicketsGoods.getNumberActually());
+                allNumberActually = allNumberActually + wmsTicketsGoods.getNumberActually();
+                AllPriceActually = AllPriceActually.add(wmsTicketsGoods.getPurchasePrice().multiply(new BigDecimal(wmsTicketsGoods.getNumberActually())));
+            }
+            if (WmsTicketsGoodsMap.containsKey(noTicketsGoods.getSkuSn() + "_CP")) {
+                WmsTicketsGoods wmsTicketsGoods = WmsTicketsGoodsMap.get(noTicketsGoods.getSkuSn() + "_CP");
+                noTicketsGoods.setCpNumberActually(wmsTicketsGoods.getNumberActually());
+                allNumberActually = allNumberActually + wmsTicketsGoods.getNumberActually();
+                AllPriceActually = AllPriceActually.add(wmsTicketsGoods.getPurchasePrice().multiply(new BigDecimal(wmsTicketsGoods.getNumberActually())));
+            }
+            noTicketsGoodsService.updateById(noTicketsGoods);
+        }
+
+        // 更新票证状态为“入库完成”
+        noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
+        noTickets.setNumberActually(allNumberActually);
+        noTickets.setPriceActually(AllPriceActually);
+        // 更新数据库中的票证信息
+        return this.baseMapper.updateById(noTickets);
+    }
+
+
 
     /**
      * 创建入库通知单
      *
      * @param noTickets 采购单对象，包含采购信息和商品明细
      * @return 如果成功创建入库通知单，则返回true
-     *
+     * <p>
      * 此方法负责根据采购单信息创建入库通知单，包括设置通知单编号、类型、关联采购单信息、
      * 虚仓信息、商品明细等，并最终保存到数据库中
      */
@@ -159,7 +209,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
         // 生成入库通知单的唯一编号，前缀为"CG"
         String sn = "CG_" + IdUtil.simpleUUID();
-
+        String operName = SecurityUtils.getUsername();
         // 根据采购单中的模拟仓库编码查询模拟仓库信息
         SimulationStoreInfoDto simulationStoreInfo = simulationStoreInfoMapper.selectSimulationStoreInfoWtihOwnerInfo(noTickets.getWmsSimulationCode());
 
@@ -167,7 +217,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         if (ObjectUtil.isEmpty(simulationStoreInfo))
             throw new RuntimeException("虚仓:" + noTickets.getWmsSimulationCode() + "信息不存在");
         QueryWrapper<WmsTickets> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("relation_sn",noTickets.getNoSn() );
+        queryWrapper.eq("relation_sn", noTickets.getNoSn());
         WmsTickets one = wmsTicketsService.getOne(queryWrapper);
         if (ObjectUtil.isNotEmpty(one))
             throw new RuntimeException("采购单:" + noTickets.getNoSn() + "已生成入库通知单");
@@ -191,7 +241,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         // 设置公司编码
         tickets.setCompanyCode(noTickets.getCompanyCode());
         // 设置操作用户名
-        tickets.setUserName(noTickets.getReviewerUser());
+        tickets.setUserName(operName);
         // 设置实际仓库信息
         tickets.setActualWarehouse(simulationStoreInfo.getOwnerInfo().getRealStoreInfo().getActualWarehouse());
 
