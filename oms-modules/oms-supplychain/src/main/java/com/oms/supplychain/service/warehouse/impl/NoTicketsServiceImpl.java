@@ -95,25 +95,54 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     }
 
     @Override
+    /**
+     * 审核采购入库单
+     * 此方法主要用于审核采购入库单，根据入库单的状态进行不同的业务处理
+     * 如果入库单状态为待审核，则创建采购入库通知单并根据实际情况进行库存回调
+     * 根据库存回调结果更新采购入库单状态
+     *
+     * @param noSn 采购入库单号
+     * @return 更新采购入库单操作的结果
+     * @throws RuntimeException 如果采购入库单状态非待审核，抛出运行时异常
+     */
     public int examine(String noSn) {
+        // 根据采购入库单号查询采购入库单信息
         QueryWrapper<NoTickets> query = new QueryWrapper<>();
         query.eq("no_sn", noSn);
         NoTickets noTickets = getOne((Wrapper<NoTickets>) query);
+
+        // 获取采购入库单的状态
         Integer state = noTickets.getNoState();
+
+        // 检查采购入库单是否为待审核状态
         if (state != DocumentState.AUDIT.getCode()) {
             throw new RuntimeException("采购入库单非待审核状态");
         }
+
+        // 创建采购入库通知单
         WmsTickets tickets = createWarehousingNotificationOrder(noTickets);
+
+        // 如果采购入库通知单的实际入库状态为虚拟入库，则进行库存回调
         if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode()){
-            boolean b = wmsTicketsService.cGInventoryCallback(tickets.getSn());
-            if (b){
-                noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
-                return this.baseMapper.updateById(noTickets);
+            // 开始处理库存前，先执行WMS票证货物处理逻辑
+            String sn = tickets.getSn();
+            if (wmsTicketsService.wmsTicketsGoodsHandle(sn)){
+                boolean b = wmsTicketsService.cGInventoryCallback(sn);
+                // 如果库存回调成功，则更新采购入库单状态为入库完成
+                if (b){
+                    noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
+                    return this.baseMapper.updateById(noTickets);
+                }
             }
+            return 0;
         }
+
+        // 如果不是虚拟入库或库存回调不成功，则更新采购入库单状态为待入库
         noTickets.setNoState(DocumentState.WAITWAREHOUSING.getCode());
         return this.baseMapper.updateById(noTickets);
     }
+
+
 
     /**
      * 创建入库通知单

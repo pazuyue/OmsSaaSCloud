@@ -68,4 +68,6 @@ public interface IWmsTicketsService extends IService<WmsTickets> {
     public boolean notice(String sn);
 
     public boolean cGInventoryCallback(String sn);
+
+    public boolean wmsTicketsGoodsHandle(String sn);
 }
