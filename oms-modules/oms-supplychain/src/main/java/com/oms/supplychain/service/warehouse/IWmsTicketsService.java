@@ -66,4 +66,6 @@ public interface IWmsTicketsService extends IService<WmsTickets> {
     public int deleteWmsTicketsById(Integer id);
 
     public boolean notice(String sn);
+
+    public boolean cGInventoryCallback(String sn);
 }

@@ -26,4 +26,14 @@ public class ServiceNameConstants
      * 商品服务的serviceid
      */
     public static final String OMS_GOODS_SERVICE = "oms-modules-goods";
+
+    /**
+     * 库存服务
+     */
+    public static final String OMS_INVENTORY_SERVICE = "oms-modules-inventory";
+
+    /**
+     * 仓储服务
+     */
+    public static final String OMS_SUPPLYCHAIN_SERVICE = "oms-modules-supplychain";
 }

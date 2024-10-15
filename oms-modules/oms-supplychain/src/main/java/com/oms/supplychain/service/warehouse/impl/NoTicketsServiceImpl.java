@@ -103,7 +103,9 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         if (state != DocumentState.AUDIT.getCode()) {
             throw new RuntimeException("采购入库单非待审核状态");
         }
-        createWarehousingNotificationOrder(noTickets);
+        WmsTickets tickets = createWarehousingNotificationOrder(noTickets);
+        if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode())
+            wmsTicketsService.cGInventoryCallback(tickets.getSn());
         return false;
     }
 
@@ -116,7 +118,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
      * 此方法负责根据采购单信息创建入库通知单，包括设置通知单编号、类型、关联采购单信息、
      * 虚仓信息、商品明细等，并最终保存到数据库中
      */
-    private boolean createWarehousingNotificationOrder(NoTickets noTickets) {
+    private WmsTickets createWarehousingNotificationOrder(NoTickets noTickets) {
         // 开始创建入库通知单的日志记录
         log.info("开始创建入库通知单");
 
@@ -201,7 +203,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         // 批量保存入库通知单商品明细信息
         wmsTicketsGoodsService.saveBatch(wmsTicketsGoodsArrayList);
         // 返回创建成功标志
-        return true;
+        return tickets;
     }
 
 }
