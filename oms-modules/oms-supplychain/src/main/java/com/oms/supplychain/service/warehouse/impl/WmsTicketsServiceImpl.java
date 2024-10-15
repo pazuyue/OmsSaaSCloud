@@ -144,11 +144,13 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
 
         // 更新票证状态，表示已处理完成
         WmsTickets tickets = new WmsTickets();
+        Date date = new Date();
         tickets.setId(wmsTickets.getId());
         tickets.setStatusTicket(DocumentState.STATUS_TICKET_PROCESSED.getCode());
         tickets.setStatusQuery(DocumentState.STATUS_QUERY_PROCESSED_SUCCESS.getCode());
         tickets.setStatusNotify(DocumentState.STATUS_NOTIFY_PROCESSED_SUCCESS.getCode());
-        tickets.setAcceptCallbackTime(new Date());
+        tickets.setAcceptCallbackTime(date);
+        tickets.setWmsActuallyTime(date);
         this.baseMapper.updateById(tickets);
 
         // 库存处理成功，返回true
