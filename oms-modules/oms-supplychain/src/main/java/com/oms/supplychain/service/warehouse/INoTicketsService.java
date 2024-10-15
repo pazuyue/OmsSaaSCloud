@@ -71,6 +71,6 @@ public interface INoTicketsService
      * @param noSn
      * @return
      */
-    public boolean examine(String noSn);
+    public int examine(String noSn);
 }
 

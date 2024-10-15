@@ -11,6 +11,7 @@ public class OwnerInfoDto {
     private Integer id;
     private String ownerCode;
     private String ownerName;
+    private String realStoreCode;
     private Byte isSync;
     private Byte isEnable;
     private String companyCode;

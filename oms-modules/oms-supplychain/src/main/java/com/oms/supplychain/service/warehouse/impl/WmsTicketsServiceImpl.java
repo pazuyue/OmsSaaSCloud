@@ -5,11 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.common.api.RemoteInventoryService;
 import com.oms.common.model.entity.GoodsSkuSnInfo;
+import com.oms.common.model.entity.WmsInventoryBatch;
 import com.oms.supplychain.mapper.warehouse.WmsTicketsMapper;
 import com.oms.supplychain.model.dto.warehouse.WmsTicketsDto;
 import com.oms.supplychain.model.enmus.DocumentState;
-import com.oms.supplychain.model.entity.Inventory.WmsInventoryBatch;
-import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 import com.oms.supplychain.model.entity.warehouse.WmsTickets;
 import com.oms.supplychain.model.entity.warehouse.WmsTicketsGoods;
 import com.oms.supplychain.service.warehouse.IWmsTicketsGoodsService;
@@ -110,12 +109,14 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             inventoryBatch.setBatchCode(wmsTicketsGoods.getBatchCode());
             inventoryBatch.setTransactionPrice(wmsTicketsGoods.getPurchasePrice());
             R<Boolean> result = remoteInventoryService.addInventory(inventoryBatch, wmsTickets.getCompanyCode());
+            log.info("库存处理结果：{}",result);
             if (!R.isSuccess(result)){
                log.info("库存处理失败");
                 WmsTicketsGoods updateWmsTticetGoods = new WmsTicketsGoods();
                 updateWmsTticetGoods.setId(wmsTicketsGoods.getId());
                 updateWmsTticetGoods.setInventoryIsHandle(DocumentState.PROCESSED_FAIL.getCode());
-                wmsTicketsGoodsService.updateById(wmsTicketsGoods);
+                log.info("库存处理失败，更新状态为：{}",updateWmsTticetGoods);
+                wmsTicketsGoodsService.updateById(updateWmsTticetGoods);
             }else {
                 WmsTicketsGoods updateWmsTticetGoods = new WmsTicketsGoods();
                 updateWmsTticetGoods.setId(wmsTicketsGoods.getId());
@@ -124,6 +125,7 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             }
         }
         WmsTickets tickets = new WmsTickets();
+        tickets.setId(wmsTickets.getId());
         tickets.setStatusTicket(DocumentState.STATUS_TICKET_PROCESSED.getCode());
         tickets.setStatusQuery(DocumentState.STATUS_QUERY_PROCESSED_SUCCESS.getCode());
         tickets.setStatusNotify(DocumentState.STATUS_NOTIFY_PROCESSED_SUCCESS.getCode());

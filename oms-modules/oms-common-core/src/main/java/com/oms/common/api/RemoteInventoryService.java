@@ -1,8 +1,7 @@
 package com.oms.common.api;
 
-import com.oms.common.factory.RemoteGoodsFallbackFactory;
 import com.oms.common.factory.RemoteInventoryFallbackFactory;
-import com.oms.supplychain.model.entity.Inventory.WmsInventoryBatch;
+import com.oms.common.model.entity.WmsInventoryBatch;
 import com.ruoyi.common.core.constant.ServiceNameConstants;
 import com.ruoyi.common.core.domain.R;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -95,7 +95,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     }
 
     @Override
-    public boolean examine(String noSn) {
+    public int examine(String noSn) {
         QueryWrapper<NoTickets> query = new QueryWrapper<>();
         query.eq("no_sn", noSn);
         NoTickets noTickets = getOne((Wrapper<NoTickets>) query);
@@ -104,9 +104,15 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
             throw new RuntimeException("采购入库单非待审核状态");
         }
         WmsTickets tickets = createWarehousingNotificationOrder(noTickets);
-        if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode())
-            wmsTicketsService.cGInventoryCallback(tickets.getSn());
-        return false;
+        if (tickets.getActualWarehouse() == DocumentState.VIRTUALLY_WAREHOUSE.getCode()){
+            boolean b = wmsTicketsService.cGInventoryCallback(tickets.getSn());
+            if (b){
+                noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
+                return this.baseMapper.updateById(noTickets);
+            }
+        }
+        noTickets.setNoState(DocumentState.WAITWAREHOUSING.getCode());
+        return this.baseMapper.updateById(noTickets);
     }
 
     /**
