@@ -49,6 +49,9 @@ public class OwnerInfo implements Serializable {
     @Excel(name = "同步资料")
     private Byte isEnable;
 
+    @Excel(name = "实仓编码")
+    private String realStoreCode;
+
     /**
      * 公司编码
      */

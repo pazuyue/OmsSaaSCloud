@@ -108,10 +108,4 @@ public class WmsRealStoreInfo implements Serializable {
      */
     @Excel(name = "出入库类型")
     private Integer actualWarehouse;
-
-    /**
-     * 货主
-     */
-    @Excel(name = "货主编码")
-    private String ownerCode;
 }

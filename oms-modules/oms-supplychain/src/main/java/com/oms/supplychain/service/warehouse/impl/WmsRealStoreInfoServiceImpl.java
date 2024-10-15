@@ -58,9 +58,6 @@ public class WmsRealStoreInfoServiceImpl extends ServiceImpl<WmsRealStoreInfoMap
     @Override
     public List<WmsRealStoreInfo> selectWmsRealStoreInfoList(WmsRealStoreInfoVO wmsRealStoreInfo) {
         QueryWrapper<WmsRealStoreInfo> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.isBlank(wmsRealStoreInfo.getOwnerCode())){
-            queryWrapper.eq("owner_code",wmsRealStoreInfo.getOwnerCode());
-        }
         if (!StrUtil.isBlank(wmsRealStoreInfo.getRealStoreCode())){
             queryWrapper.eq("real_store_code",wmsRealStoreInfo.getRealStoreCode());
         }

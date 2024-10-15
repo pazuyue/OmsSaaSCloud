@@ -66,11 +66,6 @@ public class WmsRealStoreInfoVO {
      * 公司编码
      */
     private String companyCode;
-    /**
-     * 货主
-     */
-    @NotBlank(message = "货主不能为空")
-    private String ownerCode;
 
     @NotBlank(message = "出入库类型不能为空")
     private Integer actualWarehouse;

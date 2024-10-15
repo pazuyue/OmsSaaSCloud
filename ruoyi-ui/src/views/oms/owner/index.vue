@@ -102,6 +102,7 @@
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="货主编码" align="center" prop="ownerCode" />
       <el-table-column label="货主名称" align="center" prop="ownerName" />
+      <el-table-column label="实仓编码" align="center" prop="realStoreCode" />
       <el-table-column label="是否需同步商品资料" align="center" prop="isSync">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isSync"/>
@@ -155,6 +156,16 @@
         <el-form-item label="货主名称" prop="ownerName">
           <el-input v-model="form.ownerName" placeholder="请输入编主名称" />
         </el-form-item>
+        <el-form-item label="实仓编码" prop="realStoreCode">
+          <el-select v-model="form.realStoreCode" placeholder="请选择实仓编码" @change="dataScopeSelectChange">
+            <el-option
+              v-for="item in realStoreCodeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="是否需同步商品资料" prop="isSync">
           <el-radio-group v-model="form.isSync">
             <el-radio
@@ -184,6 +195,7 @@
 
 <script>
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/owner/owner.js";
+import { listWmsRealStore} from "@/api/wmsRealStore/wmsRealStore";
 
 export default {
   name: "Info",
@@ -208,6 +220,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      ownerCodeOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -217,7 +230,8 @@ export default {
         isSync: null,
         isEnable: null,
         companyCode: null,
-        modifyTime: null
+        modifyTime: null,
+        realStoreCode: null
       },
       // 表单参数
       form: {},
@@ -228,6 +242,9 @@ export default {
         ],
         ownerName: [
           { required: true, message: "编主名称不能为空", trigger: "blur" }
+        ],
+        realStoreCode: [
+          { required: true, message: "实仓编码不能为空", trigger: "blur" }
         ],
         isEnable: [
           { required: true, message: "2启用，1不启用不能为空", trigger: "change" }
@@ -246,8 +263,20 @@ export default {
   },
   created() {
     this.getList();
+    this.getRealStoreCodeOptions();
   },
   methods: {
+    getRealStoreCodeOptions(){
+      this.realStoreCodeOptions = [];
+      listWmsRealStore().then(response => {
+        for (let i = 0; i < response.data.length; i++){
+          this.realStoreCodeOptions.push({
+            label: response.data[i].wmsName,
+            value: response.data[i].realStoreCode
+          })
+        }
+      });
+    },
     /** 查询货主基础信息列表 */
     getList() {
       this.loading = true;
@@ -268,6 +297,7 @@ export default {
         id: null,
         ownerCode: null,
         ownerName: null,
+        realStoreCode: null,
         isSync: null,
         isEnable: null,
         companyCode: null,
@@ -343,7 +373,17 @@ export default {
       this.download('supplychain/owner/export', {
         ...this.queryParams
       }, `info_${new Date().getTime()}.xlsx`)
-    }
+    },
+    dataScopeSelectChange(value) {
+      // 根据 value 找到对应的 label
+      const selectedOption = this.realStoreCodeOptions.find(item => item.value === value);
+      if (selectedOption) {
+        console.log('选中的 label:', selectedOption.label);
+        this.form.actualWarehouse = selectedOption.label;
+      } else {
+        console.log('未找到对应项');
+      }
+    },
   }
 };
 </script>

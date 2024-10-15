@@ -7,6 +7,7 @@ import com.oms.supplychain.mapper.warehouse.WmsTicketsMapper;
 import com.oms.supplychain.model.entity.warehouse.SupplierInfo;
 import com.oms.supplychain.model.entity.warehouse.WmsTickets;
 import com.oms.supplychain.service.warehouse.IWmsTicketsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author 月光光
  * @since 2023-08-03
  */
+@Slf4j
 @Service
 public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTickets> implements IWmsTicketsService {
 
@@ -63,5 +65,11 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
     @Override
     public int deleteWmsTicketsById(Integer id) {
         return this.baseMapper.deleteById(id);
+    }
+
+    @Override
+    public boolean notice(String sn) {
+        log.info("notice {}", sn);
+        return false;
     }
 }

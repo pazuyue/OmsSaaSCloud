@@ -64,4 +64,6 @@ public interface IWmsTicketsService extends IService<WmsTickets> {
      * @return 结果
      */
     public int deleteWmsTicketsById(Integer id);
+
+    public boolean notice(String sn);
 }

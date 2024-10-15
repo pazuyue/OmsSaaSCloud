@@ -95,14 +95,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="货主" prop="ownerCode">
-        <el-input
-          v-model="queryParams.ownerCode"
-          placeholder="请输入货主"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -187,7 +179,6 @@
           <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
         </template>
       </el-table-column>
-      <el-table-column label="货主" align="center" prop="ownerCode" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -274,17 +265,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="货主编码" prop="ownerCode">
-<!--          <el-input v-model="form.ownerCode" placeholder="请输入货主" />-->
-              <el-select v-model="form.ownerCode" placeholder="请选择">
-                <el-option
-                  v-for="item in ownerCodeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -296,7 +276,6 @@
 
 <script>
 import { listWmsRealStoreInfo, getWmsRealStoreInfo, delWmsRealStoreInfo, addWmsRealStoreInfo, updateWmsRealStoreInfo } from "@/api/wmsRealStore/wmsRealStore";
-import { listOwner } from "@/api/owner/owner.js";
 
 export default {
   name: "WmsRealStoreInfo",
@@ -339,7 +318,6 @@ export default {
         companyCode: null,
         modifyTime: null,
         actualWarehouse: null,
-        ownerCode: null
       },
       // 表单参数
       form: {},
@@ -378,9 +356,6 @@ export default {
         actualWarehouse: [
           { required: true, message: "是否真实出库不能为空", trigger: "change" }
         ],
-        ownerCode: [
-          { required: true, message: "货主不能为空", trigger: "blur" }
-        ]
       }
     };
   },
@@ -404,7 +379,6 @@ export default {
     },
     // 表单重置
     reset() {
-      this.getOwnerCodeOptions();
       this.form = {
         id: null,
         status: null,
@@ -420,8 +394,7 @@ export default {
         companyCode: null,
         createTime: null,
         modifyTime: null,
-        actualWarehouse: null,
-        ownerCode: null
+        actualWarehouse: null
       };
       this.resetForm("form");
     },
@@ -493,7 +466,8 @@ export default {
         ...this.queryParams
       }, `WmsRealStoreInfo_${new Date().getTime()}.xlsx`)
     },
-    getOwnerCodeOptions(){
+
+/*    getOwnerCodeOptions(){
       this.ownerCodeOptions = [];
       listOwner().then(response => {
         for (let i = 0; i < response.data.length; i++){
@@ -503,7 +477,7 @@ export default {
           })
         }
       });
-    }
+    }*/
   }
 };
 </script>

@@ -51,6 +51,13 @@ public class WmsRealStoreInfoController extends BaseController {
         return getDataTable(list);
     }
 
+    @GetMapping("/listAll")
+    @SneakyThrows
+    public AjaxResult listAll(WmsRealStoreInfoVO wmsRealStoreInfo){
+        List<WmsRealStoreInfo> list = wmsRealStoreInfoService.selectWmsRealStoreInfoList(wmsRealStoreInfo);
+        return success(list);
+    }
+
     /**
      * 导出实仓列表
      */

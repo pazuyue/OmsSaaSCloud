@@ -24,8 +24,8 @@ public interface OwnerInfoMapper extends BaseMapper<OwnerInfo> {
 
     @Select("select * from owner_info WHERE owner_code =#{owner_code}")
     @Results({
-            @Result(property = "ownerCode", column = "owner_code"),
-            @Result(property = "realStoreInfo", column = "owner_code", javaType = WmsRealStoreInfo.class,
+            @Result(property = "realStoreCode", column = "real_store_code"),
+            @Result(property = "realStoreInfo", column = "real_store_code", javaType = WmsRealStoreInfo.class,
                     one = @One(select = "com.oms.supplychain.mapper.warehouse.WmsRealStoreInfoMapper.selectRealStoreInfoByOwnerCode"))
     })
     OwnerInfoDto selectOwnerInfoByOwnerCodeWithRealStore(String owner_code);

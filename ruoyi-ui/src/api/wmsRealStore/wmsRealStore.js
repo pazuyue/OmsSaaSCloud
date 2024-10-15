@@ -9,6 +9,15 @@ export function listWmsRealStoreInfo(query) {
   })
 }
 
+// 查询实仓列表
+export function listWmsRealStore(query) {
+  return request({
+    url: '/supplychain/realStore/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询实仓详细
 export function getWmsRealStoreInfo(id) {
   return request({
