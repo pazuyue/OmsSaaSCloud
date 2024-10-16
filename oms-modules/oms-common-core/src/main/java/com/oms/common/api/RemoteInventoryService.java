@@ -19,6 +19,6 @@ public interface RemoteInventoryService {
      * @param company_code
      * @return
      */
-    @PostMapping(value = "/api/inventory/addInventory")
+    @PostMapping(value = "/api/WmsInventory/addInventory")
     public R<Boolean> addInventory(@RequestBody WmsInventoryBatch inventoryBatch, @RequestParam("company_code") String company_code);
 }

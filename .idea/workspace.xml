@@ -5,10 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/OmsInventoryApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/WmsInventoryController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/api/ApiWmsInventoryController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/TSkuInventoryMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryBatchMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/TSkuInventory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventoryBatch.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/ITSkuInventoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IWmsInventoryBatchService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IWmsInventoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/TSkuInventoryServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/resources/bootstrap.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/NoTicketsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/INoTicketsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/NoTicketsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteInventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteInventoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/WmsInventoryBatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/WmsInventoryBatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +95,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_ruoyi_vue" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -88,11 +110,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\java\com\oms\inventory\mapper" />
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\java\com\oms\inventory\model\entity" />
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain\model\entity\warehouse" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\resources" />
-      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods" />
-      <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\views\oms\goods\info" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
@@ -105,11 +127,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.inventory.service.impl" />
+      <recent name="com.oms.inventory.service" />
+      <recent name="com.oms.inventory.mapper" />
+      <recent name="com.oms.inventory.controller.wms" />
       <recent name="com.oms.common.model.entity" />
-      <recent name="com.oms.supplychain.model.entity.Inventory" />
-      <recent name="com.oms.supplychain.service.warehouse.impl" />
-      <recent name="com.oms.supplychain.mapper.warehouse" />
-      <recent name="com.oms.supplychain.model.dto.warehouse" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -119,7 +141,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.OmsSupplyChainApplication">
+  <component name="RunManager" selected="Spring Boot.OmsInventoryApplication">
     <configuration name="GeberatorUIServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GeberatorUIServer" />
       <module name="oms-goods-administration" />
@@ -143,6 +165,19 @@
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.goods.OmsGoodsAdministrationApplication" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OmsInventoryApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="oms-inventory" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.oms.inventory.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.inventory.OmsInventoryApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -224,9 +259,11 @@
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
+      <item itemvalue="Spring Boot.OmsInventoryApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Application.GeberatorUIServer" />
       </list>
@@ -328,14 +365,7 @@
       <workItem from="1728885956101" duration="11807000" />
       <workItem from="1728961952583" duration="5386000" />
       <workItem from="1728978830166" duration="11642000" />
-      <workItem from="1729065107138" duration="299000" />
-    </task>
-    <task id="LOCAL-00058" summary="OMS - 供应链 - 实仓调整">
-      <created>1724313482957</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1724313482958</updated>
+      <workItem from="1729065107138" duration="7566000" />
     </task>
     <task id="LOCAL-00059" summary="OMS - 供应链 - 调整拦截器">
       <created>1724397034954</created>
@@ -673,7 +703,14 @@
       <option name="project" value="LOCAL" />
       <updated>1728990172527</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="入库单虚拟回调">
+      <created>1729065502717</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1729065502717</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -691,7 +728,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 供应链 - 实仓管理" />
     <MESSAGE value="OMS - 供应链 - 虚仓管理" />
     <MESSAGE value="OMS - 供应链 - 虚仓管理-调整" />
     <MESSAGE value="OMS - 供应链 - 供应商-调整" />
@@ -716,7 +752,8 @@
     <MESSAGE value="入库通知单- 审核" />
     <MESSAGE value="实仓与货主关系调整" />
     <MESSAGE value="库存回调" />
-    <option name="LAST_COMMIT_MESSAGE" value="库存回调" />
+    <MESSAGE value="入库单虚拟回调" />
+    <option name="LAST_COMMIT_MESSAGE" value="入库单虚拟回调" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

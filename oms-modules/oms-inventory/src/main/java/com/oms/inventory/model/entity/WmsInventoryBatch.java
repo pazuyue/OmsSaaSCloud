@@ -1,7 +1,6 @@
-package com.oms.common.model.entity;
+package com.oms.inventory.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -29,49 +28,41 @@ public class WmsInventoryBatch implements Serializable {
     /**
      * 仓库编码
      */
-    @TableField(value = "store_code")
     private String storeCode;
 
     /**
      * sku
      */
-    @TableField(value = "sku_sn")
     private String skuSn;
 
     /**
      * 正品库存：实际库存发货时减少
      */
-    @TableField(value = "zp_actual_number")
     private Integer zpActualNumber = 0;
 
     /**
      * 次品库存：实际库存发货时减少
      */
-    @TableField(value = "cp_actual_number")
     private Integer cpActualNumber = 0;
 
     /**
      * 正品可用库存
      */
-    @TableField(value = "zp_available_number")
     private Integer zpAvailableNumber = 0;
 
     /**
      * 次品可用库存
      */
-    @TableField(value = "cp_available_number")
     private Integer cpAvailableNumber = 0;
 
     /**
      * 正品预占库存(总)
      */
-    @TableField(value = "zp_lock_number")
     private Integer zpLockNumber = 0;
 
     /**
      * 正品预占库存
      */
-    @TableField(value = "cp_lock_number")
     private Integer cpLockNumber = 0;
 
     /**
@@ -82,26 +73,22 @@ public class WmsInventoryBatch implements Serializable {
     /**
      * 采购批次
      */
-    @TableField(value = "batch_code")
     private String batchCode;
 
     /**
      * 批次的成本价
      */
-    @TableField(value = "transaction_price")
     private BigDecimal transactionPrice = new BigDecimal(0.00);
 
     /**
      * 品牌编码
      */
-    @TableField(value = "brand_code")
     private String brandCode;
-    @TableField(value = "create_time")
     private Date createTime;
 
     /**
      * 修改时间
      */
-    @TableField(value = "modify_time")
     private Date modifyTime;
+    private String companyCode;
 }

@@ -12,6 +12,7 @@
         <module>oms-goods-administration</module>
         <module>oms-common-core</module>
         <module>oms-supplychain</module>
+        <module>oms-inventory</module>
     </modules>
 
     <artifactId>oms-omdules</artifactId>

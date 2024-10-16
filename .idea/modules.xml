@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" filepath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" filepath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" filepath="$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-omdules.iml" filepath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" filepath="$PROJECT_DIR$/oms-modules/oms-supplychain/oms-supplychain.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruoyi.iml" filepath="$PROJECT_DIR$/ruoyi.iml" />
