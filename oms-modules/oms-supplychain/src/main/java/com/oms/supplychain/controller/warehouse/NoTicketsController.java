@@ -163,7 +163,7 @@ public class NoTicketsController extends BaseController
     @RequiresPermissions("warehouse:noTickets:examine")
     @PostMapping(value = "/examine")
     public AjaxResult examine(@RequestParam(value = "no_sn") String noSn) {
-        if (noTicketsService.examine(noSn)>0)
+        if (noTicketsService.examine(noSn))
             return success();
         return error("审核失败");
     }

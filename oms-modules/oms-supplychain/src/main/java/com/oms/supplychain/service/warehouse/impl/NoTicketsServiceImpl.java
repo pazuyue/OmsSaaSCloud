@@ -108,7 +108,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
      * @return 更新采购入库单操作的结果
      * @throws RuntimeException 如果采购入库单状态非待审核，抛出运行时异常
      */
-    public int examine(String noSn) {
+    public boolean examine(String noSn) {
         // 根据采购入库单号查询采购入库单信息
         QueryWrapper<NoTickets> query = new QueryWrapper<>();
         query.eq("no_sn", noSn);
@@ -135,12 +135,13 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
                     return this.end(noTickets,sn);
                 }
             }
-            return 0;
+            return false;
         }
 
         // 如果不是虚拟入库或库存回调不成功，则更新采购入库单状态为待入库
         noTickets.setNoState(DocumentState.WAITWAREHOUSING.getCode());
-        return this.baseMapper.updateById(noTickets);
+        this.baseMapper.updateById(noTickets);
+        return true;
     }
 
 
@@ -155,7 +156,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
      * @param sn 票证编号，用于唯一标识一个票证
      * @return 返回更新操作的结果，通常表示成功与否
      */
-    public int end(NoTickets noTickets, String sn) {
+    public boolean end(NoTickets noTickets, String sn) {
         // 根据票证编号查询仓库中对应的货物信息，并将其收集到一个Map中以便快速访问
         QueryWrapper<WmsTicketsGoods> wrapper = new QueryWrapper<>();
         wrapper.eq("sn", sn);
@@ -188,8 +189,9 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         noTickets.setNoState(DocumentState.WAREHOUSINGCOMPLETED.getCode());
         noTickets.setNumberActually(allNumberActually);
         noTickets.setPriceActually(AllPriceActually);
+        this.baseMapper.updateById(noTickets);
         // 更新数据库中的票证信息
-        return this.baseMapper.updateById(noTickets);
+        return true;
     }
 
 
