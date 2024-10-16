@@ -45,22 +45,22 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-        log.info("===> DynamicDatasourceInterceptor doFilter");
+        //log.info("===> DynamicDatasourceInterceptor doFilter");
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         CustomHttpServletRequest requestWrapper = new CustomHttpServletRequest(req);
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
         // 获取请求参数
         String company_code = req.getParameter("company_code");
-        log.debug("company_code:" + company_code);
         String requestURI = req.getRequestURI();
-        log.debug("requestURI:" + requestURI);
+
         if (isExcluded(requestURI)) {
             // 在排除列表中，跳过
-            log.debug("在排除列表中，跳过");
+            //log.debug("在排除列表中，跳过");
             chain.doFilter(requestWrapper, resp);
             return;
         }
-
+        log.debug("requestURI:" + requestURI);
+        log.debug("company_code:" + company_code);
         if (Objects.isNull(company_code)) {
             try {
                 company_code = this.getCompanyCode();
