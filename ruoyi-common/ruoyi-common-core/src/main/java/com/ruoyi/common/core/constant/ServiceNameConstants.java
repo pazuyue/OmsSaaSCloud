@@ -30,10 +30,10 @@ public class ServiceNameConstants
     /**
      * 库存服务
      */
-    public static final String OMS_INVENTORY_SERVICE = "oms-modules-inventory";
+    public static final String OMS_INVENTORY_SERVICE = "oms-inventory";
 
     /**
      * 仓储服务
      */
-    public static final String OMS_SUPPLYCHAIN_SERVICE = "oms-modules-supplychain";
+    public static final String OMS_SUPPLYCHAIN_SERVICE = "oms-supplychain";
 }

@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -107,7 +108,7 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
         for (WmsTicketsGoods wmsTicketsGoods : wmsTicketsGoodsList) {
             // 初始化库存批次对象，准备更新库存
             WmsInventoryBatch inventoryBatch = new WmsInventoryBatch();
-            inventoryBatch.setWmsSimulationCode(wmsTickets.getWmsSimulationCode());
+            inventoryBatch.setStoreCode(wmsTickets.getWmsSimulationCode());
             inventoryBatch.setSkuSn(wmsTicketsGoods.getSkuSn());
 
             // 设置库存实际数量和可用数量
@@ -174,7 +175,7 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             WmsTicketsGoods ticketsGoods = new WmsTicketsGoods();
             ticketsGoods.setId(wmsTicketsGoods.getId());
             ticketsGoods.setNumberActually(wmsTicketsGoods.getNumberExpected());
-            if (wmsTicketsGoods.getInventoryType() == DocumentState.ZP.getMsg()){
+            if (Objects.equals(wmsTicketsGoods.getInventoryType(), DocumentState.ZP.getMsg())){
                 ticketsGoods.setNumberZp(wmsTicketsGoods.getNumberExpected());
             }else {
                 ticketsGoods.setNumberCp(wmsTicketsGoods.getNumberExpected());
