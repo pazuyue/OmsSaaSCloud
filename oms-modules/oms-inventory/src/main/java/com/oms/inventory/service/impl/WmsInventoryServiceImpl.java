@@ -25,10 +25,35 @@ import java.util.List;
 public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, WmsInventory> implements IWmsInventoryService {
 
     @Override
+    public WmsInventory selectWmsInventoryById(Long id) {
+        return this.getById(id);
+    }
+
+    @Override
     public List<WmsInventory> selectWmsInventoryList(WmsInventory wmsInventory) {
         QueryWrapper<WmsInventory> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsInventory.getSkuSn()),"sku_sn",wmsInventory.getSkuSn());
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsInventory.getStoreCode()),"store_code",wmsInventory.getStoreCode());
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public int insertWmsInventory(WmsInventory wmsInventory) {
+        return 0;
+    }
+
+    @Override
+    public int updateWmsInventory(WmsInventory wmsInventory) {
+        return this.baseMapper.updateById(wmsInventory);
+    }
+
+    @Override
+    public int deleteWmsInventoryByIds(Long[] ids) {
+        return 0;
+    }
+
+    @Override
+    public int deleteWmsInventoryById(Long id) {
+        return 0;
     }
 }
