@@ -18,4 +18,8 @@ OMS SAAS 平台是一个基于SpringBoot/SpringCloud & Alibaba的分布式微服
 ~~~
 oms-modules   
 ├── oms-goods-administration   商品管理服务
+├── oms-supplychain   供应链管理服务
+├── oms-inventory   库存管理模块
+├── oms-order   订单管理服务
+├── oms-common-core   公共模块
 ~~~
