@@ -71,11 +71,6 @@ public class WmsInventory implements Serializable {
     private String remark;
 
     /**
-     * 品牌编码
-     */
-    private String brandCode;
-
-    /**
      * 修改时间
      */
     private Date modifyTime;

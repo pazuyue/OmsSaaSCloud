@@ -1,7 +1,6 @@
 package com.oms.inventory.controller.wms.api;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.oms.inventory.model.entity.TSkuInventory;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.WmsInventoryBatch;
 import com.oms.inventory.service.impl.WmsInventoryBatchServiceImpl;
@@ -34,13 +33,10 @@ public class ApiWmsInventoryController extends BaseController {
     public AjaxResult addInventory(@RequestBody WmsInventoryBatch wmsInventoryBatch) {
         logger.debug("wmsInventoryBatch {}",wmsInventoryBatch);
         WmsInventory wmsInventory = new WmsInventory();
-        TSkuInventory skuInventory = new TSkuInventory();
         try {
             BeanUtil.copyProperties(wmsInventoryBatch, wmsInventory);
             logger.debug("wmsInventory {}",wmsInventory);
-            BeanUtil.copyProperties(wmsInventoryBatch, skuInventory);
-            logger.debug("skuInventory {}",skuInventory);
-            wmsInventoryBatchService.addInventory(skuInventory,wmsInventory, wmsInventoryBatch);
+            wmsInventoryBatchService.addInventory(wmsInventory, wmsInventoryBatch);
             return success();
         } catch (Throwable e) {
             return error(e.getMessage());

@@ -6,8 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/service/warehouse/impl/WmsTicketsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/factory/GoodsPluginFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/api/ApiWmsInventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/api/ApiWmsInventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/TSkuInventoryMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/TSkuInventory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/ITSkuInventoryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/TSkuInventoryServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +81,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_cloud" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -343,14 +352,7 @@
       <workItem from="1728961952583" duration="5386000" />
       <workItem from="1728978830166" duration="11642000" />
       <workItem from="1729065107138" duration="8966000" />
-      <workItem from="1729148974420" duration="1801000" />
-    </task>
-    <task id="LOCAL-00061" summary="OMS - 采购入库单">
-      <created>1724927205476</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1724927205476</updated>
+      <workItem from="1729148974420" duration="7255000" />
     </task>
     <task id="LOCAL-00062" summary="OMS - 采购入库单-UI 调整">
       <created>1725002536564</created>
@@ -688,7 +690,14 @@
       <option name="project" value="LOCAL" />
       <updated>1729074528372</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <task id="LOCAL-00110" summary="库存管理-外部调用">
+      <created>1729150840309</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1729150840309</updated>
+    </task>
+    <option name="localTasksCounter" value="111" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -706,7 +715,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 供应链 - 虚仓管理-调整" />
     <MESSAGE value="OMS - 供应链 - 供应商-调整" />
     <MESSAGE value="OMS - 供应链 - 采购单-调整" />
     <MESSAGE value="OMS - 供应链 - 实仓调整" />
@@ -731,7 +739,8 @@
     <MESSAGE value="库存回调" />
     <MESSAGE value="入库单虚拟回调" />
     <MESSAGE value="库存管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="库存管理" />
+    <MESSAGE value="库存管理-外部调用" />
+    <option name="LAST_COMMIT_MESSAGE" value="库存管理-外部调用" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

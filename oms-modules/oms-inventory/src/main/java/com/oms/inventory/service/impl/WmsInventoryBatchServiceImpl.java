@@ -2,7 +2,6 @@ package com.oms.inventory.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.inventory.mapper.WmsInventoryBatchMapper;
-import com.oms.inventory.model.entity.TSkuInventory;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.WmsInventoryBatch;
 import com.oms.inventory.service.IWmsInventoryBatchService;
@@ -24,13 +23,10 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
 
     @Resource
     private WmsInventoryServiceImpl wmsInventoryService;
-    @Resource
-    private TSkuInventoryServiceImpl skuInventoryService;
 
     @Transactional
-    public Boolean addInventory(TSkuInventory skuInventory, WmsInventory wmsInventory, WmsInventoryBatch wmsInventoryBatch)
+    public Boolean addInventory( WmsInventory wmsInventory, WmsInventoryBatch wmsInventoryBatch)
     {
-        skuInventoryService.getBaseMapper().insertOrUpdate(skuInventory);
         wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
         this.baseMapper.insertOrUpdate(wmsInventoryBatch);
         return true;

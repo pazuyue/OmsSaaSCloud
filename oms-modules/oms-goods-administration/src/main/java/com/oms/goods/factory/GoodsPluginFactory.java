@@ -50,16 +50,16 @@ public class GoodsPluginFactory {
             throw new ServiceException(sysCompanyModelAssociationConfigResult.getMsg());
         }
 
-        // 订单转移模型处理，考虑未来可能的拓展性
-        int orderTransferModel = sysCompanyModelAssociationConfigResult.getData().getOrderTransferModel().intValue();
-        switch (orderTransferModel) {
+        // 商品模型处理，考虑未来可能的拓展性
+        int goodsModel = sysCompanyModelAssociationConfigResult.getData().getGoodsHandleModel().intValue();
+        switch (goodsModel) {
             case 2:
                 type = GoodsPluginEnum.Type.HM;
                 break;
             // 如果未来有更多情况，可以在这里添加case语句，或者考虑使用策略模式等设计模式进行优化
             default:
                 // 明确指出默认行为是保持为Common
-                log.info("OrderTransferModel is not recognized, falling back to Common type.");
+                log.info("goodsModel is not recognized, falling back to Common type.");
                 break;
         }
 
