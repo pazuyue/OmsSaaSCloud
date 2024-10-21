@@ -53,7 +53,7 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
+<!--      <el-table-column label="公司编码" align="center" prop="companyCode" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -76,13 +76,13 @@
     />
 
     <!-- 添加或修改仓库库存对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="650px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="虚仓编码" prop="storeCode">
-          <el-input v-model="form.storeCode" readonly/>
+          <el-input v-model="form.storeCode" :disabled = "true"/>
         </el-form-item>
         <el-form-item label="sku" prop="skuSn">
-          <el-input v-model="form.skuSn" readonly/>
+          <el-input v-model="form.skuSn" :disabled = "true"/>
         </el-form-item>
         <el-form-item label="正品库存" prop="zpActualNumber">
           <el-input v-model="form.zpActualNumber" placeholder="请输入正品库存" />
@@ -101,9 +101,6 @@
         </el-form-item>
         <el-form-item label="次品预占库存" prop="cpLockNumber">
           <el-input v-model="form.cpLockNumber" placeholder="请输入次品预占库存" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -151,7 +148,7 @@ export default {
         cpAvailableNumber: null,
         zpLockNumber: null,
         cpLockNumber: null,
-        modifyTime: null,
+        //modifyTime: null,
         companyCode: null
       },
       // 表单参数
@@ -184,12 +181,6 @@ export default {
         ],
         remark: [
           { required: true, message: "备注不能为空", trigger: "blur" }
-        ],
-        modifyTime: [
-          { required: true, message: "修改时间不能为空", trigger: "blur" }
-        ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
         ],
       }
     };
@@ -225,8 +216,8 @@ export default {
         zpLockNumber: null,
         cpLockNumber: null,
         remark: null,
-        modifyTime: null,
-        createTime: null,
+        //modifyTime: null,
+        //createTime: null,
         companyCode: null
       };
       this.resetForm("form");

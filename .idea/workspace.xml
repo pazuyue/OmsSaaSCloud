@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyMetaObjectHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,9 +19,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="JavaScript File" />
         <option value="Vue Single File Component" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -343,14 +345,8 @@
       <workItem from="1728978830166" duration="11642000" />
       <workItem from="1729065107138" duration="8966000" />
       <workItem from="1729148974420" duration="9784000" />
-      <workItem from="1729244006405" duration="487000" />
-    </task>
-    <task id="LOCAL-00064" summary="OMS - 采购入库单-UI-导入 调整">
-      <created>1725122328470</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1725122328470</updated>
+      <workItem from="1729244006405" duration="1420000" />
+      <workItem from="1729500671849" duration="5895000" />
     </task>
     <task id="LOCAL-00065" summary="OMS - 采购入库单-UI 调整">
       <created>1725180961328</created>
@@ -688,7 +684,14 @@
       <option name="project" value="LOCAL" />
       <updated>1729244092620</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <task id="LOCAL-00113" summary="说明文档更新">
+      <created>1729244841630</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1729244841630</updated>
+    </task>
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -706,7 +709,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 供应链 - 供应商-调整" />
     <MESSAGE value="OMS - 供应链 - 采购单-调整" />
     <MESSAGE value="OMS - 供应链 - 实仓调整" />
     <MESSAGE value="OMS - 供应链 - 调整拦截器" />
@@ -731,7 +733,8 @@
     <MESSAGE value="入库单虚拟回调" />
     <MESSAGE value="库存管理-外部调用" />
     <MESSAGE value="库存管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="库存管理" />
+    <MESSAGE value="说明文档更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="说明文档更新" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

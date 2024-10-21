@@ -1,8 +1,6 @@
 package com.oms.inventory.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
@@ -84,8 +82,10 @@ public class WmsInventory implements Serializable {
      * 修改时间
      */
     @Excel(name = "修改时间")
+    @TableField(value = "modify_time",fill = FieldFill.INSERT_UPDATE)
     private Date modifyTime;
-    @Excel(name = "修改时间")
+
+    @Excel(name = "创建时间")
     private Date createTime;
     private String companyCode;
 }
