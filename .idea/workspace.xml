@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyMetaObjectHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyMetaObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/filter/MyMetaObjectHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" afterDir="false" />
     </list>
@@ -105,11 +105,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.inventory.filter" />
       <recent name="com.oms.inventory.service.impl" />
       <recent name="com.oms.inventory.service" />
       <recent name="com.oms.inventory.mapper" />
       <recent name="com.oms.inventory.controller.wms" />
-      <recent name="com.oms.common.model.entity" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -346,14 +346,8 @@
       <workItem from="1729065107138" duration="8966000" />
       <workItem from="1729148974420" duration="9784000" />
       <workItem from="1729244006405" duration="1420000" />
-      <workItem from="1729500671849" duration="5895000" />
-    </task>
-    <task id="LOCAL-00065" summary="OMS - 采购入库单-UI 调整">
-      <created>1725180961328</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1725180961328</updated>
+      <workItem from="1729500671849" duration="8694000" />
+      <workItem from="1729735049188" duration="143000" />
     </task>
     <task id="LOCAL-00066" summary="OMS - 采购入库单-UI 调整">
       <created>1725183140887</created>
@@ -691,7 +685,14 @@
       <option name="project" value="LOCAL" />
       <updated>1729244841630</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <task id="LOCAL-00114" summary="功能组件">
+      <created>1729515083727</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1729515083728</updated>
+    </task>
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -709,7 +710,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 供应链 - 采购单-调整" />
     <MESSAGE value="OMS - 供应链 - 实仓调整" />
     <MESSAGE value="OMS - 供应链 - 调整拦截器" />
     <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
@@ -734,7 +734,8 @@
     <MESSAGE value="库存管理-外部调用" />
     <MESSAGE value="库存管理" />
     <MESSAGE value="说明文档更新" />
-    <option name="LAST_COMMIT_MESSAGE" value="说明文档更新" />
+    <MESSAGE value="功能组件" />
+    <option name="LAST_COMMIT_MESSAGE" value="功能组件" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -249,7 +249,16 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getInventory(id).then(response => {
-        this.form = response.data;
+       let data = response.data;
+        this.form.id = data.id;
+        this.form.storeCode = data.storeCode;
+        this.form.skuSn = data.skuSn;
+        this.form.zpActualNumber = data.zpActualNumber;
+        this.form.cpActualNumber = data.cpActualNumber;
+        this.form.zpAvailableNumber = data.zpAvailableNumber;
+        this.form.cpAvailableNumber = data.cpAvailableNumber;
+        this.form.zpLockNumber = data.zpLockNumber;
+        this.form.cpLockNumber = data.cpLockNumber;
         this.open = true;
         this.title = "修改仓库库存";
       });

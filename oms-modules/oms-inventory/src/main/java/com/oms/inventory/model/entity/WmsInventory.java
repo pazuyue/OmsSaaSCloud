@@ -5,6 +5,7 @@ import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -83,9 +84,9 @@ public class WmsInventory implements Serializable {
      */
     @Excel(name = "修改时间")
     @TableField(value = "modify_time",fill = FieldFill.INSERT_UPDATE)
-    private Date modifyTime;
+    private LocalDateTime  modifyTime;
 
     @Excel(name = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
     private String companyCode;
 }
