@@ -13,6 +13,7 @@
         <module>oms-common-core</module>
         <module>oms-supplychain</module>
         <module>oms-inventory</module>
+        <module>oms-channel</module>
     </modules>
 
     <artifactId>oms-omdules</artifactId>

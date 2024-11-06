@@ -4,11 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="仓库库存管理">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/oms-channel.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/ChannelApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/mapper/TChannelMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/model/entity/TChannel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/service/ITChannelService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/service/impl/TChannelServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/resources/bootstrap.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyMetaObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/filter/MyMetaObjectHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/WmsInventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsInventory/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-omdules.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsTickets/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/wmsTickets/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,10 +31,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="JavaScript File" />
         <option value="Vue Single File Component" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -73,7 +86,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_cloud" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/oms-modules/oms-channel/src/main/resources" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -88,11 +101,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-channel\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\java\com\oms\inventory\mapper" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\java\com\oms\inventory\model\entity" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-inventory\src\main\resources" />
       <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain\model\entity\warehouse" />
-      <recent name="D:\java\RuoYi-Cloud\oms-modules\oms-supplychain\src\main\java\com\oms\supplychain" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\java\RuoYi-Cloud\ruoyi-ui\src\api\goods" />
@@ -119,7 +132,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.OmsInventoryApplication">
+  <component name="RunManager" selected="Spring Boot.OmsChannelApplication">
     <configuration name="GeberatorUIServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GeberatorUIServer" />
       <module name="oms-goods-administration" />
@@ -134,6 +147,19 @@
     </configuration>
     <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
       <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OmsChannelApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="oms-channel" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.oms.channel.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.oms.channel.OmsChannelApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -228,19 +254,21 @@
     </configuration>
     <list>
       <item itemvalue="Application.GeberatorUIServer" />
+      <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiAuthApplication" />
       <item itemvalue="Spring Boot.OmsGoodsAdministrationApplication" />
       <item itemvalue="Spring Boot.RuoYiFileApplication" />
-      <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiGenApplication" />
       <item itemvalue="Spring Boot.RuoYiJobApplication" />
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
       <item itemvalue="Spring Boot.OmsInventoryApplication" />
+      <item itemvalue="Spring Boot.OmsChannelApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.OmsChannelApplication" />
         <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Application.GeberatorUIServer" />
@@ -347,14 +375,14 @@
       <workItem from="1729148974420" duration="9784000" />
       <workItem from="1729244006405" duration="1420000" />
       <workItem from="1729500671849" duration="8694000" />
-      <workItem from="1729735049188" duration="143000" />
-    </task>
-    <task id="LOCAL-00066" summary="OMS - 采购入库单-UI 调整">
-      <created>1725183140887</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1725183140887</updated>
+      <workItem from="1729735049188" duration="3878000" />
+      <workItem from="1730274549669" duration="682000" />
+      <workItem from="1730386426886" duration="1909000" />
+      <workItem from="1730453455012" duration="1383000" />
+      <workItem from="1730699795540" duration="18000" />
+      <workItem from="1730710096377" duration="2636000" />
+      <workItem from="1730773651924" duration="40000" />
+      <workItem from="1730801310426" duration="2514000" />
     </task>
     <task id="LOCAL-00067" summary="OMS - 采购入库单-UI 调整">
       <created>1725195550257</created>
@@ -692,7 +720,14 @@
       <option name="project" value="LOCAL" />
       <updated>1729515083728</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="仓库库存管理">
+      <created>1729735237713</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1729735237714</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -710,7 +745,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 供应链 - 实仓调整" />
     <MESSAGE value="OMS - 供应链 - 调整拦截器" />
     <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
     <MESSAGE value="OMS - 入库单" />
@@ -735,7 +769,8 @@
     <MESSAGE value="库存管理" />
     <MESSAGE value="说明文档更新" />
     <MESSAGE value="功能组件" />
-    <option name="LAST_COMMIT_MESSAGE" value="功能组件" />
+    <MESSAGE value="仓库库存管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="仓库库存管理" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

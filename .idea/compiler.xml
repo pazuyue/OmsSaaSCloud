@@ -11,6 +11,7 @@
         <module name="ruoyi-modules-job" />
         <module name="oms-goods-administration" />
         <module name="ruoyi-modules-system" />
+        <module name="oms-channel" />
         <module name="ruoyi-common-redis" />
         <module name="ruoyi-api-system" />
         <module name="ruoyi-common-swagger" />
@@ -31,6 +32,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="oms-channel" target="1.8" />
       <module name="oms-common-core" target="1.8" />
       <module name="oms-goods-administration" target="1.8" />
       <module name="oms-inventory" target="1.8" />

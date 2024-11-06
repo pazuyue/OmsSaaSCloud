@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-channel/oms-channel.iml" filepath="$PROJECT_DIR$/oms-modules/oms-channel/oms-channel.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" filepath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" filepath="$PROJECT_DIR$/oms-modules/oms-goods-administration/oms-goods-administration.iml" />
       <module fileurl="file://$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" filepath="$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" />

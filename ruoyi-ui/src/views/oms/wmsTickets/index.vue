@@ -100,7 +100,11 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="" align="center" prop="id" />
       <el-table-column label="单据编号" align="center" prop="sn" />
-      <el-table-column label="出入库类型" align="center" prop="ticketType" />
+      <el-table-column label="出入库类型" align="center" prop="ticketType" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.ticket_type" :value="scope.row.ticketType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="关联单据号" align="center" prop="relationSn" />
       <el-table-column label="源单号" align="center" prop="originalSn" />
       <el-table-column label="指派的虚仓编码" align="center" prop="wmsSimulationCode" />
@@ -217,7 +221,7 @@ import { listTickets, getTickets, delTickets, addTickets, updateTickets } from "
 
 export default {
   name: "Tickets",
-  dicts: ['wms_status_ticket','wms_type','wms_status_notify','wms_status_query','actual_warehouse'],
+  dicts: ['wms_status_ticket','wms_type','wms_status_notify','wms_status_query','actual_warehouse','ticket_type'],
   data() {
     return {
       // 遮罩层
