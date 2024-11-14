@@ -78,8 +78,9 @@ public class TChannelController extends BaseController
     @RequiresPermissions("channel:channel:add")
     @Log(title = "店铺信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TChannel tChannel)
+    public AjaxResult add(@RequestBody TChannel tChannel,String company_code)
     {
+        tChannel.setCompanyCode(company_code);
         return toAjax(tChannelService.insertTChannel(tChannel));
     }
 

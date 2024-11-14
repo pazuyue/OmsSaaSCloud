@@ -1,6 +1,10 @@
 package com.oms.channel.model.entity;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,12 +18,14 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * @author ruoyi
  * @date 2024-11-06
  */
+@TableName("t_channel")
 @Data
-public class TChannel extends BaseEntity
+public class TChannel
 {
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */
+    @TableId(value = "channel_id", type = IdType.AUTO)
     private Integer channelId;
 
     /** 渠道名称 */
