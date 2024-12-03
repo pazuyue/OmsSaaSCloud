@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/channel/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/model/entity/TChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/model/entity/TChannel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/channel/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/channel/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,9 +242,9 @@
       <item itemvalue="Spring Boot.RuoYiJobApplication" />
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
+      <item itemvalue="Spring Boot.ChannelApplication" />
       <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
       <item itemvalue="Spring Boot.OmsInventoryApplication" />
-      <item itemvalue="Spring Boot.ChannelApplication" />
     </list>
     <recent_temporary>
       <list>
@@ -366,14 +364,10 @@
       <workItem from="1730801310426" duration="2644000" />
       <workItem from="1731034979601" duration="39000" />
       <workItem from="1731046696679" duration="1190000" />
-      <workItem from="1731575986690" duration="3802000" />
-    </task>
-    <task id="LOCAL-00068" summary="OMS - 采购入库单-导入-UI 调整">
-      <created>1725197681676</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1725197681676</updated>
+      <workItem from="1731575986690" duration="4069000" />
+      <workItem from="1731635973974" duration="586000" />
+      <workItem from="1732068408327" duration="53000" />
+      <workItem from="1733193738368" duration="1953000" />
     </task>
     <task id="LOCAL-00069" summary="OMS - 采购入库单-导入-UI 调整">
       <created>1725241620698</created>
@@ -711,7 +705,14 @@
       <option name="project" value="LOCAL" />
       <updated>1730878398387</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="渠道管理">
+      <created>1731579871987</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1731579871988</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

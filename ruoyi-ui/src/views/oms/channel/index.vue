@@ -47,8 +47,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="经营模式" prop="mModelType">
-        <el-select v-model="queryParams.mModelType" placeholder="请选择经营模式：1直营, 0加盟" clearable>
+      <el-form-item label="经营模式" prop="mmodelType">
+        <el-select v-model="queryParams.mmodelType" placeholder="请选择经营模式：1直营, 2加盟" clearable>
           <el-option
             v-for="dict in dict.type.m_model_type"
             :key="dict.value"
@@ -134,7 +134,7 @@
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.syncEnabled"/>
         </template>
       </el-table-column>
-      <el-table-column label="经营模式" align="center" prop="mModelType">
+      <el-table-column label="经营模式" align="center" prop="mmodelType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.m_model_type" :value="scope.row.mmodelType"/>
         </template>
@@ -227,8 +227,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="经营模式" prop="mModelType">
-          <el-select v-model="form.mModelType" placeholder="请选择经营模式：1直营, 0加盟">
+        <el-form-item label="经营模式" prop="mmodelType">
+          <el-select v-model="form.mmodelType" placeholder="请选择经营模式：1直营, 2加盟">
             <el-option
               v-for="dict in dict.type.m_model_type"
               :key="dict.value"
@@ -282,7 +282,7 @@ export default {
         enabled: null,
         toChannelEnabled: null,
         syncEnabled: null,
-        mModelType: null,
+        mmodelType: null,
       },
       // 表单参数
       form: {},
@@ -306,7 +306,7 @@ export default {
         syncEnabled: [
           { required: true, message: "是否同步库存 1-开启, 0-关闭不能为空", trigger: "blur" }
         ],
-        mModelType: [
+        mmodelType: [
           { required: true, message: "经营模式：1直营, 0加盟不能为空", trigger: "change" }
         ],
         companyCode: [
@@ -343,7 +343,7 @@ export default {
         enabled: null,
         toChannelEnabled: null,
         syncEnabled: null,
-        mModelType: null,
+        mmodelType: null,
         companyCode: null,
         createTime: null,
         modifyTime: null

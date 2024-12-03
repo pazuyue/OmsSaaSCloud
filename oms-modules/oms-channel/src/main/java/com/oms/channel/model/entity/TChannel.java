@@ -52,8 +52,8 @@ public class TChannel
     @Excel(name = "是否同步库存 1-开启, 0-关闭")
     private Integer syncEnabled;
 
-    /** 经营模式：1直营, 0加盟 */
-    @Excel(name = "经营模式：1直营, 0加盟")
+    /** 经营模式：1直营, 2加盟 */
+    @Excel(name = "经营模式：1直营, 2加盟")
     private Integer mModelType;
 
     /** 公司编码 */
