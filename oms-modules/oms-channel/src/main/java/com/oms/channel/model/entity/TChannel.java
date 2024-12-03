@@ -1,10 +1,9 @@
 package com.oms.channel.model.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -61,7 +60,11 @@ public class TChannel
     private String companyCode;
 
     /** 修改时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @TableField(fill = FieldFill.UPDATE)
     @Excel(name = "修改时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date modifyTime;
+    private LocalDateTime modifyTime;
+
+    @TableField(fill = FieldFill.INSERT)
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private LocalDateTime createTime;
 }

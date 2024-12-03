@@ -344,9 +344,7 @@ export default {
         toChannelEnabled: null,
         syncEnabled: null,
         mmodelType: null,
-        companyCode: null,
-        createTime: null,
-        modifyTime: null
+        companyCode: null
       };
       this.resetForm("form");
     },

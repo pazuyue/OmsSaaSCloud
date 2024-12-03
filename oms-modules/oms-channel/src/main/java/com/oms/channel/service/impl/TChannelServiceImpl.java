@@ -75,7 +75,6 @@ public class TChannelServiceImpl extends ServiceImpl<TChannelMapper, TChannel> i
     @Override
     public int updateTChannel(TChannel tChannel)
     {
-        tChannel.setModifyTime(DateUtils.getNowDate());
         return this.baseMapper.updateById(tChannel);
     }
 
