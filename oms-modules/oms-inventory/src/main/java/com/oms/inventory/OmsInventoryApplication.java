@@ -16,7 +16,8 @@ public class OmsInventoryApplication {
     public static void main(String[] args)
     {
         SpringApplication.run(OmsInventoryApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  OMS库存管理模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+        System.out.println("(♥◠‿◠)ﾉﾞ  cpuCores="+cpuCores+" OMS库存管理模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +
                 " |  _ _   \\      \\   \\   /  /    \n" +
                 " | ( ' )  |       \\  _. /  '       \n" +

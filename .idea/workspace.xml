@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="渠道管理">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/RuleStockInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/RuleStockInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IRuleStockInfoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/RuleStockInfoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/model/entity/TChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/model/entity/TChannel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/service/impl/TChannelServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/service/impl/TChannelServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/filter/MyMetaObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/filter/MyMetaObjectHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/channel/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/channel/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/OmsInventoryApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/OmsInventoryApplication.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +25,8 @@
       <list>
         <option value="Class" />
         <option value="Interface" />
-        <option value="JavaScript File" />
         <option value="Vue Single File Component" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -80,7 +84,7 @@
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
     <property name="service.view.auto.scroll.to.source" value="true" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.runner" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="D:\Program Files (x86)\ideaIU_2021.2.3_64bit_Portable\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -120,7 +124,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.ChannelApplication">
+  <component name="RunManager" selected="Spring Boot.OmsInventoryApplication">
     <configuration name="GeberatorUIServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GeberatorUIServer" />
       <module name="oms-goods-administration" />
@@ -369,14 +373,16 @@
       <workItem from="1731575986690" duration="4069000" />
       <workItem from="1731635973974" duration="586000" />
       <workItem from="1732068408327" duration="53000" />
-      <workItem from="1733193738368" duration="6273000" />
-    </task>
-    <task id="LOCAL-00070" summary="OMS-api - 代码提交 调整">
-      <created>1725268236514</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1725268236514</updated>
+      <workItem from="1733193738368" duration="7288000" />
+      <workItem from="1733469936644" duration="2739000" />
+      <workItem from="1733797550538" duration="68000" />
+      <workItem from="1734078893655" duration="5614000" />
+      <workItem from="1734339282577" duration="3838000" />
+      <workItem from="1734500207140" duration="329000" />
+      <workItem from="1734516741634" duration="976000" />
+      <workItem from="1734588685866" duration="586000" />
+      <workItem from="1735090941624" duration="1208000" />
+      <workItem from="1735119924207" duration="2405000" />
     </task>
     <task id="LOCAL-00071" summary="OMS-api - 商品服务调用">
       <created>1725273503371</created>
@@ -714,7 +720,14 @@
       <option name="project" value="LOCAL" />
       <updated>1733196127049</updated>
     </task>
-    <option name="localTasksCounter" value="119" />
+    <task id="LOCAL-00119" summary="渠道管理">
+      <created>1733210175087</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1733210175087</updated>
+    </task>
+    <option name="localTasksCounter" value="120" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
