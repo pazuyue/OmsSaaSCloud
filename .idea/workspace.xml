@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="渠道管理">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/RuleStockInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/RuleStockInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IRuleStockInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/RuleStockInfoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/api/RemoteTChannelController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteChannelService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/factory/RemoteChannelFallbackFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/channel/TChannel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/OmsInventoryApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/OmsInventoryApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,10 +21,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
-        <option value="Interface" />
         <option value="Vue Single File Component" />
         <option value="JavaScript File" />
+        <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -110,11 +108,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.common.model.entity.channel" />
+      <recent name="com.oms.goods.model.entity.channel" />
       <recent name="com.oms.common.filter" />
       <recent name="com.oms.inventory.filter" />
       <recent name="com.oms.inventory.service.impl" />
-      <recent name="com.oms.inventory.service" />
-      <recent name="com.oms.inventory.mapper" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -382,14 +380,7 @@
       <workItem from="1734516741634" duration="976000" />
       <workItem from="1734588685866" duration="586000" />
       <workItem from="1735090941624" duration="1208000" />
-      <workItem from="1735119924207" duration="2405000" />
-    </task>
-    <task id="LOCAL-00071" summary="OMS-api - 商品服务调用">
-      <created>1725273503371</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1725273503371</updated>
+      <workItem from="1735119924207" duration="6152000" />
     </task>
     <task id="LOCAL-00072" summary="调整UI优化">
       <created>1725274551510</created>
@@ -727,7 +718,14 @@
       <option name="project" value="LOCAL" />
       <updated>1733210175087</updated>
     </task>
-    <option name="localTasksCounter" value="120" />
+    <task id="LOCAL-00120" summary="分仓单管理">
+      <created>1735122458751</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1735122458752</updated>
+    </task>
+    <option name="localTasksCounter" value="121" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -745,7 +743,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 监控系统兼容 - 调整拦截器" />
     <MESSAGE value="OMS - 入库单" />
     <MESSAGE value="OMS - 采购入库单" />
     <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
@@ -770,7 +767,8 @@
     <MESSAGE value="功能组件" />
     <MESSAGE value="仓库库存管理" />
     <MESSAGE value="渠道管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="渠道管理" />
+    <MESSAGE value="分仓单管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="分仓单管理" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -36,4 +36,6 @@ public class ServiceNameConstants
      * 仓储服务
      */
     public static final String OMS_SUPPLYCHAIN_SERVICE = "oms-supplychain";
+
+    public static final String OMS_CHANNEL_SERVICE = "oms-channel";
 }
