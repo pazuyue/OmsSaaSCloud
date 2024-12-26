@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -375,14 +375,7 @@
       <workItem from="1734516741634" duration="976000" />
       <workItem from="1734588685866" duration="586000" />
       <workItem from="1735090941624" duration="1208000" />
-      <workItem from="1735119924207" duration="6640000" />
-    </task>
-    <task id="LOCAL-00073" summary="入库通知单数据导入">
-      <created>1725334785065</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1725334785066</updated>
+      <workItem from="1735119924207" duration="6893000" />
     </task>
     <task id="LOCAL-00074" summary="入库通知单数据导入">
       <created>1725338196249</created>
@@ -720,7 +713,14 @@
       <option name="project" value="LOCAL" />
       <updated>1735192909976</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <task id="LOCAL-00122" summary="查询渠道信息">
+      <created>1735193389217</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1735193389217</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -738,7 +738,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 采购入库单" />
     <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
     <MESSAGE value="OMS - 采购入库单-UI 调整" />
     <MESSAGE value="OMS - 采购入库单-导入-UI 调整" />
@@ -763,7 +762,8 @@
     <MESSAGE value="渠道管理" />
     <MESSAGE value="分仓单管理" />
     <MESSAGE value="渠道接口信息共享" />
-    <option name="LAST_COMMIT_MESSAGE" value="渠道接口信息共享" />
+    <MESSAGE value="查询渠道信息" />
+    <option name="LAST_COMMIT_MESSAGE" value="查询渠道信息" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

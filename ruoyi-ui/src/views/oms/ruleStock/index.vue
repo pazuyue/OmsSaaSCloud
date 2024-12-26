@@ -11,8 +11,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="分货单规则" prop="ruleType">
-        <el-select v-model="queryParams.ruleType" placeholder="请选择分货单规则" clearable>
+      <el-form-item label="分货单类型" prop="ruleType">
+        <el-select v-model="queryParams.ruleType" placeholder="请选择分货单类型" clearable>
           <el-option
             v-for="dict in dict.type.inventory_allocation_rule_type"
             :key="dict.value"
@@ -105,7 +105,7 @@
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.enable"/>
         </template>
       </el-table-column>
-      <el-table-column label="分货单规则" align="center" prop="ruleType">
+      <el-table-column label="分货单类型" align="center" prop="ruleType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.inventory_allocation_rule_type" :value="scope.row.ruleType"/>
         </template>
@@ -210,8 +210,8 @@
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="分货单规则" prop="ruleType">
-          <el-select v-model="form.ruleType" placeholder="请选择分货单规则">
+        <el-form-item label="分货单类型" prop="ruleType">
+          <el-select v-model="form.ruleType" placeholder="请选择分货单类型">
             <el-option
               v-for="dict in dict.type.inventory_allocation_rule_type"
               :key="dict.value"
@@ -305,7 +305,7 @@ export default {
           { required: true, message: "是否启用不能为空", trigger: "change" }
         ],
         ruleType: [
-          { required: true, message: "分货单规则：1，日常分货；2，一次性分货；3，锁库时分货不能为空", trigger: "change" }
+          { required: true, message: "分货单类型：1，日常分货；2，一次性分货；3，锁库时分货不能为空", trigger: "change" }
         ],
         ruleName: [
           { required: true, message: "分货单名称不能为空", trigger: "blur" }
