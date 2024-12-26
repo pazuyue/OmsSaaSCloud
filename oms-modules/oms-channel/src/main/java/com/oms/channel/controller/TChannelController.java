@@ -49,6 +49,14 @@ public class TChannelController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/select")
+    @RequiresPermissions("channel:channel:select")
+    public TableDataInfo select(TChannel tChannel)
+    {
+        List<TChannel> list = tChannelService.selectTChannelList(tChannel);
+        return getDataTable(list);
+    }
+
     /**
      * 导出店铺信息列表
      */

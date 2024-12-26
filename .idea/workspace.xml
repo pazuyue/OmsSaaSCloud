@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/api/RemoteTChannelController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteChannelService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/factory/RemoteChannelFallbackFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/model/entity/channel/TChannel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/constant/ServiceNameConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/target/classes/com/ruoyi/common/core/constant/ServiceNameConstants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/TChannelController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -380,14 +375,7 @@
       <workItem from="1734516741634" duration="976000" />
       <workItem from="1734588685866" duration="586000" />
       <workItem from="1735090941624" duration="1208000" />
-      <workItem from="1735119924207" duration="6152000" />
-    </task>
-    <task id="LOCAL-00072" summary="调整UI优化">
-      <created>1725274551510</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1725274551510</updated>
+      <workItem from="1735119924207" duration="6640000" />
     </task>
     <task id="LOCAL-00073" summary="入库通知单数据导入">
       <created>1725334785065</created>
@@ -725,7 +713,14 @@
       <option name="project" value="LOCAL" />
       <updated>1735122458752</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <task id="LOCAL-00121" summary="渠道接口信息共享">
+      <created>1735192909976</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1735192909976</updated>
+    </task>
+    <option name="localTasksCounter" value="122" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -743,7 +738,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 入库单" />
     <MESSAGE value="OMS - 采购入库单" />
     <MESSAGE value="OMS - 采购入库单-UI-导入 调整" />
     <MESSAGE value="OMS - 采购入库单-UI 调整" />
@@ -768,7 +762,8 @@
     <MESSAGE value="仓库库存管理" />
     <MESSAGE value="渠道管理" />
     <MESSAGE value="分仓单管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="分仓单管理" />
+    <MESSAGE value="渠道接口信息共享" />
+    <option name="LAST_COMMIT_MESSAGE" value="渠道接口信息共享" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
