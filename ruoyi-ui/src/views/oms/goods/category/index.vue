@@ -137,7 +137,7 @@
     <!-- 添加或修改商品类目对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="上级部门" prop="pid">
+        <el-form-item label="上级分类" prop="pid">
           <treeselect v-model="form.pid" :options="categoryOptions" :normalizer="normalizer" placeholder="选择上级部门" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
@@ -168,7 +168,9 @@ export default {
       // 重新渲染表格状态
       refreshTable: true,
       // 类目树选项
-      categoryOptions: [],
+      categoryOptions: [
+        { id: 0, label: '默认选项' }, // 默认选项
+      ],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -288,7 +290,14 @@ export default {
         this.title = "修改商品类目";
       });
       listCategory().then(response => {
+          if (response.rows && response.rows.length > 0) {
+          }else {
+            // 添加默认选项
+            const defaultOption =  { "id": 1, "pid": null, "name": "默认选项" };
+            response.rows.push(defaultOption);
+          }
         this.categoryOptions = this.handleTree(response.rows,"id","pid");
+        console.log(this.categoryOptions)
       });
     },
     /** 提交按钮 */

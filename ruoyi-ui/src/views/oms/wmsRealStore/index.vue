@@ -252,9 +252,6 @@
         <el-form-item label="地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入地址" />
         </el-form-item>
-        <el-form-item label="公司编码" prop="companyCode">
-          <el-input v-model="form.companyCode" placeholder="请输入公司编码" />
-        </el-form-item>
         <el-form-item label="是否真实出库" prop="actualWarehouse">
           <el-select v-model="form.actualWarehouse" placeholder="请选择是否真实出库">
             <el-option
@@ -315,12 +312,13 @@ export default {
         city: null,
         district: null,
         address: null,
-        companyCode: null,
         modifyTime: null,
         actualWarehouse: null,
       },
       // 表单参数
-      form: {},
+      form: {
+
+      },
       // 表单校验
       rules: {
         status: [
@@ -381,8 +379,8 @@ export default {
     reset() {
       this.form = {
         id: null,
-        status: null,
-        wmsType: null,
+        status: 1,
+        wmsType: 1,
         realStoreCode: null,
         wmsName: null,
         director: null,
@@ -391,7 +389,6 @@ export default {
         city: null,
         district: null,
         address: null,
-        companyCode: null,
         createTime: null,
         modifyTime: null,
         actualWarehouse: null

@@ -11,7 +11,7 @@ import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +19,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/realStore")
 public class WmsRealStoreInfoController extends BaseController {
@@ -32,7 +34,8 @@ public class WmsRealStoreInfoController extends BaseController {
     @RequiresPermissions("warehouse:WmsRealStoreInfo:add")
     @Log(title = "实仓", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult save(@Validated WmsRealStoreInfoVO wmsRealStoreInfoVO, @RequestParam(value = "company_code") String companyCode){
+    public AjaxResult save(@Validated @RequestBody WmsRealStoreInfoVO wmsRealStoreInfoVO, @RequestParam(value = "company_code") String companyCode){
+        log.debug("wmsRealStoreInfoVO:"+wmsRealStoreInfoVO.toString());
         if (wmsRealStoreInfoService.save(wmsRealStoreInfoVO,companyCode))
             return success();
         return error("保存失败");
@@ -44,7 +47,7 @@ public class WmsRealStoreInfoController extends BaseController {
     @RequiresPermissions("warehouse:WmsRealStoreInfo:list")
     @GetMapping("/list")
     @SneakyThrows
-    public TableDataInfo list(WmsRealStoreInfoVO wmsRealStoreInfo)
+    public TableDataInfo list(@RequestBody WmsRealStoreInfoVO wmsRealStoreInfo)
     {
         startPage();
         List<WmsRealStoreInfo> list = wmsRealStoreInfoService.selectWmsRealStoreInfoList(wmsRealStoreInfo);

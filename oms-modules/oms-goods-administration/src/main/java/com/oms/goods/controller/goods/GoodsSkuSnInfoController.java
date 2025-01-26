@@ -36,7 +36,7 @@ public class GoodsSkuSnInfoController extends BaseController
      */
     @RequiresPermissions("goods:info:list")
     @PostMapping("/list")
-    public TableDataInfo list(GoodsSkuSnInfo goodsSkuSnInfo)
+    public TableDataInfo list(@RequestBody GoodsSkuSnInfo goodsSkuSnInfo)
     {
         startPage();
         List<GoodsSkuSnInfo> list = goodsSkuSnInfoService.selectGoodsSkuSnInfoList(goodsSkuSnInfo);

@@ -38,7 +38,7 @@ public class GoodsPluginFactory {
         log.info("Attempting to fetch companyModelAssociationInfo for companyCode: {}", companyCode);
 
         // 查询公司关联信息
-        R<SysCompanyModelAssociationConfig> sysCompanyModelAssociationConfigResult = remoteSysCompanyModelAssociationConfigService.getInfoByCompanyCode("qm");
+        R<SysCompanyModelAssociationConfig> sysCompanyModelAssociationConfigResult = remoteSysCompanyModelAssociationConfigService.getInfoByCompanyCode(companyCode);
 
         if (StringUtils.isNull(sysCompanyModelAssociationConfigResult) || StringUtils.isNull(sysCompanyModelAssociationConfigResult.getData()))
         {

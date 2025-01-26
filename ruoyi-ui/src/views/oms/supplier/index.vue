@@ -25,14 +25,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="操作用户" prop="perationUser">
-        <el-input
-          v-model="queryParams.perationUser"
-          placeholder="请输入操作用户"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker clearable
                         v-model="queryParams.createTime"

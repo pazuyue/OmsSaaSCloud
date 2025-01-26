@@ -2,6 +2,7 @@ package com.oms.goods.controller.goods;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.oms.goods.factory.GoodsPluginFactory;
+import com.oms.goods.model.dto.export.ExportGoodsRequestDTO;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
@@ -47,7 +48,7 @@ public class GoodsController extends BaseController {
      */
     @SneakyThrows
     @PostMapping(value = "/import")
-    public AjaxResult export(MultipartFile file,String import_batch,String company_code) {
+    public AjaxResult export(MultipartFile file,@RequestParam(value = "import_batch", required = false) String import_batch,@RequestParam("company_code") String company_code) {
         System.out.println("export:"+company_code);
         try{
             ExcelUtil<GoodsVO> util = new ExcelUtil<>(GoodsVO.class);
@@ -69,7 +70,7 @@ public class GoodsController extends BaseController {
 
     @SneakyThrows
     @PostMapping(value = "/toExamine")
-    public AjaxResult toExamine(@RequestParam("import_batch") String importBatch,String company_code){
+    public AjaxResult toExamine(@RequestParam("import_batch") String importBatch,@RequestParam("company_code") String company_code){
         System.out.println("toExamine:"+importBatch+":"+company_code);
         boolean b = goodsPluginFactory.getBean(company_code).toExamine(importBatch,company_code);
         return b ? success() : error("审核失败");
@@ -77,13 +78,16 @@ public class GoodsController extends BaseController {
 
     /**
      * 导入明细
-     * @param importBatch
+     * @param exportGoodsRequestDTO
      * @return
      */
     @SneakyThrows
     @PostMapping(value = "/list")
-    public TableDataInfo exportList(@RequestParam(value = "import_batch") String importBatch)
+    public TableDataInfo exportList(@RequestBody ExportGoodsRequestDTO exportGoodsRequestDTO)
     {
+        log.debug("exportList:"+exportGoodsRequestDTO.toString());
+        String importBatch = exportGoodsRequestDTO.getImportBatch();
+        System.out.println("exportList:"+importBatch);
         startPage();
         List<GoodsSkuSnInfoTmp> list = goodsSkuSnInfoTmpService.exportList(importBatch);
         return getDataTable(list);

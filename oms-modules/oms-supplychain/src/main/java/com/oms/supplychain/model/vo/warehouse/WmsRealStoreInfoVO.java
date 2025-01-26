@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class WmsRealStoreInfoVO {
@@ -12,7 +13,7 @@ public class WmsRealStoreInfoVO {
     /**
      * 1:电商仓，2：门店仓，3：零售仓
      */
-    @NotEmpty(message = "实仓类型不能为空")
+    @NotNull(message = "实仓类型不能为空")
     private Integer wmsType;
     /**
      * 实仓编码
@@ -67,6 +68,6 @@ public class WmsRealStoreInfoVO {
      */
     private String companyCode;
 
-    @NotBlank(message = "出入库类型不能为空")
+    @NotNull(message = "出入库类型不能为空")
     private Integer actualWarehouse;
 }

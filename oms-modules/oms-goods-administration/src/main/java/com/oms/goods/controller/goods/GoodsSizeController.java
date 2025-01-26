@@ -8,14 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.oms.goods.model.entity.goods.GoodsSize;
 import com.oms.goods.service.goods.GoodsSizeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
@@ -42,7 +35,7 @@ public class GoodsSizeController extends BaseController
      */
     @RequiresPermissions("goods:size:list")
     @GetMapping("/list")
-    public TableDataInfo list(GoodsSize goodsSize,String company_code)
+    public TableDataInfo list(GoodsSize goodsSize,@RequestParam("company_code") String company_code)
     {
         startPage();
         if (company_code != null)
@@ -80,8 +73,9 @@ public class GoodsSizeController extends BaseController
     @RequiresPermissions("goods:size:add")
     @Log(title = "商品尺码", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody GoodsSize goodsSize)
+    public AjaxResult add(@RequestBody GoodsSize goodsSize,@RequestParam("company_code") String company_code)
     {
+        goodsSize.setCompanyCode(company_code);
         return toAjax(goodsSizeService.insertGoodsSize(goodsSize));
     }
 
