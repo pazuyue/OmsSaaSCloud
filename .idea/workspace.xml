@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -388,14 +387,7 @@
       <workItem from="1737344358227" duration="14000" />
       <workItem from="1737697090001" duration="1982000" />
       <workItem from="1737855349090" duration="8370000" />
-      <workItem from="1737875631050" duration="17844000" />
-    </task>
-    <task id="LOCAL-00076" summary="入库通知单数据导入">
-      <created>1725525142534</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1725525142534</updated>
+      <workItem from="1737875631050" duration="20900000" />
     </task>
     <task id="LOCAL-00077" summary="入库通知单数据导入-审核">
       <created>1725872858748</created>
@@ -733,7 +725,14 @@
       <option name="project" value="LOCAL" />
       <updated>1737877476573</updated>
     </task>
-    <option name="localTasksCounter" value="125" />
+    <task id="LOCAL-00125" summary="分货店铺拖拽排序功能">
+      <created>1737958803287</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1737958803287</updated>
+    </task>
+    <option name="localTasksCounter" value="126" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -763,7 +762,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS - 采购入库单-导入-UI 调整" />
     <MESSAGE value="OMS-api - 代码提交 调整" />
     <MESSAGE value="OMS-api - 商品服务调用" />
     <MESSAGE value="调整UI优化" />
@@ -788,7 +786,8 @@
     <MESSAGE value="查询渠道信息" />
     <MESSAGE value="调整备注" />
     <MESSAGE value=" BUG 修复" />
-    <option name="LAST_COMMIT_MESSAGE" value=" BUG 修复" />
+    <MESSAGE value="分货店铺拖拽排序功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货店铺拖拽排序功能" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

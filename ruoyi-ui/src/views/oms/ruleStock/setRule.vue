@@ -9,6 +9,9 @@
               <el-descriptions-item label="分货单规则">
                 <dict-tag :options="dict.type.inventory_allocation_rule_type" :value="ruleStockInfo.ruleType"/>
               </el-descriptions-item>
+              <el-descriptions-item label="分货范围">
+                <dict-tag :options="dict.type.goods_range" :value="ruleStockInfo.ruleRange"/>
+              </el-descriptions-item>
               <el-descriptions-item label="分货单状态">
                 <dict-tag :options="dict.type.inventory_allocation_status" :value="ruleStockInfo.status"/>
               </el-descriptions-item>
@@ -17,6 +20,31 @@
         </el-collapse>
 
         <el-form ref="form" :model="form" label-width="150px" class="mt20">
+
+          <el-form-item label="分货模式" prop="priorityType">
+            <el-select v-model="form.priorityType" placeholder="请选分货模式">
+              <el-option
+                v-for="item in priorityList"
+                :key="item.priorityId"
+                :label="item.priorityType"
+                :value="item.priorityId">
+              </el-option>
+            </el-select>
+            <span style="color: #8c939d; font-size: 12px;">
+              （
+            </span>
+            <el-tooltip class="item" effect="dark" content="按照列表排序，用仓库最大可用值进行分货" placement="top">
+              <span style="color: #8c939d; font-size: 12px;">
+            优先分货</span>
+            </el-tooltip>、
+            <el-tooltip class="item" effect="dark" content="不排序，安排设置的规则，并行分货，不仓库可用，允许超卖" placement="top">
+              <span style="color: #8c939d; font-size: 12px;">
+                普通分货</span>
+            </el-tooltip>
+            <span style="color: #8c939d; font-size: 12px;">
+              ）
+            </span>
+          </el-form-item>
 
           <el-form-item label="虚仓" prop="wmsSimulationCode">
             <el-select v-model="form.wmsSimulationCodes" multiple placeholder="请选择">
@@ -38,43 +66,37 @@
                 :value="item.channelId">
               </el-option>
             </el-select>
-
-            <el-table :data="infoList" style="width: 100%"  ref="table" :row-key="(row)=>row.channelId" class="mt20">
-              <el-table-column width="55" align="center">
-                <i class="el-icon-s-unfold draggable-handle"></i>
-              </el-table-column>
-              <el-table-column label="店铺" prop="storeName" align="center" />
-              <el-table-column label="优先分货/普通分货" prop="priority" align="center">
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.priority" placeholder="请选择">
-                    <el-option label="优先分货" value="优先分货"></el-option>
-                    <el-option label="普通分货" value="普通分货"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="库存基数" prop="stockBase" align="center">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.stockBase }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="百分比（单位：%）" prop="percentage" align="center">
-                <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.percentage" :min="1" :max="100" label="百分比"></el-input-number>
-                </template>
-              </el-table-column>
-              <el-table-column label="小数点处理" prop="decimalHandling" align="center">
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.decimalHandling" placeholder="请选择">
-                    <el-option label="向下取整" value="向下取整"></el-option>
-                    <el-option label="向上取整" value="向上取整"></el-option>
-                    <el-option label="四舍五入" value="四舍五入"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-            </el-table>
-
           </el-form-item>
         </el-form>
+
+        <el-table :data="infoList" style="width: 100%"  ref="table" :row-key="(row)=>row.channelId" class="mt20">
+          <el-table-column width="55" align="center">
+            <i class="el-icon-s-unfold draggable-handle"></i>
+          </el-table-column>
+          <el-table-column label="店铺" prop="storeName" align="center" />
+          <el-table-column label="库存基数" prop="stockBase" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.stockBase }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="百分比（单位：%）" prop="percentage" align="center">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.percentage" :min="1" :max="100" label="百分比"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="小数点处理" prop="decimalHandleType" align="center">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.decimalHandleType" placeholder="请选择">
+                <el-option
+                  v-for="item in decimalHandleTypeList"
+                  :key="item.decimalHandleTypeId"
+                  :label="item.decimalHandleTypeType"
+                  :value="item.decimalHandleTypeId">
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-dialog>
     </el-col>
   </el-row>
@@ -107,9 +129,19 @@ export default {
       activeName: '1',
       channelList:[],
       wmsSimulationCodeOptions:[],
+      decimalHandleTypeList:[
+        {decimalHandleTypeId: 1, decimalHandleTypeType: '向下取整'},
+        {decimalHandleTypeId: 2, decimalHandleTypeType: '向上取整'},
+        {decimalHandleTypeId: 3, decimalHandleTypeType: '四舍五入'},
+      ],
+      priorityList:[
+        {priorityId: 1, priorityType: '普通分货'},
+        {priorityId: 2, priorityType: '优先分货'},
+      ],
       form: {
         channelIds: [],
-        wmsSimulationCodes:[]
+        wmsSimulationCodes:[],
+        priorityType:null
       },
       infoList: []
     }
@@ -196,6 +228,7 @@ export default {
       });
     },
     handleChannelChange(selectedChannels) {
+      this.infoList =[];
       // 遍历选择的渠道，检查是否已经在 infoList 中
       selectedChannels.forEach(channelId => {
         const existingItem = this.infoList.find(item => item.channelId === channelId);
@@ -206,9 +239,9 @@ export default {
             this.infoList.push({
               storeName: channel.channelName, // 或者根据需要设置其他默认值
               priority: '普通分货',
-              stockBase: 100,
-              percentage: 0.1,
-              decimalHandling: '四舍五入',
+              stockBase: "X",
+              percentage: 100,
+              decimalHandleType: 1,
               channelId: channelId
             });
           }

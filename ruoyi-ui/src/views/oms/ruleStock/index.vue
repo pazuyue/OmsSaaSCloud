@@ -119,12 +119,14 @@
       </el-table-column>
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.startTime">{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="结束时间" align="center" prop="endTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.endTime">{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="分货范围" align="center" prop="ruleRange">
@@ -140,34 +142,40 @@
       </el-table-column>
       <el-table-column label="最新分货时间" align="center" prop="lastUpdateTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lastUpdateTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.lastUpdateTime">{{ parseTime(scope.row.lastUpdateTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="首次审核时间" align="center" prop="firstReviewerTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.firstReviewerTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.firstReviewerTime">{{ parseTime(scope.row.firstReviewerTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="审核时间" align="center" prop="reviewerTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.reviewerTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.reviewerTime">{{ parseTime(scope.row.reviewerTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" align="center" prop="overTime" width="180">
+      <el-table-column label="关闭时间" align="center" prop="overTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.overTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.overTime">{{ parseTime(scope.row.overTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="作废时间" align="center" prop="cancelTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.cancelTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.cancelTime">{{ parseTime(scope.row.cancelTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="审核人姓名" align="center" prop="reviewerUserName" />
       <el-table-column label="创建人姓名" align="center" prop="createUserName" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.modifyTime">{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
+          <span v-else>---</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
