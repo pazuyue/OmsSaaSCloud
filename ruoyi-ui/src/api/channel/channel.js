@@ -9,6 +9,14 @@ export function listChannel(query) {
   })
 }
 
+// 查询店铺信息列表-用于选择-不分页
+export function getChannelList() {
+  return request({
+    url: '/channel/api/channel/list',
+    method: 'get'
+  })
+}
+
 // 查询店铺信息详细
 export function getChannel(channelId) {
   return request({

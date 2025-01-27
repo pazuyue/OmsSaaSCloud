@@ -170,7 +170,7 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -179,6 +179,13 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ruleStock:info:edit']"
           >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleSetRule(scope.row)"
+            v-hasPermi="['ruleStock:info:edit']"
+          >设置规则</el-button>
           <el-button
             size="mini"
             type="text"
@@ -223,7 +230,7 @@
         <el-form-item label="分货单名称" prop="ruleName">
           <el-input v-model="form.ruleName" placeholder="请输入分货单名称" />
         </el-form-item>
-        <el-form-item label="开始时间" prop="startTime">
+        <el-form-item label="开始时间" prop="startTime"  v-if="form.ruleType !== 2">
           <el-date-picker clearable
                           v-model="form.startTime"
                           type="datetime"
@@ -231,7 +238,7 @@
                           placeholder="请选择分货单有效期, 开始时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="结束时间" prop="endTime">
+        <el-form-item label="结束时间" prop="endTime" v-if="form.ruleType !== 2">
           <el-date-picker clearable
                           v-model="form.endTime"
                           type="datetime"
@@ -242,13 +249,24 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="商品类型" prop="type">
+        <el-form-item label="商品范围" prop="ruleRange">
+          <el-select v-model="form.ruleRange" placeholder="请选择商品范围">
+            <el-option
+              v-for="dict in dict.type.goods_range"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商品类型" prop="type" v-if="form.ruleRange ===2">
           <el-select v-model="form.type" placeholder="请选择商品类型">
             <el-option
               v-for="dict in dict.type.goods_type"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.value)"
+              v-if="parseInt(dict.value) !== 0"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -258,15 +276,17 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <setRule ref="setRule" :ruleOpen="ruleOpen" :ruleId="ruleId"  @cancelRule="handleCancelRule" />
   </div>
 </template>
 
 <script>
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/ruleStock/info";
-
+import setRule from "@/views/oms/ruleStock/setRule";
 export default {
   name: "Info",
   dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
+  components:{setRule},
   data() {
     return {
       // 遮罩层
@@ -322,7 +342,9 @@ export default {
         type: [
           { required: true, message: "商品类型不能为空", trigger: "change" }
         ],
-      }
+      },
+      ruleOpen:false,
+      ruleId:null
     };
   },
   created() {
@@ -402,6 +424,14 @@ export default {
         this.open = true;
         this.title = "修改分货单基础信息";
       });
+    },
+    handleSetRule(row){
+      this.ruleOpen = true;
+      this.ruleId = row.id
+    },
+    handleCancelRule(){
+      this.ruleOpen = false;
+      this.ruleId = null
     },
     /** 提交按钮 */
     submitForm() {
