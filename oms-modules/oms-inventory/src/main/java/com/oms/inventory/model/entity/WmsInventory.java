@@ -89,4 +89,7 @@ public class WmsInventory implements Serializable {
     @Excel(name = "创建时间")
     private LocalDateTime createTime;
     private String companyCode;
+
+    @Version // 乐观锁版本号
+    private Integer version;
 }

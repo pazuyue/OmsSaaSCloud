@@ -1,6 +1,7 @@
 package com.oms.inventory.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
@@ -54,6 +55,7 @@ public class OmsInventory implements Serializable {
 
     /** 乐观锁版本号 */
     @Excel(name = "乐观锁版本号")
+    @Version // 乐观锁版本号
     private Integer version;
 
 }

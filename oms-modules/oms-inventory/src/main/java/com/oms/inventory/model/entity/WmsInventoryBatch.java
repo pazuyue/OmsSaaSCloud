@@ -3,6 +3,7 @@ package com.oms.inventory.model.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -91,4 +92,6 @@ public class WmsInventoryBatch implements Serializable {
      */
     private Date modifyTime;
     private String companyCode;
+    @Version // 乐观锁版本号
+    private Integer version;
 }
