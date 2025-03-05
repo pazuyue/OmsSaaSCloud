@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryContextHolder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/history/InventoryHistoryMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/InventoryHistory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -399,14 +394,8 @@
       <workItem from="1739786978565" duration="174000" />
       <workItem from="1739878046217" duration="25000" />
       <workItem from="1741077110184" duration="13166000" />
-      <workItem from="1741159446305" duration="6241000" />
-    </task>
-    <task id="LOCAL-00081" summary="入库通知单数据导入- 提交审核">
-      <created>1726308049390</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1726308049390</updated>
+      <workItem from="1741159446305" duration="6846000" />
+      <workItem from="1741168404441" duration="3416000" />
     </task>
     <task id="LOCAL-00082" summary="入库通知单数据导入- 提交审核">
       <created>1726308685347</created>
@@ -744,7 +733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1741157154608</updated>
     </task>
-    <option name="localTasksCounter" value="130" />
+    <task id="LOCAL-00130" summary="OMS总库存管理-库存更新快照">
+      <created>1741165981569</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1741165981569</updated>
+    </task>
+    <option name="localTasksCounter" value="131" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -774,7 +770,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="调整UI优化" />
     <MESSAGE value="入库通知单数据导入" />
     <MESSAGE value="入库通知单数据导入-审核" />
     <MESSAGE value="入库通知单数据导入-更新" />
@@ -799,7 +794,8 @@
     <MESSAGE value="分货单" />
     <MESSAGE value="库存管理" />
     <MESSAGE value="OMS总库存管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS总库存管理" />
+    <MESSAGE value="OMS总库存管理-库存更新快照" />
+    <option name="LAST_COMMIT_MESSAGE" value="OMS总库存管理-库存更新快照" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

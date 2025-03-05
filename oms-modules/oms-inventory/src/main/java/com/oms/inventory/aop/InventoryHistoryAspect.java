@@ -1,29 +1,18 @@
 package com.oms.inventory.aop;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.oms.inventory.mapper.OmsInventoryMapper;
 import com.oms.inventory.mapper.history.InventoryHistoryMapper;
 import com.oms.inventory.model.entity.InventoryHistory;
 import com.oms.inventory.model.entity.OmsInventory;
-import com.oms.inventory.service.impl.OmsInventoryServiceImpl;
-import com.ruoyi.common.core.context.SecurityContextHolder;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Map;
 
 @Slf4j
 @Aspect
@@ -45,7 +34,6 @@ public class InventoryHistoryAspect {
         Object[] args = joinPoint.getArgs();
         log.debug("方法参数: {}", Arrays.toString(args));
         if (args.length == 0 || !(args[0] instanceof OmsInventory)) {
-            log.debug("参数类型不正确: {}", Arrays.toString(args));
             return;
         }
         OmsInventory omsInventory = (OmsInventory) args[0];
@@ -71,14 +59,16 @@ public class InventoryHistoryAspect {
         }
 
         OmsInventory beforeEntity = InventoryContextHolder.getBeforeEntity();
-        log.debug("afterInsertOrUpdate：{}", beforeEntity);
         if (beforeEntity == null) {
             InventoryContextHolder.clear();
             return;
         }
-
+        log.debug("afterInsertOrUpdate：{}", beforeEntity);
         OmsInventory afterEntity = mapper.selectBySkuSn(beforeEntity.getSkuSn());
         log.debug("afterEntity：{}", afterEntity);
+        String methodName = joinPoint.getSignature().getName();
+        log.debug("methodName：{}", methodName);
+        // 判断操作类型
         InventoryHistory history = new InventoryHistory();
         history.setSkuSn(beforeEntity.getSkuSn());
 
@@ -92,11 +82,32 @@ public class InventoryHistoryAspect {
         history.setAfterMinStock(afterEntity.getMinStock());
         history.setChangeAmount(afterEntity.getAvailableStock() - beforeEntity.getAvailableStock());
 
+        String operationType = determineOperationType(methodName,history);
+        history.setOperationType(operationType);
         history.setOperatorId(SecurityUtils.getUserId());
         history.setOperatorName(SecurityUtils.getUsername());
         history.setChangeTime(LocalDateTime.now());
         log.debug("历史库存数据：{}", history);
         inventoryHistoryMapper.insert(history);
         InventoryContextHolder.clear();
+    }
+
+    private String determineOperationType(String methodName,InventoryHistory history) {
+        log.debug("determineOperationType：{}", methodName);
+         if (methodName.equals("insertOrUpdate")) {
+            // 需要根据实际执行的操作判断
+            return determineInsertOrUpdateOperation(history);
+        }
+        return "UNKNOWN";
+    }
+
+    private String determineInsertOrUpdateOperation(InventoryHistory history) {
+        // 查询旧数据是否存在
+        log.debug("determineInsertOrUpdateOperation：{}", history);
+        if (history.getChangeAmount()>0) {
+            return "INCREASE";
+        } else {
+            return "DECREASE";
+        }
     }
 }
