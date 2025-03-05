@@ -19,7 +19,7 @@
           </el-collapse-item>
         </el-collapse>
 
-        <el-form ref="form" :model="form" label-width="150px" class="mt20">
+        <el-form ref="setRuleForm" :model="form" :rules="rules" label-width="150px" class="mt20">
 
           <el-form-item label="分货模式" prop="priorityType">
             <el-select v-model="form.priorityType" placeholder="请选分货模式">
@@ -46,7 +46,7 @@
             </span>
           </el-form-item>
 
-          <el-form-item label="虚仓" prop="wmsSimulationCode">
+          <el-form-item label="虚仓" prop="wmsSimulationCodes">
             <el-select v-model="form.wmsSimulationCodes" multiple placeholder="请选择">
               <el-option
                 v-for="item in wmsSimulationCodeOptions"
@@ -57,7 +57,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="分货渠道" prop="ruleType">
+          <el-form-item label="分货渠道" prop="channelIds">
             <el-select v-model="form.channelIds" multiple placeholder="请选分货渠道" @change="handleChannelChange">
               <el-option
                 v-for="item in channelList"
@@ -73,7 +73,7 @@
           <el-table-column width="55" align="center">
             <i class="el-icon-s-unfold draggable-handle"></i>
           </el-table-column>
-          <el-table-column label="店铺" prop="storeName" align="center" />
+          <el-table-column label="店铺" prop="channelName" align="center" />
           <el-table-column label="库存基数" prop="stockBase" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.stockBase }}</span>
@@ -97,6 +97,11 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
       </el-dialog>
     </el-col>
   </el-row>
@@ -141,9 +146,21 @@ export default {
       form: {
         channelIds: [],
         wmsSimulationCodes:[],
-        priorityType:null
+        priorityType:null,
+        infoList: []
       },
-      infoList: []
+      infoList: [],
+      rules: {
+        channelIds: [
+          { type: 'array', required: true, message: '分货渠道不能为空', trigger: 'change' },
+        ],
+        wmsSimulationCodes: [
+          { type: 'array', required: true, message: "虚仓不能为空", trigger: "change" }
+        ],
+        priorityType: [
+          { required: true, message: "分货模式不能为空", trigger: "change" }
+        ],
+      }
     }
   },
   created() {
@@ -163,10 +180,24 @@ export default {
     }
   },
   methods: {
+    cancel(){
+      this.reset();
+      this.handleClose();
+    },
+    submitForm(){
+      this.$refs["setRuleForm"].validate(valid => {
+        if (valid) {
+          this.form.infoList = this.infoList;
+          console.log(this.form);
+        }
+      });
+    },
     reset() {
       this.form = {
         channelIds: [],
-        wmsSimulationCodes:[]
+        wmsSimulationCodes:[],
+        priorityType:null,
+        infoList: []
       };
       this.infoList = [];
     },
@@ -237,7 +268,7 @@ export default {
           const channel = this.channelList.find(item => item.channelId === channelId);
           if (channel) {
             this.infoList.push({
-              storeName: channel.channelName, // 或者根据需要设置其他默认值
+              channelName: channel.channelName, // 或者根据需要设置其他默认值
               priority: '普通分货',
               stockBase: "X",
               percentage: 100,

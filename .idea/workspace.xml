@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IOmsInventoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsInventoryServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/api/ApiWmsInventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/wms/api/ApiWmsInventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryBatchMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryBatchMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -18,9 +25,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="Vue Single File Component" />
         <option value="Interface" />
         <option value="Class" />
-        <option value="Vue Single File Component" />
       </list>
     </option>
   </component>
@@ -41,14 +48,14 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/pom.xml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/page/PageDomain.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/pom.xml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/controller/goods/GoodsController.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/controller/BaseController.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/utils/PageUtils.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/pom.xml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/GoodsSkuSnInfoTmpService.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/pom.xml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/controller/BaseController.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/oms-modules/oms-goods-administration/src/main/java/com/oms/goods/service/goods/impl/GoodsSkuSnInfoTmpServiceImpl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/utils/PageUtils.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java/com/ruoyi/common/core/web/page/PageDomain.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MavenRunner">
     <option name="delegateBuildToMaven" value="true" />
@@ -234,13 +241,13 @@
     </configuration>
     <list>
       <item itemvalue="Application.GeberatorUIServer" />
+      <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiAuthApplication" />
       <item itemvalue="Spring Boot.OmsGoodsAdministrationApplication" />
       <item itemvalue="Spring Boot.RuoYiFileApplication" />
       <item itemvalue="Spring Boot.RuoYiGenApplication" />
       <item itemvalue="Spring Boot.RuoYiJobApplication" />
-      <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiMonitorApplication" />
       <item itemvalue="Spring Boot.ChannelApplication" />
       <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
@@ -248,8 +255,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Spring Boot.OmsInventoryApplication" />
+        <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Application.GeberatorUIServer" />
       </list>
     </recent_temporary>
@@ -387,14 +394,14 @@
       <workItem from="1737344358227" duration="14000" />
       <workItem from="1737697090001" duration="1982000" />
       <workItem from="1737855349090" duration="8370000" />
-      <workItem from="1737875631050" duration="20900000" />
-    </task>
-    <task id="LOCAL-00077" summary="入库通知单数据导入-审核">
-      <created>1725872858748</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1725872858748</updated>
+      <workItem from="1737875631050" duration="22182000" />
+      <workItem from="1738596164916" duration="7032000" />
+      <workItem from="1738822163736" duration="119000" />
+      <workItem from="1739186552730" duration="1142000" />
+      <workItem from="1739786909311" duration="14000" />
+      <workItem from="1739786978565" duration="174000" />
+      <workItem from="1739878046217" duration="25000" />
+      <workItem from="1741077110184" duration="8985000" />
     </task>
     <task id="LOCAL-00078" summary="入库通知单数据导入-审核">
       <created>1725876328367</created>
@@ -732,7 +739,14 @@
       <option name="project" value="LOCAL" />
       <updated>1737958803287</updated>
     </task>
-    <option name="localTasksCounter" value="126" />
+    <task id="LOCAL-00126" summary="分货单">
+      <created>1737961849082</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1737961849082</updated>
+    </task>
+    <option name="localTasksCounter" value="127" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -762,7 +776,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OMS-api - 代码提交 调整" />
     <MESSAGE value="OMS-api - 商品服务调用" />
     <MESSAGE value="调整UI优化" />
     <MESSAGE value="入库通知单数据导入" />
@@ -787,7 +800,8 @@
     <MESSAGE value="调整备注" />
     <MESSAGE value=" BUG 修复" />
     <MESSAGE value="分货店铺拖拽排序功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="分货店铺拖拽排序功能" />
+    <MESSAGE value="分货单" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货单" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -1,14 +1,20 @@
 package com.oms.inventory.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.inventory.mapper.WmsInventoryBatchMapper;
+import com.oms.inventory.model.entity.OmsInventory;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.WmsInventoryBatch;
+import com.oms.inventory.service.IOmsInventoryService;
 import com.oms.inventory.service.IWmsInventoryBatchService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.SQLException;
 
 /**
  * <p>
@@ -18,17 +24,41 @@ import javax.annotation.Resource;
  * @author 月光光
  * @since 2023-12-08
  */
+@Slf4j
 @Service
 public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchMapper, WmsInventoryBatch> implements IWmsInventoryBatchService {
 
     @Resource
     private WmsInventoryServiceImpl wmsInventoryService;
+    @Resource
+    private OmsInventoryServiceImpl omsInventoryService;
 
     @Transactional
-    public Boolean addInventory( WmsInventory wmsInventory, WmsInventoryBatch wmsInventoryBatch)
+    public Boolean addInventory(WmsInventoryBatch wmsInventoryBatch)
     {
-        wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
-        this.baseMapper.insertOrUpdate(wmsInventoryBatch);
-        return true;
+        try {
+            WmsInventory wmsInventory = new WmsInventory();
+            OmsInventory omsInventory = new OmsInventory();
+            BeanUtil.copyProperties(wmsInventoryBatch, wmsInventory);
+            log.debug("wmsInventory {}",wmsInventory);
+            int availableStock = wmsInventory.getZpAvailableNumber() + wmsInventory.getCpAvailableNumber();
+            omsInventory.setSkuSn(wmsInventory.getSkuSn());
+            omsInventory.setAvailableStock(availableStock);
+            omsInventory.setTotalStock(availableStock);
+            omsInventory.setCompanyCode(wmsInventory.getCompanyCode());
+            wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
+            this.baseMapper.insertOrUpdate(wmsInventoryBatch);
+            omsInventoryService.getBaseMapper().insertOrUpdate(omsInventory);
+            return true;
+        } catch (OptimisticLockingFailureException e) {
+            // 记录日志或采取其他措施
+            log.error("Cause: {} Optimistic lock failed: {}",e.getCause(),  e.getMessage());
+            return false;
+        } catch (Exception e) {
+            // 捕获其他可能的异常
+            log.error("Error during inventory addition: {}",e.getMessage());
+            throw new RuntimeException("Failed to add inventory", e);
+        }
+
     }
 }
