@@ -1,4 +1,4 @@
-package com.oms.inventory.service.impl;
+package com.oms.inventory.service.impl.rule;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
