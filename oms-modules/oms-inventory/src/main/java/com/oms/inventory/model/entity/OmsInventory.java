@@ -27,23 +27,23 @@ public class OmsInventory implements Serializable {
 
     /** 可售库存（扣除预留、冻结、在途库存） */
     @Excel(name = "可售库存", readConverterExp = "扣=除预留、冻结、在途库存")
-    private Integer availableStock;
+    private Integer availableStock=0;
 
     /** 预留库存（订单占用、活动预占等） */
     @Excel(name = "预留库存", readConverterExp = "订=单占用、活动预占等")
-    private Integer reservedStock;
+    private Integer reservedStock=0;
 
     /** 冻结库存（如预售、退货中库存） */
     @Excel(name = "冻结库存", readConverterExp = "如=预售、退货中库存")
-    private Integer frozenStock;
+    private Integer frozenStock=0;
 
     /** 安全库存阈值 */
     @Excel(name = "安全库存阈值")
-    private Integer safetyStock;
+    private Integer safetyStock=0;
 
     /** 最小库存预警值 */
     @Excel(name = "最小库存预警值")
-    private Integer minStock;
+    private Integer minStock=0;
 
     /** 数据更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.oms.inventory.model.entity.OmsInventory;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 
 public interface OmsInventoryMapper extends BaseMapper<OmsInventory> {
@@ -23,5 +24,8 @@ public interface OmsInventoryMapper extends BaseMapper<OmsInventory> {
             " version = version + 1" +
             " </script>")
     int reserveStock(@Param("omsInventory") OmsInventory omsInventory);
+
+    @Select("SELECT * FROM oms_inventory WHERE sku_sn = #{skuSn}")
+    OmsInventory selectBySkuSn(@Param("skuSn") String skuSn);
 
 }
