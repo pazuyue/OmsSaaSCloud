@@ -15,7 +15,7 @@ public interface OmsInventoryMapper extends BaseMapper<OmsInventory> {
             " ON DUPLICATE KEY UPDATE total_stock = total_stock + #{omsInventory.totalStock}, available_stock = available_stock + #{omsInventory.availableStock}," +
             " version = version + 1" +
             " </script>")
-    int insertOrUpdate(@Param("omsInventory") OmsInventory omsInventory);
+    int insertOrUpdate(@RelationSn("relationSn") String relationSn,@Param("omsInventory") OmsInventory omsInventory);
 
     @Insert("<script>" +
             " INSERT INTO oms_inventory(sku_sn, total_stock, available_stock, reserved_stock, frozen_stock, safety_stock, min_stock,company_code, version) VALUES " +

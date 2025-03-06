@@ -34,7 +34,7 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
     private OmsInventoryServiceImpl omsInventoryService;
 
     @Transactional
-    public Boolean addInventory(WmsInventoryBatch wmsInventoryBatch)
+    public Boolean addInventory(WmsInventoryBatch wmsInventoryBatch, String relationSn)
     {
         try {
             WmsInventory wmsInventory = new WmsInventory();
@@ -48,7 +48,7 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
             omsInventory.setCompanyCode(wmsInventory.getCompanyCode());
             wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
             this.baseMapper.insertOrUpdate(wmsInventoryBatch);
-            omsInventoryService.getBaseMapper().insertOrUpdate(omsInventory);
+            omsInventoryService.getBaseMapper().insertOrUpdate(relationSn,omsInventory);
             return true;
         } catch (OptimisticLockingFailureException e) {
             // 记录日志或采取其他措施
@@ -59,6 +59,5 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
             log.error("Error during inventory addition: {}",e.getMessage());
             throw new RuntimeException("Failed to add inventory", e);
         }
-
     }
 }

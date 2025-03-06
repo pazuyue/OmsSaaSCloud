@@ -11,7 +11,7 @@ public class InventoryHistory {
 
     @TableId(type = IdType.AUTO)
     private Long id; // 日志唯一ID
-
+    private String relationSn;
     private String skuSn;                // SKU
 
     private String operationType;      // 操作类型（INCREASE/DECREASE/ALLOCATE/FREEZE/RESERVE）

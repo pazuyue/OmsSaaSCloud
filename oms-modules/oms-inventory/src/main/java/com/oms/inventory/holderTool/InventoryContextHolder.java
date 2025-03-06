@@ -1,4 +1,4 @@
-package com.oms.inventory.aop;
+package com.oms.inventory.holderTool;
 
 import com.oms.inventory.model.entity.OmsInventory;
 
