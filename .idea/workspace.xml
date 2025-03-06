@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryBatchServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -395,14 +395,7 @@
       <workItem from="1739878046217" duration="25000" />
       <workItem from="1741077110184" duration="13166000" />
       <workItem from="1741159446305" duration="6846000" />
-      <workItem from="1741168404441" duration="11342000" />
-    </task>
-    <task id="LOCAL-00084" summary="入库通知单数据导入- 提交审核">
-      <created>1726813254055</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1726813254056</updated>
+      <workItem from="1741168404441" duration="12087000" />
     </task>
     <task id="LOCAL-00085" summary="入库通知单数据导入- 提交审核">
       <created>1726816087485</created>
@@ -740,7 +733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1741228180058</updated>
     </task>
-    <option name="localTasksCounter" value="133" />
+    <task id="LOCAL-00133" summary="OMS总库存管理-库存更新快照">
+      <created>1741232109533</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1741232109533</updated>
+    </task>
+    <option name="localTasksCounter" value="134" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

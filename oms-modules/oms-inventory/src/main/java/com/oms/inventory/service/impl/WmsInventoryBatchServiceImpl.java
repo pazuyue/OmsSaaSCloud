@@ -38,14 +38,9 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
     {
         try {
             WmsInventory wmsInventory = new WmsInventory();
-            OmsInventory omsInventory = new OmsInventory();
             BeanUtil.copyProperties(wmsInventoryBatch, wmsInventory);
+            OmsInventory omsInventory = this.getOmsInventory(wmsInventory);
             log.debug("wmsInventory {}",wmsInventory);
-            int availableStock = wmsInventory.getZpAvailableNumber() + wmsInventory.getCpAvailableNumber();
-            omsInventory.setSkuSn(wmsInventory.getSkuSn());
-            omsInventory.setAvailableStock(availableStock);
-            omsInventory.setTotalStock(availableStock);
-            omsInventory.setCompanyCode(wmsInventory.getCompanyCode());
             wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
             this.baseMapper.insertOrUpdate(wmsInventoryBatch);
             omsInventoryService.getBaseMapper().insertOrUpdate(relationSn,omsInventory);
@@ -59,5 +54,16 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
             log.error("Error during inventory addition: {}",e.getMessage());
             throw new RuntimeException("Failed to add inventory", e);
         }
+    }
+
+    private OmsInventory getOmsInventory(WmsInventory wmsInventory)
+    {
+        OmsInventory omsInventory = new OmsInventory();
+        int availableStock = wmsInventory.getZpAvailableNumber() + wmsInventory.getCpAvailableNumber();
+        omsInventory.setSkuSn(wmsInventory.getSkuSn());
+        omsInventory.setAvailableStock(availableStock);
+        omsInventory.setTotalStock(availableStock);
+        omsInventory.setCompanyCode(wmsInventory.getCompanyCode());
+        return omsInventory;
     }
 }
