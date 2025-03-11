@@ -42,3 +42,12 @@ export function delInfo(id) {
     method: 'delete'
   })
 }
+
+// 设置分货单规则
+export function setRule(data) {
+  return request({
+    url: '/inventory/ruleStockHandle/setRule',
+    method: 'post',
+    data: data
+  })
+}

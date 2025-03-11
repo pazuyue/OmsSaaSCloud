@@ -436,6 +436,7 @@ export default {
     handleSetRule(row){
       this.ruleOpen = true;
       this.ruleId = row.id
+      this.$refs.setRule.getWmsSimulationCodeOptions(); // 调用子组件的方法
     },
     handleCancelRule(){
       this.ruleOpen = false;

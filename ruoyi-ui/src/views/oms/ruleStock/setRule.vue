@@ -109,7 +109,7 @@
 
 </template>
 <script>
-import {getInfo} from "@/api/ruleStock/info";
+import {getInfo, setRule} from "@/api/ruleStock/info";
 import {getChannelList} from "@/api/channel/channel";
 import {listSimulationStore} from "@/api/simulationStore/simulationStore";
 import Sortable from 'sortablejs';
@@ -144,6 +144,7 @@ export default {
         {priorityId: 2, priorityType: '优先分货'},
       ],
       form: {
+        ruleId : null,
         channelIds: [],
         wmsSimulationCodes:[],
         priorityType:null,
@@ -187,8 +188,18 @@ export default {
     submitForm(){
       this.$refs["setRuleForm"].validate(valid => {
         if (valid) {
+          console.log("提交",valid)
+          this.form.ruleId = this.ruleId;
           this.form.infoList = this.infoList;
           console.log(this.form);
+          setRule(this.form).then(response => {
+            if (response.code === 200){
+              this.$modal.msgSuccess("设置成功");
+            }else {
+              this.$modal.msgError(response.msg);
+            }
+
+          })
         }
       });
     },

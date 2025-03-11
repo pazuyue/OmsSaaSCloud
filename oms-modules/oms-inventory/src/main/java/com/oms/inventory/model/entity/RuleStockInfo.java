@@ -2,6 +2,7 @@ package com.oms.inventory.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.oms.inventory.model.enums.RuleStatus;
 import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
@@ -53,7 +54,7 @@ public class RuleStockInfo implements Serializable {
      * 状态
      */
     @Excel(name = "状态")
-    private Integer status;
+    private RuleStatus status;
 
     /**
      * 分货单有效期, 开始时间
