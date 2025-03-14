@@ -1,12 +1,14 @@
-package com.oms.inventory.model.entity;
+package com.oms.inventory.model.entity.rule;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import com.ruoyi.common.core.annotation.Excel;
 
@@ -43,10 +45,14 @@ public class RuleStockChannelInfo implements Serializable
     private Integer decimalHandleType;
 
     /** $column.columnComment */
-    @Excel(name = "修改时间")
+    @Excel(name = "修改时间",width = 30, dateFormat = "yyyy-MM-dd")
     private Date modifyTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建", width = 30, dateFormat = "yyyy-MM-dd")
+    private LocalDateTime createTime;
+
     /** $column.columnComment */
-    @Excel(name = "创建时间")
+    @Excel(name = "公司")
     private String companyCode;
 }

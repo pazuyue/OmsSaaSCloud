@@ -1,4 +1,4 @@
-package com.oms.inventory.model.entity;
+package com.oms.inventory.model.entity.rule;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;

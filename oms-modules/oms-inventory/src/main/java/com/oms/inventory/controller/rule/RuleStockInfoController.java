@@ -1,16 +1,14 @@
 package com.oms.inventory.controller.rule;
 
-import com.oms.inventory.model.entity.RuleStockInfo;
-import com.oms.inventory.service.IRuleStockInfoService;
+import com.oms.inventory.model.entity.rule.RuleStockInfo;
+import com.oms.inventory.service.rule.IRuleStockInfoService;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.utils.uuid.IdUtils;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.web.page.TableDataInfo;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
-import com.sun.tools.javac.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

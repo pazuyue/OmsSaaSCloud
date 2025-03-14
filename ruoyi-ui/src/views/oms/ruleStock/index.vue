@@ -191,6 +191,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            v-if="scope.row.status === '新建'"
             @click="handleSetRule(scope.row)"
             v-hasPermi="['ruleStock:info:edit']"
           >设置规则</el-button>
@@ -198,6 +199,15 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            v-if="scope.row.status === '待审核'"
+            @click="handleExamine(scope.row)"
+            v-hasPermi="['ruleStock:info:edit']"
+          >审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            v-if="scope.row.status !== '执行中' && scope.row.status !== '已结束' && scope.row.status !== '已作废'"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ruleStock:info:remove']"
           >删除</el-button>
@@ -285,16 +295,19 @@
       </div>
     </el-dialog>
     <setRule ref="setRule" :ruleOpen="ruleOpen" :ruleId="ruleId"  @cancelRule="handleCancelRule" />
+
+    <ruleDetails ref="ruleDetails" :examineOpen="examineOpen"  :ruleId="ruleId"  @handleCancel="handleCancel" />
   </div>
 </template>
 
 <script>
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/ruleStock/info";
 import setRule from "@/views/oms/ruleStock/setRule";
+import ruleDetails from "@/views/oms/ruleStock/ruleDetails";
 export default {
   name: "Info",
   dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
-  components:{setRule},
+  components:{setRule,ruleDetails},
   data() {
     return {
       // 遮罩层
@@ -352,6 +365,7 @@ export default {
         ],
       },
       ruleOpen:false,
+      examineOpen:false,
       ruleId:null
     };
   },
@@ -438,10 +452,20 @@ export default {
       this.ruleId = row.id
       this.$refs.setRule.getWmsSimulationCodeOptions(); // 调用子组件的方法
     },
+    handleExamine(row){
+      this.ruleId = row.id
+      this.examineOpen = true;
+    },
     handleCancelRule(){
       this.ruleOpen = false;
       this.ruleId = null
     },
+
+    handleCancel(){
+      this.examineOpen = false;
+      this.ruleId = null
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {

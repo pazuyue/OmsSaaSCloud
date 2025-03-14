@@ -1,13 +1,15 @@
 package com.oms.inventory.service.impl.rule;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.oms.inventory.mapper.RuleStockChannelInfoMapper;
+import com.oms.inventory.mapper.rule.RuleStockChannelInfoMapper;
 import com.oms.inventory.model.dto.AllocationRuleDto;
-import com.oms.inventory.model.entity.RuleStockChannelInfo;
-import com.oms.inventory.model.entity.RuleStockInfo;
+import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
+import com.oms.inventory.model.entity.rule.RuleStockInfo;
+import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.model.enums.RuleStatus;
-import com.oms.inventory.service.IRuleStockChannelInfoService;
-import com.oms.inventory.service.IRuleStockInfoService;
+import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
+import com.oms.inventory.service.rule.IRuleStockInfoService;
+import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class RuleStockChannelInfoServiceImpl extends ServiceImpl<RuleStockChanne
 
     @Resource
     private IRuleStockInfoService ruleStockInfoService;
+    @Resource
+    private IRuleStockStoreCodeInfoService ruleStockStoreCodeInfoService;
 
     @Transactional
     public Boolean setRule(AllocationRuleDto dto) {
@@ -52,6 +56,21 @@ public class RuleStockChannelInfoServiceImpl extends ServiceImpl<RuleStockChanne
                     .collect(Collectors.toList());
 
             log.debug("setRule list:{}", list);
+
+            log.debug("setRule WmsSimulationCodes:{}", dto.getWmsSimulationCodes());
+
+            List<RuleStockStoreCodeInfo> storeCodeInfoList = new ArrayList<>();
+            for (String wmsSimulationCode : dto.getWmsSimulationCodes()) {
+                RuleStockStoreCodeInfo info = new RuleStockStoreCodeInfo();
+                info.setRuleId(dto.getRuleId());
+                info.setStoreCode(wmsSimulationCode);
+                info.setCompanyCode(dto.getCompanyCode());
+                storeCodeInfoList.add(info);
+            }
+
+            log.debug("setRule storeCodeInfoList:{}", storeCodeInfoList);
+            // 保存规则-仓库信息
+            ruleStockStoreCodeInfoService.saveBatch(storeCodeInfoList);
 
             one.setStatus(RuleStatus.PENDING_REVIEW);
             boolean saveResult = this.saveBatch(list);

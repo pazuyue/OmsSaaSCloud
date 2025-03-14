@@ -1,7 +1,7 @@
 package com.oms.inventory.controller.rule;
 
 import com.oms.inventory.model.dto.AllocationRuleDto;
-import com.oms.inventory.service.IRuleStockChannelInfoService;
+import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.log.annotation.Log;
