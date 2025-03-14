@@ -5,19 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoHandleController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/RuleStockChannelInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/dto/AllocationRuleDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/dto/ChannelRuleInfoDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/RuleStockChannelInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/enums/RuleStatus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IRuleStockChannelInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockChannelInfoServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/RuleStockInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/RuleStockInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/enums/RuleStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/enums/RuleStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockChannelInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockChannelInfoServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +20,8 @@
         <option value="JavaScript File" />
         <option value="Vue Single File Component" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -83,7 +73,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_ruoyi_vue" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -411,14 +401,11 @@
       <workItem from="1741255562776" duration="3397000" />
       <workItem from="1741313084701" duration="132000" />
       <workItem from="1741571041349" duration="11644000" />
-      <workItem from="1741665180271" duration="673000" />
-    </task>
-    <task id="LOCAL-00086" summary="入库通知单数据导入- 提交审核">
-      <created>1727077027523</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1727077027523</updated>
+      <workItem from="1741665180271" duration="1319000" />
+      <workItem from="1741772744729" duration="145000" />
+      <workItem from="1741838549558" duration="4119000" />
+      <workItem from="1741919452643" duration="1350000" />
+      <workItem from="1741931432495" duration="2875000" />
     </task>
     <task id="LOCAL-00087" summary="入库通知单数据导入- 审核或查看">
       <created>1727143581857</created>
@@ -756,7 +743,14 @@
       <option name="project" value="LOCAL" />
       <updated>1741232795076</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="分货单设置">
+      <created>1741671383871</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1741671383871</updated>
+    </task>
+    <option name="localTasksCounter" value="136" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -786,7 +780,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="入库通知单数据导入" />
     <MESSAGE value="入库通知单数据导入-审核" />
     <MESSAGE value="入库通知单数据导入-更新" />
     <MESSAGE value="入库通知单数据导入-维护" />
@@ -811,7 +804,8 @@
     <MESSAGE value="库存管理" />
     <MESSAGE value="OMS总库存管理" />
     <MESSAGE value="OMS总库存管理-库存更新快照" />
-    <option name="LAST_COMMIT_MESSAGE" value="OMS总库存管理-库存更新快照" />
+    <MESSAGE value="分货单设置" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货单设置" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

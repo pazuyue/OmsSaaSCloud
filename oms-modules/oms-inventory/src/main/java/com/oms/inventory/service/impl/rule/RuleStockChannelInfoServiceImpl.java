@@ -3,7 +3,6 @@ package com.oms.inventory.service.impl.rule;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.inventory.mapper.RuleStockChannelInfoMapper;
 import com.oms.inventory.model.dto.AllocationRuleDto;
-import com.oms.inventory.model.dto.ChannelRuleInfoDto;
 import com.oms.inventory.model.entity.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.RuleStockInfo;
 import com.oms.inventory.model.enums.RuleStatus;
