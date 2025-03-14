@@ -1,6 +1,7 @@
 package com.oms.inventory.service.rule;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oms.inventory.model.dto.rule.RuleDetailsInfoDto;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 
 import java.util.List;

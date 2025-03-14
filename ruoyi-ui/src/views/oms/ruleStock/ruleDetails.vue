@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {getInfo} from "@/api/ruleStock/info";
+import {getInfo, getInfoDetails} from "@/api/ruleStock/info";
 
 export default {
   name: "ruleDetails",
@@ -42,6 +42,8 @@ export default {
       localExamineOpen: this.examineOpen, // 初始化本地数据属性
       title: "规则明细",
       ruleStockInfo: {},
+      storeCodeList: [],
+      channelList: [],
       activeName: '1',
     }
   },
@@ -68,6 +70,11 @@ export default {
       getInfo(this.ruleId).then(response => {
         this.ruleStockInfo = response.data;
       });
+      getInfoDetails(this.ruleId).then(response => {
+        console.log(response.data)
+        this.storeCodeList = response.data.storeCodeList;
+        this.channelList = response.data.channelList;
+      })
     },
   }
 }

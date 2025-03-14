@@ -17,6 +17,14 @@ export function getInfo(id) {
   })
 }
 
+// 查询分货单基础信息详细
+export function getInfoDetails(id) {
+  return request({
+    url: '/inventory/ruleStockHandle/getInfoDetails/' + id,
+    method: 'get'
+  })
+}
+
 // 新增分货单基础信息
 export function addInfo(data) {
   return request({

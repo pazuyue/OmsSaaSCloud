@@ -1,7 +1,7 @@
 package com.oms.inventory.controller.rule;
 
 import com.oms.inventory.model.dto.AllocationRuleDto;
-import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
+import com.oms.inventory.service.rule.IRuleStockInfoHandleService;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.log.annotation.Log;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 public class RuleStockInfoHandleController extends BaseController {
 
     @Resource
-    private IRuleStockChannelInfoService ruleStockChannelInfoService;
+    private IRuleStockInfoHandleService iRuleStockInfoHandleService;
     /**
      * 获取分货单基础信息详细信息
      */
@@ -29,10 +29,17 @@ public class RuleStockInfoHandleController extends BaseController {
     {
         log.info("分货单设置：{}",dto);
         dto.setCompanyCode(companyCode);
-        Boolean aBoolean = ruleStockChannelInfoService.setRule(dto);
+        Boolean aBoolean = iRuleStockInfoHandleService.setRule(dto);
         if (!aBoolean){
             return error("保存失败");
         }
         return success();
+    }
+
+    @RequiresPermissions("ruleStock:info:query")
+    @GetMapping(value = "/getInfoDetails/{id}")
+    public AjaxResult getInfoDetails(@PathVariable("id") Long id)
+    {
+        return success(iRuleStockInfoHandleService.getInfoDetails(id));
     }
 }
