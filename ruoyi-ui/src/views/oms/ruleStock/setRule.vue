@@ -195,6 +195,7 @@ export default {
           setRule(this.form).then(response => {
             if (response.code === 200){
               this.$modal.msgSuccess("设置成功");
+              this.$emit('cancelRule');
             }else {
               this.$modal.msgError(response.msg);
             }

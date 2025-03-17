@@ -458,12 +458,14 @@ export default {
     },
     handleCancelRule(){
       this.ruleOpen = false;
-      this.ruleId = null
+      this.ruleId = null;
+      this.getList();
     },
 
     handleCancel(){
       this.examineOpen = false;
       this.ruleId = null
+      this.getList();
     },
 
     /** 提交按钮 */

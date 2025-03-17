@@ -17,5 +17,5 @@ public interface IRuleStockInfoHandleService {
      * @param id
      * @return
      */
-    public RuleDetailsInfoDto getInfoDetails(Long id);
+    public RuleDetailsInfoDto getInfoDetails(Long id,String companyCode);
 }

@@ -1,6 +1,7 @@
 package com.oms.inventory.service.impl.rule;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.oms.common.api.RemoteChannelService;
 import com.oms.inventory.model.dto.AllocationRuleDto;
 import com.oms.inventory.model.dto.rule.RuleDetailsInfoDto;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
@@ -11,6 +12,7 @@ import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
 import com.oms.inventory.service.rule.IRuleStockInfoHandleService;
 import com.oms.inventory.service.rule.IRuleStockInfoService;
 import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
+import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
     private IRuleStockStoreCodeInfoService ruleStockStoreCodeInfoService;
     @Resource
     private IRuleStockChannelInfoService ruleStockChannelInfoService;
+
     @Override
     @Transactional
     public Boolean setRule(AllocationRuleDto dto) {
@@ -51,6 +54,7 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
                     .map(item -> {
                         RuleStockChannelInfo ruleStockChannelInfo = new RuleStockChannelInfo();
                         ruleStockChannelInfo.setChannelId(item.getChannelId());
+                        ruleStockChannelInfo.setChannelName(item.getChannelName());
                         ruleStockChannelInfo.setPercentage(item.getPercentage());
                         ruleStockChannelInfo.setDecimalHandleType(item.getDecimalHandleType());
                         ruleStockChannelInfo.setRuleId(dto.getRuleId());
@@ -98,7 +102,7 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
     }
 
     @Override
-    public RuleDetailsInfoDto getInfoDetails(Long id) {
+    public RuleDetailsInfoDto getInfoDetails(Long id,String companyCode) {
         QueryWrapper<RuleStockStoreCodeInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("rule_id",id);
         List<RuleStockStoreCodeInfo> storeCodeList = ruleStockStoreCodeInfoService.list(queryWrapper);

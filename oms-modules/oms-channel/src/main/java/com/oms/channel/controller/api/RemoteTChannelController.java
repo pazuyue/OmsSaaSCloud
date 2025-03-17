@@ -7,6 +7,7 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class RemoteTChannelController extends BaseController {
     /**
      * 查询店铺信息列表
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public TableDataInfo list(TChannel tChannel)
     {
         List<TChannel> list = tChannelService.selectTChannelList(tChannel);

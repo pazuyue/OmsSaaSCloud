@@ -38,8 +38,8 @@ public class RuleStockInfoHandleController extends BaseController {
 
     @RequiresPermissions("ruleStock:info:query")
     @GetMapping(value = "/getInfoDetails/{id}")
-    public AjaxResult getInfoDetails(@PathVariable("id") Long id)
+    public AjaxResult getInfoDetails(@PathVariable("id") Long id,@RequestParam(value = "company_code",required = false) String companyCode)
     {
-        return success(iRuleStockInfoHandleService.getInfoDetails(id));
+        return success(iRuleStockInfoHandleService.getInfoDetails(id,companyCode));
     }
 }
