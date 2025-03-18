@@ -1,5 +1,6 @@
 package com.oms.inventory.service.impl.rule;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oms.common.api.RemoteChannelService;
 import com.oms.inventory.model.dto.AllocationRuleDto;
@@ -111,5 +112,34 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
         dto.setStoreCodeInfoList(storeCodeList);
         dto.setChannelInfoList(channelList);
         return dto;
+    }
+
+    @Override
+    public Boolean toExamine(Long id, String companyCode) {
+        RuleStockInfo one = ruleStockInfoService.getById(id);
+        if (ObjectUtil.isEmpty(one)) {
+            throw new RuntimeException("分货单不存在");
+        }
+        if (one.getStatus() != RuleStatus.PENDING_REVIEW){
+            throw new RuntimeException("分货单状态不正确");
+        }
+        switch (one.getRuleType()){
+            case 1: //日常分货
+            case 3: //锁库时分货
+                one.setStatus(RuleStatus.PENDING_EXECUTION); // 更新为待执行
+                ruleStockInfoService.updateRuleStockInfo(one);
+                return true;
+                case 2: //一次性分货
+                    one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
+                    ruleStockInfoService.updateRuleStockInfo(one);
+                    return true;
+            default:
+                    throw new RuntimeException("分货单类型不正确");
+
+        }
+    }
+
+    private Boolean handleAllocate(RuleStockInfo rule){
+        return true;
     }
 }

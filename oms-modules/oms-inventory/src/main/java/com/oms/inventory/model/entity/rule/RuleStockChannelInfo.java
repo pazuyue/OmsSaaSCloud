@@ -39,6 +39,10 @@ public class RuleStockChannelInfo implements Serializable
     @Excel(name = "店铺名称")
     private String channelName;
 
+    /** 规则类型 1 百分百 2整型数量*/
+    @Excel(name = "规则类型 1 百分百 2整型数量")
+    private Integer ruleType = 1;
+
     /** $column.columnComment */
     @Excel(name = "设置值")
     private BigDecimal percentage;

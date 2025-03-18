@@ -18,4 +18,7 @@ public interface IRuleStockInfoHandleService {
      * @return
      */
     public RuleDetailsInfoDto getInfoDetails(Long id,String companyCode);
+
+
+    public Boolean toExamine(Long id,String companyCode);
 }

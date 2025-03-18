@@ -42,4 +42,10 @@ public class RuleStockInfoHandleController extends BaseController {
     {
         return success(iRuleStockInfoHandleService.getInfoDetails(id,companyCode));
     }
+
+    @RequiresPermissions("ruleStock:info:toExamine")
+    @GetMapping(value = "/toExamine/{id}")
+    public AjaxResult toExamine(@PathVariable("id") Long id,@RequestParam(value = "company_code",required = false) String companyCode){
+        return success(iRuleStockInfoHandleService.toExamine(id,companyCode));
+    }
 }

@@ -6,15 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/api/RemoteTChannelController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-channel/src/main/java/com/oms/channel/controller/api/RemoteTChannelController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteChannelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/src/main/java/com/oms/common/api/RemoteChannelService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoHandleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoHandleController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockChannelInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockChannelInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoHandleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoHandleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -414,14 +409,8 @@
       <workItem from="1741919452643" duration="1350000" />
       <workItem from="1741931432495" duration="15133000" />
       <workItem from="1742177017601" duration="2061000" />
-      <workItem from="1742193895461" duration="5013000" />
-    </task>
-    <task id="LOCAL-00090" summary="入库通知单数据导入- 审核或查看">
-      <created>1727175622265</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1727175622265</updated>
+      <workItem from="1742193895461" duration="5138000" />
+      <workItem from="1742208128563" duration="2184000" />
     </task>
     <task id="LOCAL-00091" summary="入库通知单数据导入- 审核或查看">
       <created>1727601162997</created>
@@ -759,7 +748,14 @@
       <option name="project" value="LOCAL" />
       <updated>1741947448495</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="分货单明细-提交审核">
+      <created>1742200251762</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1742200251764</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -789,7 +785,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="入库通知单数据导入-更新" />
     <MESSAGE value="入库通知单数据导入-维护" />
     <MESSAGE value="入库通知单数据导入- 提交审核" />
     <MESSAGE value="入库通知单数据导入- 审核或查看" />
@@ -814,7 +809,8 @@
     <MESSAGE value="OMS总库存管理-库存更新快照" />
     <MESSAGE value="分货单设置" />
     <MESSAGE value="分货单明细" />
-    <option name="LAST_COMMIT_MESSAGE" value="分货单明细" />
+    <MESSAGE value="分货单明细-提交审核" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货单明细-提交审核" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
