@@ -5,11 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_13_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/factory/AllocationStrategyFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/enums/AllocationStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/test/java/AllocationStrategyFactoryTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoHandleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockInfoHandleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockChannelInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockChannelInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoHandleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoHandleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/oms-common-core.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-common-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/oms-inventory.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,9 +26,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="Enum" />
         <option value="Vue Single File Component" />
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -75,7 +81,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../oms_ruoyi_vue" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../spring3BaseFrame" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1507799" />
@@ -121,10 +127,20 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.OmsInventoryApplication">
+  <component name="RunManager" selected="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1">
     <configuration name="GeberatorUIServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GeberatorUIServer" />
       <module name="oms-goods-administration" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="oms-inventory" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="AllocationStrategyFactoryTest" />
+      <option name="METHOD_NAME" value="testGetStrategyWithRuleType1" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -237,6 +253,7 @@
     </configuration>
     <list>
       <item itemvalue="Application.GeberatorUIServer" />
+      <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
       <item itemvalue="Spring Boot.RuoYiSystemApplication" />
       <item itemvalue="Spring Boot.RuoYiGatewayApplication" />
       <item itemvalue="Spring Boot.RuoYiAuthApplication" />
@@ -251,6 +268,7 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Application.GeberatorUIServer" />
@@ -410,14 +428,10 @@
       <workItem from="1741931432495" duration="15133000" />
       <workItem from="1742177017601" duration="2061000" />
       <workItem from="1742193895461" duration="5138000" />
-      <workItem from="1742208128563" duration="2184000" />
-    </task>
-    <task id="LOCAL-00091" summary="入库通知单数据导入- 审核或查看">
-      <created>1727601162997</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1727601162997</updated>
+      <workItem from="1742208128563" duration="2236000" />
+      <workItem from="1742370729940" duration="573000" />
+      <workItem from="1742435287696" duration="2770000" />
+      <workItem from="1742441407308" duration="17000" />
     </task>
     <task id="LOCAL-00092" summary="入库通知单数据导入- 审核或查看">
       <created>1727684974566</created>
@@ -755,7 +769,14 @@
       <option name="project" value="LOCAL" />
       <updated>1742200251764</updated>
     </task>
-    <option name="localTasksCounter" value="140" />
+    <task id="LOCAL-00140" summary="分货单明细-提交审核">
+      <created>1742262434664</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1742262434664</updated>
+    </task>
+    <option name="localTasksCounter" value="141" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
