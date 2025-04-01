@@ -3,12 +3,17 @@ package com.oms.inventory.service.impl.rule;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oms.common.api.RemoteChannelService;
+import com.oms.inventory.context.AllocationContext;
 import com.oms.inventory.model.dto.AllocationRuleDto;
+import com.oms.inventory.model.dto.rule.ChannelAllocationRule;
 import com.oms.inventory.model.dto.rule.RuleDetailsInfoDto;
+import com.oms.inventory.model.dto.rule.VirtualWarehouse;
+import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.model.enums.RuleStatus;
+import com.oms.inventory.service.impl.WmsInventoryServiceImpl;
 import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
 import com.oms.inventory.service.rule.IRuleStockInfoHandleService;
 import com.oms.inventory.service.rule.IRuleStockInfoService;
@@ -20,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,12 +34,17 @@ import java.util.stream.Collectors;
 @Service
 public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleService {
 
+    private static final int ALL_SKU_LIST = 1;
+    private static final int APPOINT_SKU_LIST = 2;
     @Resource
     private IRuleStockInfoService ruleStockInfoService;
     @Resource
     private IRuleStockStoreCodeInfoService ruleStockStoreCodeInfoService;
     @Resource
     private IRuleStockChannelInfoService ruleStockChannelInfoService;
+
+    @Resource
+    private WmsInventoryServiceImpl wmsInventoryService;
 
     @Override
     @Transactional
@@ -82,6 +93,7 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
             ruleStockStoreCodeInfoService.saveBatch(storeCodeInfoList);
 
             one.setStatus(RuleStatus.PENDING_REVIEW);
+            one.setRuleMode(dto.getPriorityType());
             boolean saveResult = ruleStockChannelInfoService.saveBatch(list);
             if (!saveResult) {
                 log.error("Failed to save batch data");
@@ -129,17 +141,37 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
                 one.setStatus(RuleStatus.PENDING_EXECUTION); // 更新为待执行
                 ruleStockInfoService.updateRuleStockInfo(one);
                 return true;
-                case 2: //一次性分货
-                    one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
-                    ruleStockInfoService.updateRuleStockInfo(one);
-                    return true;
+            case 2: //一次性分货
+                one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
+                ruleStockInfoService.updateRuleStockInfo(one);
+                return handleAllocate(one);
             default:
-                    throw new RuntimeException("分货单类型不正确");
+                throw new RuntimeException("分货单类型不正确");
 
         }
     }
 
     private Boolean handleAllocate(RuleStockInfo rule){
+        //获取商品范围
+        List<String> skuList = getSkuList(rule.getRuleRange());
         return true;
     }
+
+    /**
+     * 获取商品范围
+     * @param ruleRange
+     * @return
+     */
+    public List<String> getSkuList(int ruleRange){
+        switch (ruleRange){
+            case ALL_SKU_LIST: //全部商品
+                List<WmsInventory> wmsInventories = wmsInventoryService.selectWmsInventoryListBySkuSn(new WmsInventory());
+                return wmsInventories.stream().map(WmsInventory::getSkuSn).collect(Collectors.toList());
+            case APPOINT_SKU_LIST:
+                return Collections.emptyList();
+        }
+        return Collections.emptyList();
+    }
+
+
 }

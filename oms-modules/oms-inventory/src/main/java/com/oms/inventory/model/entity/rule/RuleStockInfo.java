@@ -2,6 +2,7 @@ package com.oms.inventory.model.entity.rule;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.oms.inventory.model.enums.AllocationStrategy;
 import com.oms.inventory.model.enums.RuleStatus;
 import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
@@ -49,6 +50,12 @@ public class RuleStockInfo implements Serializable {
      */
     @Excel(name = "分货单名称")
     private String ruleName;
+
+    /**
+     * 分货方式：1，普通分配；2，优先分配；3，等比例压缩
+     */
+    @Excel(name = "分货方式：1，普通分配；2，优先分配；3，等比例压缩")
+    private AllocationStrategy ruleMode;
 
     /**
      * 状态

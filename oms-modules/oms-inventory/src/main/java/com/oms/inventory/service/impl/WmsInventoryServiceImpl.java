@@ -37,6 +37,14 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
         return this.list(queryWrapper);
     }
 
+    //查询列表,Select sku_sn
+    public List<WmsInventory> selectWmsInventoryListBySkuSn(WmsInventory wmsInventory) {
+        QueryWrapper<WmsInventory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(ObjectUtil.isNotEmpty(wmsInventory.getSkuSn()),"sku_sn",wmsInventory.getSkuSn());
+        queryWrapper.select("sku_sn");
+        return this.list(queryWrapper);
+    }
+
     @Override
     public int insertWmsInventory(WmsInventory wmsInventory) {
         return 0;
@@ -56,4 +64,6 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
     public int deleteWmsInventoryById(Long id) {
         return 0;
     }
+
+
 }
