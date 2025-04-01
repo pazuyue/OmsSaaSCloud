@@ -8,12 +8,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum AllocationStrategy {
-    OVER_ALLOCATE(1,"普通分配"), // 直接分配不扣减库存
-    PRIORITY(2, "优先分配"),       // 按渠道优先级分配
-    PROPORTIONAL(3, "等比例压缩"); // 总量压缩至可用库存
+    OVER_ALLOCATE(1,"OVER_ALLOCATE"), // 直接分配不扣减库存
+    PRIORITY(2, "PRIORITY"),       // 按渠道优先级分配
+    PROPORTIONAL(3, "PROPORTIONAL"); // 总量压缩至可用库存
 
     @EnumValue
-    private final int code;
+    private final Integer code;
     @JsonValue
     public String remark;
 }

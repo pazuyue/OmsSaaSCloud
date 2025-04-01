@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oms.common.api.RemoteChannelService;
 import com.oms.inventory.context.AllocationContext;
+import com.oms.inventory.factory.StrategyFactory;
 import com.oms.inventory.model.dto.AllocationRuleDto;
 import com.oms.inventory.model.dto.rule.ChannelAllocationRule;
 import com.oms.inventory.model.dto.rule.RuleDetailsInfoDto;
@@ -12,12 +13,10 @@ import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
+import com.oms.inventory.model.enums.AllocationStrategy;
 import com.oms.inventory.model.enums.RuleStatus;
 import com.oms.inventory.service.impl.WmsInventoryServiceImpl;
-import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
-import com.oms.inventory.service.rule.IRuleStockInfoHandleService;
-import com.oms.inventory.service.rule.IRuleStockInfoService;
-import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
+import com.oms.inventory.service.rule.*;
 import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,6 +44,9 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
 
     @Resource
     private WmsInventoryServiceImpl wmsInventoryService;
+
+    @Resource
+    private StrategyFactory strategyFactory;
 
     @Override
     @Transactional
@@ -153,7 +155,9 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
 
     private Boolean handleAllocate(RuleStockInfo rule){
         //获取商品范围
-        List<String> skuList = getSkuList(rule.getRuleRange());
+        //List<String> skuList = getSkuList(rule.getRuleRange());
+        AllocationStrategyService allocationStrategyService = strategyFactory.getStrategy(rule.getRuleMode().getRemark());
+        allocationStrategyService.allocate(rule);
         return true;
     }
 
