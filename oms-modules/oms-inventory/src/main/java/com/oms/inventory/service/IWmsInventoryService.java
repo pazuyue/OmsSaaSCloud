@@ -1,9 +1,11 @@
 package com.oms.inventory.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.oms.inventory.model.entity.WmsInventory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -62,4 +64,7 @@ public interface IWmsInventoryService extends IService<WmsInventory> {
      * @return 结果
      */
     public int deleteWmsInventoryById(Long id);
+
+    //selectSkuTotalAvailable
+    List<Map<String, Object>> selectSkuTotalAvailable(List<String> storeCodes, String skuSn, int pageNum, int pageSize);
 }

@@ -3,7 +3,9 @@ package com.oms.inventory.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.oms.inventory.mapper.WmsInventoryMapper;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.service.IWmsInventoryService;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -63,6 +66,12 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
     @Override
     public int deleteWmsInventoryById(Long id) {
         return 0;
+    }
+
+    @Override
+    public List<Map<String, Object>> selectSkuTotalAvailable(List<String> storeCodes, String skuSn, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return this.baseMapper.selectSkuTotalAvailable(storeCodes,skuSn);
     }
 
 

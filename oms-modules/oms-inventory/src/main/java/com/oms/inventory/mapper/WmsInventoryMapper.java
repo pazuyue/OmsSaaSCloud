@@ -1,9 +1,14 @@
 package com.oms.inventory.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oms.inventory.model.entity.WmsInventory;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -22,4 +27,19 @@ public interface WmsInventoryMapper extends BaseMapper<WmsInventory> {
             " version = version + 1"+
             " </script>")
     int insertOrUpdate(@Param("wms") WmsInventory wms);
+
+    @Select("<script>" +
+            "SELECT sku_sn, SUM(zp_available_number) AS total_available " +
+            "FROM wms_inventory " +
+            "WHERE store_code IN " +
+            "<foreach item='storeCode' index='index' collection='storeCodes' open='(' separator=',' close=')'>" +
+            "#{storeCode}" +
+            "</foreach>" +
+            "<if test='skuSn != null and skuSn != \"\"'>" +
+            "AND sku_sn = #{skuSn}" +
+            "</if>" +
+            "GROUP BY sku_sn" +
+            "</script>")
+    List<Map<String, Object>> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuSn") String skuSn);
+
 }

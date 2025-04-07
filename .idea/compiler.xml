@@ -35,7 +35,7 @@
       <module name="oms-channel" target="1.8" />
       <module name="oms-common-core" target="1.8" />
       <module name="oms-goods-administration" target="1.8" />
-      <module name="oms-inventory" target="1.8" />
+      <module name="oms-inventory" target="8" />
       <module name="oms-omdules" target="1.8" />
       <module name="oms-supplychain" target="1.8" />
       <module name="ruoyi" target="1.8" />
