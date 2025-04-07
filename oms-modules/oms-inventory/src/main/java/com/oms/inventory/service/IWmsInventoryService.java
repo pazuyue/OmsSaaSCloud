@@ -66,5 +66,5 @@ public interface IWmsInventoryService extends IService<WmsInventory> {
     public int deleteWmsInventoryById(Long id);
 
     //selectSkuTotalAvailable
-    List<Map<String, Object>> selectSkuTotalAvailable(List<String> storeCodes, String skuSn, int pageNum, int pageSize);
+    List<Map<String, Object>> selectSkuTotalAvailable(List<String> storeCodes, List<String> skuList, int pageNum, int pageSize);
 }

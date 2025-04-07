@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,20 +44,26 @@ public class OverAllocateStrategyImpl implements AllocationStrategyService {
         log.debug("storeCodes:{}", storeCodes);
         if (rule.getRuleRange() == 1) {
             // 全部商品
-            paginateAndProcessInventory(storeCodes);
+            paginateAndProcessInventory(storeCodes, null);
         } else {
             // 部分商品
+            List<String> skuList = getSkuList(rule.getId());
+            paginateAndProcessInventory(storeCodes, skuList);
         }
 
         return null;
     }
 
-    private void paginateAndProcessInventory(List<String> storeCodes) {
+    public List<String> getSkuList(Long ruleId) {
+      return new ArrayList<>();
+    }
+
+    private void paginateAndProcessInventory(List<String> storeCodes, List<String> skuList) {
         int pageSize = 1000;
         int currentPage = 1;
         while (true) {
             // 分页查询
-            List<Map<String, Object>> wmsInventories = wmsInventoryService.selectSkuTotalAvailable(storeCodes,null,currentPage,pageSize);
+            List<Map<String, Object>> wmsInventories = wmsInventoryService.selectSkuTotalAvailable(storeCodes,skuList,currentPage,pageSize);
             log.debug("分页查询结果：{}", wmsInventories);
             if (wmsInventories.isEmpty()) {
                 // 如果没有更多数据，则退出循环

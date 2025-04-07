@@ -35,11 +35,14 @@ public interface WmsInventoryMapper extends BaseMapper<WmsInventory> {
             "<foreach item='storeCode' index='index' collection='storeCodes' open='(' separator=',' close=')'>" +
             "#{storeCode}" +
             "</foreach>" +
-            "<if test='skuSn != null and skuSn != \"\"'>" +
-            "AND sku_sn = #{skuSn}" +
+            "<if test='skuList != null and skuList.size() > 0'>" +
+            "AND sku_sn IN " +
+            "<foreach item='sku' index='index' collection='skuList' open='(' separator=',' close=')'>" +
+            "#{sku}" +
+            "</foreach>" +
             "</if>" +
             "GROUP BY sku_sn" +
             "</script>")
-    List<Map<String, Object>> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuSn") String skuSn);
+    List<Map<String, Object>> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuList") List<String> skuList);
 
 }
