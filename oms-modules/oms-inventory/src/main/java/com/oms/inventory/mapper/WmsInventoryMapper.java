@@ -43,6 +43,22 @@ public interface WmsInventoryMapper extends BaseMapper<WmsInventory> {
             "</if>" +
             "GROUP BY sku_sn" +
             "</script>")
-    List<Map<String, Object>> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuList") List<String> skuList);
+    List<Map<String, Object>> selectSkuListTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuList") List<String> skuList);
+
+
+    @Select("<script>" +
+            "SELECT sku_sn, SUM(zp_available_number) AS total_available " +
+            "FROM wms_inventory " +
+            "WHERE store_code IN " +
+            "<foreach item='storeCode' index='index' collection='storeCodes' open='(' separator=',' close=')'>" +
+            "#{storeCode}" +
+            "</foreach>" +
+            "<if test='skuSn != null'>" +
+            "AND sku_sn = #{skuSn}"+
+            "</if>"+
+            "GROUP BY sku_sn" +
+            "</script>")
+    Map<String, Object> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuSn") String skuSn);
+
 
 }

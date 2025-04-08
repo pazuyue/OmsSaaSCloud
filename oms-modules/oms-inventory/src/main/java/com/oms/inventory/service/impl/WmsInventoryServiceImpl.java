@@ -69,9 +69,14 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
     }
 
     @Override
-    public List<Map<String, Object>> selectSkuTotalAvailable(List<String> storeCodes, List<String> skuList, int pageNum, int pageSize) {
+    public List<Map<String, Object>> selectSkuListTotalAvailable(List<String> storeCodes, List<String> skuList, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        return this.baseMapper.selectSkuTotalAvailable(storeCodes,skuList);
+        return this.baseMapper.selectSkuListTotalAvailable(storeCodes,skuList);
+    }
+
+    @Override
+    public Map<String, Object> selectSkuTotalAvailable(List<String> storeCodes, String skuSn) {
+        return this.baseMapper.selectSkuTotalAvailable(storeCodes,skuSn);
     }
 
 
