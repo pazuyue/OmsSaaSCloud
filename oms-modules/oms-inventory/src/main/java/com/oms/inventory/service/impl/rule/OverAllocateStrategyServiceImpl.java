@@ -149,28 +149,9 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
                     log.warn("渠道信息缺失关键字段，ruleId={}", ruleId);
                     continue;
                 }
-
-                BigDecimal percentage = ruleStockChannelInfo.getPercentage();
-                BigDecimal availableStock;
-                // 计算 availableStock
-                if (ruleStockChannelInfo.getRuleType() == 1){ //百分百
-                    availableStock = totalAvailable.multiply(percentage).divide(new BigDecimal(100));
-                    availableStock = applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
-                }else { //整型数量
-
-                    // 如果 totalAvailable > percentage 则 availableStock = percentage
-                    if (totalAvailable.compareTo(percentage) > 0) {
-                        availableStock = percentage;
-                    }else {
-                        availableStock = totalAvailable;
-                    }
-                }
+                BigDecimal availableStock = calculateAvailableStock(ruleStockChannelInfo, totalAvailable);
                 log.debug("availableStock:{}", availableStock);
-                Boolean aBoolean = omsChannelInventoryService.allocationInventory(ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
-                if (aBoolean){
-                    //记录日志
-                }
-
+                omsChannelInventoryService.allocationInventory(ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
             }
         } catch (Exception e) {
             log.error("processAllocateInventory error:{}", e);
@@ -188,6 +169,18 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
             default:
                 return availableStock.setScale(0, RoundingMode.HALF_UP); // 四舍五入
         }
+    }
+
+    private BigDecimal calculateAvailableStock(RuleStockChannelInfo ruleStockChannelInfo, BigDecimal totalAvailable) {
+        BigDecimal percentage = ruleStockChannelInfo.getPercentage();
+        BigDecimal availableStock;
+        if (ruleStockChannelInfo.getRuleType() == 1) { // 百分百
+            availableStock = totalAvailable.multiply(percentage).divide(new BigDecimal(100));
+        } else { // 整型数量
+            availableStock = totalAvailable.compareTo(percentage) > 0 ? percentage : totalAvailable;
+        }
+        availableStock = applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
+        return availableStock;
     }
 
 }
