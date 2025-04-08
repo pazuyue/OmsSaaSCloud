@@ -1,6 +1,5 @@
 package com.oms.inventory.service.rule;
 
-import com.oms.inventory.model.dto.rule.AllocationResult;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 
 public interface AllocationStrategyService {
@@ -10,5 +9,5 @@ public interface AllocationStrategyService {
      * @param rule 分配请求对象
      * @return 分配结果
      */
-    AllocationResult allocate(RuleStockInfo rule);
+    Boolean allocate(RuleStockInfo rule);
 }
