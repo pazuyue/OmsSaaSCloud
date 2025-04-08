@@ -3,6 +3,7 @@ package com.oms.inventory.service.impl.rule;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.oms.inventory.annotation.StrategyType;
 import com.oms.inventory.mapper.OmsChannelInventoryMapper;
@@ -12,6 +13,7 @@ import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
+import com.oms.inventory.service.IOmsChannelInventoryService;
 import com.oms.inventory.service.IWmsInventoryService;
 import com.oms.inventory.service.rule.AllocationStrategyService;
 import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
@@ -39,7 +41,7 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
     @Resource
     private IRuleStockChannelInfoService ruleStockChannelInfoService;
     @Resource
-    private OmsChannelInventoryMapper omsChannelInventoryMapper;
+    private IOmsChannelInventoryService omsChannelInventoryService;
 
     @Override
     public AllocationResult allocate(RuleStockInfo rule) {
@@ -164,17 +166,9 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
                     }
                 }
                 log.debug("availableStock:{}", availableStock);
-                QueryWrapper wrapper = new QueryWrapper();
-                wrapper.eq("channel_id", ruleStockChannelInfo.getChannelId());
-                OmsChannelInventory channelInventory = omsChannelInventoryMapper.selectOne(wrapper);
-                if (ObjectUtil.isEmpty(channelInventory)){
-                    channelInventory = new OmsChannelInventory();
-                    channelInventory.setChannelId(ruleStockChannelInfo.getChannelId());
-                    channelInventory.setSkuSn(skuSn);
-                    channelInventory.setAvailableStock(availableStock);
-                    channelInventory.setCompanyCode(ruleStockChannelInfo.getCompanyCode());
-                    omsChannelInventoryMapper.insert(channelInventory);
-                    log.debug("channelInventory is null,insert channelInventory:{}", channelInventory);
+                Boolean aBoolean = omsChannelInventoryService.allocationInventory(ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
+                if (aBoolean){
+                    //记录日志
                 }
 
             }
