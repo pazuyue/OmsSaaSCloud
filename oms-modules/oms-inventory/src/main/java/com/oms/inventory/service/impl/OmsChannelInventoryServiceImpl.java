@@ -39,6 +39,7 @@ public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInvent
                 return false;
             }
             channelInventory.setAvailableStock(availableStock);
+            log.debug("update channelInventory:{}", channelInventory);
             return this.updateById(channelInventory);
         }
     }
