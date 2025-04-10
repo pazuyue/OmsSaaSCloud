@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/OmsChannelInventoryAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/OmsChannelInventoryAspect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +29,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -75,7 +76,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../spring3BaseFrame" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.1507799" />
     <property name="project.structure.side.proportion" value="0.29953915" />
     <property name="service.view.auto.scroll.to.source" value="true" />
@@ -272,8 +273,8 @@
       <list>
         <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
-        <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest" />
+        <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="Application.GeberatorUIServer" />
       </list>
     </recent_temporary>
@@ -446,13 +447,7 @@
       <workItem from="1744019859108" duration="3356000" />
       <workItem from="1744082210586" duration="14664000" />
       <workItem from="1744164774315" duration="9091000" />
-    </task>
-    <task id="LOCAL-00101" summary="库存回调">
-      <created>1728982082443</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1728982082443</updated>
+      <workItem from="1744260472410" duration="3989000" />
     </task>
     <task id="LOCAL-00102" summary="库存回调">
       <created>1728985281261</created>
@@ -790,7 +785,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744107755991</updated>
     </task>
-    <option name="localTasksCounter" value="150" />
+    <task id="LOCAL-00150" summary="分货单明细-提交审核-普通超额分货">
+      <created>1744256208655</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1744256208655</updated>
+    </task>
+    <option name="localTasksCounter" value="151" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -812,7 +814,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>

@@ -12,6 +12,7 @@ import com.oms.inventory.model.entity.OmsChannelInventory;
 import com.oms.inventory.model.entity.history.ChannelInventoryChangeHistory;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.util.BigRealField;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 @Slf4j
@@ -85,7 +87,13 @@ public class OmsChannelInventoryAspect {
                 // 如果数据库中不存在当前库存信息，则创建一个新的OmsChannelInventory对象
                 if (beforeEntity == null){
                     beforeEntity = new OmsChannelInventory();
+                    beforeEntity.setChannelId(channelId);
                     beforeEntity.setSkuSn(SkuSn);
+                    beforeEntity.setAllocatedStock(BigDecimal.ZERO);
+                    beforeEntity.setReservedStock(BigDecimal.ZERO);
+                    beforeEntity.setAvailableStock(BigDecimal.ZERO);
+                    beforeEntity.setFrozenStock(BigDecimal.ZERO);
+                    beforeEntity.setVersion(0);
                 }
                 // 将前置实体对象存储到线程上下文中，供后续使用
                 OmsChannelInventoryDto omsChannelInventoryDto = new OmsChannelInventoryDto();
@@ -127,7 +135,7 @@ public class OmsChannelInventoryAspect {
             return;
         }
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("channel_id",beforeOmsChannelInventory.getChannelId() );
+        wrapper.eq("channel_id",beforeOmsChannelInventory.getChannelId());
         wrapper.eq("sku_sn", beforeOmsChannelInventory.getSkuSn());
         // 从数据库中获取当前库存信息
         OmsChannelInventory afterEntity = channelInventoryMapper.selectOne(wrapper);
@@ -138,7 +146,7 @@ public class OmsChannelInventoryAspect {
         String operationType = getOperationType(methodName);
         ChannelInventoryChangeHistory history = new ChannelInventoryChangeHistory();
         history.setOperationType(operationType);
-        history.setChannelId(beforeOmsChannelInventory.getChannelId());
+        history.setChannelId(afterEntity.getChannelId());
         history.setSkuSn(beforeOmsChannelInventory.getSkuSn());
         history.setOldAvailableStock(beforeOmsChannelInventory.getAvailableStock().intValue());
         history.setNewAvailableStock(afterEntity.getAvailableStock().intValue());

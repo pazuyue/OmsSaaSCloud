@@ -83,6 +83,7 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
         return wmsInventoryService.list(new QueryWrapper<WmsInventory>().select("sku_sn"))
                 .stream()
                 .map(WmsInventory::getSkuSn)
+                .distinct() // 去重
                 .collect(Collectors.toList());
     }
 
