@@ -184,7 +184,7 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
                 log.debug("availableStock:{}", availableStock);
 
                 // 调用服务进行库存分配
-                omsChannelInventoryService.allocationInventory(ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
+                omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
             }
 
             // 所有渠道的库存分配成功，返回true

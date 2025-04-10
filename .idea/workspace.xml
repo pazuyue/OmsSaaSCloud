@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="分货单明细-提交审核-普通超额分货">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/OmsChannelInventoryAspect.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holderTool/ChannelInventoryContextHolder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/history/ChannelInventoryChangeHistoryMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/dto/Inventory/OmsChannelInventoryDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/dto/rule/AllocationDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/dto/rule/AllocationResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/log/InventoryChangeLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/history/ChannelInventoryChangeHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IOmsChannelInventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/IOmsChannelInventoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/AllocationStrategyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/AllocationStrategyService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,11 +112,11 @@
       <recent name="com.oms.filter" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.oms.inventory.holderTool" />
       <recent name="com.oms.inventory.service.impl.rule" />
       <recent name="com.oms.common.model.entity.channel" />
       <recent name="com.oms.goods.model.entity.channel" />
       <recent name="com.oms.common.filter" />
-      <recent name="com.oms.inventory.filter" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -447,14 +451,8 @@
       <workItem from="1744004466908" duration="7699000" />
       <workItem from="1744015262649" duration="3436000" />
       <workItem from="1744019859108" duration="3356000" />
-      <workItem from="1744082210586" duration="13222000" />
-    </task>
-    <task id="LOCAL-00100" summary="实仓与货主关系调整">
-      <created>1728971954716</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1728971954717</updated>
+      <workItem from="1744082210586" duration="14664000" />
+      <workItem from="1744164774315" duration="9091000" />
     </task>
     <task id="LOCAL-00101" summary="库存回调">
       <created>1728982082443</created>
@@ -792,7 +790,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744106994872</updated>
     </task>
-    <option name="localTasksCounter" value="149" />
+    <task id="LOCAL-00149" summary="分货单明细-提交审核-普通超额分货">
+      <created>1744107755991</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1744107755991</updated>
+    </task>
+    <option name="localTasksCounter" value="150" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -855,9 +860,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoService.java</url>
           <line>39</line>
-          <properties class="com.oms.inventory.service.rule.IRuleStockInfoService" method="updateRuleStockInfo">
-            <option name="EMULATED" value="true" />
-          </properties>
+          <properties class="com.oms.inventory.service.rule.IRuleStockInfoService" method="updateRuleStockInfo" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

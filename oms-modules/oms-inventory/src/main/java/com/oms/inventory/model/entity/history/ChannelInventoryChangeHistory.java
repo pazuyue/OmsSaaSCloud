@@ -1,12 +1,14 @@
-package com.oms.inventory.model.entity.log;
+package com.oms.inventory.model.entity.history;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-@TableName("inventory_change_log") // 指定数据库表名
-public class InventoryChangeLog {
+@TableName("channel_inventory_change_history") // 指定数据库表名
+public class ChannelInventoryChangeHistory {
 
     // 主键
     @TableId(type = IdType.AUTO) // 自增主键
@@ -14,7 +16,7 @@ public class InventoryChangeLog {
 
     // 操作时间（自动填充当前时间）
     @TableField(fill = FieldFill.INSERT)
-    private Date operationTime;
+    private LocalDateTime createTime;
 
     // 操作类型（ALLOCATE/RELEASE/FROZEN/UNFROZEN/ADJUST/ORDER_DEDUCT/RETURN_RESTORE/MANUAL_ADJUST）
     private String operationType;
@@ -41,7 +43,7 @@ public class InventoryChangeLog {
     private String changeReason;
 
     // 关联业务ID（订单ID、任务ID等）
-    private Long relatedId;
+    private String relatedId;
 
     // 关联业务类型（订单、任务等）
     private Integer relatedType;

@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.inventory.mapper.OmsChannelInventoryMapper;
+import com.oms.inventory.mapper.RelationSn;
 import com.oms.inventory.model.entity.OmsChannelInventory;
 import com.oms.inventory.service.IOmsChannelInventoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @Service
 public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInventoryMapper, OmsChannelInventory> implements IOmsChannelInventoryService {
     @Override
-    public Boolean allocationInventory(Integer channelId, String SkuSn,String companyCode, BigDecimal availableStock) {
+    public Boolean allocationInventory(@RelationSn("relationSn") String relationSn,Integer channelId, String SkuSn, String companyCode, BigDecimal availableStock) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("channel_id", channelId);
         wrapper.eq("sku_sn", SkuSn);
