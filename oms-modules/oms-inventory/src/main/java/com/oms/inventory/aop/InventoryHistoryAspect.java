@@ -1,7 +1,7 @@
 package com.oms.inventory.aop;
 
-import com.oms.inventory.holderTool.InventoryContextHolder;
-import com.oms.inventory.holderTool.RelationSnHolder;
+import com.oms.inventory.holder.InventoryContextHolder;
+import com.oms.inventory.holder.RelationSnHolder;
 import com.oms.inventory.mapper.OmsInventoryMapper;
 import com.oms.inventory.mapper.RelationSn;
 import com.oms.inventory.mapper.history.InventoryHistoryMapper;

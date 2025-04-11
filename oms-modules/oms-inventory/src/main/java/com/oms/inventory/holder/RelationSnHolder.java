@@ -1,4 +1,4 @@
-package com.oms.inventory.holderTool;
+package com.oms.inventory.holder;
 
 public class RelationSnHolder {
     private static final ThreadLocal<String> holder = new ThreadLocal<>();

@@ -140,7 +140,12 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
             case 2: //一次性分货
                 one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
                 ruleStockInfoService.updateRuleStockInfo(one);
-                return handleAllocate(one);
+                if (handleAllocate(one)){
+                    one.setStatus(RuleStatus.COMPLETED);
+                    ruleStockInfoService.updateRuleStockInfo(one);
+                    return true;
+                }
+                return false;
             default:
                 throw new RuntimeException("分货单类型不正确");
 
