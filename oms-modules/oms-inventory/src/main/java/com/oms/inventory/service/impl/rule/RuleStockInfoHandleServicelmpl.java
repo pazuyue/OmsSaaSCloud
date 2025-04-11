@@ -12,11 +12,13 @@ import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.model.enums.RuleStatus;
 import com.oms.inventory.service.impl.WmsInventoryServiceImpl;
 import com.oms.inventory.service.rule.*;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -125,12 +127,16 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
     @Override
     public Boolean toExamine(Long id, String companyCode) {
         RuleStockInfo one = ruleStockInfoService.getById(id);
+        String operName = SecurityUtils.getUsername();
         if (ObjectUtil.isEmpty(one)) {
             throw new RuntimeException("分货单不存在");
         }
         if (one.getStatus() != RuleStatus.PENDING_REVIEW){
             throw new RuntimeException("分货单状态不正确");
         }
+        one.setFirstReviewerTime(LocalDateTime.now());
+        one.setReviewerTime(LocalDateTime.now());
+        one.setReviewerUserName(operName);
         switch (one.getRuleType()){
             case 1: //日常分货
             case 3: //锁库时分货
@@ -139,9 +145,11 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
                 return true;
             case 2: //一次性分货
                 one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
+                one.setLastUpdateTime(LocalDateTime.now());
                 ruleStockInfoService.updateRuleStockInfo(one);
                 if (handleAllocate(one)){
                     one.setStatus(RuleStatus.COMPLETED);
+                    one.setOverTime(LocalDateTime.now());
                     ruleStockInfoService.updateRuleStockInfo(one);
                     return true;
                 }

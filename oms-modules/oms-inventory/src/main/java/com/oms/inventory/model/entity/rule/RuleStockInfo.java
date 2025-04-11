@@ -87,12 +87,6 @@ public class RuleStockInfo implements Serializable {
     private String remark;
 
     /**
-     * 商品类型
-     */
-    @Excel(name = "商品类型")
-    private Integer type;
-
-    /**
      * 最新分货时间
      */
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")

@@ -6,82 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/InventoryHistoryAspect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/OmsChannelInventoryAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/aop/OmsChannelInventoryAspect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holderTool/ChannelInventoryContextHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holder/ChannelInventoryContextHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holderTool/InventoryContextHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holder/InventoryContextHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holderTool/RelationSnHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/holder/RelationSnHolder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDept.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDept.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDictData.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDictData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDictType.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysDictType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysFile.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysFile.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysLogininfor.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysLogininfor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysOperLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysOperLog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysRole.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysRole.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/domain/SysUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteFileFallbackFactory$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteFileFallbackFactory$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteFileFallbackFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteFileFallbackFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteLogFallbackFactory$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteLogFallbackFactory$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteLogFallbackFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteLogFallbackFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteUserFallbackFactory$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteUserFallbackFactory$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteUserFallbackFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/factory/RemoteUserFallbackFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/target/classes/com/ruoyi/system/api/model/LoginUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/RuoYiSystemApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/RuoYiSystemApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysConfigController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysConfigController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDeptController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDeptController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDictDataController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDictDataController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDictTypeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysDictTypeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysLogininforController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysLogininforController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysMenuController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysMenuController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysNoticeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysNoticeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysOperlogController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysOperlogController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysPostController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysPostController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysProfileController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysProfileController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysRoleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysRoleController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysUserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysUserController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysUserOnlineController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/controller/SysUserOnlineController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysMenu.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysMenu.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysNotice.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysNotice.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysPost.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysPost.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysRoleDept.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysRoleDept.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysRoleMenu.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysRoleMenu.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserOnline.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserOnline.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserPost.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserPost.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserRole.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/SysUserRole.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/MetaVo.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/MetaVo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/RouterVo.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/RouterVo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/TreeSelect.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/domain/vo/TreeSelect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysConfigServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysConfigServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDeptServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDeptServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDictDataServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDictDataServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDictTypeServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysDictTypeServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysLogininforServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysLogininforServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysMenuServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysMenuServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysNoticeServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysNoticeServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysOperLogServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysOperLogServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysPermissionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysPermissionServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysPostServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysPostServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysRoleServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysRoleServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysUserOnlineServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysUserOnlineServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysUserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-system/target/classes/com/ruoyi/system/service/impl/SysUserServiceImpl.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -523,14 +449,7 @@
       <workItem from="1744164774315" duration="9091000" />
       <workItem from="1744260472410" duration="3989000" />
       <workItem from="1744280559590" duration="1148000" />
-      <workItem from="1744335490635" duration="902000" />
-    </task>
-    <task id="LOCAL-00102" summary="库存回调">
-      <created>1728985281261</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1728985281261</updated>
+      <workItem from="1744335490635" duration="2138000" />
     </task>
     <task id="LOCAL-00103" summary="库存回调">
       <created>1728985631894</created>
@@ -868,7 +787,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744256208655</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <task id="LOCAL-00151" summary="分货单明细-提交审核-普通超额分货">
+      <created>1744337648700</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1744337648702</updated>
+    </task>
+    <option name="localTasksCounter" value="152" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -936,18 +862,6 @@
     <MESSAGE value="分货单明细-提交审核" />
     <MESSAGE value="分货单明细-提交审核-普通超额分货" />
     <option name="LAST_COMMIT_MESSAGE" value="分货单明细-提交审核-普通超额分货" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/rule/IRuleStockInfoService.java</url>
-          <line>39</line>
-          <properties class="com.oms.inventory.service.rule.IRuleStockInfoService" method="updateRuleStockInfo" />
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
