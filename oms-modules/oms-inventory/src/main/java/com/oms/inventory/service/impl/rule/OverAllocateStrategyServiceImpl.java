@@ -1,20 +1,16 @@
 package com.oms.inventory.service.impl.rule;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.oms.inventory.annotation.StrategyType;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
-import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.service.IOmsChannelInventoryService;
 import com.oms.inventory.service.IWmsInventoryService;
 import com.oms.inventory.service.rule.AllocationStrategyService;
 import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
-import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,18 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @StrategyType("OVER_ALLOCATE")
 @Service
-public class OverAllocateStrategyServiceImpl implements AllocationStrategyService {
-
-    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
-
-    @Resource
-    private IRuleStockStoreCodeInfoService ruleStockStoreCodeInfoService;
-    @Resource
-    private IWmsInventoryService wmsInventoryService;
-    @Resource
-    private IRuleStockChannelInfoService ruleStockChannelInfoService;
-    @Resource
-    private IOmsChannelInventoryService omsChannelInventoryService;
+public class OverAllocateStrategyServiceImpl extends StrategyBaseServiceImpl implements AllocationStrategyService {
 
     @Override
     public Boolean allocate(RuleStockInfo rule) {
@@ -56,20 +41,12 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
         return true;
     }
 
-    private List<String> getStoreCodesByRuleId(Long ruleId) {
-        return ruleStockStoreCodeInfoService.list(
-                        new LambdaQueryWrapper<RuleStockStoreCodeInfo>().eq(RuleStockStoreCodeInfo::getRuleId, ruleId)
-                ).stream()
-                .map(RuleStockStoreCodeInfo::getStoreCode)
-                .collect(Collectors.toList());
-    }
-
     private void processAllSkus(Long ruleId, List<String> storeCodes) {
         int pageSize = 1000;
         int currentPage = 1;
 
         while (true) {
-            List<String> skuList = getSkusByPage(currentPage, pageSize);
+            List<String> skuList = this.getSkusByPage(currentPage, pageSize);
             if (skuList.isEmpty()) {
                 break;
             }
@@ -78,23 +55,12 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
         }
     }
 
-    private List<String> getSkusByPage(int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
-        return wmsInventoryService.list(new QueryWrapper<WmsInventory>().select("sku_sn"))
-                .stream()
-                .map(WmsInventory::getSkuSn)
-                .distinct() // 去重
-                .collect(Collectors.toList());
-    }
+
 
     private void processSelectedSkus(Long ruleId, List<String> storeCodes) {
         List<String> skuList = getSkuList(ruleId);
         log.debug("skuList:{}", skuList);
         skuList.forEach(sku -> processInventoryByStoreAndSku(ruleId, storeCodes, sku));
-    }
-
-    public List<String> getSkuList(Long ruleId) {
-        return new ArrayList<>();
     }
 
     /**
@@ -131,28 +97,6 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
             // 记录处理过程中发生的异常信息
             log.error("处理库存时发生异常，storeCodes={}，sku={}，异常信息：{}", storeCodes, sku, e.getMessage(), e);
             return false;
-        }
-    }
-
-
-    private void validateInputParameters(List<String> storeCodes, String sku) {
-        if (storeCodes == null || storeCodes.isEmpty() || sku == null || sku.isEmpty()) {
-            log.warn("输入参数无效：storeCodes={}，sku={}", storeCodes, sku);
-            throw new IllegalArgumentException("输入参数无效");
-        }
-    }
-
-    private void validateWmsInventory(Map<String, Object> wmsInventory, List<String> storeCodes, String sku) {
-        if (wmsInventory == null || wmsInventory.isEmpty()) {
-            log.debug("未查询到库存信息，storeCodes={}，sku={}", storeCodes, sku);
-            throw new RuntimeException("未查询到库存信息");
-        }
-    }
-
-    private void validateInventoryFields(String skuSn, BigDecimal totalAvailable, List<String> storeCodes, String sku, Map<String, Object> wmsInventory) {
-        if (skuSn == null || totalAvailable == null) {
-            log.warn("库存信息缺失关键字段，storeCodes={}，sku={}，结果：{}", storeCodes, sku, wmsInventory);
-            throw new RuntimeException("库存信息缺失关键字段");
         }
     }
 
@@ -198,26 +142,6 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
     }
 
 
-    private List<RuleStockChannelInfo> getRuleStockChannelInfoList(Long ruleId) {
-        List<RuleStockChannelInfo> ruleStockChannelInfoList = ruleStockChannelInfoService.listByMap(Collections.singletonMap("rule_id", ruleId));
-        if (ruleStockChannelInfoList.isEmpty()) {
-            log.warn("未查询到渠道信息，ruleId={}", ruleId);
-            throw new RuntimeException("未查询到渠道信息");
-        }
-        return ruleStockChannelInfoList;
-    }
-
-    private void validateChannelInfo(RuleStockChannelInfo ruleStockChannelInfo, Long ruleId, String skuSn, BigDecimal totalAvailable) {
-        if (totalAvailable.compareTo(BigDecimal.ZERO) < 0) {
-            log.warn("库存不足，skuSn={} totalAvailable={}", skuSn, totalAvailable);
-            throw new RuntimeException("库存不足");
-        }
-        if (ruleStockChannelInfo.getChannelId() == null) {
-            log.warn("渠道信息缺失关键字段，ruleId={}", ruleId);
-            throw new RuntimeException("渠道信息缺失关键字段");
-        }
-    }
-
     private BigDecimal calculateAvailableStock(RuleStockChannelInfo ruleStockChannelInfo, BigDecimal totalAvailable) {
         BigDecimal percentage = ruleStockChannelInfo.getPercentage();
         BigDecimal availableStock = ruleStockChannelInfo.getRuleType() == 1
@@ -226,14 +150,5 @@ public class OverAllocateStrategyServiceImpl implements AllocationStrategyServic
         return applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
     }
 
-    private BigDecimal applyDecimalHandling(BigDecimal availableStock, Integer decimalHandleType) {
-        switch (decimalHandleType) {
-            case 1:
-                return availableStock.setScale(0, RoundingMode.DOWN);
-            case 2:
-                return availableStock.setScale(0, RoundingMode.UP);
-            default:
-                return availableStock.setScale(0, RoundingMode.HALF_UP);
-        }
-    }
+
 }

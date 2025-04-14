@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -275,8 +272,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="Spring Boot.OmsInventoryApplication" />
+        <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="Application.GeberatorUIServer" />
@@ -455,14 +452,7 @@
       <workItem from="1744280559590" duration="1148000" />
       <workItem from="1744335490635" duration="3415000" />
       <workItem from="1744352897544" duration="5887000" />
-      <workItem from="1744596922708" duration="243000" />
-    </task>
-    <task id="LOCAL-00104" summary="库存回调">
-      <created>1728986421013</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1728986421013</updated>
+      <workItem from="1744596922708" duration="3959000" />
     </task>
     <task id="LOCAL-00105" summary="库存回调">
       <created>1728987708084</created>
@@ -800,7 +790,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744339100709</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <task id="LOCAL-00153" summary="分货单明细-提交审核">
+      <created>1744597221963</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1744597221965</updated>
+    </task>
+    <option name="localTasksCounter" value="154" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
