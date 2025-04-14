@@ -451,6 +451,7 @@ export default {
       this.ruleOpen = true;
       this.ruleId = row.id
       this.$refs.setRule.getWmsSimulationCodeOptions(); // 调用子组件的方法
+      this.$refs.setRule.getChannelList();
     },
     handleExamine(row){
       this.ruleId = row.id

@@ -139,10 +139,10 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
         one.setReviewerUserName(operName);
         switch (one.getRuleType()){
             case 1: //日常分货
-            case 3: //锁库时分货
                 one.setStatus(RuleStatus.PENDING_EXECUTION); // 更新为待执行
                 ruleStockInfoService.updateRuleStockInfo(one);
                 return true;
+            case 3: //锁库单分货
             case 2: //一次性分货
                 one.setStatus(RuleStatus.EXECUTING); // 更新为执行中
                 one.setLastUpdateTime(LocalDateTime.now());

@@ -140,8 +140,8 @@ export default {
         {decimalHandleTypeId: 3, decimalHandleTypeType: '四舍五入'},
       ],
       priorityList:[
-        {priorityId: 1, priorityType: '普通分货'},
-        {priorityId: 2, priorityType: '优先分货'},
+        {priorityId: 'OVER_ALLOCATE', priorityType: '普通分货'},
+        {priorityId: 'PRIORITY', priorityType: '优先分货'},
       ],
       form: {
         ruleId : null,
@@ -165,8 +165,6 @@ export default {
     }
   },
   created() {
-    this.getChannelList();
-    this.getWmsSimulationCodeOptions();
   },
   watch: {
     ruleOpen(newVal) {
@@ -248,18 +246,19 @@ export default {
       });
     },
     getChannelList() {
+      console.log("获取渠道列表");
       getChannelList().then(response => {
+        this.channelList = [];
           for (let i = 0; i < response.rows.length; i++){
             this.channelList.push({
               channelId: response.rows[i].channelId,
               channelName: response.rows[i].channelName
             })
           }
-
-        //this.channelList = response.rows;
       });
     },
     getWmsSimulationCodeOptions(){
+      console.log("获取虚仓列表");
       this.wmsSimulationCodeOptions = [];
       listSimulationStore().then(response => {
         for (let i = 0; i < response.data.length; i++){
@@ -281,7 +280,6 @@ export default {
           if (channel) {
             this.infoList.push({
               channelName: channel.channelName, // 或者根据需要设置其他默认值
-              priority: '普通分货',
               stockBase: "X",
               percentage: 100,
               decimalHandleType: 1,

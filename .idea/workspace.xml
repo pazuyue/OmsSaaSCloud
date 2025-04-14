@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/channel/channel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/ruleDetails.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/setRule.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -271,8 +275,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
+        <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="Application.GeberatorUIServer" />
@@ -449,14 +453,9 @@
       <workItem from="1744164774315" duration="9091000" />
       <workItem from="1744260472410" duration="3989000" />
       <workItem from="1744280559590" duration="1148000" />
-      <workItem from="1744335490635" duration="2138000" />
-    </task>
-    <task id="LOCAL-00103" summary="库存回调">
-      <created>1728985631894</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1728985631894</updated>
+      <workItem from="1744335490635" duration="3415000" />
+      <workItem from="1744352897544" duration="5887000" />
+      <workItem from="1744596922708" duration="243000" />
     </task>
     <task id="LOCAL-00104" summary="库存回调">
       <created>1728986421013</created>
@@ -794,7 +793,14 @@
       <option name="project" value="LOCAL" />
       <updated>1744337648702</updated>
     </task>
-    <option name="localTasksCounter" value="152" />
+    <task id="LOCAL-00152" summary="分货单明细-提交审核">
+      <created>1744339100709</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1744339100709</updated>
+    </task>
+    <option name="localTasksCounter" value="153" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -859,9 +865,9 @@
     <MESSAGE value="分货单设置" />
     <MESSAGE value="分货单明细" />
     <MESSAGE value="分货单明细-提交审核调整" />
-    <MESSAGE value="分货单明细-提交审核" />
     <MESSAGE value="分货单明细-提交审核-普通超额分货" />
-    <option name="LAST_COMMIT_MESSAGE" value="分货单明细-提交审核-普通超额分货" />
+    <MESSAGE value="分货单明细-提交审核" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货单明细-提交审核" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

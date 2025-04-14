@@ -59,3 +59,11 @@ export function setRule(data) {
     data: data
   })
 }
+
+// 审核
+export function toExamine(id) {
+  return request({
+    url: '/inventory/ruleStockHandle/toExamine/' + id,
+    method: 'get'
+  })
+}

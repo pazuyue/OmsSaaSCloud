@@ -13,7 +13,7 @@ export function listChannel(query) {
 export function getChannelList() {
   return request({
     url: '/channel/api/channel/list',
-    method: 'get'
+    method: 'post'
   })
 }
 

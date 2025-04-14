@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import {getInfo, getInfoDetails} from "@/api/ruleStock/info";
+import {getInfo, getInfoDetails, toExamine} from "@/api/ruleStock/info";
 
 export default {
   name: "ruleDetails",
@@ -106,7 +106,12 @@ export default {
       })
     },
     submitForm() {
-      this.$emit('handleCancel');
+      toExamine(this.ruleId).then(response => {
+        this.$modal.msgSuccess("审核成功");
+        this.localExamineOpen = false;
+        this.$emit('handleCancel');
+      })
+
     }
   }
 }
