@@ -452,14 +452,7 @@
       <workItem from="1744352897544" duration="5887000" />
       <workItem from="1744596922708" duration="4040000" />
       <workItem from="1744614342089" duration="16000" />
-      <workItem from="1745743405911" duration="2046000" />
-    </task>
-    <task id="LOCAL-00107" summary="入库单虚拟回调">
-      <created>1729065502717</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1729065502717</updated>
+      <workItem from="1745743405911" duration="2125000" />
     </task>
     <task id="LOCAL-00108" summary="库存管理">
       <created>1729073946634</created>
@@ -797,7 +790,14 @@
       <option name="project" value="LOCAL" />
       <updated>1745744470068</updated>
     </task>
-    <option name="localTasksCounter" value="156" />
+    <task id="LOCAL-00156" summary="分货单明细-提交审核">
+      <created>1745745505049</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1745745505049</updated>
+    </task>
+    <option name="localTasksCounter" value="157" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

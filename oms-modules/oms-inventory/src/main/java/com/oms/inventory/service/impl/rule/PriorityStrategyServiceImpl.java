@@ -87,12 +87,12 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
         try {
             // 记录调试信息，输出SKU编号和总可用库存
             log.debug("skuSn={} totalAvailable={}", skuSn, totalAvailable);
-            BigDecimal AlltotalAvailable = totalAvailable; //总可分配库存
+            BigDecimal allTotalAvailable = totalAvailable; //总可分配库存
             // 获取与规则ID相关的所有库存渠道信息
             List<RuleStockChannelInfo> ruleStockChannelInfoList = getRuleStockChannelInfoList(ruleId);
             // 遍历每个库存渠道信息，进行库存分配
             for (RuleStockChannelInfo ruleStockChannelInfo : ruleStockChannelInfoList) {
-                if (AlltotalAvailable.compareTo(BigDecimal.ZERO) <= 0) {
+                if (allTotalAvailable.compareTo(BigDecimal.ZERO) <= 0) {
                     break;
                 }
                 // 验证当前渠道的库存信息是否有效
@@ -101,16 +101,15 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
                 BigDecimal availableStock = calculateAvailableStock(ruleStockChannelInfo, totalAvailable);
                 log.debug("availableStock:{}", availableStock);
 
-                if ((AlltotalAvailable.compareTo(availableStock) >= 0)) {  //判断当前总可分配库存，是否大于当前分配结果
+                if ((allTotalAvailable.compareTo(availableStock) >= 0)) {  //判断当前总可分配库存，是否大于当前分配结果
                     // 调用服务进行库存分配
                     omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
-                    AlltotalAvailable = AlltotalAvailable.subtract(availableStock);
-                    log.debug("totalAvailable:{}", totalAvailable);
+                    allTotalAvailable = allTotalAvailable.subtract(availableStock);
                 }else {  // 判断当前总可分配库存，是否小于当前分配结果
-                    omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), AlltotalAvailable);
-                    AlltotalAvailable = BigDecimal.ZERO;
+                    omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), allTotalAvailable);
+                    allTotalAvailable = BigDecimal.ZERO;
                 }
-
+                log.debug("allTotalAvailable:{}", allTotalAvailable);
 
 
             }
