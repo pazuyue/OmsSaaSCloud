@@ -87,23 +87,31 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
         try {
             // 记录调试信息，输出SKU编号和总可用库存
             log.debug("skuSn={} totalAvailable={}", skuSn, totalAvailable);
-
+            BigDecimal AlltotalAvailable = totalAvailable; //总可分配库存
             // 获取与规则ID相关的所有库存渠道信息
             List<RuleStockChannelInfo> ruleStockChannelInfoList = getRuleStockChannelInfoList(ruleId);
             // 遍历每个库存渠道信息，进行库存分配
             for (RuleStockChannelInfo ruleStockChannelInfo : ruleStockChannelInfoList) {
+                if (AlltotalAvailable.compareTo(BigDecimal.ZERO) <= 0) {
+                    break;
+                }
                 // 验证当前渠道的库存信息是否有效
                 validateChannelInfo(ruleStockChannelInfo, ruleId, skuSn, totalAvailable);
                 // 计算当前渠道的可用库存
                 BigDecimal availableStock = calculateAvailableStock(ruleStockChannelInfo, totalAvailable);
                 log.debug("availableStock:{}", availableStock);
-                // 调用服务进行库存分配
-                omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
-                totalAvailable = totalAvailable.subtract(availableStock);
-                log.debug("totalAvailable:{}", totalAvailable);
-                if (totalAvailable.compareTo(BigDecimal.ZERO) <= 0) {
-                    break;
+
+                if ((AlltotalAvailable.compareTo(availableStock) >= 0)) {  //判断当前总可分配库存，是否大于当前分配结果
+                    // 调用服务进行库存分配
+                    omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
+                    AlltotalAvailable = AlltotalAvailable.subtract(availableStock);
+                    log.debug("totalAvailable:{}", totalAvailable);
+                }else {  // 判断当前总可分配库存，是否小于当前分配结果
+                    omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), AlltotalAvailable);
+                    AlltotalAvailable = BigDecimal.ZERO;
                 }
+
+
 
             }
         } catch (Exception e) {
