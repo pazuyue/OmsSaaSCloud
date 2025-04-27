@@ -1,6 +1,7 @@
 package com.oms.inventory.service.impl.rule;
 
 import com.oms.inventory.annotation.StrategyType;
+import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.service.IOmsChannelInventoryService;
 import com.oms.inventory.service.IWmsInventoryService;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
             // 处理库存分配逻辑
             processAllocateInventory(ruleId, skuSn, totalAvailable);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             // 记录处理过程中发生的异常信息
             log.error("处理库存时发生异常，storeCodes={}，sku={}，异常信息：{}", storeCodes, sku, e.getMessage(), e);
             return false;
@@ -84,6 +84,34 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
     }
 
     private void processAllocateInventory(Long ruleId, String skuSn, BigDecimal totalAvailable) {
+        try {
+            // 记录调试信息，输出SKU编号和总可用库存
+            log.debug("skuSn={} totalAvailable={}", skuSn, totalAvailable);
 
+            // 获取与规则ID相关的所有库存渠道信息
+            List<RuleStockChannelInfo> ruleStockChannelInfoList = getRuleStockChannelInfoList(ruleId);
+            // 遍历每个库存渠道信息，进行库存分配
+            for (RuleStockChannelInfo ruleStockChannelInfo : ruleStockChannelInfoList) {
+                // 验证当前渠道的库存信息是否有效
+                validateChannelInfo(ruleStockChannelInfo, ruleId, skuSn, totalAvailable);
+                // 计算当前渠道的可用库存
+                BigDecimal availableStock = calculateAvailableStock(ruleStockChannelInfo, totalAvailable);
+                log.debug("availableStock:{}", availableStock);
+                // 调用服务进行库存分配
+                omsChannelInventoryService.allocationInventory(ruleId.toString(),ruleStockChannelInfo.getChannelId(), skuSn, ruleStockChannelInfo.getCompanyCode(), availableStock);
+                totalAvailable = totalAvailable.subtract(availableStock);
+                log.debug("totalAvailable:{}", totalAvailable);
+                if (totalAvailable.compareTo(BigDecimal.ZERO) <= 0) {
+                    break;
+                }
+
+            }
+        } catch (Exception e) {
+            // 记录错误日志，并抛出运行时异常
+            log.error("processAllocateInventory error:{}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }
+
+

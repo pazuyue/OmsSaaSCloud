@@ -124,4 +124,12 @@ public class StrategyBaseServiceImpl {
         return new ArrayList<>();
     }
 
+    protected BigDecimal calculateAvailableStock(RuleStockChannelInfo ruleStockChannelInfo, BigDecimal totalAvailable) {
+        BigDecimal percentage = ruleStockChannelInfo.getPercentage();
+        BigDecimal availableStock = ruleStockChannelInfo.getRuleType() == 1
+                ? totalAvailable.multiply(percentage).divide(ONE_HUNDRED)
+                : totalAvailable.compareTo(percentage) > 0 ? percentage : totalAvailable;
+        return applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
+    }
+}
 }

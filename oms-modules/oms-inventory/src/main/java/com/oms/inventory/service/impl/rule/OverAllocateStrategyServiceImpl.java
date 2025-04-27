@@ -136,19 +136,9 @@ public class OverAllocateStrategyServiceImpl extends StrategyBaseServiceImpl imp
             return true;
         } catch (Exception e) {
             // 记录错误日志，并抛出运行时异常
-            log.error("processAllocateInventory error:{}", e);
+            log.error("processAllocateInventory error:{}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
-
-
-    private BigDecimal calculateAvailableStock(RuleStockChannelInfo ruleStockChannelInfo, BigDecimal totalAvailable) {
-        BigDecimal percentage = ruleStockChannelInfo.getPercentage();
-        BigDecimal availableStock = ruleStockChannelInfo.getRuleType() == 1
-                ? totalAvailable.multiply(percentage).divide(ONE_HUNDRED)
-                : totalAvailable.compareTo(percentage) > 0 ? percentage : totalAvailable;
-        return applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
-    }
-
 
 }
