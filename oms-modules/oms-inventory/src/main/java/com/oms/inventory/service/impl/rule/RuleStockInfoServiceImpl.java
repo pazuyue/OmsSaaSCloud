@@ -30,7 +30,7 @@ public class RuleStockInfoServiceImpl extends ServiceImpl<RuleStockInfoMapper,Ru
         queryWrapper.eq(ObjectUtil.isNotNull(ruleStockInfo.getStatus()),"status",ruleStockInfo.getStatus());
         queryWrapper.eq(ObjectUtil.isNotEmpty(ruleStockInfo.getRuleType()),"rule_type",ruleStockInfo.getRuleType());
         queryWrapper.ge(ObjectUtil.isNotEmpty(ruleStockInfo.getCreateTime()),"create_time",ruleStockInfo.getCreateTime());
-
+        queryWrapper.orderByDesc("id");
         return this.list(queryWrapper);
     }
 

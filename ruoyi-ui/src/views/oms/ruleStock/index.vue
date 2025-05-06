@@ -184,6 +184,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            v-if="scope.row.status === '新建'"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ruleStock:info:edit']"
           >修改</el-button>
@@ -207,7 +208,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
-            v-if="scope.row.status === '待审核' && scope.row.rule_range === 2"
+            v-if="scope.row.status === '新建' && scope.row.ruleRange === 2"
             @click="handleImport(scope.row)"
             v-hasPermi="['ruleStock:info:edit']"
           >导入商品</el-button>
@@ -285,17 +286,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商品类型" prop="type" v-if="form.ruleRange ===2">
-          <el-select v-model="form.type" placeholder="请选择商品类型">
-            <el-option
-              v-for="dict in dict.type.goods_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-              v-if="parseInt(dict.value) !== 0"
-            ></el-option>
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -305,6 +295,8 @@
     <setRule ref="setRule" :ruleOpen="ruleOpen" :ruleId="ruleId"  @cancelRule="handleCancelRule" />
 
     <ruleDetails ref="ruleDetails" :examineOpen="examineOpen"  :ruleId="ruleId"  @handleCancel="handleCancel" />
+
+    <ruleUpload ref="ruleUpload" :title="title" :ruleId="ruleId" :open="upload.open" @update:open="updateOpen" v-if="upload.open"/>
   </div>
 </template>
 
@@ -312,11 +304,11 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/ruleStock/info";
 import setRule from "@/views/oms/ruleStock/setRule";
 import ruleDetails from "@/views/oms/ruleStock/ruleDetails";
-import {getTickets} from "@/api/noTickets/noTickets";
+import ruleUpload from "@/views/oms/ruleStock/upload";
 export default {
   name: "Info",
   dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
-  components:{setRule,ruleDetails},
+  components:{setRule,ruleDetails,ruleUpload},
   data() {
     return {
       // 遮罩层
@@ -523,14 +515,14 @@ export default {
     handleImport(row) {
       console.log("商品导入")
       this.upload.title = "商品导入";
-      this.reset();
-      const id = row.id
-      getTickets(id).then(response => {
-        this.form = response.data;
-      });
+      this.ruleId = row.id
       this.upload.open = true;
-      this.upload.open2 = true;
     },
-  }
+    updateOpen(value){
+      console.log("updateOpen商品导入",value)
+      this.upload.open = value
+    }
+  },
+
 };
 </script>
