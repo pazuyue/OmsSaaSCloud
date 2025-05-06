@@ -132,4 +132,3 @@ public class StrategyBaseServiceImpl {
         return applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
     }
 }
-}

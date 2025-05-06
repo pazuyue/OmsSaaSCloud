@@ -207,6 +207,14 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            v-if="scope.row.status === '待审核' && scope.row.rule_range === 2"
+            @click="handleImport(scope.row)"
+            v-hasPermi="['ruleStock:info:edit']"
+          >导入商品</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
             v-if="scope.row.status !== '执行中' && scope.row.status !== '已结束' && scope.row.status !== '已作废'"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ruleStock:info:remove']"
@@ -304,6 +312,7 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/ruleStock/info";
 import setRule from "@/views/oms/ruleStock/setRule";
 import ruleDetails from "@/views/oms/ruleStock/ruleDetails";
+import {getTickets} from "@/api/noTickets/noTickets";
 export default {
   name: "Info",
   dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
@@ -337,6 +346,12 @@ export default {
         ruleCode: null,
         ruleName: null,
         status: null,
+      },
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题
+        title:'',
       },
       // 表单参数
       form: {},
@@ -504,7 +519,18 @@ export default {
       this.download('ruleStock/export', {
         ...this.queryParams
       }, `info_${new Date().getTime()}.xlsx`)
-    }
+    },
+    handleImport(row) {
+      console.log("商品导入")
+      this.upload.title = "商品导入";
+      this.reset();
+      const id = row.id
+      getTickets(id).then(response => {
+        this.form = response.data;
+      });
+      this.upload.open = true;
+      this.upload.open2 = true;
+    },
   }
 };
 </script>

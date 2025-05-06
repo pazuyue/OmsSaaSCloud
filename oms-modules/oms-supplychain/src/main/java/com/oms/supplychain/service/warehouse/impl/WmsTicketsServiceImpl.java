@@ -4,8 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oms.common.api.RemoteInventoryService;
-import com.oms.common.model.entity.GoodsSkuSnInfo;
-import com.oms.common.model.entity.WmsInventoryBatch;
+import com.oms.common.model.dto.wms.WmsInventoryBatchDto;
+import com.oms.common.model.entity.wms.WmsInventoryBatch;
 import com.oms.supplychain.mapper.warehouse.WmsTicketsMapper;
 import com.oms.supplychain.model.dto.warehouse.WmsTicketsDto;
 import com.oms.supplychain.model.enmus.DocumentState;
@@ -123,8 +123,11 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             inventoryBatch.setBatchCode(wmsTicketsGoods.getBatchCode());
             inventoryBatch.setTransactionPrice(wmsTicketsGoods.getPurchasePrice());
 
+            WmsInventoryBatchDto wmsInventoryBatchDto = new WmsInventoryBatchDto();
+            wmsInventoryBatchDto.setWmsInventoryBatch(inventoryBatch);
+            wmsInventoryBatchDto.setRelationSn(wmsTickets.getSn());
             // 调用远程服务，执行库存更新操作
-            R<Boolean> result = remoteInventoryService.addInventory(inventoryBatch, wmsTickets.getCompanyCode());
+            R<Boolean> result = remoteInventoryService.addInventory(wmsInventoryBatchDto, wmsTickets.getCompanyCode());
             log.info("库存处理结果：{}",result);
             if (!R.isSuccess(result)){
                 // 如果库存更新失败，记录日志并更新货物状态为处理失败

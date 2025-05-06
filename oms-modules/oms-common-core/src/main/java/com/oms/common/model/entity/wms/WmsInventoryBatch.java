@@ -1,4 +1,4 @@
-package com.oms.common.model.entity;
+package com.oms.common.model.entity.wms;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -104,4 +104,7 @@ public class WmsInventoryBatch implements Serializable {
      */
     @TableField(value = "modify_time")
     private Date modifyTime;
+
+    @TableField(value = "company_code")
+    private String companyCode;
 }

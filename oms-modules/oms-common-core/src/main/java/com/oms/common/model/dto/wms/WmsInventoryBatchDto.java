@@ -1,6 +1,5 @@
-package com.oms.inventory.model.dto;
-
-import com.oms.inventory.model.entity.WmsInventoryBatch;
+package com.oms.common.model.dto.wms;
+import com.oms.common.model.entity.wms.WmsInventoryBatch;
 import lombok.Data;
 
 @Data

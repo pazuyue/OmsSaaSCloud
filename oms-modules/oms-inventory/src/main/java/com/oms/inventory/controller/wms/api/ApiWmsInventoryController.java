@@ -1,9 +1,7 @@
 package com.oms.inventory.controller.wms.api;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.oms.inventory.model.dto.WmsInventoryBatchDto;
-import com.oms.inventory.model.entity.OmsInventory;
-import com.oms.inventory.model.entity.WmsInventory;
+import com.oms.common.model.dto.wms.WmsInventoryBatchDto;
 import com.oms.inventory.model.entity.WmsInventoryBatch;
 import com.oms.inventory.service.impl.WmsInventoryBatchServiceImpl;
 import com.ruoyi.common.core.web.controller.BaseController;
@@ -33,7 +31,8 @@ public class ApiWmsInventoryController extends BaseController {
         logger.debug("WmsInventoryBatchDto {}",dto);
 
         try {
-            WmsInventoryBatch wmsInventoryBatch = dto.getWmsInventoryBatch();
+            WmsInventoryBatch wmsInventoryBatch = new WmsInventoryBatch();
+            BeanUtil.copyProperties(dto.getWmsInventoryBatch(), wmsInventoryBatch);
             wmsInventoryBatch.setCompanyCode(company_code);
             String relationSn = dto.getRelationSn();
             wmsInventoryBatchService.addInventory(wmsInventoryBatch,relationSn);
