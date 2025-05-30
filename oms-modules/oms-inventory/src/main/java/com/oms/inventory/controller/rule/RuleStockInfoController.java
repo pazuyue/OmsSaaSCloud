@@ -1,8 +1,10 @@
 package com.oms.inventory.controller.rule;
 
+import com.oms.inventory.model.entity.rule.RuleStockGoodsInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.vo.RuleStockExcel;
 import com.oms.inventory.service.rule.IRuleStockInfoService;
+import com.oms.inventory.service.rule.RuleStockGoodsInfoService;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +58,7 @@ public class RuleStockInfoController extends BaseController
         List<RuleStockInfo> list = ruleStockInfoService.selectRuleStockInfoList(ruleStockInfo);
         ExcelUtil<RuleStockInfo> util = new ExcelUtil<RuleStockInfo>(RuleStockInfo.class);
         util.exportExcel(response, list, "分货单基础信息数据");
+
     }
 
     /**
@@ -106,26 +110,5 @@ public class RuleStockInfoController extends BaseController
     {
         ExcelUtil<RuleStockExcel> util = new ExcelUtil<>(RuleStockExcel.class);
         util.importTemplateExcel(response, "分货单基础信息数据");
-    }
-
-    /**
-     * 商品导入
-     * @param file
-     * @return
-     */
-    @SneakyThrows
-    @PostMapping(value = "/import")
-    public AjaxResult export(MultipartFile file, @RequestParam(value = "rule_id") String ruleId, @RequestParam(value = "company_code") String companyCode) {
-        logger.debug("ruleId:"+ruleId);
-        logger.debug("companyCode:"+companyCode);
-        try{
-            ExcelUtil<RuleStockExcel> util = new ExcelUtil<>(RuleStockExcel.class);
-            List<RuleStockExcel> ruleStockExcels = util.importExcel(file.getInputStream());
-            logger.debug("ruleStockSkuList:"+ruleStockExcels.toString());
-            return success("导入成功");
-        }catch (Exception e){
-            logger.error("导入失败",e);
-            return error(e.getMessage());
-        }
     }
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 样式定义 -->
+    <defs>
+        <style type="text/css">
+            .layer { fill: #f5f5f5; stroke: #666; stroke-width: 2; }
+            .component { fill: #fff; stroke: #333; stroke-width: 1; }
+            .text { font-family: Arial; font-size: 14px; fill: #333; }
+            .layer-title { font-family: Arial; font-size: 16px; font-weight: bold; fill: #333; }
+        </style>
+    </defs>
+
+    <!-- 接口层 -->
+    <g transform="translate(0,0)">
+        <rect class="layer" x="50" y="20" width="700" height="100"/>
+        <text class="layer-title" x="60" y="45">接口层</text>
+        <rect class="component" x="100" y="60" width="180" height="40"/>
+        <text class="text" x="120" y="85">WMS库存控制器</text>
+        <rect class="component" x="320" y="60" width="180" height="40"/>
+        <text class="text" x="340" y="85">库存规则控制器</text>
+        <rect class="component" x="540" y="60" width="180" height="40"/>
+        <text class="text" x="560" y="85">商品库存控制器</text>
+    </g>
+
+    <!-- 业务层 -->
+    <g transform="translate(0,120)">
+        <rect class="layer" x="50" y="20" width="700" height="180"/>
+        <text class="layer-title" x="60" y="45">业务层</text>
+        
+        <!-- 库存管理服务 -->
+        <rect class="component" x="70" y="60" width="160" height="40"/>
+        <text class="text" x="90" y="85">WMS库存服务</text>
+        
+        <!-- 库存规则服务 -->
+        <rect class="component" x="250" y="60" width="160" height="40"/>
+        <text class="text" x="270" y="85">库存规则服务</text>
+        
+        <!-- 库存分配策略 -->
+        <rect class="component" x="430" y="60" width="160" height="40"/>
+        <text class="text" x="450" y="85">库存分配策略</text>
+
+        <!-- 批次管理服务 -->
+        <rect class="component" x="70" y="120" width="160" height="40"/>
+        <text class="text" x="90" y="145">批次管理服务</text>
+
+        <!-- 库存历史服务 -->
+        <rect class="component" x="250" y="120" width="160" height="40"/>
+        <text class="text" x="270" y="145">库存历史记录</text>
+
+        <!-- 库存预警服务 -->
+        <rect class="component" x="430" y="120" width="160" height="40"/>
+        <text class="text" x="450" y="145">库存预警服务</text>
+    </g>
+
+    <!-- 数据访问层 -->
+    <g transform="translate(0,320)">
+        <rect class="layer" x="50" y="20" width="700" height="120"/>
+        <text class="layer-title" x="60" y="45">数据访问层</text>
+        
+        <rect class="component" x="70" y="60" width="140" height="40"/>
+        <text class="text" x="85" y="85">WMS库存Mapper</text>
+        
+        <rect class="component" x="230" y="60" width="140" height="40"/>
+        <text class="text" x="245" y="85">库存规则Mapper</text>
+        
+        <rect class="component" x="390" y="60" width="140" height="40"/>
+        <text class="text" x="405" y="85">批次库存Mapper</text>
+
+        <rect class="component" x="550" y="60" width="140" height="40"/>
+        <text class="text" x="565" y="85">历史记录Mapper</text>
+    </g>
+
+    <!-- 实体层 -->
+    <g transform="translate(0,460)">
+        <rect class="layer" x="50" y="20" width="700" height="100"/>
+        <text class="layer-title" x="60" y="45">实体层</text>
+        
+        <rect class="component" x="70" y="60" width="120" height="40"/>
+        <text class="text" x="85" y="85">WmsInventory</text>
+        
+        <rect class="component" x="210" y="60" width="120" height="40"/>
+        <text class="text" x="225" y="85">RuleStockInfo</text>
+        
+        <rect class="component" x="350" y="60" width="120" height="40"/>
+        <text class="text" x="365" y="85">InventoryBatch</text>
+
+        <rect class="component" x="490" y="60" width="120" height="40"/>
+        <text class="text" x="505" y="85">InventoryHistory</text>
+    </g>
+</svg>

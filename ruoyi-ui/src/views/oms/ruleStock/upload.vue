@@ -73,7 +73,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/inventory/ruleStock/import",
+        url: process.env.VUE_APP_BASE_API + "/inventory/ruleStockGoods/import",
         // 导入产品信息表格数据
         exportInfoList: [],
         exportTotal : 0,

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- 标题 -->
+  <text x="600" y="40" text-anchor="middle" font-size="24" font-weight="bold">库存分配策略流程图</text>
+  
+  <!-- 开始节点 -->
+  <circle cx="600" cy="100" r="30" fill="#4CAF50"/>
+  <text x="600" y="105" text-anchor="middle" fill="white">开始</text>
+  
+  <!-- 分配规则验证 -->
+  <rect x="500" y="160" width="200" height="60" rx="10" fill="#90CAF9"/>
+  <text x="600" y="195" text-anchor="middle">分配规则验证</text>
+  
+  <!-- 策略选择判断 -->
+  <path d="M 500,260 L 700,260 L 600,320 Z" fill="#FFB74D"/>
+  <text x="600" y="290" text-anchor="middle">选择分配策略</text>
+  
+  <!-- 三种策略分支 -->
+  <!-- 超额分配策略 -->
+  <rect x="100" y="360" width="200" height="60" rx="10" fill="#81C784"/>
+  <text x="200" y="395" text-anchor="middle">超额分配策略</text>
+  
+  <!-- 优先级分配策略 -->
+  <rect x="500" y="360" width="200" height="60" rx="10" fill="#81C784"/>
+  <text x="600" y="395" text-anchor="middle">优先级分配策略</text>
+  
+  <!-- 比例分配策略 -->
+  <rect x="900" y="360" width="200" height="60" rx="10" fill="#81C784"/>
+  <text x="1000" y="395" text-anchor="middle">比例分配策略</text>
+  
+  <!-- 策略处理流程 -->
+  <!-- 超额分配流程 -->
+  <rect x="100" y="460" width="200" height="50" rx="10" fill="#E0E0E0"/>
+  <text x="200" y="490" text-anchor="middle" font-size="14">直接分配不扣减库存</text>
+  
+  <!-- 优先级分配流程 -->
+  <rect x="500" y="460" width="200" height="50" rx="10" fill="#E0E0E0"/>
+  <text x="600" y="490" text-anchor="middle" font-size="14">按渠道优先级顺序分配</text>
+  
+  <!-- 比例分配流程 -->
+  <rect x="900" y="460" width="200" height="50" rx="10" fill="#E0E0E0"/>
+  <text x="1000" y="490" text-anchor="middle" font-size="14">总量压缩至可用库存</text>
+  
+  <!-- 结果处理 -->
+  <rect x="500" y="600" width="200" height="60" rx="10" fill="#90CAF9"/>
+  <text x="600" y="635" text-anchor="middle">更新库存分配结果</text>
+  
+  <!-- 结束节点 -->
+  <circle cx="600" cy="720" r="30" fill="#F44336"/>
+  <text x="600" y="725" text-anchor="middle" fill="white">结束</text>
+  
+  <!-- 连接线 -->
+  <path d="M 600,130 L 600,160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 600,220 L 600,260" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 策略选择连接线 -->
+  <path d="M 600,320 L 200,360" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 600,320 L 600,360" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 600,320 L 1000,360" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 策略处理连接线 -->
+  <path d="M 200,420 L 200,460" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 600,420 L 600,460" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 1000,420 L 1000,460" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 汇总连接线 -->
+  <path d="M 200,510 L 200,630 L 500,630" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 600,510 L 600,600" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 1000,510 L 1000,630 L 700,630" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 结束连接线 -->
+  <path d="M 600,660 L 600,690" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+</svg>
