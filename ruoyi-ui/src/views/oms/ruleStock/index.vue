@@ -191,6 +191,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-view"
+            v-if="scope.row.ruleRange === 2"
+            @click="handleViewGoodsList(scope.row)"
+            v-hasPermi="['ruleStock:info:view']"
+          >查看导入商品列表</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             v-if="scope.row.status === '新建'"
             @click="handleSetRule(scope.row)"
@@ -204,14 +212,7 @@
             @click="handleExamine(scope.row)"
             v-hasPermi="['ruleStock:info:edit']"
           >审核</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            v-if="scope.row.status === '新建' && scope.row.ruleRange === 2"
-            @click="handleImport(scope.row)"
-            v-hasPermi="['ruleStock:info:edit']"
-          >导入商品</el-button>
+
           <el-button
             size="mini"
             type="text"
@@ -296,7 +297,13 @@
 
     <ruleDetails ref="ruleDetails" :examineOpen="examineOpen"  :ruleId="ruleId"  @handleCancel="handleCancel" />
 
-    <ruleUpload ref="ruleUpload" :title="title" :ruleId="ruleId" :open="upload.open" @update:open="updateOpen" v-if="upload.open"/>
+    <!-- 查看导入商品列表弹窗 -->
+    <GoodsListDialog 
+      :open.sync="goodsListDialog.open" 
+      :rule-id="goodsListDialog.ruleId" 
+      :show-import-button="goodsListDialog.showImportButton"
+      title="查看导入商品列表" 
+    />
   </div>
 </template>
 
@@ -304,11 +311,11 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/ruleStock/info";
 import setRule from "@/views/oms/ruleStock/setRule";
 import ruleDetails from "@/views/oms/ruleStock/ruleDetails";
-import ruleUpload from "@/views/oms/ruleStock/upload";
+import GoodsListDialog from "@/views/oms/ruleStock/components/GoodsListDialog";
 export default {
   name: "Info",
   dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
-  components:{setRule,ruleDetails,ruleUpload},
+  components:{setRule,ruleDetails,GoodsListDialog},
   data() {
     return {
       // 遮罩层
@@ -339,12 +346,7 @@ export default {
         ruleName: null,
         status: null,
       },
-      upload: {
-        // 是否显示弹出层（用户导入）
-        open: false,
-        // 弹出层标题
-        title:'',
-      },
+
       // 表单参数
       form: {},
       // 表单校验
@@ -373,7 +375,13 @@ export default {
       },
       ruleOpen:false,
       examineOpen:false,
-      ruleId:null
+      ruleId:null,
+      // 查看导入商品列表弹窗
+      goodsListDialog: {
+        open: false,
+        ruleId: null,
+        showImportButton: false
+      }
     };
   },
   created() {
@@ -512,15 +520,13 @@ export default {
         ...this.queryParams
       }, `info_${new Date().getTime()}.xlsx`)
     },
-    handleImport(row) {
-      console.log("商品导入")
-      this.upload.title = "商品导入";
-      this.ruleId = row.id
-      this.upload.open = true;
-    },
-    updateOpen(value){
-      console.log("updateOpen商品导入",value)
-      this.upload.open = value
+
+    /** 查看导入商品列表 */
+    handleViewGoodsList(row) {
+      this.goodsListDialog.open = true;
+      this.goodsListDialog.ruleId = row.id;
+      // 根据状态和分货范围判断是否显示导入按钮
+      this.goodsListDialog.showImportButton = row.status === '新建' && row.ruleRange === 2;
     }
   },
 

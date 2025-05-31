@@ -66,4 +66,14 @@ export function toExamine(id) {
     url: '/inventory/ruleStockHandle/toExamine/' + id,
     method: 'get'
   })
+
+
+}
+
+export function getRuleStockGoodsInfoList(id, params) {
+  return request({
+    url: '/inventory/ruleStockGoods/list/'+id,
+    method: 'get',
+    params: params
+  })
 }
