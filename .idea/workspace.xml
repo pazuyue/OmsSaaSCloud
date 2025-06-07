@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/components/GoodsListDialog.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockGoodsInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/controller/rule/RuleStockGoodsInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/api/ruleStock/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/architecture.svg" beforeDir="false" afterPath="$PROJECT_DIR$/architecture.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java/com/oms/supplychain/controller/warehouse/WmsRealStoreInfoController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -277,8 +273,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="Spring Boot.OmsSupplyChainApplication" />
+        <item itemvalue="Spring Boot.OmsInventoryApplication" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest" />
         <item itemvalue="JUnit.AllocationStrategyFactoryTest.testGetStrategyWithRuleType1" />
         <item itemvalue="Application.GeberatorUIServer" />
@@ -471,14 +467,8 @@
       <workItem from="1748310347578" duration="160000" />
       <workItem from="1748310544905" duration="1557000" />
       <workItem from="1748624382025" duration="3199000" />
-      <workItem from="1748655386080" duration="8359000" />
-    </task>
-    <task id="LOCAL-00112" summary="库存管理">
-      <created>1729244092620</created>
-      <option name="number" value="00112" />
-      <option name="presentableId" value="LOCAL-00112" />
-      <option name="project" value="LOCAL" />
-      <updated>1729244092620</updated>
+      <workItem from="1748655386080" duration="11615000" />
+      <workItem from="1749118744157" duration="655000" />
     </task>
     <task id="LOCAL-00113" summary="说明文档更新">
       <created>1729244841630</created>
@@ -816,7 +806,14 @@
       <option name="project" value="LOCAL" />
       <updated>1748626881904</updated>
     </task>
-    <option name="localTasksCounter" value="161" />
+    <task id="LOCAL-00161" summary="分货规则匹配">
+      <created>1748706935673</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1748706935673</updated>
+    </task>
+    <option name="localTasksCounter" value="162" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -858,7 +855,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="库存回调" />
     <MESSAGE value="入库单虚拟回调" />
     <MESSAGE value="库存管理-外部调用" />
     <MESSAGE value="说明文档更新" />
@@ -883,7 +879,8 @@
     <MESSAGE value="入库回调" />
     <MESSAGE value="配置文件" />
     <MESSAGE value="代码同步" />
-    <option name="LAST_COMMIT_MESSAGE" value="代码同步" />
+    <MESSAGE value="分货规则匹配" />
+    <option name="LAST_COMMIT_MESSAGE" value="分货规则匹配" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

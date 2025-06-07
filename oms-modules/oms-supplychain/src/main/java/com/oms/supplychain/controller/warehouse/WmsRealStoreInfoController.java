@@ -47,7 +47,7 @@ public class WmsRealStoreInfoController extends BaseController {
     @RequiresPermissions("warehouse:WmsRealStoreInfo:list")
     @GetMapping("/list")
     @SneakyThrows
-    public TableDataInfo list(@RequestBody WmsRealStoreInfoVO wmsRealStoreInfo)
+    public TableDataInfo list(WmsRealStoreInfoVO wmsRealStoreInfo)
     {
         startPage();
         List<WmsRealStoreInfo> list = wmsRealStoreInfoService.selectWmsRealStoreInfoList(wmsRealStoreInfo);
