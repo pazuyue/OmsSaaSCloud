@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.oms.inventory.model.entity.WmsInventory;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -69,4 +70,8 @@ public interface IWmsInventoryService extends IService<WmsInventory> {
     List<Map<String, Object>> selectSkuListTotalAvailable(List<String> storeCodes, List<String> skuList, int pageNum, int pageSize);
 
     Map<String, Object> selectSkuTotalAvailable(List<String> storeCodes, String skuSn);
+
+    Boolean lockInventory(List<String> storeCodes, String sku, BigDecimal quantity);
+
+    Boolean unlockInventory(List<String> storeCodes, String sku, BigDecimal quantity);
 }

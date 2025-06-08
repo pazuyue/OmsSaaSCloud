@@ -6,10 +6,12 @@ import com.github.pagehelper.PageHelper;
 import com.oms.inventory.annotation.StrategyType;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
+import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.service.IOmsChannelInventoryService;
 import com.oms.inventory.service.IWmsInventoryService;
 import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
+import com.oms.inventory.service.rule.IRuleStockInfoService;
 import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,8 @@ public class StrategyBaseServiceImpl {
     protected IRuleStockChannelInfoService ruleStockChannelInfoService;
     @Resource
     protected IOmsChannelInventoryService omsChannelInventoryService;
+    @Resource
+    protected IRuleStockInfoService ruleStockInfoService;
 
     protected List<String> getStoreCodesByRuleId(Long ruleId) {
         return ruleStockStoreCodeInfoService.list(
@@ -130,5 +134,28 @@ public class StrategyBaseServiceImpl {
                 ? totalAvailable.multiply(percentage).divide(ONE_HUNDRED)
                 : totalAvailable.compareTo(percentage) > 0 ? percentage : totalAvailable;
         return applyDecimalHandling(availableStock, ruleStockChannelInfo.getDecimalHandleType());
+    }
+
+    /**
+     * 判断是否为锁库单分货
+     * @param relationSn 关联单号（规则ID）
+     * @return true-锁库单分货，false-非锁库单分货
+     */
+    protected boolean isLockAllocation(String relationSn) {
+        try {
+            // 尝试将relationSn转换为Long类型的规则ID
+            Long ruleId = Long.parseLong(relationSn);
+            RuleStockInfo ruleStockInfo = ruleStockInfoService.selectRuleStockInfoById(ruleId);
+
+            // 判断规则类型是否为3（锁库时分货）
+            return ruleStockInfo != null && ruleStockInfo.getRuleType() != null && ruleStockInfo.getRuleType() == 3;
+        } catch (NumberFormatException e) {
+            // 如果relationSn不是数字，则不是规则ID，返回false
+            log.debug("relationSn is not a valid rule ID: {}", relationSn);
+            return false;
+        } catch (Exception e) {
+            log.error("Error checking lock allocation for relationSn: {}", relationSn, e);
+            return false;
+        }
     }
 }

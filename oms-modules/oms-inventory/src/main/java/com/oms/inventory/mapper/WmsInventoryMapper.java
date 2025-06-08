@@ -6,7 +6,9 @@ import com.oms.inventory.model.entity.WmsInventory;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -60,5 +62,46 @@ public interface WmsInventoryMapper extends BaseMapper<WmsInventory> {
             "</script>")
     Map<String, Object> selectSkuTotalAvailable(@Param("storeCodes") List<String> storeCodes, @Param("skuSn") String skuSn);
 
+    /**
+     * 锁定库存 - 增加锁定数量，减少可用数量
+     * @param storeCodes 仓库编码列表
+     * @param sku SKU编号
+     * @param quantity 锁定数量
+     * @return 影响行数
+     */
+    @Update("<script>" +
+            "UPDATE wms_inventory SET " +
+            "zp_lock_number = zp_lock_number + #{quantity}, " +
+            "zp_available_number = zp_available_number - #{quantity}, " +
+            "version = version + 1 " +
+            "WHERE sku_sn = #{sku} " +
+            "AND store_code IN " +
+            "<foreach item='storeCode' index='index' collection='storeCodes' open='(' separator=',' close=')'>" +
+            "#{storeCode}" +
+            "</foreach>" +
+            "AND zp_available_number >= #{quantity}" +
+            "</script>")
+    int lockInventory(@Param("storeCodes") List<String> storeCodes, @Param("sku") String sku, @Param("quantity") BigDecimal quantity);
+
+    /**
+     * 解锁库存 - 减少锁定数量，增加可用数量
+     * @param storeCodes 仓库编码列表
+     * @param sku SKU编号
+     * @param quantity 解锁数量
+     * @return 影响行数
+     */
+    @Update("<script>" +
+            "UPDATE wms_inventory SET " +
+            "zp_lock_number = zp_lock_number - #{quantity}, " +
+            "zp_available_number = zp_available_number + #{quantity}, " +
+            "version = version + 1 " +
+            "WHERE sku_sn = #{sku} " +
+            "AND store_code IN " +
+            "<foreach item='storeCode' index='index' collection='storeCodes' open='(' separator=',' close=')'>" +
+            "#{storeCode}" +
+            "</foreach>" +
+            "AND zp_lock_number >= #{quantity}" +
+            "</script>")
+    int unlockInventory(@Param("storeCodes") List<String> storeCodes, @Param("sku") String sku, @Param("quantity") BigDecimal quantity);
 
 }
