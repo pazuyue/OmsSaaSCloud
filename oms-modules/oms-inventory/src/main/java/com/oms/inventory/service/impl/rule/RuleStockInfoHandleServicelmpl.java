@@ -297,7 +297,6 @@ public class RuleStockInfoHandleServicelmpl implements IRuleStockInfoHandleServi
             case RULE_TYPE_DAILY: // 日常分货
                 return processDailyRule(ruleInfo);
             case RULE_TYPE_ONETIME: // 一次性分货
-            case RULE_TYPE_LOCK: // 锁库单分货
                 return processImmediateRule(ruleInfo);
             default:
                 throw new RuntimeException("不支持的分货单类型: " + ruleType);

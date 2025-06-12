@@ -147,8 +147,8 @@ public class StrategyBaseServiceImpl {
             Long ruleId = Long.parseLong(relationSn);
             RuleStockInfo ruleStockInfo = ruleStockInfoService.selectRuleStockInfoById(ruleId);
 
-            // 判断规则类型是否为3（锁库时分货）
-            return ruleStockInfo != null && ruleStockInfo.getRuleType() != null && ruleStockInfo.getRuleType() == 3;
+            // 分货类型是否为2（锁库时分货）
+            return ruleStockInfo != null && ruleStockInfo.getAllocationType() != null && ruleStockInfo.getAllocationType() == 2;
         } catch (NumberFormatException e) {
             // 如果relationSn不是数字，则不是规则ID，返回false
             log.debug("relationSn is not a valid rule ID: {}", relationSn);

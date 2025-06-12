@@ -39,6 +39,9 @@ public class RuleStockInfo implements Serializable {
     @Excel(name = "分货单规则：1，日常分货；2，一次性分货；3，锁库时分货")
     private Integer ruleType;
 
+    @Excel(name = "分货类型：1-普通分货，2-锁库分货")
+    private Integer allocationType;
+
     /**
      * 分货单编号(系统唯一)
      */
