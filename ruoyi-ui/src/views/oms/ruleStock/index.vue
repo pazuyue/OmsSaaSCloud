@@ -21,6 +21,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="分货类型" prop="allocationType">
+        <el-select v-model="queryParams.allocationType" placeholder="请选择分货类型" clearable>
+          <el-option
+            v-for="dict in dict.type.oms_warehouse_allocation_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="分货单编号" prop="ruleCode">
         <el-input
           v-model="queryParams.ruleCode"
@@ -110,6 +120,11 @@
           <dict-tag :options="dict.type.inventory_allocation_rule_type" :value="scope.row.ruleType"/>
         </template>
       </el-table-column>
+      <el-table-column label="分货类型" align="center" prop="allocationType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.oms_warehouse_allocation_type" :value="scope.row.allocationType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="分货单编号" align="center" prop="ruleCode" />
       <el-table-column label="分货单名称" align="center" prop="ruleName" />
       <el-table-column label="状态" align="center" prop="status">
@@ -135,11 +150,6 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="商品类型" align="center" prop="type">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.goods_type" :value="scope.row.type"/>
-        </template>
-      </el-table-column>
       <el-table-column label="最新分货时间" align="center" prop="lastUpdateTime" width="180">
         <template slot-scope="scope">
           <span v-if="scope.row.lastUpdateTime">{{ parseTime(scope.row.lastUpdateTime, '{y}-{m}-{d}') }}</span>
@@ -255,6 +265,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="分货类型" prop="allocationType">
+          <el-select v-model="form.allocationType" placeholder="请选择分货类型">
+            <el-option
+              v-for="dict in dict.type.oms_warehouse_allocation_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="分货单名称" prop="ruleName">
           <el-input v-model="form.ruleName" placeholder="请输入分货单名称" />
         </el-form-item>
@@ -298,11 +318,11 @@
     <ruleDetails ref="ruleDetails" :examineOpen="examineOpen"  :ruleId="ruleId"  @handleCancel="handleCancel" />
 
     <!-- 查看导入商品列表弹窗 -->
-    <GoodsListDialog 
-      :open.sync="goodsListDialog.open" 
-      :rule-id="goodsListDialog.ruleId" 
+    <GoodsListDialog
+      :open.sync="goodsListDialog.open"
+      :rule-id="goodsListDialog.ruleId"
       :show-import-button="goodsListDialog.showImportButton"
-      title="查看导入商品列表" 
+      title="查看导入商品列表"
     />
   </div>
 </template>
@@ -314,7 +334,7 @@ import ruleDetails from "@/views/oms/ruleStock/ruleDetails";
 import GoodsListDialog from "@/views/oms/ruleStock/components/GoodsListDialog";
 export default {
   name: "Info",
-  dicts: ['oms_yes_no', 'inventory_allocation_rule_type', 'goods_type','inventory_allocation_status','goods_range'],
+  dicts: ['oms_yes_no', 'inventory_allocation_rule_type','inventory_allocation_status','goods_range','oms_warehouse_allocation_type'],
   components:{setRule,ruleDetails,GoodsListDialog},
   data() {
     return {
@@ -345,6 +365,7 @@ export default {
         ruleCode: null,
         ruleName: null,
         status: null,
+        allocationType: null,
       },
 
       // 表单参数
@@ -416,6 +437,7 @@ export default {
         ruleRange: null,
         remark: null,
         type: null,
+        allocationType: null,
         lastUpdateTime: null,
         firstReviewerTime: null,
         reviewerTime: null,
