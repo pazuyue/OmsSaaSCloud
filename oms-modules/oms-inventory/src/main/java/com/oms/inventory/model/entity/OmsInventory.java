@@ -29,9 +29,13 @@ public class OmsInventory implements Serializable {
     @Excel(name = "可售库存", readConverterExp = "扣=除预留、冻结、在途库存")
     private Integer availableStock=0;
 
-    /** 预留库存（订单占用、活动预占等） */
-    @Excel(name = "预留库存", readConverterExp = "订=单占用、活动预占等")
+    /** 预占库存（订单占用）*/
+    @Excel(name = "预占库存", readConverterExp = "预占库存")
     private Integer reservedStock=0;
+
+    /** 已分配库存（锁库单） */
+    @Excel(name = "预留库存", readConverterExp = "已分配库存:锁库单预占等")
+    private Integer allocatedStock=0;
 
     /** 冻结库存（如预售、退货中库存） */
     @Excel(name = "冻结库存", readConverterExp = "如=预售、退货中库存")

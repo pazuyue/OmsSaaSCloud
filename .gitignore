@@ -58,10 +58,22 @@ build/
 ### Spring Boot ###
 *.pid
 *.orig
+*.lock
+*.cache
+*.tmp
+spring-boot-*.jar
+bootstrap.yml
+bootstrap.properties
+bootstrap-*.yml
+bootstrap-*.properties
 
 ### Logs ###
 logs/
 *.log
+*.log.*
+log/
+log4j.log
+spring.log
 
 ### OS generated files ###
 .DS_Store
@@ -90,7 +102,52 @@ nacos/logs/
 
 ### Docker ###
 .docker/
+*.tar
+*.gz
+docker/mysql/data/
+docker/redis/data/
+docker/*/jar/*.jar
+docker-compose.override.yml
+.dockerignore
+
+### Temporary files ###
+temp/
+tmp/
+*.tmp
+*.temp
+
+### IDE generated files ###
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+.settings/
+.project
+.classpath
+
+### Build output ###
+target/
+build/
+out/
+dist/
 
 ### Custom ###
 *.swp
 *.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.rar
+*.7z

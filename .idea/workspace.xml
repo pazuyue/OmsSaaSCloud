@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="锁库单兼容">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/rule/RuleStockInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/RuleStockInfoHandleServicelmpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -473,21 +478,12 @@
       <workItem from="1749306630563" duration="3534000" />
       <workItem from="1749366211032" duration="12424000" />
       <workItem from="1749388759366" duration="918000" />
-      <workItem from="1749700480364" duration="2481000" />
-    </task>
-    <task id="LOCAL-00115" summary="仓库库存管理">
-      <created>1729735237713</created>
-      <option name="number" value="00115" />
-      <option name="presentableId" value="LOCAL-00115" />
-      <option name="project" value="LOCAL" />
-      <updated>1729735237714</updated>
-    </task>
-    <task id="LOCAL-00116" summary="渠道管理">
-      <created>1730878398387</created>
-      <option name="number" value="00116" />
-      <option name="presentableId" value="LOCAL-00116" />
-      <option name="project" value="LOCAL" />
-      <updated>1730878398387</updated>
+      <workItem from="1749700480364" duration="3492000" />
+      <workItem from="1749818015695" duration="593000" />
+      <workItem from="1749819583173" duration="3366000" />
+      <workItem from="1752057632539" duration="359000" />
+      <workItem from="1752457862689" duration="3080000" />
+      <workItem from="1752476842123" duration="3901000" />
     </task>
     <task id="LOCAL-00117" summary="渠道管理">
       <created>1731579871987</created>
@@ -818,11 +814,28 @@
       <option name="project" value="LOCAL" />
       <updated>1749389490859</updated>
     </task>
-    <option name="localTasksCounter" value="164" />
+    <task id="LOCAL-00164" summary="锁库单兼容">
+      <created>1749708708359</created>
+      <option name="number" value="00164" />
+      <option name="presentableId" value="LOCAL-00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1749708708359</updated>
+    </task>
+    <task id="LOCAL-00165" summary="锁库单兼容 OMS-0001">
+      <created>1752057802449</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1752057802451</updated>
+    </task>
+    <option name="localTasksCounter" value="166" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ID_ORDER">
@@ -860,7 +873,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="说明文档更新" />
     <MESSAGE value="功能组件" />
     <MESSAGE value="仓库库存管理" />
     <MESSAGE value="渠道管理" />
@@ -885,7 +897,8 @@
     <MESSAGE value="分货规则匹配" />
     <MESSAGE value="系统架构图" />
     <MESSAGE value="锁库单兼容" />
-    <option name="LAST_COMMIT_MESSAGE" value="锁库单兼容" />
+    <MESSAGE value="锁库单兼容 OMS-0001" />
+    <option name="LAST_COMMIT_MESSAGE" value="锁库单兼容 OMS-0001" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
