@@ -4,16 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="锁库单兼容">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/OmsInventoryMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/model/entity/OmsInventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-gateway/target/ruoyi-gateway.jar.original" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/components/GoodsListDialog.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/components/GoodsListDialog.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -483,14 +492,7 @@
       <workItem from="1749819583173" duration="3366000" />
       <workItem from="1752057632539" duration="359000" />
       <workItem from="1752457862689" duration="3080000" />
-      <workItem from="1752476842123" duration="3901000" />
-    </task>
-    <task id="LOCAL-00117" summary="渠道管理">
-      <created>1731579871987</created>
-      <option name="number" value="00117" />
-      <option name="presentableId" value="LOCAL-00117" />
-      <option name="project" value="LOCAL" />
-      <updated>1731579871988</updated>
+      <workItem from="1752476842123" duration="7893000" />
     </task>
     <task id="LOCAL-00118" summary="渠道管理">
       <created>1733196127048</created>
@@ -828,7 +830,14 @@
       <option name="project" value="LOCAL" />
       <updated>1752057802451</updated>
     </task>
-    <option name="localTasksCounter" value="166" />
+    <task id="LOCAL-00166" summary="锁库单兼容,代码优化">
+      <created>1752480837040</created>
+      <option name="number" value="00166" />
+      <option name="presentableId" value="LOCAL-00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1752480837041</updated>
+    </task>
+    <option name="localTasksCounter" value="167" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -873,7 +882,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="功能组件" />
     <MESSAGE value="仓库库存管理" />
     <MESSAGE value="渠道管理" />
     <MESSAGE value="分仓单管理" />
@@ -898,7 +906,8 @@
     <MESSAGE value="系统架构图" />
     <MESSAGE value="锁库单兼容" />
     <MESSAGE value="锁库单兼容 OMS-0001" />
-    <option name="LAST_COMMIT_MESSAGE" value="锁库单兼容 OMS-0001" />
+    <MESSAGE value="锁库单兼容,代码优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="锁库单兼容,代码优化" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

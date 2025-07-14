@@ -8,6 +8,7 @@ import com.oms.inventory.mapper.OmsInventoryMapper;
 import com.oms.inventory.model.entity.OmsInventory;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.rule.RuleStockChannelInfo;
+import com.oms.inventory.model.entity.rule.RuleStockGoodsInfo;
 import com.oms.inventory.model.entity.rule.RuleStockInfo;
 import com.oms.inventory.model.entity.rule.RuleStockStoreCodeInfo;
 import com.oms.inventory.service.IOmsChannelInventoryService;
@@ -15,6 +16,7 @@ import com.oms.inventory.service.IWmsInventoryService;
 import com.oms.inventory.service.rule.IRuleStockChannelInfoService;
 import com.oms.inventory.service.rule.IRuleStockInfoService;
 import com.oms.inventory.service.rule.IRuleStockStoreCodeInfoService;
+import com.oms.inventory.service.rule.RuleStockGoodsInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,8 @@ public class StrategyBaseServiceImpl {
     protected IRuleStockInfoService ruleStockInfoService;
     @Resource
     protected OmsInventoryMapper omsInventoryMapper;
+    @Resource
+    protected RuleStockGoodsInfoService ruleStockGoodsInfoService;
 
     /** 分页查询默认页大小 */
     protected static final int DEFAULT_PAGE_SIZE = 1000;
@@ -136,7 +140,12 @@ public class StrategyBaseServiceImpl {
     }
 
     protected List<String> getSkuList(Long ruleId) {
-        return new ArrayList<>();
+        return ruleStockGoodsInfoService.list(
+                new LambdaQueryWrapper<RuleStockGoodsInfo>()
+                        .eq(RuleStockGoodsInfo::getRuleId, ruleId)
+        ).stream()
+                .map(RuleStockGoodsInfo::getSkuSn)
+                .collect(Collectors.toList());
     }
 
     protected BigDecimal calculateAvailableStock(RuleStockChannelInfo ruleStockChannelInfo, BigDecimal totalAvailable) {

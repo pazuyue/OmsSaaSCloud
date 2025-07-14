@@ -65,8 +65,8 @@ public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInvent
                 channelInventory.setAvailableStock(BigDecimal.ZERO); // 初始化为0
             } else {
                 // 非锁库单：更新available_stock字段
-                channelInventory.setAvailableStock(availableStock);
-                channelInventory.setAllocatedStock(BigDecimal.ZERO); // 初始化为0
+                channelInventory.setAvailableStock(BigDecimal.ZERO);
+                channelInventory.setAllocatedStock(availableStock); // 初始化为0
             }
 
             log.debug("channelInventory is null,insert channelInventory:{}", channelInventory);

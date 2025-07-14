@@ -294,13 +294,37 @@ export default {
        const url = process.env.VUE_APP_BASE_API + '/inventory/ruleStockGoods/importTemplate';
        const filename = `ruleStock_template_${new Date().getTime()}.xlsx`;
 
-       const link = document.createElement('a');
-       link.href = url;
-       link.download = filename;
-       link.style.display = 'none';
-       document.body.appendChild(link);
-       link.click();
-       document.body.removeChild(link);
+       // 使用fetch请求下载文件，携带认证令牌
+       fetch(url, {
+         method: 'POST',
+         headers: {
+           'Authorization': 'Bearer ' + getToken(),
+           'Content-Type': 'application/json'
+         }
+       })
+       .then(response => {
+         if (!response.ok) {
+           throw new Error('下载失败: ' + response.statusText);
+         }
+         return response.blob();
+       })
+       .then(blob => {
+         // 创建下载链接
+         const downloadUrl = window.URL.createObjectURL(blob);
+         const link = document.createElement('a');
+         link.href = downloadUrl;
+         link.download = filename;
+         link.style.display = 'none';
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+         // 释放URL对象
+         window.URL.revokeObjectURL(downloadUrl);
+       })
+       .catch(error => {
+         console.error('下载模板失败:', error);
+         this.$message.error('下载模板失败: ' + error.message);
+       });
      },
 
     /**
