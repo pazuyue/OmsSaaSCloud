@@ -3,7 +3,7 @@ package com.oms.inventory.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.oms.inventory.mapper.WmsInventoryMapper;
@@ -35,7 +35,7 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
 
     @Resource
     private IWmsInventoryChangeHistoryService wmsInventoryChangeHistoryService;
-    
+
     @Resource
     private WmsInventoryBatchMapper wmsInventoryBatchMapper;
 
@@ -67,7 +67,32 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
 
     @Override
     public int updateWmsInventory(WmsInventory wmsInventory) {
-        return this.baseMapper.updateById(wmsInventory);
+        try {
+            // 获取更新前的库存信息（包含当前版本号）
+            WmsInventory oldInventory = this.getById(wmsInventory.getId());
+            if (oldInventory == null) {
+                throw new RuntimeException("库存记录不存在，ID: " + wmsInventory.getId());
+            }
+
+            // 设置版本号用于乐观锁控制
+            if (wmsInventory.getVersion() == null) {
+                wmsInventory.setVersion(oldInventory.getVersion());
+            }
+
+            // 执行库存更新（MyBatis-Plus会自动处理乐观锁）
+            int result = this.baseMapper.updateById(wmsInventory);
+
+            if (result == 0) {
+                // 更新失败，可能是版本号冲突（并发更新）
+                throw new RuntimeException("库存更新失败，可能存在并发更新冲突，请重试");
+            }
+            // 记录库存变化历史
+            recordInventoryUpdateHistory(oldInventory, wmsInventory);
+            return result;
+        } catch (Exception e) {
+            log.error("更新WMS库存失败，库存ID: {}, 版本号: {}", wmsInventory.getId(), wmsInventory.getVersion(), e);
+            throw new RuntimeException("更新WMS库存失败: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -96,10 +121,10 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
         try {
             // 调用Mapper方法锁定wms_inventory库存
             int result = this.baseMapper.lockInventory(storeCodes, sku, quantity);
-            
+
             // 同时锁定wms_inventory_batch库存
             int batchResult = wmsInventoryBatchMapper.lockInventory(storeCodes, sku, quantity);
-            
+
             log.debug("锁库操作结果 - wms_inventory: {}, wms_inventory_batch: {}", result, batchResult);
 
             if (result > 0) {
@@ -119,10 +144,10 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
         try {
             // 调用Mapper方法解锁wms_inventory库存
             int result = this.baseMapper.unlockInventory(storeCodes, sku, quantity);
-            
+
             // 同时解锁wms_inventory_batch库存
             int batchResult = wmsInventoryBatchMapper.unlockInventory(storeCodes, sku, quantity);
-            
+
             log.debug("解锁操作结果 - wms_inventory: {}, wms_inventory_batch: {}", result, batchResult);
 
             if (result > 0) {
@@ -134,6 +159,53 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
         } catch (Exception e) {
             log.error("解锁库存失败，storeCodes: {}, sku: {}, quantity: {}", storeCodes, sku, quantity, e);
             return false;
+        }
+    }
+
+
+    /**
+     * 记录库存更新历史
+     *
+     * @param oldInventory 更新前的库存信息
+     * @param newInventory 更新后的库存信息
+     */
+    private void recordInventoryUpdateHistory(WmsInventory oldInventory, WmsInventory newInventory) {
+        try {
+            WmsInventoryChangeHistory history = new WmsInventoryChangeHistory();
+            history.setOperationType("UPDATE");
+            history.setStoreCode(newInventory.getStoreCode());
+            history.setSkuSn(newInventory.getSkuSn());
+            history.setChangeReason("库存更新");
+            history.setOperationTime(LocalDateTime.now());
+            history.setCompanyCode(newInventory.getCompanyCode());
+
+            // 设置更新前的库存信息
+            history.setOldZpActualNumber(oldInventory.getZpActualNumber());
+            history.setOldZpAvailableNumber(oldInventory.getZpAvailableNumber());
+            history.setOldZpLockNumber(oldInventory.getZpLockNumber());
+            history.setOldCpActualNumber(oldInventory.getCpActualNumber());
+            history.setOldCpAvailableNumber(oldInventory.getCpAvailableNumber());
+            history.setOldCpLockNumber(oldInventory.getCpLockNumber());
+
+            // 设置更新后的库存信息
+            history.setNewZpActualNumber(newInventory.getZpActualNumber());
+            history.setNewZpAvailableNumber(newInventory.getZpAvailableNumber());
+            history.setNewZpLockNumber(newInventory.getZpLockNumber());
+            history.setNewCpActualNumber(newInventory.getCpActualNumber());
+            history.setNewCpAvailableNumber(newInventory.getCpAvailableNumber());
+            history.setNewCpLockNumber(newInventory.getCpLockNumber());
+
+            // 计算变化数量（以正品可用库存为例）
+            BigDecimal changeQuantity = BigDecimal.valueOf(
+                newInventory.getZpAvailableNumber() - oldInventory.getZpAvailableNumber()
+            );
+            history.setChangeQuantity(changeQuantity);
+
+            // 记录历史
+            wmsInventoryChangeHistoryService.recordInventoryChange(history);
+
+        } catch (Exception e) {
+            log.error("记录库存更新历史失败: {}", e.getMessage(), e);
         }
     }
 
