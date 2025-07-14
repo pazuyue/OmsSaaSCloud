@@ -53,7 +53,7 @@ public class StrategyBaseServiceImpl {
 
     /** 分页查询默认页大小 */
     protected static final int DEFAULT_PAGE_SIZE = 1000;
-    
+
     /** SKU范围类型：全部商品 */
     protected static final int ALL_SKU_RANGE = 1;
 
@@ -186,12 +186,12 @@ public class StrategyBaseServiceImpl {
     protected static class InventoryInfo {
         private final String skuSn;
         private final BigDecimal totalAvailable;
-        
+
         public InventoryInfo(String skuSn, BigDecimal totalAvailable) {
             this.skuSn = skuSn;
             this.totalAvailable = totalAvailable;
         }
-        
+
         public String getSkuSn() { return skuSn; }
         public BigDecimal getTotalAvailable() { return totalAvailable; }
     }
@@ -207,9 +207,9 @@ public class StrategyBaseServiceImpl {
         private final boolean isLockAllocation;
         private final List<String> storeCodes;
         private final List<RuleStockChannelInfo> channelInfoList;
-        
-        public BaseAllocationContext(Long ruleId, String skuSn, BigDecimal totalAvailable, 
-                                   boolean isLockAllocation, List<String> storeCodes, 
+
+        public BaseAllocationContext(Long ruleId, String skuSn, BigDecimal totalAvailable,
+                                   boolean isLockAllocation, List<String> storeCodes,
                                    List<RuleStockChannelInfo> channelInfoList) {
             this.ruleId = ruleId;
             this.skuSn = skuSn;
@@ -218,7 +218,7 @@ public class StrategyBaseServiceImpl {
             this.storeCodes = storeCodes;
             this.channelInfoList = channelInfoList;
         }
-        
+
         // Getters
         public Long getRuleId() { return ruleId; }
         public String getSkuSn() { return skuSn; }
@@ -239,7 +239,7 @@ public class StrategyBaseServiceImpl {
         validateWmsInventory(wmsInventory, storeCodes, sku);
         return wmsInventory;
     }
-    
+
     /**
      * 提取库存信息
      * @param wmsInventory WMS库存信息
@@ -250,9 +250,9 @@ public class StrategyBaseServiceImpl {
     protected InventoryInfo extractInventoryInfo(Map<String, Object> wmsInventory, List<String> storeCodes, String sku) {
         String skuSn = (String) wmsInventory.getOrDefault("sku_sn", null);
         BigDecimal totalAvailable = (BigDecimal) wmsInventory.getOrDefault("total_available", BigDecimal.ZERO);
-        
+
         validateInventoryFields(skuSn, totalAvailable, storeCodes, sku, wmsInventory);
-        
+
         return new InventoryInfo(skuSn, totalAvailable);
     }
 
@@ -267,7 +267,7 @@ public class StrategyBaseServiceImpl {
         boolean isLockAllocation = isLockAllocation(ruleId.toString());
         List<String> storeCodes = getStoreCodesByRuleId(ruleId);
         List<RuleStockChannelInfo> channelInfoList = getRuleStockChannelInfoList(ruleId);
-        
+
         return new BaseAllocationContext(ruleId, skuSn, totalAvailable, isLockAllocation, storeCodes, channelInfoList);
     }
 
@@ -282,7 +282,7 @@ public class StrategyBaseServiceImpl {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             return false;
         }
-        
+
         return omsChannelInventoryService.allocationInventory(
                 context.getRuleId().toString(),
                 channelInfo.getChannelId(),
@@ -301,25 +301,25 @@ public class StrategyBaseServiceImpl {
         if (!context.isLockAllocation() || totalAllocatedAmount.compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
-        
-        log.info("锁库单分货：开始处理WMS库存锁定，SKU: {}, 锁定数量: {}, 仓库: {}", 
+
+        log.info("锁库单分货：开始处理WMS库存锁定，SKU: {}, 锁定数量: {}, 仓库: {}",
                 context.getSkuSn(), totalAllocatedAmount, context.getStoreCodes());
-        
+
         Boolean lockResult = wmsInventoryService.lockInventory(
                 context.getStoreCodes(), context.getSkuSn(), totalAllocatedAmount);
-        
+
         if (!lockResult) {
-            String errorMsg = String.format("WMS库存锁定失败，SKU: %s, 锁定数量: %s", 
+            String errorMsg = String.format("WMS库存锁定失败，SKU: %s, 锁定数量: %s",
                     context.getSkuSn(), totalAllocatedAmount);
             log.error(errorMsg);
             throw new RuntimeException(errorMsg);
         }
-        
-        log.info("锁库单分货：WMS库存锁定成功，SKU: {}, 锁定数量: {}", 
+
+        log.info("锁库单分货：WMS库存锁定成功，SKU: {}, 锁定数量: {}",
                 context.getSkuSn(), totalAllocatedAmount);
-        
+
         // 同步更新oms_inventory库存
-        updateOmsInventoryForLocking(context.getSkuSn(), totalAllocatedAmount, 
+        updateOmsInventoryForLocking(context.getSkuSn(), totalAllocatedAmount,
                 context.getStoreCodes(), context.getRuleId().toString());
     }
 
@@ -330,8 +330,7 @@ public class StrategyBaseServiceImpl {
      * @param storeCodes 仓库代码列表
      * @param relationSn 关联单号
      */
-    @Transactional(rollbackFor = Exception.class)
-    protected void updateOmsInventoryForLocking(String skuSn, BigDecimal lockQuantity, 
+    protected void updateOmsInventoryForLocking(String skuSn, BigDecimal lockQuantity,
                                               List<String> storeCodes, String relationSn) {
         try {
             // 构建OMS库存对象进行预留操作
@@ -340,17 +339,17 @@ public class StrategyBaseServiceImpl {
             omsInventory.setAllocatedStock(lockQuantity.intValue());
             // 假设使用第一个仓库代码作为公司代码，实际应根据业务逻辑调整
             omsInventory.setCompanyCode(storeCodes.isEmpty() ? "DEFAULT" : storeCodes.get(0));
-            
+
             // 预留库存（减少可用库存，增加已分配库存）
             int updateResult = omsInventoryMapper.reserveStock(omsInventory);
-            
+
             if (updateResult <= 0) {
                 log.error("OMS库存预留失败，SKU: {}, 锁定数量: {}", skuSn, lockQuantity);
                 throw new RuntimeException("OMS库存预留失败，可能库存不足");
             }
-            
+
             log.info("OMS库存预留成功，SKU: {}, 锁定数量: {}", skuSn, lockQuantity);
-            
+
         } catch (Exception e) {
             log.error("OMS库存更新异常，SKU: {}, 锁定数量: {}", skuSn, lockQuantity, e);
             throw new RuntimeException("OMS库存更新异常: " + e.getMessage(), e);
@@ -360,28 +359,28 @@ public class StrategyBaseServiceImpl {
     /**
      * 处理全部商品的库存分配
      * 采用分页方式处理，避免一次性加载过多数据导致内存溢出
-     * 
+     *
      * @param ruleId 规则ID
      * @param storeCodes 仓库代码列表
      * @param processor SKU处理器函数
      */
-    protected void processAllSkus(Long ruleId, List<String> storeCodes, 
+    protected void processAllSkus(Long ruleId, List<String> storeCodes,
                                 java.util.function.BiConsumer<Long, String> processor) {
         int currentPage = 1;
         int processedCount = 0;
 
         log.info("开始分页处理全部商品，页大小: {}", DEFAULT_PAGE_SIZE);
-        
+
         while (true) {
             List<String> skuList = this.getSkusByPage(currentPage, DEFAULT_PAGE_SIZE);
             if (skuList.isEmpty()) {
                 log.info("全部商品处理完成，共处理 {} 个SKU", processedCount);
                 break;
             }
-            
+
             log.debug("处理第 {} 页，SKU数量: {}", currentPage, skuList.size());
             skuList.forEach(sku -> processor.accept(ruleId, sku));
-            
+
             processedCount += skuList.size();
             currentPage++;
         }
@@ -390,7 +389,7 @@ public class StrategyBaseServiceImpl {
     /**
      * 处理指定商品的库存分配
      * 根据规则ID获取指定的SKU列表进行处理
-     * 
+     *
      * @param ruleId 规则ID
      * @param processor SKU处理器函数
      */
@@ -398,7 +397,7 @@ public class StrategyBaseServiceImpl {
         List<String> skuList = getSkuList(ruleId);
         log.info("开始处理指定商品，SKU数量: {}", skuList.size());
         log.debug("指定商品SKU列表: {}", skuList);
-        
+
         skuList.forEach(sku -> processor.accept(ruleId, sku));
         log.info("指定商品处理完成");
     }

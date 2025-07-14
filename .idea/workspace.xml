@@ -6,23 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="9cea5969-d5f0-45b3-a6fa-d136a0f9eb67" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/OmsChannelInventoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryBatchMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/mapper/WmsInventoryBatchMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/WmsInventoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/OverAllocateStrategyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/PriorityStrategyServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/oms-modules/oms-inventory/src/main/java/com/oms/inventory/service/impl/rule/StrategyBaseServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/RuoYiJobApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/controller/SysJobLogController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/domain/SysJobLog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobLogServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/service/SysJobServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/task/RyTask.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/AbstractQuartzJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/CronUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/JobInvokeUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzDisallowConcurrentExecution.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/QuartzJobExecution.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-modules/ruoyi-job/target/classes/com/ruoyi/job/util/ScheduleUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/components/GoodsListDialog.vue" beforeDir="false" afterPath="$PROJECT_DIR$/ruoyi-ui/src/views/oms/ruleStock/components/GoodsListDialog.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -492,14 +480,7 @@
       <workItem from="1749819583173" duration="3366000" />
       <workItem from="1752057632539" duration="359000" />
       <workItem from="1752457862689" duration="3080000" />
-      <workItem from="1752476842123" duration="7893000" />
-    </task>
-    <task id="LOCAL-00118" summary="渠道管理">
-      <created>1733196127048</created>
-      <option name="number" value="00118" />
-      <option name="presentableId" value="LOCAL-00118" />
-      <option name="project" value="LOCAL" />
-      <updated>1733196127049</updated>
+      <workItem from="1752476842123" duration="9486000" />
     </task>
     <task id="LOCAL-00119" summary="渠道管理">
       <created>1733210175087</created>
@@ -837,7 +818,14 @@
       <option name="project" value="LOCAL" />
       <updated>1752480837041</updated>
     </task>
-    <option name="localTasksCounter" value="167" />
+    <task id="LOCAL-00167" summary="锁库单兼容,代码优化">
+      <created>1752486731047</created>
+      <option name="number" value="00167" />
+      <option name="presentableId" value="LOCAL-00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1752486731047</updated>
+    </task>
+    <option name="localTasksCounter" value="168" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

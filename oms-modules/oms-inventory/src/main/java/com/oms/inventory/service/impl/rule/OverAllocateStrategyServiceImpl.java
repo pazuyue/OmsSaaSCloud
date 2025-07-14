@@ -102,7 +102,8 @@ public class OverAllocateStrategyServiceImpl extends StrategyBaseServiceImpl imp
      * @param skuSn SKU序列号
      * @param totalAvailable 总可用库存
      */
-    private void processAllocateInventory(Long ruleId, String skuSn, BigDecimal totalAvailable) {
+    @Transactional(rollbackFor = Exception.class)
+    protected void processAllocateInventory(Long ruleId, String skuSn, BigDecimal totalAvailable) {
         try {
             // 1. 初始化分配上下文
             BaseAllocationContext context = initializeAllocationContext(ruleId, skuSn, totalAvailable);

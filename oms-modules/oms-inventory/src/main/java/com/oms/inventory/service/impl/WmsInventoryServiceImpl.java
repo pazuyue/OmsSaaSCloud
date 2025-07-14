@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.oms.inventory.mapper.WmsInventoryMapper;
+import com.oms.inventory.mapper.WmsInventoryBatchMapper;
 import com.oms.inventory.model.entity.WmsInventory;
 import com.oms.inventory.model.entity.WmsInventoryChangeHistory;
 import com.oms.inventory.service.IWmsInventoryService;
@@ -34,6 +35,9 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
 
     @Resource
     private IWmsInventoryChangeHistoryService wmsInventoryChangeHistoryService;
+    
+    @Resource
+    private WmsInventoryBatchMapper wmsInventoryBatchMapper;
 
     @Override
     public WmsInventory selectWmsInventoryById(Long id) {
@@ -90,8 +94,13 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
     @Override
     public Boolean lockInventory(List<String> storeCodes, String sku, BigDecimal quantity) {
         try {
-            // 调用Mapper方法锁定库存
+            // 调用Mapper方法锁定wms_inventory库存
             int result = this.baseMapper.lockInventory(storeCodes, sku, quantity);
+            
+            // 同时锁定wms_inventory_batch库存
+            int batchResult = wmsInventoryBatchMapper.lockInventory(storeCodes, sku, quantity);
+            
+            log.debug("锁库操作结果 - wms_inventory: {}, wms_inventory_batch: {}", result, batchResult);
 
             if (result > 0) {
                 // 记录WMS库存变动历史
@@ -108,8 +117,13 @@ public class WmsInventoryServiceImpl extends ServiceImpl<WmsInventoryMapper, Wms
     @Override
     public Boolean unlockInventory(List<String> storeCodes, String sku, BigDecimal quantity) {
         try {
-            // 调用Mapper方法解锁库存
+            // 调用Mapper方法解锁wms_inventory库存
             int result = this.baseMapper.unlockInventory(storeCodes, sku, quantity);
+            
+            // 同时解锁wms_inventory_batch库存
+            int batchResult = wmsInventoryBatchMapper.unlockInventory(storeCodes, sku, quantity);
+            
+            log.debug("解锁操作结果 - wms_inventory: {}, wms_inventory_batch: {}", result, batchResult);
 
             if (result > 0) {
                 // 记录WMS库存变动历史
