@@ -37,7 +37,33 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="inventoryList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="inventoryList" @selection-change="handleSelectionChange" @expand-change="handleExpandChange">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <div style="padding: 20px;">
+            <h4>批次库存详情</h4>
+            <el-table :data="props.row.batchList" v-loading="props.row.batchLoading" border>
+              <el-table-column label="批次编码" prop="batchCode" width="120"></el-table-column>
+              <el-table-column label="正品库存" prop="zpActualNumber" width="100"></el-table-column>
+              <el-table-column label="次品库存" prop="cpActualNumber" width="100"></el-table-column>
+              <el-table-column label="可用正品" prop="zpAvailableNumber" width="100"></el-table-column>
+              <el-table-column label="可用次品" prop="cpAvailableNumber" width="100"></el-table-column>
+              <el-table-column label="正品预占" prop="zpLockNumber" width="100"></el-table-column>
+              <el-table-column label="次品预占" prop="cpLockNumber" width="100"></el-table-column>
+              <el-table-column label="品牌编码" prop="brandCode" width="100"></el-table-column>
+              <el-table-column label="交易价格" prop="transactionPrice" width="100"></el-table-column>
+              <el-table-column label="修改时间" prop="modifyTime" width="150">
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div v-if="!props.row.batchList || props.row.batchList.length === 0" style="text-align: center; color: #999; padding: 20px;">
+              暂无批次库存数据
+            </div>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="虚仓编码" align="center" prop="storeCode" />
       <el-table-column label="sku" align="center" prop="skuSn" />
@@ -113,6 +139,7 @@
 
 <script>
 import { listInventory, getInventory, delInventory, addInventory, updateInventory } from "@/api/wmsInventory/wmsInventory";
+import { listInventoryBatch } from "@/api/wmsInventoryBatch/wmsInventoryBatch";
 
 export default {
   name: "Inventory",
@@ -298,6 +325,32 @@ export default {
       this.download('inventory/wmsInventory/export', {
         ...this.queryParams
       }, `inventory_${new Date().getTime()}.xlsx`)
+    },
+    /** 表格展开事件 */
+    handleExpandChange(row, expandedRows) {
+      // 如果行被展开且还没有加载批次数据
+      if (expandedRows.includes(row) && !row.batchList) {
+        // 设置加载状态
+        this.$set(row, 'batchLoading', true);
+        this.$set(row, 'batchList', []);
+        
+        // 查询批次库存数据
+        const batchParams = {
+          storeCode: row.storeCode,
+          skuSn: row.skuSn,
+          companyCode: row.companyCode
+        };
+        
+        listInventoryBatch(batchParams).then(response => {
+          this.$set(row, 'batchList', response.rows || []);
+          this.$set(row, 'batchLoading', false);
+        }).catch(error => {
+          console.error('加载批次库存数据失败:', error);
+          this.$set(row, 'batchList', []);
+          this.$set(row, 'batchLoading', false);
+          this.$modal.msgError('加载批次库存数据失败');
+        });
+      }
     }
   }
 };

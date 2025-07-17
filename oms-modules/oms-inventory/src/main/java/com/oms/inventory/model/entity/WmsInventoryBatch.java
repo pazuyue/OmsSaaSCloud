@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.ruoyi.common.core.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,68 +30,82 @@ public class WmsInventoryBatch implements Serializable {
     /**
      * 仓库编码
      */
+    @Excel(name = "虚仓编码")
     private String storeCode;
 
     /**
      * sku
      */
+    @Excel(name = "SKU")
     private String skuSn;
 
     /**
      * 正品库存：实际库存发货时减少
      */
+    @Excel(name = "正品库存")
     private Integer zpActualNumber = 0;
 
     /**
      * 次品库存：实际库存发货时减少
      */
+    @Excel(name = "次品库存")
     private Integer cpActualNumber = 0;
 
     /**
      * 正品可用库存
      */
+    @Excel(name = "可用正品库存")
     private Integer zpAvailableNumber = 0;
 
     /**
      * 次品可用库存
      */
+    @Excel(name = "可用次品库存")
     private Integer cpAvailableNumber = 0;
 
     /**
      * 正品预占库存(总)
      */
+    @Excel(name = "正品预占库存")
     private Integer zpLockNumber = 0;
 
     /**
-     * 正品预占库存
+     * 次品预占库存
      */
+    @Excel(name = "次品预占库存")
     private Integer cpLockNumber = 0;
 
     /**
      * 备注
      */
+    @Excel(name = "备注")
     private String remark;
 
     /**
      * 采购批次
      */
+    @Excel(name = "批次编码")
     private String batchCode;
 
     /**
      * 批次的成本价
      */
+    @Excel(name = "成本价")
     private BigDecimal transactionPrice = new BigDecimal(0.00);
 
     /**
      * 品牌编码
      */
+    @Excel(name = "品牌编码")
     private String brandCode;
     private Date createTime;
 
     /**
      * 修改时间
      */
+    @Excel(name = "修改时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifyTime;
+    @Excel(name = "公司编码")
     private String companyCode;
     @Version // 乐观锁版本号
     private Integer version;
