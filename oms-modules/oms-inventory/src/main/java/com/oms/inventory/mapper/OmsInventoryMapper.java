@@ -25,7 +25,7 @@ public interface OmsInventoryMapper extends BaseMapper<OmsInventory> {
             " </script>")
     int reserveStock(@Param("omsInventory") OmsInventory omsInventory);
 
-    @Select("SELECT * FROM oms_inventory WHERE sku_sn = #{skuSn}")
-    OmsInventory selectBySkuSn(@Param("skuSn") String skuSn);
+    @Select("SELECT * FROM oms_inventory WHERE company_code = #{companyCode} AND sku_sn = #{skuSn}")
+    OmsInventory selectBySkuSn(@Param("companyCode") String companyCode, @Param("skuSn") String skuSn);
 
 }

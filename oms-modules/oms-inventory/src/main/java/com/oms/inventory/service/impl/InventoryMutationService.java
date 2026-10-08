@@ -16,7 +16,6 @@ import static com.oms.inventory.service.impl.InventoryQueryService.*;
 @Service
 public class InventoryMutationService {
     @Resource private JdbcTemplate jdbc;
-    @Resource private InventoryQueryService queries;
 
     private void require(boolean valid, String message) { if (!valid) throw new IllegalArgumentException(message); }
     private String canonical(String company) {

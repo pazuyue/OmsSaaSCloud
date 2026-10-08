@@ -26,11 +26,14 @@ def main():
         assert result['rows'], 'Existing batch was not returned'
         assert all(row['storeCode'] == store and row['skuSn'] == sku and row['companyCode'].lower() == company.lower() for row in result['rows'])
         print('PASS existing batch and warehouse/SKU/company matching', flush=True)
-        for field, value in [('storeCode', store[:-1]), ('skuSn', sku[:-1]), ('companyCode', 'NO_MATCH_UI_CHECK')]:
+        for field, value in [('storeCode', store[:-1]), ('skuSn', sku[:-1])]:
             query = {**params, field: value}
             result = request(ENDPOINT + '?' + urlencode(query), token=token)
             assert result['total'] == 0, (field, 'Unexpected batch from a different inventory dimension')
             print('PASS unmatched ' + field + ' returns an empty list', flush=True)
+        result = request(ENDPOINT + '?' + urlencode({**params, 'companyCode': 'NO_MATCH_UI_CHECK'}), token=token)
+        assert result['rows'] and all(row['companyCode'].lower() == company.lower() for row in result['rows'])
+        print('PASS browser-supplied company cannot override the authenticated company', flush=True)
     finally:
         request('/auth/logout', {}, token, method='DELETE')
 

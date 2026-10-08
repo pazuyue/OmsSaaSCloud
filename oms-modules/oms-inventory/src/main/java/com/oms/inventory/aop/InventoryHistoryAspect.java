@@ -45,7 +45,7 @@ public class InventoryHistoryAspect {
         Object[] args = joinPoint.getArgs();
         log.debug("方法参数: {}", Arrays.toString(args));
         // 检查参数是否包含OmsInventory类型
-        if (args.length == 0 || !(args[1] instanceof OmsInventory)) {
+        if (args.length < 2 || !(args[1] instanceof OmsInventory)) {
             return;
         }
 
@@ -54,12 +54,13 @@ public class InventoryHistoryAspect {
         log.debug("原始参数：{}", omsInventory);
         OmsInventory beforeEntity;
         // 从数据库中获取当前库存信息
-        beforeEntity = mapper.selectBySkuSn(omsInventory.getSkuSn());
+        beforeEntity = mapper.selectBySkuSn(omsInventory.getCompanyCode(), omsInventory.getSkuSn());
         log.debug("beforeInsertOrUpdate：{}", beforeEntity);
         // 如果数据库中不存在当前库存信息，则创建一个新的OmsInventory对象
         if (beforeEntity == null){
             beforeEntity = new OmsInventory();
             beforeEntity.setSkuSn(omsInventory.getSkuSn());
+            beforeEntity.setCompanyCode(omsInventory.getCompanyCode());
         }
 
         // 解析 @RelationSn 注解
@@ -112,7 +113,7 @@ public class InventoryHistoryAspect {
         }
         log.debug("afterInsertOrUpdate：{}", beforeEntity);
         // 根据SKU编号获取变更后的库存实体
-        OmsInventory afterEntity = mapper.selectBySkuSn(beforeEntity.getSkuSn());
+        OmsInventory afterEntity = mapper.selectBySkuSn(beforeEntity.getCompanyCode(), beforeEntity.getSkuSn());
         log.debug("afterEntity：{}", afterEntity);
         // 获取方法名称，用于判断操作类型
         String methodName = joinPoint.getSignature().getName();

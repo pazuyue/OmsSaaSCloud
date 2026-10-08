@@ -120,6 +120,32 @@ npm run test:navigation
 `build-frontend.sh` 先构建到临时产物目录，成功后发布资源并最后替换入口页，保留旧版本的哈希资源供已打开的页面加载。
 日常构建不会删除 Nginx 挂载的静态目录，页面刷新后即可使用新版。
 
+## 库存页面与一致性优化
+
+仓库库存页按公司隔离，支持仓库/商品查询、仅有库存、仅看差异、正次品分组和当前页导出。
+右侧详情抽屉按需加载分页批次、预占记录与库存流水；汇总与批次不一致时显示六项数量差额，禁止直接改数。
+库存调整须选择批次、正次品、数量及原因，提交版本与请求编号；汇总、批次、OMS 数量和流水同事务更新。
+旧批次直接增删改接口已关闭，入库继续走原有入库接口。历史导入数据没有来源流水时明确显示为空，不补造来源。
+
+首次从旧备份升级时，先启动 MySQL，并在停止库存写入的情况下执行：
+
+```bash
+python3 docker/local/backup_database.py
+python3 docker/local/migrate_inventory.py
+python3 docker/local/index_inventory.py
+bash docker/local/build.sh -pl oms-modules/oms-inventory,oms-modules/oms-goods-administration,oms-modules/oms-supplychain -am
+bash docker/local/build-frontend.sh
+docker compose -f docker/local/compose.yaml up -d --force-recreate inventory goods supplychain
+python3 docker/local/verify_inventory_workspace.py
+python3 docker/local/test_inventory.py
+```
+
+迁移补充公司维度唯一键、分页索引与现有库存流水模型对应的表。编码上限为公司 50、SKU 128、仓库 64、批次 128 字符，迁移前检查已有数据长度。
+列表固定为计数、当前页查询、当前页批次汇总三个 SQL；名称按页批量查询，页面和明细每页最多 100 条。
+写入按公司/SKU 汇总行、排序后的仓库、批次加锁；分货失败向外抛出并回滚，禁止吞掉错误后报成功。
+不在持锁事务中调用远程服务，不在事务内部自动重试。调整使用幂等请求编号，预占释放按原单据及批次回溯。
+`test_inventory.py` 仅操作独立的 `inventory_workspace_test` 数据库，覆盖并发、真实死锁回滚、幂等、差异核对及大数据分页。
+
 ## 平台简介
 
 若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
