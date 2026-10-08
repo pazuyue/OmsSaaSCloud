@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['sizeName', 'companyCode', 'outSizeCode']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="尺码名称" prop="sizeName">
         <el-input
@@ -25,7 +26,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="修改时间" prop="modifyTime">
+<!--      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
           v-model="queryParams.modifyTime"
           type="date"
@@ -38,6 +39,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -87,16 +89,16 @@
 
     <el-table v-loading="loading" :data="sizeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="尺码名称" align="center" prop="sizeName" />
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="外部尺码" align="center" prop="outSizeCode" />
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="尺码名称" align="center" prop="sizeName" />
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="外部尺码" align="center" prop="outSizeCode" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -125,7 +127,7 @@
     />
 
     <!-- 添加或修改商品尺码对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="尺码名称" prop="sizeName">
           <el-input v-model="form.sizeName" placeholder="请输入尺码名称" />

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['storeCode', 'skuSn']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="虚仓编码" prop="storeCode">
         <el-input
@@ -22,6 +23,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -37,12 +39,16 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="inventoryList" @selection-change="handleSelectionChange" @expand-change="handleExpandChange">
+    <el-table v-loading="loading" :data="inventoryList" row-key="id" @selection-change="handleSelectionChange" @expand-change="handleExpandChange">
       <el-table-column type="expand">
         <template slot-scope="props">
           <div style="padding: 20px;">
             <h4>批次库存详情</h4>
-            <el-table :data="props.row.batchList" v-loading="props.row.batchLoading" border>
+            <div v-if="props.row.batchError" role="alert" class="batch-load-error">
+              <span>批次库存加载失败，请重试。</span>
+              <el-button type="text" icon="el-icon-refresh" @click="loadInventoryBatches(props.row)">重新加载</el-button>
+            </div>
+            <el-table :data="props.row.batchList" v-loading="props.row.batchLoading" :empty-text="props.row.batchLoading ? '正在加载批次库存…' : props.row.batchError ? '加载失败' : '暂无批次库存数据'" border>
               <el-table-column label="批次编码" prop="batchCode" width="120"></el-table-column>
               <el-table-column label="正品库存" prop="zpActualNumber" width="100"></el-table-column>
               <el-table-column label="次品库存" prop="cpActualNumber" width="100"></el-table-column>
@@ -58,9 +64,6 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div v-if="!props.row.batchList || props.row.batchList.length === 0" style="text-align: center; color: #999; padding: 20px;">
-              暂无批次库存数据
-            </div>
           </div>
         </template>
       </el-table-column>
@@ -328,30 +331,33 @@ export default {
     },
     /** 表格展开事件 */
     handleExpandChange(row, expandedRows) {
-      // 如果行被展开且还没有加载批次数据
-      if (expandedRows.includes(row) && !row.batchList) {
-        // 设置加载状态
-        this.$set(row, 'batchLoading', true);
-        this.$set(row, 'batchList', []);
-        
-        // 查询批次库存数据
-        const batchParams = {
-          storeCode: row.storeCode,
-          skuSn: row.skuSn,
-          companyCode: row.companyCode
-        };
-        
-        listInventoryBatch(batchParams).then(response => {
-          this.$set(row, 'batchList', response.rows || []);
-          this.$set(row, 'batchLoading', false);
-        }).catch(error => {
-          console.error('加载批次库存数据失败:', error);
-          this.$set(row, 'batchList', []);
-          this.$set(row, 'batchLoading', false);
-          this.$modal.msgError('加载批次库存数据失败');
-        });
+      if (expandedRows.includes(row) && !row.batchLoaded) {
+        this.loadInventoryBatches(row);
       }
+    },
+    loadInventoryBatches(row) {
+      if (row.batchLoading) return;
+      this.$set(row, 'batchLoading', true);
+      this.$set(row, 'batchError', false);
+      this.$set(row, 'batchList', []);
+      return listInventoryBatch({
+        storeCode: row.storeCode,
+        skuSn: row.skuSn,
+        companyCode: row.companyCode
+      }).then(response => {
+        this.$set(row, 'batchList', response.rows || []);
+        this.$set(row, 'batchLoaded', true);
+      }).catch(() => {
+        this.$set(row, 'batchLoaded', false);
+        this.$set(row, 'batchError', true);
+      }).finally(() => {
+        this.$set(row, 'batchLoading', false);
+      });
     }
   }
 };
 </script>
+
+<style scoped>
+.batch-load-error { display: flex; align-items: center; gap: 16px; color: #b85b45; font-size: 13px; margin-bottom: 12px; }
+</style>

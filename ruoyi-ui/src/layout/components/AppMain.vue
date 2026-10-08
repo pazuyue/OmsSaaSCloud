@@ -1,5 +1,6 @@
 <template>
   <section class="app-main">
+    <page-heading />
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view v-if="!$route.meta.link" :key="key" />
@@ -10,11 +11,12 @@
 </template>
 
 <script>
+import PageHeading from './PageHeading'
 import iframeToggle from "./IframeToggle/index"
 
 export default {
   name: 'AppMain',
-  components: { iframeToggle },
+  components: { iframeToggle, PageHeading },
   computed: {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews

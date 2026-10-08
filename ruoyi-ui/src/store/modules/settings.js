@@ -2,10 +2,12 @@ import defaultSettings from '@/settings'
 
 const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dynamicTitle } = defaultSettings
 
-const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
+let storageSetting = {}
+try { storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || {} } catch (_) { /* Use defaults if stored preferences are invalid. */ }
+if (storageSetting.layoutVersion !== 2) storageSetting = {}
 const state = {
   title: '',
-  theme: storageSetting.theme || '#409EFF',
+  theme: '#0071e3',
   sideTheme: storageSetting.sideTheme || sideTheme,
   showSettings: showSettings,
   topNav: storageSetting.topNav === undefined ? topNav : storageSetting.topNav,

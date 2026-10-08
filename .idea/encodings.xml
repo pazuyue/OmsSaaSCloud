@@ -11,8 +11,12 @@
     <file url="file://$PROJECT_DIR$/oms-modules/oms-inventory/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/oms-modules/oms-supplychain/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/oms-modules/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/oms-modules/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-api/ruoyi-api-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-auth/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-auth/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-core/src/main/java" charset="UTF-8" />
@@ -20,15 +24,21 @@
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-datascope/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-datasource/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-log/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-redis/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-seata/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-security/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-sensitive/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-common/ruoyi-common-swagger/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-gateway/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-modules/ruoyi-file/src/main/java" charset="UTF-8" />
@@ -39,8 +49,14 @@
     <file url="file://$PROJECT_DIR$/ruoyi-modules/ruoyi-job/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-modules/ruoyi-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-modules/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-modules/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ruoyi-visual/ruoyi-monitor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-visual/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ruoyi-visual/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

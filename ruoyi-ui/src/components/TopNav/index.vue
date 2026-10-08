@@ -1,195 +1,133 @@
 <template>
-  <el-menu
-    :default-active="activeMenu"
-    mode="horizontal"
-    @select="handleSelect"
-  >
-    <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber">
-        <svg-icon
-        v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
-        :icon-class="item.meta.icon"/>
-        {{ item.meta.title }}
-      </el-menu-item>
-    </template>
-
-    <!-- 顶部菜单超出数量折叠 -->
-    <el-submenu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber">
-      <template slot="title">更多菜单</template>
-      <template v-for="(item, index) in topMenus">
-        <el-menu-item
-          :index="item.path"
-          :key="index"
-          v-if="index >= visibleNumber">
-          <svg-icon
-            v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
-            :icon-class="item.meta.icon"/>
-          {{ item.meta.title }}
-        </el-menu-item>
-      </template>
-    </el-submenu>
-  </el-menu>
+  <nav class="workspace-nav" aria-label="主导航">
+    <div class="nav-measure" aria-hidden="true">
+      <span v-for="item in modules" :key="item.path" ref="labels">{{ item.meta.title }}</span>
+    </div>
+    <button
+      v-for="item in visibleMenus"
+      :key="item.path"
+      type="button"
+      class="module-tab"
+      :class="{ 'is-active': current && current.path === item.path }"
+      :aria-current="current && current.path === item.path ? 'page' : null"
+      @click="select(item)"
+    >
+      {{ item.meta.title }}
+    </button>
+    <el-dropdown v-if="overflowMenus.length" trigger="click" @command="select">
+      <button
+        type="button"
+        class="module-tab more-modules"
+        :class="{ 'is-active': overflowActive }"
+        aria-label="更多业务模块"
+      >
+        {{ overflowActive ? current.meta.title : '更多' }} <i class="el-icon-arrow-down" />
+      </button>
+      <el-dropdown-menu
+        slot="dropdown"
+        class="module-dropdown"
+      ><el-dropdown-item
+        v-for="item in overflowMenus"
+        :key="item.path"
+        :command="item"
+        :class="{ 'is-current': current && current.path === item.path }"
+      >{{ item.meta.title }}</el-dropdown-item></el-dropdown-menu>
+    </el-dropdown>
+  </nav>
 </template>
-
 <script>
-import { constantRoutes } from "@/router";
-
-// 隐藏侧边栏路由
-const hideList = ['/index', '/user/profile'];
-
+import { workspaceModules, activeModule, menuLeaves, menuLocation } from '@/utils/workspaceNavigation'
 export default {
-  data() {
-    return {
-      // 顶部栏初始数
-      visibleNumber: 5,
-      // 当前激活菜单的 index
-      currentIndex: undefined
-    };
-  },
+  data: () => ({ visibleNumber: 6, lastVisited: {}, observer: null, historyReady: false }),
   computed: {
-    theme() {
-      return this.$store.state.settings.theme;
+    modules() {
+      return workspaceModules(this.$store.state.permission.topbarRouters)
     },
-    // 顶部显示菜单
-    topMenus() {
-      let topMenus = [];
-      this.routers.map((menu) => {
-        if (menu.hidden !== true) {
-          // 兼容顶部栏一级菜单内部跳转
-          if (menu.path === "/") {
-            topMenus.push(menu.children[0]);
-          } else {
-            topMenus.push(menu);
-          }
-        }
-      });
-      return topMenus;
+    current() {
+      return activeModule(this.modules, this.$route.meta.activeMenu || this.$route.path)
     },
-    // 所有的路由信息
-    routers() {
-      return this.$store.state.permission.topbarRouters;
+    visibleMenus() {
+      return this.modules.slice(0, this.visibleNumber)
     },
-    // 设置子路由
-    childrenMenus() {
-      var childrenMenus = [];
-      this.routers.map((router) => {
-        for (var item in router.children) {
-          if (router.children[item].parentPath === undefined) {
-            if(router.path === "/") {
-              router.children[item].path = "/" + router.children[item].path;
-            } else {
-              if(!this.ishttp(router.children[item].path)) {
-                router.children[item].path = router.path + "/" + router.children[item].path;
-              }
-            }
-            router.children[item].parentPath = router.path;
-          }
-          childrenMenus.push(router.children[item]);
-        }
-      });
-      return constantRoutes.concat(childrenMenus);
+    overflowMenus() {
+      return this.modules.slice(this.visibleNumber)
     },
-    // 默认激活的菜单
-    activeMenu() {
-      const path = this.$route.path;
-      let activePath = path;
-      if (path !== undefined && path.lastIndexOf("/") > 0 && hideList.indexOf(path) === -1) {
-        const tmpPath = path.substring(1, path.length);
-        activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
-        if (!this.$route.meta.link) {
-          this.$store.dispatch('app/toggleSideBarHide', false);
-        }
-      } else if(!this.$route.children) {
-        activePath = path;
-        this.$store.dispatch('app/toggleSideBarHide', true);
-      }
-      this.activeRoutes(activePath);
-      return activePath;
+    overflowActive() {
+      return this.current && this.overflowMenus.some((item) => item.path === this.current.path)
     },
-  },
-  beforeMount() {
-    window.addEventListener('resize', this.setVisibleNumber)
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.setVisibleNumber)
-  },
-  mounted() {
-    this.setVisibleNumber();
-  },
-  methods: {
-    // 根据宽度计算设置显示栏数
-    setVisibleNumber() {
-      const width = document.body.getBoundingClientRect().width / 3;
-      this.visibleNumber = parseInt(width / 85);
-    },
-    // 菜单选择事件
-    handleSelect(key, keyPath) {
-      this.currentIndex = key;
-      const route = this.routers.find(item => item.path === key);
-      if (this.ishttp(key)) {
-        // http(s):// 路径新窗口打开
-        window.open(key, "_blank");
-      } else if (!route || !route.children) {
-        // 没有子路由路径内部打开
-        const routeMenu = this.childrenMenus.find(item => item.path === key);
-        if (routeMenu && routeMenu.query) {
-          let query = JSON.parse(routeMenu.query);
-          this.$router.push({ path: key, query: query });
-        } else {
-          this.$router.push({ path: key });
-        }
-        this.$store.dispatch('app/toggleSideBarHide', true);
-      } else {
-        // 显示左侧联动菜单
-        this.activeRoutes(key);
-        this.$store.dispatch('app/toggleSideBarHide', false);
-      }
-    },
-    // 当前激活的路由
-    activeRoutes(key) {
-      var routes = [];
-      if (this.childrenMenus && this.childrenMenus.length > 0) {
-        this.childrenMenus.map((item) => {
-          if (key == item.parentPath || (key == "index" && "" == item.path)) {
-            routes.push(item);
-          }
-        });
-      }
-      if(routes.length > 0) {
-        this.$store.commit("SET_SIDEBAR_ROUTERS", routes);
-      } else {
-        this.$store.dispatch('app/toggleSideBarHide', true);
-      }
-    },
-    ishttp(url) {
-      return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
+    storageKey() {
+      return 'oms-module-history:' + this.$store.state.user.id
     }
   },
-};
+  watch: {
+    '$route.fullPath': {
+      immediate: true,
+      handler() {
+        this.syncNavigation()
+      }
+    },
+    modules() {
+      this.syncNavigation()
+      this.$nextTick(this.measure)
+    }
+  },
+  mounted() {
+    try {
+      this.lastVisited = JSON.parse(sessionStorage.getItem(this.storageKey)) || {}
+    } catch (_) {
+      this.lastVisited = {}
+    }
+    this.historyReady = true
+    this.syncNavigation()
+    this.observer = new ResizeObserver(this.measure)
+    this.observer.observe(this.$el)
+    this.measure()
+  },
+  beforeDestroy() {
+    if (this.observer) this.observer.disconnect()
+  },
+  methods: {
+    measure() {
+      const widths = (this.$refs.labels || []).map((label) => label.getBoundingClientRect().width + 6)
+      const available = this.$el.clientWidth
+      if (widths.reduce((sum, width) => sum + width, 0) <= available) {
+        this.visibleNumber = widths.length
+        return
+      }
+      let used = 100
+      let count = 0
+      for (const width of widths) {
+        if (used + width > available) break
+        used += width
+        count++
+      }
+      this.visibleNumber = count
+    },
+    syncNavigation() {
+      const children = this.current ? this.current.children : []
+      this.$store.commit('SET_SIDEBAR_ROUTERS', children)
+      this.$store.dispatch('app/toggleSideBarHide', !children.length)
+      if (this.current && menuLeaves(this.current).some((item) => item.path === this.$route.path)) {
+        this.lastVisited[this.current.path] = this.$route.fullPath
+        try {
+          if (this.historyReady) sessionStorage.setItem(this.storageKey, JSON.stringify(this.lastVisited))
+        } catch (_) {
+          /* Storage may be unavailable. */
+        }
+      }
+    },
+    select(menu) {
+      const leaves = menuLeaves(menu)
+      const previous = this.lastVisited[menu.path]
+      const target = leaves.find((item) => previous && item.path === previous.split('?')[0]) || leaves[0]
+      if (!target) return
+      if (/^https?:\/\//.test(target.path)) window.open(target.path, '_blank', 'noopener,noreferrer')
+      else {
+        this.$router.push(
+          previous && target.path === previous.split('?')[0] ? previous : menuLocation(target)
+        )
+      }
+    }
+  }
+}
 </script>
-
-<style lang="scss">
-.topmenu-container.el-menu--horizontal > .el-menu-item {
-  float: left;
-  height: 50px !important;
-  line-height: 50px !important;
-  color: #999093 !important;
-  padding: 0 5px !important;
-  margin: 0 10px !important;
-}
-
-.topmenu-container.el-menu--horizontal > .el-menu-item.is-active, .el-menu--horizontal > .el-submenu.is-active .el-submenu__title {
-  border-bottom: 2px solid #{'var(--theme)'} !important;
-  color: #303133;
-}
-
-/* submenu item */
-.topmenu-container.el-menu--horizontal > .el-submenu .el-submenu__title {
-  float: left;
-  height: 50px !important;
-  line-height: 50px !important;
-  color: #999093 !important;
-  padding: 0 5px !important;
-  margin: 0 10px !important;
-}
-</style>

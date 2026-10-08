@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['colorName', 'outColorCode']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="颜色" prop="colorName">
         <el-input
@@ -22,6 +23,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -71,10 +73,10 @@
 
     <el-table v-loading="loading" :data="colorList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
-      <el-table-column label="颜色" align="center" prop="colorName" />
-      <el-table-column label="外部颜色编码" align="center" prop="outColorCode" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column min-width="120" label="${comment}" align="center" prop="id" />
+      <el-table-column min-width="120" label="颜色" align="center" prop="colorName" />
+      <el-table-column min-width="120" label="外部颜色编码" align="center" prop="outColorCode" />
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -103,7 +105,7 @@
     />
 
     <!-- 添加或修改商品颜色对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="颜色" prop="colorName">
           <el-input v-model="form.colorName" placeholder="请输入颜色" />

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['ownerCode', 'ownerName', 'isSync']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="货主编码" prop="ownerCode">
         <el-input
@@ -27,7 +28,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="是否启用" prop="isEnable">
+      <el-form-item class="filter-advanced" label="是否启用" prop="isEnable">
         <el-select v-model="queryParams.isEnable" placeholder="是否启用" clearable>
           <el-option
             v-for="dict in dict.type.oms_yes_no"
@@ -37,7 +38,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -50,6 +51,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -99,27 +101,27 @@
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="货主编码" align="center" prop="ownerCode" />
-      <el-table-column label="货主名称" align="center" prop="ownerName" />
-      <el-table-column label="实仓编码" align="center" prop="realStoreCode" />
-      <el-table-column label="是否需同步商品资料" align="center" prop="isSync">
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="货主编码" align="center" prop="ownerCode" />
+      <el-table-column min-width="120" label="货主名称" align="center" prop="ownerName" />
+      <el-table-column min-width="120" label="实仓编码" align="center" prop="realStoreCode" />
+      <el-table-column min-width="120" label="是否需同步商品资料" align="center" prop="isSync">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isSync"/>
         </template>
       </el-table-column>
-      <el-table-column label="是否启用" align="center" prop="isEnable">
+      <el-table-column min-width="120" label="是否启用" align="center" prop="isEnable">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isEnable"/>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -148,7 +150,7 @@
     />
 
     <!-- 添加或修改货主基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="货主编码" prop="ownerCode">
           <el-input v-model="form.ownerCode" placeholder="请输入编主编码" />

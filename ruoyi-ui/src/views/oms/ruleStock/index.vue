@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['enable', 'ruleType', 'allocationType']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="是否启用" prop="enable">
         <el-select v-model="queryParams.enable" placeholder="请选择是否启用" clearable>
@@ -31,7 +32,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="分货单编号" prop="ruleCode">
+      <el-form-item class="filter-advanced" label="分货单编号" prop="ruleCode">
         <el-input
           v-model="queryParams.ruleCode"
           placeholder="请输入分货单编号"
@@ -39,7 +40,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="分货单名称" prop="ruleName">
+      <el-form-item class="filter-advanced" label="分货单名称" prop="ruleName">
         <el-input
           v-model="queryParams.ruleName"
           placeholder="请输入分货单名称"
@@ -47,7 +48,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item class="filter-advanced" label="状态" prop="status">
         <el-input
           v-model="queryParams.status"
           placeholder="请输入状态"
@@ -60,6 +61,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -109,25 +111,25 @@
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="是否启用" align="center" prop="enable">
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="是否启用" align="center" prop="enable">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.enable"/>
         </template>
       </el-table-column>
-      <el-table-column label="分货单类型" align="center" prop="ruleType">
+      <el-table-column min-width="120" label="分货单类型" align="center" prop="ruleType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.inventory_allocation_rule_type" :value="scope.row.ruleType"/>
         </template>
       </el-table-column>
-      <el-table-column label="分货类型" align="center" prop="allocationType">
+      <el-table-column min-width="120" label="分货类型" align="center" prop="allocationType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_warehouse_allocation_type" :value="scope.row.allocationType"/>
         </template>
       </el-table-column>
-      <el-table-column label="分货单编号" align="center" prop="ruleCode" />
-      <el-table-column label="分货单名称" align="center" prop="ruleName" />
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column min-width="120" label="分货单编号" align="center" prop="ruleCode" />
+      <el-table-column min-width="120" label="分货单名称" align="center" prop="ruleName" />
+      <el-table-column min-width="120" label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.inventory_allocation_status" :value="scope.row.status"/>
         </template>
@@ -144,12 +146,12 @@
           <span v-else>---</span>
         </template>
       </el-table-column>
-      <el-table-column label="分货范围" align="center" prop="ruleRange">
+      <el-table-column min-width="120" label="分货范围" align="center" prop="ruleRange">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.goods_range" :value="scope.row.ruleRange"/>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column min-width="120" label="备注" align="center" prop="remark" />
       <el-table-column label="最新分货时间" align="center" prop="lastUpdateTime" width="180">
         <template slot-scope="scope">
           <span v-if="scope.row.lastUpdateTime">{{ parseTime(scope.row.lastUpdateTime, '{y}-{m}-{d}') }}</span>
@@ -180,15 +182,15 @@
           <span v-else>---</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核人姓名" align="center" prop="reviewerUserName" />
-      <el-table-column label="创建人姓名" align="center" prop="createUserName" />
+      <el-table-column min-width="120" label="审核人姓名" align="center" prop="reviewerUserName" />
+      <el-table-column min-width="120" label="创建人姓名" align="center" prop="createUserName" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span v-if="scope.row.modifyTime">{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
           <span v-else>---</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width" :fixed="$store.state.app.device === 'mobile' ? false : 'right'">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -244,7 +246,7 @@
     />
 
     <!-- 添加或修改分货单基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="是否启用" prop="enable">
           <el-radio-group v-model="form.enable">

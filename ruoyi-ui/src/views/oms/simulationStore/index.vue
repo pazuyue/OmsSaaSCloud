@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['status', 'wmsSimulationCode', 'wmsSimulationName']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="是否开启" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择是否开启" clearable>
@@ -27,7 +28,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="货主编码" prop="ownerCode">
+      <el-form-item class="filter-advanced" label="货主编码" prop="ownerCode">
         <el-input
           v-model="queryParams.ownerCode"
           placeholder="请输入货主编码"
@@ -35,7 +36,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="货主名称" prop="ownerName">
+      <el-form-item class="filter-advanced" label="货主名称" prop="ownerName">
         <el-input
           v-model="queryParams.ownerName"
           placeholder="请输入货主名称"
@@ -43,7 +44,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -56,6 +57,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -105,17 +107,17 @@
 
     <el-table v-loading="loading" :data="simulationStoreInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="是否开启" align="center" prop="status">
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="是否开启" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="虚仓编码" align="center" prop="wmsSimulationCode" />
-      <el-table-column label="虚仓名称" align="center" prop="wmsSimulationName" />
-      <el-table-column label="货主编码" align="center" prop="ownerCode" />
-      <el-table-column label="货主名称" align="center" prop="ownerName" />
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="虚仓编码" align="center" prop="wmsSimulationCode" />
+      <el-table-column min-width="120" label="虚仓名称" align="center" prop="wmsSimulationName" />
+      <el-table-column min-width="120" label="货主编码" align="center" prop="ownerCode" />
+      <el-table-column min-width="120" label="货主名称" align="center" prop="ownerName" />
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
@@ -126,7 +128,7 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -155,7 +157,7 @@
     />
 
     <!-- 添加或修改虚仓对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="是否开启" prop="status">
           <el-radio-group v-model="form.status">

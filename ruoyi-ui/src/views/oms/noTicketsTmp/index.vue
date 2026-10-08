@@ -2,7 +2,8 @@
   <el-card class="app-container" style="margin: 5px">
     <!-- 用户导入对话框 -->
     <el-dialog :title="noTicketsTmpTitle" :visible.sync="noTicketsTmpOpen" width="80%" append-to-body @close="handleClose">
-      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <filter-panel :model="queryParams" :primary-fields="['skuSn', 'barcodeSn', 'goodsSn']" v-show="showSearch">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
 
         <el-form-item label="sku_sn" prop="skuSn">
           <el-input
@@ -28,7 +29,7 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="产品名称" prop="goodsName">
+        <el-form-item class="filter-advanced" label="产品名称" prop="goodsName">
           <el-input
             v-model="queryParams.goodsName"
             placeholder="请输入产品名称"
@@ -41,6 +42,7 @@
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
+    </filter-panel>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
@@ -90,22 +92,22 @@
 
       <el-table v-loading="loading" :data="tmpList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="ID" align="center" prop="id" />
-        <el-table-column label="入库单号" align="center" prop="noSn" />
-        <el-table-column label="sku_sn" align="center" prop="skuSn" />
-        <el-table-column label="条形码" align="center" prop="barcodeSn" />
-        <el-table-column label="货号" align="center" prop="goodsSn" />
-        <el-table-column label="产品名称" align="center" prop="goodsName" />
-        <el-table-column label="采购价格" align="center" prop="purchasePrice" />
-        <el-table-column label="计划入库-正品数量" align="center" prop="zpNumberExpected" />
-        <el-table-column label="公司编码" align="center" prop="companyCode" />
-        <el-table-column label="错误信息" align="center" prop="errorInfo" />
+        <el-table-column min-width="120" label="ID" align="center" prop="id" />
+        <el-table-column min-width="120" label="入库单号" align="center" prop="noSn" />
+        <el-table-column min-width="120" label="sku_sn" align="center" prop="skuSn" />
+        <el-table-column min-width="120" label="条形码" align="center" prop="barcodeSn" />
+        <el-table-column min-width="120" label="货号" align="center" prop="goodsSn" />
+        <el-table-column min-width="120" label="产品名称" align="center" prop="goodsName" />
+        <el-table-column min-width="120" label="采购价格" align="center" prop="purchasePrice" />
+        <el-table-column min-width="120" label="计划入库-正品数量" align="center" prop="zpNumberExpected" />
+        <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
+        <el-table-column min-width="120" label="错误信息" align="center" prop="errorInfo" />
         <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -140,7 +142,7 @@
 
 
       <!-- 添加或修改入库通知单明细-未送审对话框 -->
-      <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
         <el-form ref="form" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="入库单号" prop="noSn">
             <el-input v-model="form.noSn" placeholder="请输入入库单号" readonly />

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['companyCode', 'name', 'pid']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="公司" prop="companyCode">
         <el-input
@@ -25,7 +26,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -33,7 +34,7 @@
                         placeholder="请选择修改时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="级别" prop="level">
+      <el-form-item class="filter-advanced" label="级别" prop="level">
         <el-input
           v-model="queryParams.level"
           placeholder="请输入级别"
@@ -46,6 +47,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -89,17 +91,17 @@
                :default-expand-all="isExpandAll"
                :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                @selection-change="handleSelectionChange">
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="公司" align="center" prop="companyCode" />
-      <el-table-column label="分类名称" align="center" prop="name" />
-      <el-table-column label="父ID" align="center" prop="pid" />
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="公司" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="分类名称" align="center" prop="name" />
+      <el-table-column min-width="120" label="父ID" align="center" prop="pid" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="级别" align="center" prop="level" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column min-width="120" label="级别" align="center" prop="level" />
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -135,7 +137,7 @@
     />
 
     <!-- 添加或修改商品类目对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="上级分类" prop="pid">
           <treeselect v-model="form.pid" :options="categoryOptions" :normalizer="normalizer" placeholder="选择上级部门" />

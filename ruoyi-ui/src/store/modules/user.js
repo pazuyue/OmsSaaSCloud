@@ -6,6 +6,7 @@ const user = {
     token: getToken(),
     id: '',
     deptId:'',
+    companyCode: '',
     name: '',
     avatar: '',
     roles: [],
@@ -29,6 +30,7 @@ const user = {
     SET_DEPT: (state, dept) => {
       state.dept = dept
     },
+    SET_COMPANY: (state, companyCode) => { state.companyCode = companyCode || '' },
     SET_NAME: (state, name) => {
       state.name = name
     },
@@ -79,6 +81,7 @@ const user = {
           commit('SET_DEPT',user.dept)
           commit('SET_DEPTID',user.deptId)
           commit('SET_ID', user.userId)
+          commit('SET_COMPANY', user.loginCompanyCode)
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
           resolve(res)

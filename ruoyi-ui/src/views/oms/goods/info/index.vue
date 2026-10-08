@@ -1,34 +1,19 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['goodsName', 'skuSn', 'categoryCode']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="sku" prop="skuSn">
-        <el-input
-          v-model="queryParams.skuSn"
-          placeholder="请输入sku"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="货号" prop="goodsSn">
-        <el-input
-          v-model="queryParams.goodsSn"
-          placeholder="请输入货号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="条形码" prop="barcodeSn">
-        <el-input
-          v-model="queryParams.barcodeSn"
-          placeholder="请输入条形码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="商品名称" prop="goodsName">
         <el-input
           v-model="queryParams.goodsName"
           placeholder="请输入商品名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="SKU" prop="skuSn">
+        <el-input
+          v-model="queryParams.skuSn"
+          placeholder="请输入 SKU"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -41,7 +26,26 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="颜色编码" prop="colorCode">
+
+      <el-form-item class="filter-advanced" label="货号" prop="goodsSn">
+        <el-input
+          v-model="queryParams.goodsSn"
+          placeholder="请输入货号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item class="filter-advanced" label="条形码" prop="barcodeSn">
+        <el-input
+          v-model="queryParams.barcodeSn"
+          placeholder="请输入条形码"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+
+
+      <el-form-item class="filter-advanced" label="颜色编码" prop="colorCode">
         <el-input
           v-model="queryParams.colorCode"
           placeholder="请输入颜色编码"
@@ -49,7 +53,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="尺码" prop="sizeCode">
+      <el-form-item class="filter-advanced" label="尺码" prop="sizeCode">
         <el-input
           v-model="queryParams.sizeCode"
           placeholder="请输入尺码"
@@ -57,7 +61,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="市场价" prop="marketPrice">
+      <el-form-item class="filter-advanced" label="市场价" prop="marketPrice">
         <el-input
           v-model="queryParams.marketPrice"
           placeholder="请输入市场价"
@@ -65,7 +69,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="有效期" prop="validity">
+      <el-form-item class="filter-advanced" label="有效期" prop="validity">
         <el-input
           v-model="queryParams.validity"
           placeholder="请输入有效期"
@@ -73,7 +77,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="商品描述" prop="goodsDesc">
+      <el-form-item class="filter-advanced" label="商品描述" prop="goodsDesc">
         <el-input
           v-model="queryParams.goodsDesc"
           placeholder="请输入商品描述"
@@ -81,7 +85,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否福袋" prop="isFd">
+      <el-form-item class="filter-advanced" label="是否福袋" prop="isFd">
         <el-select v-model="queryParams.isFd" placeholder="请选择是否福袋" clearable>
           <el-option
             v-for="dict in dict.type.oms_yes_no"
@@ -91,7 +95,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="是否赠品" prop="isGift">
+      <el-form-item class="filter-advanced" label="是否赠品" prop="isGift">
         <el-select v-model="queryParams.isGift" placeholder="请选择是否赠品" clearable>
           <el-option
             v-for="dict in dict.type.oms_yes_no"
@@ -101,7 +105,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="公司编码" prop="companyCode">
+      <el-form-item class="filter-advanced" label="公司编码" prop="companyCode">
         <el-input
           v-model="queryParams.companyCode"
           placeholder="请输入公司编码"
@@ -109,7 +113,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
           v-model="queryParams.modifyTime"
           type="date"
@@ -117,7 +121,7 @@
           placeholder="请选择修改时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="是否套装" prop="isPackage">
+      <el-form-item class="filter-advanced" label="是否套装" prop="isPackage">
         <el-select v-model="queryParams.isPackage" placeholder="请选择是否套装" clearable>
           <el-option
             v-for="dict in dict.type.oms_yes_no"
@@ -132,6 +136,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
 <!--      <el-col :span="1.5">
@@ -186,45 +191,45 @@
           v-hasPermi="['goods:info:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="sku" align="center" prop="skuSn" />
-      <el-table-column label="货号" align="center" prop="goodsSn" />
-      <el-table-column label="条形码" align="center" prop="barcodeSn" />
-      <el-table-column label="商品名称" align="center" prop="goodsName" />
-      <el-table-column label="类目" align="center" prop="categoryCode" />
-      <el-table-column label="颜色编码" align="center" prop="colorCode" />
-      <el-table-column label="尺码" align="center" prop="sizeCode" />
-      <el-table-column label="市场价" align="center" prop="marketPrice" />
-      <el-table-column label="有效期" align="center" prop="validity" />
-      <el-table-column label="商品描述" align="center" prop="goodsDesc" />
-      <el-table-column label="是否福袋" align="center" prop="isFd">
+      <el-table-column v-if="columns[0].visible" min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column show-overflow-tooltip v-if="columns[1].visible" min-width="160" label="SKU" align="left" prop="skuSn" />
+      <el-table-column show-overflow-tooltip v-if="columns[2].visible" min-width="160" label="货号" align="left" prop="goodsSn" />
+      <el-table-column show-overflow-tooltip v-if="columns[3].visible" min-width="160" label="条形码" align="left" prop="barcodeSn" />
+      <el-table-column show-overflow-tooltip v-if="columns[4].visible" min-width="200" label="商品名称" align="left" prop="goodsName" />
+      <el-table-column v-if="columns[5].visible" min-width="120" label="类目" align="center" prop="categoryCode" />
+      <el-table-column v-if="columns[6].visible" min-width="120" label="颜色编码" align="center" prop="colorCode" />
+      <el-table-column v-if="columns[7].visible" min-width="120" label="尺码" align="center" prop="sizeCode" />
+      <el-table-column v-if="columns[8].visible" min-width="120" label="市场价" align="right" prop="marketPrice" :formatter="formatPrice" />
+      <el-table-column v-if="columns[9].visible" min-width="120" label="有效期" align="center" prop="validity" />
+      <el-table-column v-if="columns[10].visible" min-width="120" label="商品描述" align="center" prop="goodsDesc" />
+      <el-table-column v-if="columns[11].visible" min-width="120" label="是否福袋" align="center" prop="isFd">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isFd"/>
         </template>
       </el-table-column>
-      <el-table-column label="是否赠品" align="center" prop="isGift">
+      <el-table-column v-if="columns[12].visible" min-width="120" label="是否赠品" align="center" prop="isGift">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isGift"/>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
+      <el-table-column v-if="columns[13].visible" min-width="120" label="公司编码" align="center" prop="companyCode" />
+      <el-table-column v-if="columns[14].visible" label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否套装" align="center" prop="isPackage">
+      <el-table-column v-if="columns[15].visible" min-width="120" label="是否套装" align="center" prop="isPackage">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.isPackage"/>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="description" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column v-if="columns[16].visible" min-width="120" label="备注" align="center" prop="description" />
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -253,10 +258,11 @@
     />
 
     <!-- 添加或修改产品信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="sku" prop="skuSn">
-          <el-input v-model="form.skuSn" placeholder="请输入sku" />
+        <div class="form-section-heading">基础资料</div>
+        <el-form-item label="SKU" prop="skuSn">
+          <el-input v-model="form.skuSn" placeholder="请输入 SKU" />
         </el-form-item>
         <el-form-item label="货号" prop="goodsSn">
           <el-input v-model="form.goodsSn" placeholder="请输入货号" />
@@ -270,6 +276,7 @@
         <el-form-item label="类目" prop="categoryCode">
           <el-input v-model="form.categoryCode" placeholder="请输入类目" />
         </el-form-item>
+        <div class="form-section-heading">商品规格与属性</div>
         <el-form-item label="颜色编码" prop="colorCode">
           <el-input v-model="form.colorCode" placeholder="请输入颜色编码" />
         </el-form-item>
@@ -363,7 +370,7 @@
     <el-dialog :title="upload.title" :visible.sync="upload.exportOpen" width="80%" append-to-body>
       <el-table v-loading="loading" :data="this.upload.exportInfoList">
         <el-table-column label="ID" align="center" prop="id" />
-        <el-table-column label="sku" align="center" prop="skuSn" />
+        <el-table-column label="SKU" align="center" prop="skuSn" />
         <el-table-column label="货号" align="center" prop="goodsSn" />
         <el-table-column label="条形码" align="center" prop="barcodeSn" />
         <el-table-column label="商品名称" align="center" prop="goodsName" />
@@ -419,6 +426,25 @@ export default {
   dicts: ['oms_yes_no'],
   data() {
     return {
+      columns: [
+        { key: 0, label: "ID", visible: false },
+        { key: 1, label: "sku", visible: true },
+        { key: 2, label: "货号", visible: true },
+        { key: 3, label: "条形码", visible: true },
+        { key: 4, label: "商品名称", visible: true },
+        { key: 5, label: "类目", visible: false },
+        { key: 6, label: "颜色编码", visible: true },
+        { key: 7, label: "尺码", visible: true },
+        { key: 8, label: "市场价", visible: true },
+        { key: 9, label: "有效期", visible: false },
+        { key: 10, label: "商品描述", visible: false },
+        { key: 11, label: "是否福袋", visible: false },
+        { key: 12, label: "是否赠品", visible: false },
+        { key: 13, label: "公司编码", visible: false },
+        { key: 14, label: "修改时间", visible: true },
+        { key: 15, label: "是否套装", visible: false },
+        { key: 16, label: "备注", visible: false }
+      ],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -542,6 +568,9 @@ export default {
     this.getList();
   },
   methods: {
+    formatPrice(row, column, value) {
+      return value === null || value === undefined || value === '' ? '—' : Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
     /** 查询产品信息列表 */
     getList() {
       this.loading = true;

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['sn', 'relationSn', 'originalSn']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="单据编号" prop="sn">
         <el-input
@@ -25,7 +26,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="通知成功时间" prop="timeNotify">
+      <el-form-item class="filter-advanced" label="通知成功时间" prop="timeNotify">
         <el-date-picker clearable
                         v-model="queryParams.timeNotify"
                         type="date"
@@ -33,7 +34,7 @@
                         placeholder="请选择通知成功时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="查询时间" prop="timeQuery">
+      <el-form-item class="filter-advanced" label="查询时间" prop="timeQuery">
         <el-date-picker clearable
                         v-model="queryParams.timeQuery"
                         type="date"
@@ -41,7 +42,7 @@
                         placeholder="请选择收到反馈完成出入库时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="作废成功时间" prop="timeCancel">
+      <el-form-item class="filter-advanced" label="作废成功时间" prop="timeCancel">
         <el-date-picker clearable
                         v-model="queryParams.timeCancel"
                         type="date"
@@ -49,7 +50,7 @@
                         placeholder="请选择作废成功时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -57,7 +58,7 @@
                         placeholder="请选择修改时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item class="filter-advanced" label="创建时间" prop="createTime">
         <el-date-picker clearable
                         v-model="queryParams.createTime"
                         type="date"
@@ -70,6 +71,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -98,33 +100,33 @@
 
     <el-table v-loading="loading" :data="ticketsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="" align="center" prop="id" />
-      <el-table-column label="单据编号" align="center" prop="sn" />
-      <el-table-column label="出入库类型" align="center" prop="ticketType" >
+      <el-table-column min-width="120" label="" align="center" prop="id" />
+      <el-table-column min-width="120" label="单据编号" align="center" prop="sn" />
+      <el-table-column min-width="120" label="出入库类型" align="center" prop="ticketType" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.ticket_type" :value="scope.row.ticketType"/>
         </template>
       </el-table-column>
-      <el-table-column label="关联单据号" align="center" prop="relationSn" />
-      <el-table-column label="源单号" align="center" prop="originalSn" />
-      <el-table-column label="指派的虚仓编码" align="center" prop="wmsSimulationCode" />
-      <el-table-column label="指派的虚仓名称" align="center" prop="wmsSimulationName" />
-      <el-table-column label="仓库类型" align="center" prop="storeType">
+      <el-table-column min-width="120" label="关联单据号" align="center" prop="relationSn" />
+      <el-table-column min-width="120" label="源单号" align="center" prop="originalSn" />
+      <el-table-column min-width="120" label="指派的虚仓编码" align="center" prop="wmsSimulationCode" />
+      <el-table-column min-width="120" label="指派的虚仓名称" align="center" prop="wmsSimulationName" />
+      <el-table-column min-width="120" label="仓库类型" align="center" prop="storeType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_type" :value="scope.row.storeType"/>
         </template>
       </el-table-column>
-      <el-table-column label="单据状态" align="center" prop="statusTicket">
+      <el-table-column min-width="120" label="单据状态" align="center" prop="statusTicket">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_status_ticket" :value="scope.row.statusTicket"/>
         </template>
       </el-table-column>
-      <el-table-column label="通知状态" align="center" prop="statusNotify">
+      <el-table-column min-width="120" label="通知状态" align="center" prop="statusNotify">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_status_notify" :value="scope.row.statusNotify"/>
         </template>
       </el-table-column>
-      <el-table-column label="查询状态" align="center" prop="statusQuery">
+      <el-table-column min-width="120" label="查询状态" align="center" prop="statusQuery">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_status_query" :value="scope.row.statusQuery"/>
         </template>
@@ -144,10 +146,10 @@
           <span>{{ parseTime(scope.row.timeCancel, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="快递名称" align="center" prop="shippingName" />
-      <el-table-column label="快递编码" align="center" prop="shippingCode" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="最终发货仓库编码(实仓)" align="center" prop="realStoreCode" />
+      <el-table-column min-width="120" label="快递名称" align="center" prop="shippingName" />
+      <el-table-column min-width="120" label="快递编码" align="center" prop="shippingCode" />
+      <el-table-column min-width="120" label="备注" align="center" prop="remark" />
+      <el-table-column min-width="120" label="最终发货仓库编码(实仓)" align="center" prop="realStoreCode" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
@@ -158,8 +160,8 @@
           <span>{{ parseTime(scope.row.wmsActuallyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人的用户名称" align="center" prop="userName" />
-      <el-table-column label="客户编码" align="center" prop="customerNo" />
+      <el-table-column min-width="120" label="创建人的用户名称" align="center" prop="userName" />
+      <el-table-column min-width="120" label="客户编码" align="center" prop="customerNo" />
       <el-table-column label="WMS仓库接单时间" align="center" prop="acceptTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.acceptTime, '{y}-{m}-{d}') }}</span>
@@ -170,13 +172,13 @@
           <span>{{ parseTime(scope.row.acceptCallbackTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="1 真实出库 2 虚拟出库 " align="center" prop="actualWarehouse">
+      <el-table-column min-width="120" label="1 真实出库 2 虚拟出库 " align="center" prop="actualWarehouse">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -205,7 +207,7 @@
     />
 
     <!-- 查询 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       </el-form>
       <div slot="footer" class="dialog-footer">

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['supplierSn', 'supplierName', 'companyName']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="供应商编码" prop="supplierSn">
         <el-input
@@ -25,7 +26,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item class="filter-advanced" label="创建时间" prop="createTime">
         <el-date-picker clearable
                         v-model="queryParams.createTime"
                         type="date"
@@ -33,7 +34,7 @@
                         placeholder="请选择创建时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -46,6 +47,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -95,17 +97,17 @@
 
     <el-table v-loading="loading" :data="supplierIinfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="供应商编码" align="center" prop="supplierSn" />
-      <el-table-column label="供应商简称" align="center" prop="supplierName" />
-      <el-table-column label="公司全称" align="center" prop="companyName" />
-      <el-table-column label="联系人" align="center" prop="contactUser" />
-      <el-table-column label="联系电话" align="center" prop="contactTel" />
-      <el-table-column label="省" align="center" prop="contactProvince" />
-      <el-table-column label="市" align="center" prop="contactCity" />
-      <el-table-column label="区" align="center" prop="contactArea" />
-      <el-table-column label="联系人地址" align="center" prop="contactAddress" />
-      <el-table-column label="操作用户" align="center" prop="perationUser" />
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="供应商编码" align="center" prop="supplierSn" />
+      <el-table-column min-width="120" label="供应商简称" align="center" prop="supplierName" />
+      <el-table-column min-width="120" label="公司全称" align="center" prop="companyName" />
+      <el-table-column min-width="120" label="联系人" align="center" prop="contactUser" />
+      <el-table-column min-width="120" label="联系电话" align="center" prop="contactTel" />
+      <el-table-column min-width="120" label="省" align="center" prop="contactProvince" />
+      <el-table-column min-width="120" label="市" align="center" prop="contactCity" />
+      <el-table-column min-width="120" label="区" align="center" prop="contactArea" />
+      <el-table-column min-width="120" label="联系人地址" align="center" prop="contactAddress" />
+      <el-table-column min-width="120" label="操作用户" align="center" prop="perationUser" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
@@ -116,8 +118,8 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -146,7 +148,7 @@
     />
 
     <!-- 添加或修改供应商主对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="供应商简称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商简称" />

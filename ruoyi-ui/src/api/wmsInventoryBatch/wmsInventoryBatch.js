@@ -29,7 +29,7 @@ export function addInventoryBatch(data) {
 // 修改仓库批次库存
 export function updateInventoryBatch(data) {
   return request({
-    url: '/wmsInventory/wmsInventoryBatch',
+    url: '/inventory/wmsInventory/wmsInventoryBatch',
     method: 'put',
     data: data
   })

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['channelName', 'outCorrelationCode', 'channelType']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="渠道名称" prop="channelName">
         <el-input
@@ -17,8 +18,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="渠道编码" prop="channelType">
-        <el-select v-model="queryParams.channelType" placeholder="请选择渠道编码" clearable>
+      <el-form-item label="渠道平台" prop="channelType">
+        <el-select v-model="queryParams.channelType" placeholder="请选择渠道平台" clearable>
           <el-option
             v-for="dict in dict.type.channel_type"
             :key="dict.value"
@@ -27,7 +28,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="是否启用" prop="enabled">
+      <el-form-item class="filter-advanced" label="是否启用" prop="enabled">
         <el-select v-model="queryParams.enabled" placeholder="请选择是否启用 1-开启,0-禁用" clearable>
           <el-option
             v-for="dict in dict.type.oms_switch"
@@ -37,7 +38,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="对接平台" prop="toChannelEnabled">
+      <el-form-item class="filter-advanced" label="对接平台" prop="toChannelEnabled">
         <el-select v-model="queryParams.toChannelEnabled" placeholder="请选择对接平台, 1：需对接，0：无需对接" clearable>
           <el-option
             v-for="dict in dict.type.oms_switch"
@@ -47,7 +48,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="经营模式" prop="mmodelType">
+      <el-form-item class="filter-advanced" label="经营模式" prop="mmodelType">
         <el-select v-model="queryParams.mmodelType" placeholder="请选择经营模式：1直营, 2加盟" clearable>
           <el-option
             v-for="dict in dict.type.m_model_type"
@@ -62,6 +63,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -111,35 +113,35 @@
 
     <el-table v-loading="loading" :data="channelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="渠道ID" align="center" prop="channelId" />
-      <el-table-column label="渠道名称" align="center" prop="channelName" />
-      <el-table-column label="外部关联编码" align="center" prop="outCorrelationCode" />
-      <el-table-column label="渠道编码" align="center" prop="channelType">
+      <el-table-column min-width="120" label="渠道ID" align="center" prop="channelId" />
+      <el-table-column min-width="120" label="渠道名称" align="center" prop="channelName" />
+      <el-table-column min-width="120" label="外部关联编码" align="center" prop="outCorrelationCode" />
+      <el-table-column min-width="120" label="渠道平台" align="center" prop="channelType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.channel_type" :value="scope.row.channelType"/>
         </template>
       </el-table-column>
-      <el-table-column label="是否启用" align="center" prop="enabled">
+      <el-table-column min-width="120" label="是否启用" align="center" prop="enabled">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_switch" :value="scope.row.enabled"/>
         </template>
       </el-table-column>
-      <el-table-column label="是否对接平台" align="center" prop="toChannelEnabled">
+      <el-table-column min-width="120" label="是否对接平台" align="center" prop="toChannelEnabled">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_switch" :value="scope.row.toChannelEnabled"/>
         </template>
       </el-table-column>
-      <el-table-column label="是否同步库存" align="center" prop="syncEnabled">
+      <el-table-column min-width="120" label="是否同步库存" align="center" prop="syncEnabled">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_switch" :value="scope.row.syncEnabled"/>
         </template>
       </el-table-column>
-      <el-table-column label="经营模式" align="center" prop="mmodelType">
+      <el-table-column min-width="120" label="经营模式" align="center" prop="mmodelType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.m_model_type" :value="scope.row.mmodelType"/>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
@@ -150,7 +152,7 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -179,7 +181,7 @@
     />
 
     <!-- 添加或修改店铺信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="渠道名称" prop="channelName">
           <el-input v-model="form.channelName" placeholder="请输入渠道名称" />
@@ -187,8 +189,8 @@
         <el-form-item label="外部关联编码" prop="outCorrelationCode">
           <el-input v-model="form.outCorrelationCode" placeholder="请输入外部关联编码" />
         </el-form-item>
-        <el-form-item label="渠道编码" prop="channelType">
-          <el-select v-model="form.channelType" placeholder="请选择渠道编码">
+        <el-form-item label="渠道平台" prop="channelType">
+          <el-select v-model="form.channelType" placeholder="请选择渠道平台">
             <el-option
               v-for="dict in dict.type.channel_type"
               :key="dict.value"
@@ -198,7 +200,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="是否启用" prop="enabled">
-          <el-select v-model="form.enabled" placeholder="请选择是否启用 1-开启,0-禁用">
+          <el-select v-model="form.enabled" placeholder="请选择启用状态">
             <el-option
               v-for="dict in dict.type.oms_switch"
               :key="dict.value"
@@ -208,7 +210,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="是否对接平台" prop="toChannelEnabled">
-          <el-select v-model="form.toChannelEnabled" placeholder="请选择对接平台, 1：需对接，0：无需对接">
+          <el-select v-model="form.toChannelEnabled" placeholder="请选择是否对接平台">
             <el-option
               v-for="dict in dict.type.oms_switch"
               :key="dict.value"
@@ -218,7 +220,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="是否同步库存" prop="syncEnabled">
-          <el-select v-model="form.syncEnabled" placeholder="是否同步库存, 1：需对接，0：无需对接">
+          <el-select v-model="form.syncEnabled" placeholder="请选择是否同步库存">
             <el-option
               v-for="dict in dict.type.oms_switch"
               :key="dict.value"
@@ -228,7 +230,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="经营模式" prop="mmodelType">
-          <el-select v-model="form.mmodelType" placeholder="请选择经营模式：1直营, 2加盟">
+          <el-select v-model="form.mmodelType" placeholder="请选择经营模式">
             <el-option
               v-for="dict in dict.type.m_model_type"
               :key="dict.value"
@@ -368,7 +370,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加店铺信息";
+      this.title = "新增渠道";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -377,7 +379,7 @@ export default {
       getChannel(channelId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改店铺信息";
+        this.title = "编辑渠道";
       });
     },
     /** 提交按钮 */

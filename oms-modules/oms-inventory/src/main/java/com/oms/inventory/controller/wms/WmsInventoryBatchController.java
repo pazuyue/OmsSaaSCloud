@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * 仓库批次库存Controller
@@ -37,8 +38,9 @@ public class WmsInventoryBatchController extends BaseController {
         startPage();
         List<WmsInventoryBatch> list = wmsInventoryBatchService.list(
             wmsInventoryBatchService.lambdaQuery()
-                .like(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
-                .like(wmsInventoryBatch.getSkuSn() != null, WmsInventoryBatch::getSkuSn, wmsInventoryBatch.getSkuSn())
+                .eq(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
+                .eq(wmsInventoryBatch.getSkuSn() != null, WmsInventoryBatch::getSkuSn, wmsInventoryBatch.getSkuSn())
+                .eq(wmsInventoryBatch.getCompanyCode() != null, WmsInventoryBatch::getCompanyCode, wmsInventoryBatch.getCompanyCode())
                 .like(wmsInventoryBatch.getBatchCode() != null, WmsInventoryBatch::getBatchCode, wmsInventoryBatch.getBatchCode())
                 .like(wmsInventoryBatch.getBrandCode() != null, WmsInventoryBatch::getBrandCode, wmsInventoryBatch.getBrandCode())
                 .orderByDesc(WmsInventoryBatch::getModifyTime)
@@ -56,8 +58,9 @@ public class WmsInventoryBatchController extends BaseController {
     public void export(HttpServletResponse response, WmsInventoryBatch wmsInventoryBatch) {
         List<WmsInventoryBatch> list = wmsInventoryBatchService.list(
             wmsInventoryBatchService.lambdaQuery()
-                .like(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
-                .like(wmsInventoryBatch.getSkuSn() != null, WmsInventoryBatch::getSkuSn, wmsInventoryBatch.getSkuSn())
+                .eq(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
+                .eq(wmsInventoryBatch.getSkuSn() != null, WmsInventoryBatch::getSkuSn, wmsInventoryBatch.getSkuSn())
+                .eq(wmsInventoryBatch.getCompanyCode() != null, WmsInventoryBatch::getCompanyCode, wmsInventoryBatch.getCompanyCode())
                 .like(wmsInventoryBatch.getBatchCode() != null, WmsInventoryBatch::getBatchCode, wmsInventoryBatch.getBatchCode())
                 .like(wmsInventoryBatch.getBrandCode() != null, WmsInventoryBatch::getBrandCode, wmsInventoryBatch.getBrandCode())
                 .orderByDesc(WmsInventoryBatch::getModifyTime)
@@ -103,6 +106,6 @@ public class WmsInventoryBatchController extends BaseController {
     @Log(title = "仓库批次库存", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(wmsInventoryBatchService.removeByIds(List.of(ids)));
+        return toAjax(wmsInventoryBatchService.removeByIds(Arrays.asList(ids)));
     }
 }

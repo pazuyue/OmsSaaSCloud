@@ -23,8 +23,8 @@ const mutations = {
       Cookies.set('sidebarStatus', 0)
     }
   },
+  OPEN_SIDEBAR: state => { state.sidebar.opened = true; state.sidebar.withoutAnimation = false },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
-    Cookies.set('sidebarStatus', 0)
     state.sidebar.opened = false
     state.sidebar.withoutAnimation = withoutAnimation
   },

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['poSn', 'poName', 'poState']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="采购单号" prop="poSn">
         <el-input
@@ -25,7 +26,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="计划入库数量" prop="numberExpected">
+      <el-form-item class="filter-advanced" label="计划入库数量" prop="numberExpected">
         <el-input
           v-model="queryParams.numberExpected"
           placeholder="请输入计划入库数量"
@@ -33,7 +34,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="实际入库数量" prop="numberActually">
+      <el-form-item class="filter-advanced" label="实际入库数量" prop="numberActually">
         <el-input
           v-model="queryParams.numberActually"
           placeholder="请输入实际入库数量"
@@ -41,7 +42,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="操作人" prop="perationUser">
+      <el-form-item class="filter-advanced" label="操作人" prop="perationUser">
         <el-input
           v-model="queryParams.perationUser"
           placeholder="请输入操作人"
@@ -49,7 +50,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
+      <el-form-item class="filter-advanced" label="修改时间" prop="modifyTime">
         <el-date-picker clearable
                         v-model="queryParams.modifyTime"
                         type="date"
@@ -57,7 +58,7 @@
                         placeholder="请选择修改时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="公司编码" prop="companyCode">
+      <el-form-item class="filter-advanced" label="公司编码" prop="companyCode">
         <el-input
           v-model="queryParams.companyCode"
           placeholder="请输入公司编码"
@@ -65,7 +66,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="备注" prop="remarks">
+      <el-form-item class="filter-advanced" label="备注" prop="remarks">
         <el-input
           v-model="queryParams.remarks"
           placeholder="请输入备注"
@@ -73,7 +74,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="计划入库货值" prop="moneyExpected">
+      <el-form-item class="filter-advanced" label="计划入库货值" prop="moneyExpected">
         <el-input
           v-model="queryParams.moneyExpected"
           placeholder="请输入计划入库货值"
@@ -81,7 +82,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="实际入库货值" prop="moneyActually">
+      <el-form-item class="filter-advanced" label="实际入库货值" prop="moneyActually">
         <el-input
           v-model="queryParams.moneyActually"
           placeholder="请输入实际入库货值"
@@ -89,7 +90,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="单据状态" prop="comeFrom">
+      <el-form-item class="filter-advanced" label="单据状态" prop="comeFrom">
         <el-select v-model="queryParams.poState" placeholder="请选择单据状态">
           <el-option
             v-for="dict in dict.type.po_state"
@@ -99,7 +100,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="出入库类型" prop="actualWarehouse">
+      <el-form-item class="filter-advanced" label="出入库类型" prop="actualWarehouse">
         <el-select v-model="queryParams.actualWarehouse" placeholder="请选择是否真实出库">
           <el-option
             v-for="dict in dict.type.actual_warehouse"
@@ -114,6 +115,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -163,36 +165,36 @@
 
     <el-table v-loading="loading" :data="poInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="采购单号" align="center" prop="poSn" />
-      <el-table-column label="采购单名称" align="center" prop="poName" />
-      <el-table-column label="状态" align="center" prop="poState" >
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="采购单号" align="center" prop="poSn" />
+      <el-table-column min-width="120" label="采购单名称" align="center" prop="poName" />
+      <el-table-column min-width="120" label="状态" align="center" prop="poState" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.po_state" :value="scope.row.poState"/>
         </template>
       </el-table-column>
-      <el-table-column label="供应商编码" align="center" prop="supplierSn" />
-      <el-table-column label="采购部门" align="center" prop="departmentCode" />
-      <el-table-column label="虚仓编码" align="center" prop="wmsSimulationCode" />
-      <el-table-column label="计划入库数量" align="center" prop="numberExpected" />
-      <el-table-column label="实际入库数量" align="center" prop="numberActually" />
-      <el-table-column label="操作人" align="center" prop="perationUser" />
+      <el-table-column min-width="120" label="供应商编码" align="center" prop="supplierSn" />
+      <el-table-column min-width="120" label="采购部门" align="center" prop="departmentCode" />
+      <el-table-column min-width="120" label="虚仓编码" align="center" prop="wmsSimulationCode" />
+      <el-table-column min-width="120" label="计划入库数量" align="center" prop="numberExpected" />
+      <el-table-column min-width="120" label="实际入库数量" align="center" prop="numberActually" />
+      <el-table-column min-width="120" label="操作人" align="center" prop="perationUser" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
-      <el-table-column label="备注" align="center" prop="remarks" />
-      <el-table-column label="计划入库货值" align="center" prop="moneyExpected" />
-      <el-table-column label="实际入库货值" align="center" prop="moneyActually" />
-      <el-table-column label="来源" align="center" prop="comeFrom" />
-      <el-table-column label="出入库类型" align="center" prop="actualWarehouse">
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="备注" align="center" prop="remarks" />
+      <el-table-column min-width="120" label="计划入库货值" align="center" prop="moneyExpected" />
+      <el-table-column min-width="120" label="实际入库货值" align="center" prop="moneyActually" />
+      <el-table-column min-width="120" label="来源" align="center" prop="comeFrom" />
+      <el-table-column min-width="120" label="出入库类型" align="center" prop="actualWarehouse">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width" :fixed="$store.state.app.device === 'mobile' ? false : 'right'">
         <template slot-scope="scope">
           <el-button
             size="mini"

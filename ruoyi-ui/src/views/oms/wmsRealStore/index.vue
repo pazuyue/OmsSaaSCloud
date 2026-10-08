@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['status', 'wmsType', 'realStoreCode']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="启用状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择启用状态" clearable>
@@ -29,7 +30,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="实仓名称" prop="wmsName">
+      <el-form-item class="filter-advanced" label="实仓名称" prop="wmsName">
         <el-input
           v-model="queryParams.wmsName"
           placeholder="请输入实仓名称"
@@ -37,7 +38,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="负责人" prop="director">
+      <el-form-item class="filter-advanced" label="负责人" prop="director">
         <el-input
           v-model="queryParams.director"
           placeholder="请输入负责人"
@@ -45,7 +46,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="联系电话" prop="mobilePhone">
+      <el-form-item class="filter-advanced" label="联系电话" prop="mobilePhone">
         <el-input
           v-model="queryParams.mobilePhone"
           placeholder="请输入联系电话"
@@ -53,7 +54,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="省" prop="province">
+      <el-form-item class="filter-advanced" label="省" prop="province">
         <el-input
           v-model="queryParams.province"
           placeholder="请输入省"
@@ -61,7 +62,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="市" prop="city">
+      <el-form-item class="filter-advanced" label="市" prop="city">
         <el-input
           v-model="queryParams.city"
           placeholder="请输入市"
@@ -69,7 +70,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="区" prop="district">
+      <el-form-item class="filter-advanced" label="区" prop="district">
         <el-input
           v-model="queryParams.district"
           placeholder="请输入区"
@@ -77,7 +78,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="地址" prop="address">
+      <el-form-item class="filter-advanced" label="地址" prop="address">
         <el-input
           v-model="queryParams.address"
           placeholder="请输入地址"
@@ -85,7 +86,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否真实出库" prop="actualWarehouse">
+      <el-form-item class="filter-advanced" label="是否真实出库" prop="actualWarehouse">
         <el-select v-model="queryParams.actualWarehouse" placeholder="请选择是否真实出库" clearable>
           <el-option
             v-for="dict in dict.type.actual_warehouse"
@@ -100,6 +101,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -149,37 +151,37 @@
 
     <el-table v-loading="loading" :data="WmsRealStoreInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="启用状态" align="center" prop="status">
+      <el-table-column min-width="120" label="ID" align="center" prop="id" />
+      <el-table-column min-width="120" label="启用状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="仓库类型" align="center" prop="wmsType">
+      <el-table-column min-width="120" label="仓库类型" align="center" prop="wmsType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_type" :value="scope.row.wmsType"/>
         </template>
       </el-table-column>
-      <el-table-column label="实仓编码" align="center" prop="realStoreCode" />
-      <el-table-column label="实仓名称" align="center" prop="wmsName" />
-      <el-table-column label="负责人" align="center" prop="director" />
-      <el-table-column label="联系电话" align="center" prop="mobilePhone" />
-      <el-table-column label="省" align="center" prop="province" />
-      <el-table-column label="市" align="center" prop="city" />
-      <el-table-column label="区" align="center" prop="district" />
-      <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="公司编码" align="center" prop="companyCode" />
+      <el-table-column min-width="120" label="实仓编码" align="center" prop="realStoreCode" />
+      <el-table-column min-width="120" label="实仓名称" align="center" prop="wmsName" />
+      <el-table-column min-width="120" label="负责人" align="center" prop="director" />
+      <el-table-column min-width="120" label="联系电话" align="center" prop="mobilePhone" />
+      <el-table-column min-width="120" label="省" align="center" prop="province" />
+      <el-table-column min-width="120" label="市" align="center" prop="city" />
+      <el-table-column min-width="120" label="区" align="center" prop="district" />
+      <el-table-column min-width="120" label="地址" align="center" prop="address" />
+      <el-table-column min-width="120" label="公司编码" align="center" prop="companyCode" />
       <el-table-column label="修改时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否真实出库" align="center" prop="actualWarehouse">
+      <el-table-column min-width="120" label="是否真实出库" align="center" prop="actualWarehouse">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.actual_warehouse" :value="scope.row.actualWarehouse"/>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -208,7 +210,7 @@
     />
 
     <!-- 添加或修改实仓对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="720px" custom-class="workspace-form-dialog" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="启用状态" prop="status">
           <el-radio-group v-model="form.status">

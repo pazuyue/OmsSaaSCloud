@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <filter-panel :model="queryParams" :primary-fields="['operIp', 'title', 'operName']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="操作地址" prop="operIp">
         <el-input
@@ -28,7 +29,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="类型" prop="businessType">
+      <el-form-item class="filter-advanced" label="类型" prop="businessType">
         <el-select
           v-model="queryParams.businessType"
           placeholder="操作类型"
@@ -43,7 +44,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item class="filter-advanced" label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
           placeholder="操作状态"
@@ -75,6 +76,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </filter-panel>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
