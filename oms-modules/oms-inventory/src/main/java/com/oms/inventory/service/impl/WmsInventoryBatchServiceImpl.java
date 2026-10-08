@@ -33,27 +33,12 @@ public class WmsInventoryBatchServiceImpl extends ServiceImpl<WmsInventoryBatchM
     @Resource
     private OmsInventoryServiceImpl omsInventoryService;
 
+    @Resource
+    private InventoryMutationService mutations;
+
     @Transactional
-    public Boolean addInventory(WmsInventoryBatch wmsInventoryBatch, String relationSn)
-    {
-        try {
-            WmsInventory wmsInventory = new WmsInventory();
-            BeanUtil.copyProperties(wmsInventoryBatch, wmsInventory);
-            OmsInventory omsInventory = this.getOmsInventory(wmsInventory);
-            log.debug("wmsInventory {}",wmsInventory);
-            wmsInventoryService.getBaseMapper().insertOrUpdate(wmsInventory);
-            this.baseMapper.insertOrUpdate(wmsInventoryBatch);
-            omsInventoryService.getBaseMapper().insertOrUpdate(relationSn,omsInventory);
-            return true;
-        } catch (OptimisticLockingFailureException e) {
-            // 记录日志或采取其他措施
-            log.error("Cause: {} Optimistic lock failed: {}",e.getCause(),  e.getMessage());
-            return false;
-        } catch (Exception e) {
-            // 捕获其他可能的异常
-            log.error("Error during inventory addition: {}",e.getMessage());
-            throw new RuntimeException("Failed to add inventory", e);
-        }
+    public Boolean addInventory(WmsInventoryBatch batch, String relationSn) {
+        return mutations.receive(batch, relationSn);
     }
 
     private OmsInventory getOmsInventory(WmsInventory wmsInventory)

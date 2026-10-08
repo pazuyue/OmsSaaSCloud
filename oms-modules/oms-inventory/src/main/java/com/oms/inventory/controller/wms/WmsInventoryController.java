@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import javax.validation.Valid;
+import com.oms.inventory.service.InventoryCompany;
+import com.oms.inventory.service.impl.InventoryQueryService;
+import com.oms.inventory.service.impl.InventoryMutationService;
+import com.oms.inventory.model.dto.InventoryAdjustment;
 
 /**
  * <p>
@@ -32,6 +37,8 @@ public class WmsInventoryController extends BaseController {
 
     @Resource
     private IWmsInventoryService wmsInventoryService;
+    @Resource private InventoryQueryService queries;
+    @Resource private InventoryMutationService mutations;
 
 
     /**
@@ -39,11 +46,13 @@ public class WmsInventoryController extends BaseController {
      */
     @RequiresPermissions("wmsInventory:inventory:list")
     @GetMapping("/list")
-    public TableDataInfo list(WmsInventory wmsInventory)
-    {
-        startPage();
-        List<WmsInventory> list = wmsInventoryService.selectWmsInventoryList(wmsInventory);
-        return getDataTable(list);
+    public TableDataInfo list(@RequestParam(required=false) String storeCode,
+            @RequestParam(required=false) String skuSn,
+            @RequestParam(defaultValue="false") boolean onlyStock,
+            @RequestParam(defaultValue="false") boolean abnormal,
+            @RequestParam(defaultValue="1") int pageNum,
+            @RequestParam(defaultValue="20") int pageSize) {
+        return queries.list(InventoryCompany.current(),storeCode,skuSn,onlyStock,abnormal,pageNum,pageSize);
     }
 
     /**
@@ -64,9 +73,8 @@ public class WmsInventoryController extends BaseController {
      */
     @RequiresPermissions("wmsInventory:inventory:query")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(wmsInventoryService.selectWmsInventoryById(id));
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
+        return success(queries.detail(InventoryCompany.current(), id));
     }
 
     /**
@@ -78,5 +86,21 @@ public class WmsInventoryController extends BaseController {
     public AjaxResult edit(@RequestBody WmsInventory wmsInventory)
     {
         return toAjax(wmsInventoryService.updateWmsInventory(wmsInventory));
+    }
+
+    @RequiresPermissions("wmsInventory:inventory:list")
+    @GetMapping("/{id}/history")
+    public TableDataInfo history(@PathVariable long id, @RequestParam(required=false) String operation,
+            @RequestParam(defaultValue="1") int pageNum, @RequestParam(defaultValue="20") int pageSize) {
+        return queries.history(InventoryCompany.current(),id,operation,pageNum,pageSize);
+    }
+
+    @RequiresPermissions("wmsInventory:inventory:edit")
+    @Log(title="批次库存调整", businessType=BusinessType.UPDATE)
+    @PostMapping("/adjust")
+    public AjaxResult adjust(@Valid @RequestBody InventoryAdjustment adjustment) {
+        mutations.adjust(InventoryCompany.current(),adjustment.getBatchId(),adjustment.getVersion(),
+                adjustment.getQuantity(),adjustment.getInventoryType(),adjustment.getReason(),adjustment.getRequestId());
+        return success();
     }
 }

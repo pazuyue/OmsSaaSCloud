@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Arrays;
+import com.oms.inventory.service.InventoryCompany;
+import com.github.pagehelper.PageHelper;
 
 /**
  * 仓库批次库存Controller
@@ -34,8 +36,10 @@ public class WmsInventoryBatchController extends BaseController {
      */
     @RequiresPermissions("wmsInventoryBatch:batch:list")
     @GetMapping("/list")
-    public TableDataInfo list(WmsInventoryBatch wmsInventoryBatch) {
-        startPage();
+    public TableDataInfo list(WmsInventoryBatch wmsInventoryBatch,
+            @RequestParam(defaultValue="1") int pageNum, @RequestParam(defaultValue="20") int pageSize) {
+        wmsInventoryBatch.setCompanyCode(InventoryCompany.current());
+        PageHelper.startPage(Math.max(1, Math.min(pageNum,100000)), Math.max(1,Math.min(pageSize,100)));
         List<WmsInventoryBatch> list = wmsInventoryBatchService.list(
             wmsInventoryBatchService.lambdaQuery()
                 .eq(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
@@ -43,7 +47,7 @@ public class WmsInventoryBatchController extends BaseController {
                 .eq(wmsInventoryBatch.getCompanyCode() != null, WmsInventoryBatch::getCompanyCode, wmsInventoryBatch.getCompanyCode())
                 .like(wmsInventoryBatch.getBatchCode() != null, WmsInventoryBatch::getBatchCode, wmsInventoryBatch.getBatchCode())
                 .like(wmsInventoryBatch.getBrandCode() != null, WmsInventoryBatch::getBrandCode, wmsInventoryBatch.getBrandCode())
-                .orderByDesc(WmsInventoryBatch::getModifyTime)
+                .orderByDesc(WmsInventoryBatch::getId)
                 .getWrapper()
         );
         return getDataTable(list);
@@ -56,6 +60,7 @@ public class WmsInventoryBatchController extends BaseController {
     @Log(title = "仓库批次库存", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, WmsInventoryBatch wmsInventoryBatch) {
+        wmsInventoryBatch.setCompanyCode(InventoryCompany.current());
         List<WmsInventoryBatch> list = wmsInventoryBatchService.list(
             wmsInventoryBatchService.lambdaQuery()
                 .eq(wmsInventoryBatch.getStoreCode() != null, WmsInventoryBatch::getStoreCode, wmsInventoryBatch.getStoreCode())
@@ -63,7 +68,7 @@ public class WmsInventoryBatchController extends BaseController {
                 .eq(wmsInventoryBatch.getCompanyCode() != null, WmsInventoryBatch::getCompanyCode, wmsInventoryBatch.getCompanyCode())
                 .like(wmsInventoryBatch.getBatchCode() != null, WmsInventoryBatch::getBatchCode, wmsInventoryBatch.getBatchCode())
                 .like(wmsInventoryBatch.getBrandCode() != null, WmsInventoryBatch::getBrandCode, wmsInventoryBatch.getBrandCode())
-                .orderByDesc(WmsInventoryBatch::getModifyTime)
+                .orderByDesc(WmsInventoryBatch::getId)
                 .getWrapper()
         );
         ExcelUtil<WmsInventoryBatch> util = new ExcelUtil<WmsInventoryBatch>(WmsInventoryBatch.class);
@@ -76,7 +81,7 @@ public class WmsInventoryBatchController extends BaseController {
     @RequiresPermissions("wmsInventoryBatch:batch:query")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(wmsInventoryBatchService.getById(id));
+        return success(wmsInventoryBatchService.lambdaQuery().eq(WmsInventoryBatch::getId,id).eq(WmsInventoryBatch::getCompanyCode,InventoryCompany.current()).one());
     }
 
     /**
@@ -86,7 +91,7 @@ public class WmsInventoryBatchController extends BaseController {
     @Log(title = "仓库批次库存", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody WmsInventoryBatch wmsInventoryBatch) {
-        return toAjax(wmsInventoryBatchService.save(wmsInventoryBatch));
+        return error("请通过入库或批次库存调整操作，禁止直接修改批次账面数据");
     }
 
     /**
@@ -96,7 +101,7 @@ public class WmsInventoryBatchController extends BaseController {
     @Log(title = "仓库批次库存", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody WmsInventoryBatch wmsInventoryBatch) {
-        return toAjax(wmsInventoryBatchService.updateById(wmsInventoryBatch));
+        return error("请通过入库或批次库存调整操作，禁止直接修改批次账面数据");
     }
 
     /**
@@ -106,6 +111,6 @@ public class WmsInventoryBatchController extends BaseController {
     @Log(title = "仓库批次库存", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(wmsInventoryBatchService.removeByIds(Arrays.asList(ids)));
+        return error("请通过入库或批次库存调整操作，禁止直接修改批次账面数据");
     }
 }

@@ -306,7 +306,8 @@ public class StrategyBaseServiceImpl {
                 context.getSkuSn(), totalAllocatedAmount, context.getStoreCodes());
 
         Boolean lockResult = wmsInventoryService.lockInventory(
-                context.getStoreCodes(), context.getSkuSn(), totalAllocatedAmount);
+                ruleStockInfoService.selectRuleStockInfoById(context.getRuleId()).getCompanyCode(),
+                context.getStoreCodes(), context.getSkuSn(), totalAllocatedAmount, "RULE-" + context.getRuleId());
 
         if (!lockResult) {
             String errorMsg = String.format("WMS库存锁定失败，SKU: %s, 锁定数量: %s",
@@ -318,9 +319,7 @@ public class StrategyBaseServiceImpl {
         log.info("锁库单分货：WMS库存锁定成功，SKU: {}, 锁定数量: {}",
                 context.getSkuSn(), totalAllocatedAmount);
 
-        // 同步更新oms_inventory库存
-        updateOmsInventoryForLocking(context.getSkuSn(), totalAllocatedAmount,
-                context.getStoreCodes(), context.getRuleId().toString());
+        // OMS and batch quantities are updated atomically by the inventory mutation service.
     }
 
     /**
@@ -330,31 +329,7 @@ public class StrategyBaseServiceImpl {
      * @param storeCodes 仓库代码列表
      * @param relationSn 关联单号
      */
-    protected void updateOmsInventoryForLocking(String skuSn, BigDecimal lockQuantity,
-                                              List<String> storeCodes, String relationSn) {
-        try {
-            // 构建OMS库存对象进行预留操作
-            OmsInventory omsInventory = new OmsInventory();
-            omsInventory.setSkuSn(skuSn);
-            omsInventory.setAllocatedStock(lockQuantity.intValue());
-            // 假设使用第一个仓库代码作为公司代码，实际应根据业务逻辑调整
-            omsInventory.setCompanyCode(storeCodes.isEmpty() ? "DEFAULT" : storeCodes.get(0));
 
-            // 预留库存（减少可用库存，增加已分配库存）
-            int updateResult = omsInventoryMapper.reserveStock(omsInventory);
-
-            if (updateResult <= 0) {
-                log.error("OMS库存预留失败，SKU: {}, 锁定数量: {}", skuSn, lockQuantity);
-                throw new RuntimeException("OMS库存预留失败，可能库存不足");
-            }
-
-            log.info("OMS库存预留成功，SKU: {}, 锁定数量: {}", skuSn, lockQuantity);
-
-        } catch (Exception e) {
-            log.error("OMS库存更新异常，SKU: {}, 锁定数量: {}", skuSn, lockQuantity, e);
-            throw new RuntimeException("OMS库存更新异常: " + e.getMessage(), e);
-        }
-    }
 
     /**
      * 处理全部商品的库存分配
@@ -379,7 +354,7 @@ public class StrategyBaseServiceImpl {
             }
 
             log.debug("处理第 {} 页，SKU数量: {}", currentPage, skuList.size());
-            skuList.forEach(sku -> processor.accept(ruleId, sku));
+            skuList.stream().sorted().forEach(sku -> processor.accept(ruleId, sku));
 
             processedCount += skuList.size();
             currentPage++;
@@ -398,7 +373,7 @@ public class StrategyBaseServiceImpl {
         log.info("开始处理指定商品，SKU数量: {}", skuList.size());
         log.debug("指定商品SKU列表: {}", skuList);
 
-        skuList.forEach(sku -> processor.accept(ruleId, sku));
+        skuList.stream().sorted().forEach(sku -> processor.accept(ruleId, sku));
         log.info("指定商品处理完成");
     }
 }

@@ -30,6 +30,26 @@ public class WmsSimulationStoreInfoController extends BaseController
     @Resource
     private WmsSimulationStoreInfoService wmsSimulationStoreInfoService;
 
+    @RequiresPermissions("wmsInventory:inventory:list")
+    @GetMapping("/inventoryLookup")
+    public AjaxResult inventoryLookup(@RequestParam(required=false) List<String> codes,
+                                      @RequestParam(defaultValue="") String keyword) {
+        com.ruoyi.system.api.model.LoginUser user=com.ruoyi.common.security.utils.SecurityUtils.getLoginUser();
+        String company=user.getCompanyCode();
+        if (company==null || company.isEmpty()) company=user.getSysUser().getLoginCompanyCode();
+        if (company==null || company.isEmpty()) return error("请先选择登录公司");
+        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<WmsSimulationStoreInfo> query=new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
+        query.select("wms_simulation_code","wms_simulation_name").eq("company_code",company);
+        if (codes!=null && !codes.isEmpty()) {
+            if(codes.size()>100)return error("每次最多查询 100 个仓库");
+            query.in("wms_simulation_code",codes);
+        } else if (!keyword.trim().isEmpty()) {
+            if(keyword.length()>128)return error("搜索内容过长");
+            query.and(q->q.likeRight("wms_simulation_code",keyword.trim()).or().likeRight("wms_simulation_name",keyword.trim()));
+        }
+        return success(wmsSimulationStoreInfoService.list(query.orderByAsc("wms_simulation_code").last("LIMIT 100")));
+    }
+
     /**
      * 查询虚仓列表
      */

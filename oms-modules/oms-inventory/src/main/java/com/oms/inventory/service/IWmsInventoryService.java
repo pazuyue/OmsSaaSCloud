@@ -71,7 +71,7 @@ public interface IWmsInventoryService extends IService<WmsInventory> {
 
     Map<String, Object> selectSkuTotalAvailable(List<String> storeCodes, String skuSn);
 
-    Boolean lockInventory(List<String> storeCodes, String sku, BigDecimal quantity);
+    Boolean lockInventory(String company, List<String> storeCodes, String sku, BigDecimal quantity, String relationSn);
 
-    Boolean unlockInventory(List<String> storeCodes, String sku, BigDecimal quantity);
+    Boolean unlockInventory(String company, List<String> storeCodes, String sku, BigDecimal quantity, String relationSn);
 }
