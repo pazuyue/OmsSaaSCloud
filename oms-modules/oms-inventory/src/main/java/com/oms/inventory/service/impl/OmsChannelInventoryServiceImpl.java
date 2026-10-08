@@ -33,7 +33,7 @@ public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInvent
             RuleStockInfo ruleStockInfo = ruleStockInfoService.selectRuleStockInfoById(ruleId);
 
             // 判断规则类型是否为3（锁库时分货）
-            return ruleStockInfo != null && ruleStockInfo.getRuleType() != null && ruleStockInfo.getRuleType() == 3;
+            return ruleStockInfo != null && ruleStockInfo.getAllocationType() != null && ruleStockInfo.getAllocationType() == 2;
         } catch (NumberFormatException e) {
             // 如果relationSn不是数字，则不是规则ID，返回false
             log.debug("relationSn is not a valid rule ID: {}", relationSn);
@@ -49,6 +49,7 @@ public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInvent
         boolean isLockAllocation = isLockAllocation(relationSn);
 
         QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("company_code", companyCode);
         wrapper.eq("channel_id", channelId);
         wrapper.eq("sku_sn", SkuSn);
         OmsChannelInventory channelInventory = this.baseMapper.selectOne(wrapper);
@@ -65,8 +66,8 @@ public class OmsChannelInventoryServiceImpl extends ServiceImpl<OmsChannelInvent
                 channelInventory.setAvailableStock(BigDecimal.ZERO); // 初始化为0
             } else {
                 // 非锁库单：更新available_stock字段
-                channelInventory.setAvailableStock(BigDecimal.ZERO);
-                channelInventory.setAllocatedStock(availableStock); // 初始化为0
+                channelInventory.setAvailableStock(availableStock);
+                channelInventory.setAllocatedStock(BigDecimal.ZERO);
             }
 
             log.debug("channelInventory is null,insert channelInventory:{}", channelInventory);

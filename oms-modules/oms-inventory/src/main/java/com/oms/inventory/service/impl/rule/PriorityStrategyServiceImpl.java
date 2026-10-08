@@ -42,6 +42,7 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
      * @return Boolean 分配成功返回true
      */
     @Override
+    @Transactional(rollbackFor = Exception.class, timeout=60)
     public Boolean allocate(RuleStockInfo rule) {
         log.info("开始执行优先级分配策略，规则ID: {}, 规则名称: {}", rule.getId(), rule.getRuleName());
 
@@ -77,7 +78,7 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
             List<String> storeCodes = getStoreCodesByRuleId(ruleId);
 
             // 获取WMS库存信息
-            Map<String, Object> wmsInventory = getWmsInventoryInfo(storeCodes, sku);
+            Map<String, Object> wmsInventory = getWmsInventoryInfo(ruleId, storeCodes, sku);
 
             // 提取库存信息
             InventoryInfo inventoryInfo = extractInventoryInfo(wmsInventory, storeCodes, sku);
@@ -89,8 +90,7 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
 
         } catch (Exception e) {
             log.error("处理SKU: {} 库存分配时发生异常", sku, e);
-            // 根据业务需求决定是否继续处理其他SKU或抛出异常
-            // 这里选择记录错误但继续处理其他SKU
+            throw new RuntimeException("库存分配失败，整笔操作已回滚", e);
         }
     }
 
@@ -110,6 +110,7 @@ public class PriorityStrategyServiceImpl extends StrategyBaseServiceImpl impleme
         try {
             // 初始化分配上下文
             BaseAllocationContext context = initializeAllocationContext(ruleId, skuSn, totalAvailable);
+            if (!beginAllocation(context)) return;
 
             // 执行渠道分配
             BigDecimal totalAllocatedAmount = executePriorityChannelAllocation(context);

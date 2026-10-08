@@ -46,7 +46,7 @@
     <pagination v-show="total > 0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" :page-sizes="[10, 20, 50, 100]" @pagination="loadList" />
 
     <el-drawer title="库存详情" :visible.sync="drawer" :size="mobile ? '100%' : 'min(1080px, 86vw)'" append-to-body custom-class="inventory-drawer" @closed="closeDetail">
-      <div v-if="detail" class="inventory-detail" v-loading="detailLoading">
+      <div v-if="detail" v-loading="detailLoading" class="inventory-detail">
         <div class="detail-heading"><div><h3>{{ goodsName(detail.skuSn) }}</h3><p>{{ detail.skuSn }} <span class="muted">· {{ storeName(detail.storeCode) }} / {{ detail.storeCode }}</span></p></div><el-button size="small" icon="el-icon-refresh" @click="refreshDetail">刷新</el-button></div>
         <el-alert v-if="detailError" title="详情刷新失败，请重试" type="error" :closable="false" show-icon />
         <el-alert v-else-if="!detail.consistent" title="汇总与批次库存不一致" type="warning" show-icon :closable="false" description="下表为当前虚仓全部批次的核对结果。请按来源单据核实差异；处理前暂不允许调整库存。" />
@@ -58,7 +58,7 @@
           <el-tab-pane label="批次明细" name="batches">
             <div class="detail-toolbar"><el-input v-model="batchQuery.batchCode" clearable placeholder="搜索批次编码" size="small" @keyup.enter.native="searchBatches" @clear="searchBatches" /><el-button size="small" @click="searchBatches">查询</el-button><el-button v-hasPermi="['wmsInventoryBatch:batch:export']" size="small" @click="exportBatches">导出当前页</el-button></div>
             <div v-if="batchError" class="load-error">批次加载失败。<el-button type="text" @click="loadBatches">重新加载</el-button></div>
-            <el-table :data="batches" v-loading="batchLoading" :empty-text="batchError ? '加载失败' : detail.consistent ? '该虚仓暂无批次记录' : '未找到匹配批次，请核对仓库编码及入库来源'">
+            <el-table v-loading="batchLoading" :data="batches" :empty-text="batchError ? '加载失败' : detail.consistent ? '该虚仓暂无批次记录' : '未找到匹配批次，请核对仓库编码及入库来源'">
               <el-table-column label="批次编码" prop="batchCode" min-width="150" show-overflow-tooltip />
               <el-table-column v-for="field in quantityFields" :key="field.key" :label="field.label" :prop="field.key" width="95" align="right" />
               <el-table-column label="批次成本" prop="transactionPrice" width="95" align="right" />
@@ -72,12 +72,13 @@
         <div v-if="activeTab !== 'batches'">
           <p class="muted">{{ activeTab === 'reservations' ? '按来源单据记录预占与释放；历史导入库存未补造明细。' : '记录本次升级后的入库、调整、预占和释放。' }}</p>
           <div v-if="historyError" class="load-error">记录加载失败。<el-button type="text" @click="loadHistory">重新加载</el-button></div>
-          <el-table :data="history" v-loading="historyLoading" :empty-text="historyError ? '加载失败' : '暂无可追溯记录'">
+          <el-table v-loading="historyLoading" :data="history" :empty-text="historyError ? '加载失败' : '暂无可追溯记录'">
             <el-table-column label="时间" prop="operationTime" width="165" />
             <el-table-column label="类型" width="90"><template slot-scope="s">{{ operationName(s.row.operationType) }}</template></el-table-column>
             <el-table-column label="批次" prop="batchCode" min-width="130" show-overflow-tooltip />
             <el-table-column label="来源单号" prop="relationSn" min-width="150" show-overflow-tooltip />
             <el-table-column label="数量变化" width="100" align="right"><template slot-scope="s">{{ s.row.changeQuantity > 0 ? '+' : '' }}{{ s.row.changeQuantity }}</template></el-table-column>
+            <el-table-column label="批次数量变化" min-width="190"><template slot-scope="s"><div>{{ s.row.inventoryType === 'CP' ? '次品' : '正品' }}可用 {{ s.row.inventoryType === 'CP' ? s.row.oldCpAvailableNumber : s.row.oldZpAvailableNumber }} → {{ s.row.inventoryType === 'CP' ? s.row.newCpAvailableNumber : s.row.newZpAvailableNumber }}</div><span class="muted">正品预占 {{ s.row.oldZpLockNumber }} → {{ s.row.newZpLockNumber }}</span></template></el-table-column>
             <el-table-column label="原因" prop="changeReason" min-width="150" show-overflow-tooltip />
             <el-table-column label="操作人" prop="operatorName" width="95" />
           </el-table>
@@ -156,14 +157,14 @@ export default {
     },
     searchGoods(keyword) {
       clearTimeout(this.goodsTimer); const seq = ++this.goodsSeq
-      this.goodsTimer = setTimeout(async () => {
+      this.goodsTimer = setTimeout(async() => {
         this.goodsSearching = true
         try { const r = await lookupGoods({ keyword }); if (seq === this.goodsSeq) this.goodsOptions = r.data } catch (e) { if (seq === this.goodsSeq) this.goodsOptions = [] } finally { if (seq === this.goodsSeq) this.goodsSearching = false }
       }, 300)
     },
     searchStores(keyword) {
       clearTimeout(this.storeTimer); const seq = ++this.storeSeq
-      this.storeTimer = setTimeout(async () => {
+      this.storeTimer = setTimeout(async() => {
         this.storeSearching = true
         try { const r = await lookupStores({ keyword }); if (seq === this.storeSeq) this.storeOptions = r.data } catch (e) { if (seq === this.storeSeq) this.storeOptions = [] } finally { if (seq === this.storeSeq) this.storeSearching = false }
       }, 300)
@@ -230,7 +231,7 @@ export default {
 .code { font-variant-numeric:tabular-nums; }
 .cell-title { color:#202939; font-weight:500; }
 .available { color:#246bd6; font-variant-numeric:tabular-nums; }
-.inventory-workspace ::v-deep .el-select { width:250px; }
+.inventory-workspace ::v-deep .el-select { width:100%; }
 .inventory-detail { padding:0 26px 28px; }
 .detail-heading { margin-bottom:20px; }
 .detail-heading h3 { margin:0; font-size:20px; font-weight:600; }

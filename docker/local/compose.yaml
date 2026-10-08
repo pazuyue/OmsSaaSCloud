@@ -1,0 +1,765 @@
+{
+  "name": "oms-local",
+  "services": {
+    "mysql": {
+      "image": "mysql:5.7",
+      "environment": {
+        "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}",
+        "TZ": "Asia/Shanghai"
+      },
+      "ports": [
+        "127.0.0.1:13306:3306"
+      ],
+      "volumes": [
+        "mysql-data:/var/lib/mysql",
+        "./generated:/docker-entrypoint-initdb.d:ro"
+      ],
+      "command": [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
+        "--lower-case-table-names=1"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysql -h127.0.0.1 -uroot --database=ry-config -N -e \"SELECT COUNT(*) FROM config_info\" >/dev/null"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-mysql",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "redis": {
+      "image": "redis:latest",
+      "working_dir": "/data",
+      "command": [
+        "redis-server",
+        "--dir",
+        "/data",
+        "--appendonly",
+        "yes"
+      ],
+      "ports": [
+        "127.0.0.1:16379:6379"
+      ],
+      "volumes": [
+        "redis-data:/data"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "redis-cli",
+          "ping"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-redis",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "nacos": {
+      "image": "nacos/nacos-server:v2.2.3",
+      "environment": {
+        "MODE": "standalone",
+        "PREFER_HOST_MODE": "hostname",
+        "SPRING_DATASOURCE_PLATFORM": "mysql",
+        "MYSQL_SERVICE_HOST": "mysql",
+        "MYSQL_SERVICE_DB_NAME": "ry-config",
+        "MYSQL_SERVICE_USER": "root",
+        "MYSQL_SERVICE_PASSWORD": "${MYSQL_ROOT_PASSWORD}",
+        "MYSQL_SERVICE_DB_PARAM": "characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai",
+        "JVM_XMS": "256m",
+        "JVM_XMX": "512m",
+        "JVM_XMN": "128m",
+        "NACOS_AUTH_ENABLE": "false"
+      },
+      "ports": [
+        "127.0.0.1:8848:8848",
+        "127.0.0.1:9848:9848"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:8848/nacos/v1/console/health/readiness"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-nacos",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "gateway": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-gateway.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:8080/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "ports": [
+        "127.0.0.1:8080:8080"
+      ],
+      "container_name": "oms-local-gateway",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "auth": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-auth.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9200/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-auth",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "system": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-modules-system.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9201/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-system",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "gen": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-modules-gen.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9202/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-gen",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "job": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-modules-job.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9203/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-job",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "file": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-modules-file.jar:/app/app.jar:ro",
+        "uploads:/home/ruoyi/uploadPath"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9300/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-file",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "monitor": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/ruoyi-visual-monitor.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS -u ruoyi:123456 http://localhost:9100/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "ports": [
+        "127.0.0.1:9100:9100"
+      ],
+      "container_name": "oms-local-monitor",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "goods": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/oms-goods-administration.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9301/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-goods",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "supplychain": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/oms-supplychain.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9302/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-supplychain",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "inventory": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/oms-inventory.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9303/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-inventory",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "channel": {
+      "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
+      "entrypoint": [
+        "java",
+        "-Dfile.encoding=UTF-8",
+        "-Xms64m",
+        "-Xmx384m",
+        "-XX:ActiveProcessorCount=2",
+        "-jar",
+        "/app/app.jar"
+      ],
+      "working_dir": "/home/ruoyi",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
+        "SPRING_CLOUD_SENTINEL_ENABLED": "false",
+        "SPRING_CLOUD_SENTINEL_EAGER": "false",
+        "SPRING_REDIS_HOST": "redis"
+      },
+      "volumes": [
+        "./artifacts/oms-channel.jar:/app/app.jar:ro"
+      ],
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "redis": {
+          "condition": "service_healthy"
+        },
+        "nacos": {
+          "condition": "service_healthy"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:9304/actuator/health | grep -q UP"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-channel",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "nginx": {
+      "image": "nginx:latest",
+      "ports": [
+        "127.0.0.1:8088:80"
+      ],
+      "volumes": [
+        "./dist:/usr/share/nginx/html:ro",
+        "./nginx.conf:/etc/nginx/nginx.conf:ro"
+      ],
+      "depends_on": {
+        "gateway": {
+          "condition": "service_started"
+        }
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "curl -fsS http://localhost/ >/dev/null"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 30,
+        "start_period": "30s"
+      },
+      "container_name": "oms-local-nginx",
+      "restart": "unless-stopped",
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    }
+  },
+  "volumes": {
+    "mysql-data": {},
+    "redis-data": {},
+    "uploads": {}
+  }
+}

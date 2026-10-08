@@ -1,0 +1,10 @@
+.env
+generated/
+logs/
+dist/
+dist-next/
+tools/
+__pycache__/
+artifacts/
+backups/
+business/

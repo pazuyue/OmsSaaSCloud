@@ -38,6 +38,13 @@ public class StrategyBaseServiceImpl {
 
     @Resource
     protected IRuleStockStoreCodeInfoService ruleStockStoreCodeInfoService;
+    @Resource private com.oms.inventory.service.impl.InventoryMutationService inventoryMutations;
+    @Resource private org.springframework.jdbc.core.JdbcTemplate inventoryJdbc;
+
+    protected boolean beginAllocation(BaseAllocationContext context) {
+        String company=ruleStockInfoService.selectRuleStockInfoById(context.getRuleId()).getCompanyCode();
+        return inventoryMutations.beginAllocation(company,context.getSkuSn(),"RULE-"+context.getRuleId(),context.isLockAllocation());
+    }
     @Resource
     protected IWmsInventoryService wmsInventoryService;
     @Resource
@@ -65,9 +72,12 @@ public class StrategyBaseServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    protected List<String> getSkusByPage(int page, int pageSize) {
+    protected List<String> getSkusByPage(Long ruleId, int page, int pageSize) {
+        String company=ruleStockInfoService.selectRuleStockInfoById(ruleId).getCompanyCode().toUpperCase(java.util.Locale.ROOT);
+        List<String> stores=getStoreCodesByRuleId(ruleId);
+        if(stores.isEmpty()) throw new IllegalArgumentException("分货规则未配置仓库");
         PageHelper.startPage(page, pageSize);
-        return wmsInventoryService.list(new QueryWrapper<WmsInventory>().select("sku_sn"))
+        return wmsInventoryService.list(new QueryWrapper<WmsInventory>().select("DISTINCT sku_sn").eq("company_code",company).in("store_code",stores).orderByAsc("sku_sn"))
                 .stream()
                 .map(WmsInventory::getSkuSn)
                 .distinct() // 去重
@@ -234,8 +244,10 @@ public class StrategyBaseServiceImpl {
      * @param sku SKU编码
      * @return WMS库存信息
      */
-    protected Map<String, Object> getWmsInventoryInfo(List<String> storeCodes, String sku) {
-        Map<String, Object> wmsInventory = wmsInventoryService.selectSkuTotalAvailable(storeCodes, sku);
+    protected Map<String, Object> getWmsInventoryInfo(Long ruleId, List<String> storeCodes, String sku) {
+        String company=ruleStockInfoService.selectRuleStockInfoById(ruleId).getCompanyCode().toUpperCase(java.util.Locale.ROOT);
+        List<Object> args=new ArrayList<>();args.add(company);args.add(sku);args.addAll(storeCodes);
+        Map<String,Object> wmsInventory=inventoryJdbc.queryForMap("SELECT sku_sn, SUM(zp_available_number) AS total_available FROM wms_inventory WHERE company_code=? AND sku_sn=? AND store_code IN ("+String.join(",",Collections.nCopies(storeCodes.size(),"?"))+") GROUP BY sku_sn",args.toArray());
         validateWmsInventory(wmsInventory, storeCodes, sku);
         return wmsInventory;
     }
@@ -347,7 +359,7 @@ public class StrategyBaseServiceImpl {
         log.info("开始分页处理全部商品，页大小: {}", DEFAULT_PAGE_SIZE);
 
         while (true) {
-            List<String> skuList = this.getSkusByPage(currentPage, DEFAULT_PAGE_SIZE);
+            List<String> skuList = this.getSkusByPage(ruleId, currentPage, DEFAULT_PAGE_SIZE);
             if (skuList.isEmpty()) {
                 log.info("全部商品处理完成，共处理 {} 个SKU", processedCount);
                 break;
