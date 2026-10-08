@@ -9,6 +9,98 @@
 	<a href="https://gitee.com/y_project/RuoYi-Cloud/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
 </p>
 
+## WSL Ubuntu 本地部署
+
+本仓库已增加 `docker/local/` 部署配置，适用于当前 Ubuntu 24.04.3 LTS 的 Docker 环境。
+后端为 Spring Boot 2.7.18 / Spring Cloud 2021.0.8，前端为 Vue 2 / Element UI；
+本地启动 MySQL、Redis、Nacos、Nginx，以及网关、认证、系统、代码生成、任务、文件、监控、商品、供应链、库存、渠道共 11 个 Java 服务。
+
+在 PowerShell 中进入 WSL，后续命令在 Ubuntu 中执行：
+
+```powershell
+wsl -d Ubuntu-24.04
+```
+
+```bash
+cd /mnt/d/Users/yueguang/OmsSaaSCloud
+# 已完成首次构建，日常启动直接运行这一条：
+bash docker/local/start.sh
+
+# 查看状态、日志；停止服务并保留数据：
+docker compose -f docker/local/compose.yaml ps
+docker compose -f docker/local/compose.yaml logs --tail=100 system
+docker compose -f docker/local/compose.yaml stop
+
+# 修改代码后的重新构建与启动：
+bash docker/local/build.sh
+bash docker/local/build-frontend.sh
+docker compose -f docker/local/compose.yaml up -d --force-recreate
+
+# 验证真实验证码、登录、用户信息、菜单和基础列表接口：
+python3 docker/local/verify.py
+```
+
+| 入口 | 地址 | 本地初始账号 |
+| --- | --- | --- |
+| 管理后台 | http://localhost:8088 | `admin / admin123` |
+| Nacos | http://localhost:8848/nacos | 本地关闭鉴权，仅绑定回环地址 |
+| 服务监控 | http://localhost:9100 | `ruoyi / 123456` |
+| 网关 | http://localhost:8080 | 由前端 `/prod-api/` 代理调用 |
+| MySQL | `127.0.0.1:13306`，共 5 个数据库，见下文 | `root`，密码见 `docker/local/.env` |
+| Redis | `127.0.0.1:16379` | 本地无密码 |
+
+本地容器以 `oms-local-` 命名，数据库、Redis 和上传文件存放在独立 Docker 数据卷中。
+旧 `ruoyi-*` 容器和旧数据库卷保留。SQL 仅在新数据卷第一次启动时初始化，后续启动不清空数据。
+`start.sh` 会从仓库 SQL 生成本地配置并发布到本地 Nacos，因此持久修改本地配置请修改 `docker/local/prepare.py`。
+其中适配了容器地址、MyBatis-Plus 配置、各 OMS 服务的实体扫描范围、网关路由和本地文件上传。
+初始化脚本另补充了当前登录代码需要的 `sys_user.login_company_code` 字段。
+
+后端通过 `local-docker` Maven profile 包含 OMS 模块，编译目录为 WSL 的 `~/.cache/oms-local/source`，
+依赖缓存为 `~/.cache/oms-local/m2`，部署 JAR 位于 `docker/local/artifacts/`。
+前端产物位于 `docker/local/dist/`，构建与启动日志位于 `docker/local/logs/`。
+构建需要 Maven、JDK 17、Node 和 npm；前端脚本已处理旧 Webpack 在新 Node 下的 OpenSSL 兼容参数。
+
+当前部署复用本机已有的 `mysql:5.7`、`redis:latest`、`nginx:latest` 及 `docker_ruoyi-auth:latest` 中的 Java 8 运行时，
+并使用 `nacos/nacos-server:v2.2.3`。Java 镜像入口已覆盖，实际运行的是新编译的项目 JAR。
+如更换运行时镜像，可在 `.env` 设置 `JAVA_RUNTIME_IMAGE`；镜像需包含兼容的 Java 和用于健康检查的 `curl`。
+
+已导入用户提供的 `oms-saas.zip` 中的 27 张业务表，保留其原始数据。商品、供应链共用
+`qm_oms_saas_commodity`，库存使用 `qm_oms_saas_inventory`，渠道使用 `qm_oms_saas_channel`；
+基础后台与 Nacos 分别使用 `ry-cloud`、`ry-config`。`.env` 中的 `OMS_BUSINESS_DATABASES=1` 保持此路由。
+根据当前代码补齐两张企业插件配置表、库存规则 `type` 字段、18 类字典、14 个业务页面菜单及管理员权限，
+管理员的登录企业设置为 `qm`。已有登录会话请退出后重新登录。
+缺失插件配置采用代码中的通用默认值；无法从现有资料确定的商品类型保留为 `0 / 未指定`，库存规则 `type` 默认 `0`。
+已验证 15 个业务列表查询、字典、菜单和跨服务插件配置查询；完整下单、出入库等写入流程尚未验证。
+
+```bash
+# 验证业务数据库与页面读取接口：
+python3 docker/local/verify_business.py
+
+# 以后需要补充备份时运行；会在隔离的临时 MySQL 中恢复并核对每张表的记录数：
+python3 docker/local/backup_database.py --verify
+```
+
+本次完整备份为 `docker/local/backups/oms-saas-complete-20261008-110641.sql`，包含 5 个数据库、71 张表，
+已通过隔离恢复验证。同目录配套 `.json` 记录表数量与校验结果、`.sql.sha256` 记录文件校验和、`.env` 保存对应部署配置。
+请一起保留这些文件；备份包含业务数据和连接凭据，已排除在 Git 提交之外。
+导入前的原数据库备份保留在 `docker/local/backups/20261008-105158/before-business-import.sql`。
+
+恢复到当前本地环境时，在 WSL 的项目根目录执行：
+
+```bash
+python3 docker/local/restore_database.py \
+  docker/local/backups/oms-saas-complete-20261008-110641.sql --replace-local-data
+python3 docker/local/verify_business.py
+```
+
+恢复脚本先校验文件及数据库密码，停止应用服务，再备份恢复前的数据，然后导入 SQL、清除本地登录缓存并启动服务。
+该操作会替换备份内的同名表；恢复后需重新登录。脚本保留备份中的 Nacos 配置。
+如果是在全新的数据卷上重建环境，请在首次启动 MySQL **之前**将配套备份 `.env` 复制为 `docker/local/.env`，
+完成镜像及项目构建、运行 `start.sh` 后再执行恢复命令；现有数据卷的 MySQL 密码不会因修改 `.env` 自动变更。
+SQL 备份不包含上传文件、Docker 镜像或构建产物。
+
+本地默认关闭 Sentinel 控制台集成，文件上传使用本地数据卷，未部署 FastDFS、MinIO、Seata 或 SkyWalking。
+
 ## 平台简介
 
 若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
