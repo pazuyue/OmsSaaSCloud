@@ -30,7 +30,7 @@
       <el-form-item label="是否启用" prop="enabled">
         <el-select v-model="queryParams.enabled" placeholder="请选择是否启用 1-开启,0-禁用" clearable>
           <el-option
-            v-for="dict in dict.type.oms_yes_no"
+            v-for="dict in dict.type.oms_switch"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -40,7 +40,7 @@
       <el-form-item label="对接平台" prop="toChannelEnabled">
         <el-select v-model="queryParams.toChannelEnabled" placeholder="请选择对接平台, 1：需对接，0：无需对接" clearable>
           <el-option
-            v-for="dict in dict.type.oms_yes_no"
+            v-for="dict in dict.type.oms_switch"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -121,17 +121,17 @@
       </el-table-column>
       <el-table-column label="是否启用" align="center" prop="enabled">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.enabled"/>
+          <dict-tag :options="dict.type.oms_switch" :value="scope.row.enabled"/>
         </template>
       </el-table-column>
       <el-table-column label="是否对接平台" align="center" prop="toChannelEnabled">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.toChannelEnabled"/>
+          <dict-tag :options="dict.type.oms_switch" :value="scope.row.toChannelEnabled"/>
         </template>
       </el-table-column>
       <el-table-column label="是否同步库存" align="center" prop="syncEnabled">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.oms_yes_no" :value="scope.row.syncEnabled"/>
+          <dict-tag :options="dict.type.oms_switch" :value="scope.row.syncEnabled"/>
         </template>
       </el-table-column>
       <el-table-column label="经营模式" align="center" prop="mmodelType">
@@ -200,7 +200,7 @@
         <el-form-item label="是否启用" prop="enabled">
           <el-select v-model="form.enabled" placeholder="请选择是否启用 1-开启,0-禁用">
             <el-option
-              v-for="dict in dict.type.oms_yes_no"
+              v-for="dict in dict.type.oms_switch"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.value)"
@@ -210,7 +210,7 @@
         <el-form-item label="是否对接平台" prop="toChannelEnabled">
           <el-select v-model="form.toChannelEnabled" placeholder="请选择对接平台, 1：需对接，0：无需对接">
             <el-option
-              v-for="dict in dict.type.oms_yes_no"
+              v-for="dict in dict.type.oms_switch"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.value)"
@@ -220,7 +220,7 @@
         <el-form-item label="是否同步库存" prop="syncEnabled">
           <el-select v-model="form.syncEnabled" placeholder="是否同步库存, 1：需对接，0：无需对接">
             <el-option
-              v-for="dict in dict.type.oms_yes_no"
+              v-for="dict in dict.type.oms_switch"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.value)"
@@ -251,7 +251,7 @@ import { listChannel, getChannel, delChannel, addChannel, updateChannel } from "
 
 export default {
   name: "Channel",
-  dicts: ['oms_yes_no', 'channel_type', 'm_model_type'],
+  dicts: ['oms_switch', 'channel_type', 'm_model_type'],
   data() {
     return {
       // 遮罩层

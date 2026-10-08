@@ -252,6 +252,15 @@
     </modules>
     <packaging>pom</packaging>
 
+    <profiles>
+        <profile>
+            <id>local-docker</id>
+            <modules>
+                <module>oms-modules</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!-- bootstrap 启动器 -->
         <dependency>
