@@ -69,8 +69,9 @@ def main():
         ('supplychain', '实体仓库', 'wmsRealStore', 'oms/wmsRealStore/index', ['WmsRealStoreInfoController']),
         ('supplychain', '虚拟仓库', 'simulationStore', 'oms/simulationStore/index', ['WmsSimulationStoreInfoController']),
         ('supplychain', '出入库单', 'wmsTickets', 'oms/wmsTickets/index', ['WmsTicketsController']),
+        ('inventory', '商品库存', 'productInventory', 'oms/productInventory/index', ['ProductInventoryController']),
         ('inventory', '仓库库存', 'wmsInventory', 'oms/wmsInventory/index', ['WmsInventoryController']),
-        ('inventory', '分货规则', 'ruleStock', 'oms/ruleStock/index', ['RuleStockInfoController', 'RuleStockInfoHandleController']),
+        ('inventory', '分货管理', 'ruleStock', 'oms/ruleStock/index', ['RuleStockInfoController', 'RuleStockInfoHandleController']),
         ('channel', '渠道资料', 'channel', 'oms/channel/index', ['TChannelController']),
         ('system', '企业插件配置', 'companyModelAssociationConfig', 'system/companyModelAssociationConfig/index', ['SysCompanyModelAssociationConfigController']),
     ]

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Arrays;
 import com.oms.inventory.service.InventoryCompany;
 import com.github.pagehelper.PageHelper;
+import com.oms.inventory.service.impl.BatchInventoryQueryService;
 
 /**
  * 仓库批次库存Controller
@@ -30,6 +31,7 @@ public class WmsInventoryBatchController extends BaseController {
 
     @Resource
     private IWmsInventoryBatchService wmsInventoryBatchService;
+    @Resource private BatchInventoryQueryService queries;
 
     /**
      * 查询仓库批次库存列表
@@ -81,8 +83,26 @@ public class WmsInventoryBatchController extends BaseController {
     @RequiresPermissions("wmsInventoryBatch:batch:query")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(wmsInventoryBatchService.lambdaQuery().eq(WmsInventoryBatch::getId,id).eq(WmsInventoryBatch::getCompanyCode,InventoryCompany.current()).one());
+        return success(queries.detail(InventoryCompany.current(),id));
     }
+
+    @RequiresPermissions("wmsInventoryBatch:batch:query")
+    @GetMapping("/{id}/history")
+    public TableDataInfo history(@PathVariable long id,@RequestParam(defaultValue="") String operation,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize) {
+        return queries.history(InventoryCompany.current(),id,operation,pageNum,pageSize);
+    }
+    @RequiresPermissions("wmsInventoryBatch:batch:query")
+    @GetMapping("/{id}/sources")
+    public TableDataInfo sources(@PathVariable long id,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize) {
+        return queries.sources(InventoryCompany.current(),id,pageNum,pageSize);
+    }
+    @RequiresPermissions("wmsInventoryBatch:batch:query")
+    @GetMapping("/{id}/sources/{sourceId}/orders")
+    public TableDataInfo orders(@PathVariable long id,@PathVariable long sourceId,@RequestParam(defaultValue="true") boolean onlyOccupied,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize) {
+        return queries.orders(InventoryCompany.current(),id,sourceId,onlyOccupied,pageNum,pageSize);
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public AjaxResult invalid(IllegalArgumentException error){return AjaxResult.error(error.getMessage());}
 
     /**
      * 新增仓库批次库存

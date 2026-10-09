@@ -80,16 +80,17 @@ python3 docker/local/verify_business.py
 python3 docker/local/backup_database.py --verify
 ```
 
-本次完整备份为 `docker/local/backups/oms-saas-complete-20261008-110641.sql`，包含 5 个数据库、71 张表，
-已通过隔离恢复验证。同目录配套 `.json` 记录表数量与校验结果、`.sql.sha256` 记录文件校验和、`.env` 保存对应部署配置。
+最新完整备份为 `docker/local/backups/oms-saas-complete-20261009-112716.sql`，包含 5 个数据库、78 张表及库存、分货、锁库来源余额、订单回调记录、日常分货轮次/商品记录、Quartz 调度任务、商品库存菜单和查询索引，已在隔离 MySQL 中恢复并核对全部表记录数。
+同目录配套 `.json` 记录表数量与校验结果、`.sql.sha256` 记录文件校验和、`.env` 保存对应部署配置。
 请一起保留这些文件；备份包含业务数据和连接凭据，已排除在 Git 提交之外。
 导入前的原数据库备份保留在 `docker/local/backups/20261008-105158/before-business-import.sql`。
+首次导入后的 71 表备份 `oms-saas-complete-20261008-110641.sql` 和本次迁移前备份 `oms-saas-complete-20261008-145432.sql` 同样保留。
 
 恢复到当前本地环境时，在 WSL 的项目根目录执行：
 
 ```bash
 python3 docker/local/restore_database.py \
-  docker/local/backups/oms-saas-complete-20261008-110641.sql --replace-local-data
+  docker/local/backups/oms-saas-complete-20261009-112716.sql --replace-local-data
 python3 docker/local/verify_business.py
 ```
 
@@ -98,6 +99,7 @@ python3 docker/local/verify_business.py
 如果是在全新的数据卷上重建环境，请在首次启动 MySQL **之前**将配套备份 `.env` 复制为 `docker/local/.env`，
 完成镜像及项目构建、运行 `start.sh` 后再执行恢复命令；现有数据卷的 MySQL 密码不会因修改 `.env` 自动变更。
 SQL 备份不包含上传文件、Docker 镜像或构建产物。
+备份使用单事务快照和单行 INSERT，从实际导出的 SQL 统计恢复校验行数，避免定时任务日志或业务写入期间，独立计数与备份快照不一致而误报。
 
 本地默认关闭 Sentinel 控制台集成，文件上传使用本地数据卷，未部署 FastDFS、MinIO、Seata 或 SkyWalking。
 
@@ -132,10 +134,14 @@ npm run test:navigation
 ```bash
 python3 docker/local/backup_database.py
 python3 docker/local/migrate_inventory.py
+python3 docker/local/migrate_allocation.py
+python3 docker/local/migrate_product_inventory.py
+python3 docker/local/migrate_batch_trace.py
+python3 docker/local/migrate_daily_allocation.py
 python3 docker/local/index_inventory.py
-bash docker/local/build.sh -pl oms-modules/oms-inventory,oms-modules/oms-goods-administration,oms-modules/oms-supplychain -am
+bash docker/local/build.sh -pl oms-modules/oms-inventory,oms-modules/oms-goods-administration,oms-modules/oms-supplychain,oms-modules/oms-channel,ruoyi-modules/ruoyi-job -am
 bash docker/local/build-frontend.sh
-docker compose -f docker/local/compose.yaml up -d --force-recreate inventory goods supplychain
+docker compose -f docker/local/compose.yaml up -d --force-recreate inventory goods supplychain channel job
 python3 docker/local/verify_inventory_workspace.py
 python3 docker/local/test_inventory.py
 ```
@@ -145,6 +151,60 @@ python3 docker/local/test_inventory.py
 写入按公司/SKU 汇总行、排序后的仓库、批次加锁；分货失败向外抛出并回滚，禁止吞掉错误后报成功。
 不在持锁事务中调用远程服务，不在事务内部自动重试。调整使用幂等请求编号，预占释放按原单据及批次回溯。
 `test_inventory.py` 仅操作独立的 `inventory_workspace_test` 数据库，覆盖并发、真实死锁回滚、幂等、差异核对及大数据分页。
+
+## 商品库存总览
+
+入口为“库存 → 商品库存”，路由 `/oms-inventory/productInventory`。列表以 `oms_inventory` 的公司 + SKU 汇总记录为基础，默认每页 20 个商品；商品名称、SKU、条码使用现有商品查询，次品列默认收起。
+总库存显示商品汇总表数值，正次品数量来自仓库明细合计。库存写入链路按虚仓记账，核对范围包含停用仓的现存库存，不再叠加实体仓数据。商品、仓库、批次数值分别显示，出现差异不自动覆盖或补造明细。
+详情提供仓库分布、锁库来源、库存流水三个页签，分页按需加载。仓库可进入原有批次详情与调整入口，分货来源可进入原有分货单释放入口；返回商品页保留查询条件、分页和详情页签。
+锁库来源显示原锁库、订单占用、已出库、已释放、可释放及渠道余额。订单占用属于锁定库存的其中项；历史来源不完整显示“待核对”。出库流水关联订单行，入库、调整、锁库及释放保留原始单据关联。
+新接口 `/inventory/productInventory` 及 `/{id}`、`/{id}/warehouses`、`/{id}/reservations`、`/{id}/history` 均为只读，复用 `wmsInventory:inventory:list` 权限并强制按登录公司查询。跳转后的调整和释放仍检查原有操作权限。
+`migrate_product_inventory.py` 增加菜单和四个查询索引，商品页菜单授权沿用原仓库库存菜单读者。数量核对只汇总当前页 SKU，读取使用同一 MVCC 快照，不加库存写锁；默认分页明确使用公司 + ID 索引，避免 MySQL 5.7 对整个公司排序。未提供全库异常扫描、直接编辑商品汇总、冻结或安全库存配置。
+
+## 批次详情追溯
+
+入口沿用“仓库库存 → 查看详情 → 批次明细 → 查看详情”，商品库存的仓库分布也可进入。批次详情嵌入原抽屉，返回保留批次筛选；库存调整继续使用原批次列表的入口。
+“本批次流水”支持按入库、调整、锁库、释放、出库筛选，显示本批次前后数量及来源单据、关联订单行。查询使用登录公司和批次 ID，并校验 SKU、仓库，不按可能重复的批次编码推断历史归属。
+“锁库去向”以分货单、渠道和当前批次为一行，显示原锁库、剩余锁定、其中订单占用、已出库、已释放、可释放。查看订单时才分页加载该来源的订单行，默认仅看仍占用，可切换查看已出库或取消的历史记录；跨批次订单只显示当前批次分摊量。
+来源可跳转原分货单处理释放，返回恢复仓库筛选、批次及页签；来源不完整显示“待核对”，其他锁定余额单独提示。
+批次接口 `/{id}`、`/{id}/history`、`/{id}/sources`、`/{id}/sources/{sourceId}/orders` 位于 `/inventory/wmsInventory/wmsInventoryBatch` 下，复用 `wmsInventoryBatch:batch:query` 权限，无新增菜单或写接口。
+`migrate_batch_trace.py` 只增加公司 + 批次 + 流水 ID、公司 + 来源 + 订单记录 ID 两个索引。分页上限 100，读取使用 MVCC，不申请库存写锁，不调用远程服务。
+
+## 分货工作台
+
+分货页采用基本信息、仓库与商品、渠道分配、预览与结果四个页签；日常分货另提供执行记录。执行方式准确显示 `1 日常分货 / 2 一次性分货 / 3 锁库时分货`。日常分货仅允许普通配额；类型 3 复用现有一次性锁库、来源追溯和释放流程。历史类型 2 的锁库分货保持兼容。
+普通配额重算选中渠道的可售量（扣除订单预占与冻结、最低为零），不预留实物库存；锁库分货增加渠道锁库量并同步预留仓库和原始批次。
+按优先级分配明确保存顺序，目标配额为零也会清理旧可售量。渠道独立配额允许普通配额共享实物库存，锁库总量始终不能超过实际可用量。
+仓库和渠道按当前登录公司查询，只能选择已启用渠道。导入 SKU 上限 50 字符、5 万行、10 MB，校验并去重后事务替换；失败保留原清单。
+
+新增迁移 `docker/local/migrate_allocation.py` 添加规则版本、渠道顺序、执行记录及查询索引，保留历史库存。
+新 API 位于 `/inventory/allocation`，旧无版本写接口和审核 GET 已停用。草稿可以编辑、删除，待审核可以撤回；执行后配置不可修改。
+预览最多每页 20 个 SKU，按当前页批量读取库存及渠道数据，不锁库存。开始执行固定商品清单，每个 SKU 一个独立短事务，失败项单独回滚。
+每次处理请求最多 10 个 SKU，规则行、OMS SKU、仓库按统一顺序加锁；同规则的并发请求串行处理，成功记录与库存同事务提交。
+页面关闭或网络中断后停止发送下一批请求，当前请求可能完成；重新打开详情点击“继续处理”，不会重做成功项。
+失败重试按最新库存重新计算，只处理失败项。锁库执行时保存本单、SKU、渠道、批次的来源余额；释放只返还本来源未占用、未出库、未释放的数量，库存与渠道任一校验失败则回滚该 SKU。
+列表按当前页批量汇总原锁库、订单占用、已出库、已释放、可释放数量，显示“部分释放 / 释放完成”；商品结果提供相同明细。开始释放后不再接受新订单占用，已占用部分可以继续出库或取消。订单取消只归还本来源余额，用户可再次点击“释放剩余锁库”；出库不会返还可用库存。
+历史单据缺少来源余额时显示“待核对”，不根据汇总锁定量推断，必须先核对原始业务记录。已完成的普通配额不会因删除或关闭单据自动恢复旧配额。
+
+订单集成入口为 `POST /inventory/allocation/{ruleId}/reservation/{action}`，动作取 `OCCUPY`（占用）、`CONSUME`（实际出库）、`CANCEL`（取消尚未出库的占用），需登录且有 `ruleStock:info:edit` 权限，公司取自登录身份。
+请求 JSON 包含 `skuSn`、`channelId`、`orderLine`（唯一订单行编号，最多 100 字）、`quantity`（正整数）和 `requestId`（16–64 位字母、数字、短横线或下划线）。相同分货单、SKU、请求编号必须重放相同参数；同一订单行对同一单据 SKU 只能首次占用一次，取消后重新占用需新的订单行版本编号。
+取消和出库可分次结算，出库数量只能从该订单行的剩余占用扣减；事件记录关联实际批次扣减流水。所有操作沿用规则行、结果行、OMS SKU 锁顺序，不跨 SKU 开长事务，不在事务内调用外部服务。当前仓库未包含订单模块，此入口已实现并验证，后续订单调用方需在确认业务事件后调用，并沿用原请求编号重试。
+新增 `20261008_reservation_sources.sql` 由 `migrate_allocation.py` 一并执行，仅增加余额字段和来源、订单占用、回调事件三张表，不回填无法确认的历史消耗量。
+
+`test_inventory.py` 同时运行 20 项分货、10 项库存事务、12 项商品总览与批次追溯、11 项日常分货 MySQL 集成测试，包括真实死锁回滚、并发请求、跨规则锁库、部分出库与释放、取消后再次释放、回调幂等、跨批次渠道来源、租户隔离、差异展示、读取不等待写锁及万级 SKU 分页。批次测试还覆盖重复批次编码隔离、缺失历史关联、跨批次订单分摊及来源订单分页索引。
+
+## 日常分货与现有定时任务
+
+日常规则设置生效时间、结束时间、执行间隔（1–1440 分钟）和规则优先级。保存草稿、提交审核、审核启用后，后台只在 `[生效时间, 结束时间)` 内执行；未来生效的规则等待到时再运行。支持停用、有效期内重新启用和立即执行一轮。审核后的配置不可直接编辑。
+每轮以所选仓库正品可用库存重算普通渠道配额，排除正品锁库和次品。可用量已经扣除锁库，不再重复扣减；渠道普通订单预占、冻结沿用原计算方式，渠道锁库余额及来源记录保持不变。普通配额覆盖重算，不累加；已存在且配额无变化的渠道不写库存行。
+同一公司、SKU、渠道被多条有效日常规则覆盖时，数字更小的优先级负责该渠道，同值按规则 ID 较小者优先。低优先级规则仍保留计算明细，标记跳过，不覆盖该渠道，也不把跳过的目标重新分摊给其他渠道；高优先级规则失败时不会自动降级覆盖。停用或到期后，其他规则可在下一轮接管。
+
+复用“系统监控 → 定时任务”的 Quartz 模块，不新增独立定时器。迁移注册任务“日常分货规则扫描”，调用目标 `dailyAllocationTask.scan('qm')`，Cron 为 `0/10 * * * * ?`（每 10 秒），禁止并发，错过触发不补跑。任务通过服务发现和内部鉴权调用库存服务，并显式传入公司编码供原数据源路由使用；其他公司需按其数据源编码配置对应任务。公网网关会移除内部鉴权标识，不能直接调用扫描接口。
+暂停系统任务会暂停所有对应公司的规则扫描，恢复后从已提交进度继续；它不会停用规则或清理配额。规则自己的停用操作会结束当前轮次，并阻止后续商品处理。到期同样在下一商品事务开始前检查，已开始提交的事务允许完成；最后一次配额保留，不自动清零。
+
+每轮有独立执行记录和商品结果，支持分页、仅看失败、展开渠道变化与优先级原因。商品清单每批最多 2000 个 SKU，准备期间新出现的商品可能在下一轮纳入；处理每次最多 50 个 SKU、约 2 秒工作预算，单个事务超时 15 秒。扫描按规则 ID 轮转，避免大型规则长期占据扫描入口。每个 SKU 使用短事务，锁顺序为规则头、轮次/商品结果、OMS SKU、排序后的仓库和渠道；事务内没有远程调用，也没有自动重试。
+库存与商品成功记录同事务提交，多实例或重复触发不会重复处理已成功项。进程中断后由下一次扫描继续未完成轮次；某 SKU 失败会回滚并记录原因，其余商品继续。轮次结束后从结束时间计算下一次间隔，不补跑漏掉的历史周期；失败商品在下一轮按最新库存重新计算。系统任务日志记录扫描调用是否成功，分货执行记录记录每个业务商品的成功与失败。
+迁移 `migrate_daily_allocation.py` 新增 5 个规则调度字段、`rule_stock_daily_run` 和 `rule_stock_daily_item` 两张表及查询索引，新增字段和表均带中文 COMMENT。迁移不启用历史分货规则，不更改库存数量。新增 API 为 `/inventory/allocation/{id}/daily/{ENABLE|PAUSE|RUN}`、`/{id}/daily-runs`、`/{id}/daily-runs/{runId}` 及其 `/items`；权限沿用分货编辑和查询权限，业务接口公司来自当前登录用户。
 
 ## 平台简介
 

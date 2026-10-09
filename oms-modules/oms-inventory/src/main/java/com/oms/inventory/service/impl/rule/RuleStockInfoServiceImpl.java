@@ -19,12 +19,17 @@ import java.util.List;
 public class RuleStockInfoServiceImpl extends ServiceImpl<RuleStockInfoMapper,RuleStockInfo> implements IRuleStockInfoService {
     @Override
     public RuleStockInfo selectRuleStockInfoById(Long id) {
-        return this.getById(id);
+        RuleStockInfo row=this.getById(id);
+        if(row==null || !com.oms.inventory.service.InventoryCompany.current().equalsIgnoreCase(row.getCompanyCode()))throw new IllegalArgumentException("分货单不存在或无权访问");
+        return row;
     }
 
     @Override
     public List<RuleStockInfo> selectRuleStockInfoList(RuleStockInfo ruleStockInfo) {
         QueryWrapper<RuleStockInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_code",com.oms.inventory.service.InventoryCompany.current());
+        queryWrapper.eq(ruleStockInfo.getEnable()!=null,"enable",ruleStockInfo.getEnable());
+        queryWrapper.eq(ruleStockInfo.getAllocationType()!=null,"allocation_type",ruleStockInfo.getAllocationType());
         queryWrapper.eq(ObjectUtil.isNotEmpty(ruleStockInfo.getRuleName()),"rule_name",ruleStockInfo.getRuleName());
         queryWrapper.eq(ObjectUtil.isNotEmpty(ruleStockInfo.getRuleCode()),"rule_code",ruleStockInfo.getRuleCode());
         queryWrapper.eq(ObjectUtil.isNotNull(ruleStockInfo.getStatus()),"status",ruleStockInfo.getStatus());

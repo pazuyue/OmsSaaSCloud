@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * 分货单商品信息Controller
  */
-@RestController
+// Legacy unversioned import is deliberately not registered. Use /allocation/{id}/goods.
 @RequestMapping("/ruleStockGoods")
 public class RuleStockGoodsInfoController extends BaseController {
     @Resource

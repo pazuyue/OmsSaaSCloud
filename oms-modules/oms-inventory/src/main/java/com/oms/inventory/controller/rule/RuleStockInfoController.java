@@ -79,8 +79,7 @@ public class RuleStockInfoController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody RuleStockInfo ruleStockInfo,@RequestParam(value = "company_code",required = false) String companyCode)
     {
-        ruleStockInfo.setCompanyCode(companyCode);
-        return toAjax(ruleStockInfoService.insertRuleStockInfo(ruleStockInfo));
+        return error("请刷新页面，使用新的分货工作台创建草稿");
     }
 
     /**
@@ -91,7 +90,7 @@ public class RuleStockInfoController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody RuleStockInfo ruleStockInfo)
     {
-        return toAjax(ruleStockInfoService.updateRuleStockInfo(ruleStockInfo));
+        return error("请刷新页面，使用带版本校验的分货工作台");
     }
 
     /**
@@ -102,7 +101,7 @@ public class RuleStockInfoController extends BaseController
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(ruleStockInfoService.deleteRuleStockInfoByIds(ids));
+        return error("请在分货工作台删除草稿，已执行单据不可删除");
     }
 
     @PostMapping("/importTemplate")

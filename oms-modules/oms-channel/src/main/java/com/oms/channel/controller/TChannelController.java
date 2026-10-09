@@ -37,6 +37,22 @@ public class TChannelController extends BaseController
     @Resource
     private ITChannelService tChannelService;
 
+    @RequiresPermissions(value={"ruleStock:info:list","ruleStock:info:edit","ruleStock:info:add"}, logical=com.ruoyi.common.security.annotation.Logical.OR)
+    @GetMapping("/allocationLookup")
+    public AjaxResult allocationLookup(@org.springframework.web.bind.annotation.RequestParam(required=false) List<Integer> ids,
+                                      @org.springframework.web.bind.annotation.RequestParam(defaultValue="") String keyword) {
+        com.ruoyi.system.api.model.LoginUser user=com.ruoyi.common.security.utils.SecurityUtils.getLoginUser();
+        String company=user==null?null:user.getCompanyCode();
+        if ((company==null || company.isEmpty()) && user!=null && user.getSysUser()!=null) company=user.getSysUser().getLoginCompanyCode();
+        if(company==null || company.isEmpty()) return error("请先选择登录公司");
+        if(keyword.length()>100 || (ids!=null && ids.size()>100)) return error("查询条件过多");
+        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<TChannel> query=new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
+        query.select("channel_id","channel_name").eq("company_code",company).eq("enabled",1);
+        if(ids!=null && !ids.isEmpty()) query.in("channel_id",ids);
+        else if(!keyword.trim().isEmpty()) query.likeRight("channel_name",keyword.trim());
+        return success(tChannelService.list(query.orderByAsc("channel_id").last("LIMIT 100")));
+    }
+
     /**
      * 查询店铺信息列表
      */

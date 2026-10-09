@@ -57,6 +57,22 @@ public class InventoryMutationService {
         return !locking || previous(company,sku,relation,"LOCK").isEmpty();
     }
 
+    /** Current read after the shared SKU mutex. Missing warehouse rows contribute zero. */
+    @Transactional(propagation=org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public long allocationAvailable(String company,String sku,List<String> stores) {
+        company=canonical(company);
+        lockOms(company,sku,false);
+        long total=0;
+        for(String store:new TreeSet<>(stores)) {
+            List<Map<String,Object>> rows=jdbc.query("SELECT * FROM wms_inventory WHERE company_code=? AND sku_sn=? AND store_code=? FOR UPDATE",ROW,company,sku,store);
+            if(!rows.isEmpty()) {
+                require(number(rows.get(0),"zpAvailableNumber")>=0,"仓库可用库存不能为负数");
+                total=Math.addExact(total,number(rows.get(0),"zpAvailableNumber"));
+            }
+        }
+        return total;
+    }
+
     private void journal(String company, Map<String,Object> before, String operation,String request,String relation,String type,int quantity,String reason) {
         Map<String,Object> after=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE id=?",ROW,before.get("id"));
         List<Object> args=new ArrayList<>(Arrays.asList(company,before.get("storeCode"),before.get("skuSn"),before.get("id"),before.get("batchCode"),type,operation,request,relation,quantity,reason,SecurityUtils.getUserId(),SecurityUtils.getUsername()));
@@ -106,6 +122,9 @@ public class InventoryMutationService {
     @Transactional(rollbackFor=Exception.class, timeout=15)
     public boolean reserve(String company,List<String> stores,String sku,BigDecimal amount,String relation,boolean release) {
         company=canonical(company);
+        if(release && relation!=null && relation.startsWith("RULE-")) {
+            throw new IllegalArgumentException("分货锁库必须按来源余额释放，请使用分货工作台");
+        }
         require(stores!=null && !stores.isEmpty() && stores.size()<=100,"请选择 1 至 100 个仓库");
         require(sku!=null && !sku.isEmpty() && relation!=null && relation.length()<=64,"库存操作必须关联来源单据");
         int quantity=amount.intValueExact();require(quantity>0,"预占或释放数量必须为正整数");
@@ -149,6 +168,40 @@ public class InventoryMutationService {
         int delta=release?-quantity:quantity;
         jdbc.update("UPDATE oms_inventory SET available_stock=available_stock-?,allocated_stock=allocated_stock+?,version=version+1 WHERE id=?",delta,delta,oms.get("id"));
         return true;
+    }
+
+    /** Source service owns attribution; physical changes share the same transaction and SKU mutex. */
+    @Transactional(propagation=org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void settleReservation(String company,String sku,Map<Long,Long> quantities,String request,String relation,boolean consume) {
+        Map<String,Object> oms=lockOms(company,sku,false);
+        long total=quantities.values().stream().mapToLong(Long::longValue).sum();
+        require(total>0 && total<=Integer.MAX_VALUE && quantities.values().stream().allMatch(q->q>0),"来源结算数量无效");
+        require(number(oms,"allocatedStock")>=total && (!consume || number(oms,"totalStock")>=total),"商品汇总锁库不足，请核对来源记录");
+        String marks=String.join(",",Collections.nCopies(quantities.size(),"?"));
+        List<Object> args=new ArrayList<>(Arrays.asList(company,sku));args.addAll(quantities.keySet());
+        List<Map<String,Object>> hints=jdbc.query("SELECT id,store_code FROM wms_inventory_batch WHERE company_code=? AND sku_sn=? AND id IN ("+marks+") ORDER BY store_code,id",ROW,args.toArray());
+        require(hints.size()==quantities.size(),"原锁库批次不存在或公司不匹配");
+        Map<String,Map<String,Object>> warehouses=new TreeMap<>();
+        for(Map<String,Object> hint:hints) {String store=(String)hint.get("storeCode");if(!warehouses.containsKey(store))warehouses.put(store,lockWarehouse(company,sku,store));}
+        for(Map<String,Object> warehouse:warehouses.values())checkConsistent(warehouse,company);
+        Map<String,Long> byStore=new TreeMap<>();
+        for(Map<String,Object> hint:hints) {
+            long id=number(hint,"id"),take=quantities.get(id);
+            Map<String,Object> before=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE id=? FOR UPDATE",ROW,id);
+            // Protect every tracked source in this batch, including other allocation rules.
+            long owed=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-consumed_quantity-released_quantity),0) FROM rule_stock_reservation WHERE company_code=? AND sku_sn=? AND batch_id=?",Long.class,company,sku,id);
+            require(number(before,"zpLockNumber")>=Math.max(take,owed),"批次锁库与来源余额不一致，操作已回滚");
+            String field=consume?"zp_actual_number=zp_actual_number-?":"zp_available_number=zp_available_number+?";
+            jdbc.update("UPDATE wms_inventory_batch SET "+field+",zp_lock_number=zp_lock_number-?,version=version+1 WHERE id=?",take,take,id);
+            journal(company,before,consume?"CONSUME":"UNLOCK",request,relation,"ZP",-(int)take,consume?"订单按锁库来源出库":"释放本单未占用余额");
+            byStore.merge((String)hint.get("storeCode"),take,Long::sum);
+        }
+        for(Map.Entry<String,Long> entry:byStore.entrySet()) {
+            String field=consume?"zp_actual_number=zp_actual_number-?":"zp_available_number=zp_available_number+?";
+            jdbc.update("UPDATE wms_inventory SET "+field+",zp_lock_number=zp_lock_number-?,version=version+1 WHERE id=?",entry.getValue(),entry.getValue(),warehouses.get(entry.getKey()).get("id"));
+        }
+        String field=consume?"total_stock=total_stock-?":"available_stock=available_stock+?";
+        jdbc.update("UPDATE oms_inventory SET "+field+",allocated_stock=allocated_stock-?,version=version+1 WHERE id=?",total,total,oms.get("id"));
     }
 
     @Transactional(rollbackFor=Exception.class, timeout=15)

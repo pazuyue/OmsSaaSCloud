@@ -5,6 +5,13 @@ DB='qm_oms_saas_inventory'
 ROOT=Path(__file__).resolve().parent
 
 def main():
+    assert list((ROOT/'backups').glob('oms-saas-complete-*.sql')),'Create a backup first'
+    if execute("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='rule_stock_info' AND column_name='allocation_type'",DB).strip()=='0':
+        execute((ROOT/'migrations/20261008_rule_allocation.sql').read_text(),DB)
+        print('Rule allocation type column added')
+    execute("INSERT INTO sys_dict_type(dict_name,dict_type,status,create_by,create_time,remark) SELECT '分货类型','oms_warehouse_allocation_type','0','local-deploy',NOW(),'对应当前库存分货代码枚举' WHERE NOT EXISTS (SELECT 1 FROM sys_dict_type WHERE dict_type='oms_warehouse_allocation_type')")
+    for value,label in [(1,'普通分货'),(2,'锁库分货')]:
+        execute(f"INSERT INTO sys_dict_data(dict_sort,dict_label,dict_value,dict_type,list_class,is_default,status,create_by,create_time) SELECT {value},'{label}','{value}','oms_warehouse_allocation_type','default','N','0','local-deploy',NOW() WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='oms_warehouse_allocation_type' AND dict_value='{value}')")
     if execute("SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='wms_inventory' AND index_name='uk_inventory_company_sku_store'",DB).strip()!='0':
         print('Inventory migration already applied');return
     for table in ['wms_inventory','wms_inventory_batch']:

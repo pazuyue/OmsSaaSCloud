@@ -92,7 +92,9 @@ button {
   position: relative;
 }
 .nav-measure {
-  position: absolute;
+  position: fixed;
+  left: -10000px;
+  top: 0;
   visibility: hidden;
   pointer-events: none;
   height: 0;

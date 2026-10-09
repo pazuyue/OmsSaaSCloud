@@ -27,25 +27,19 @@ public class RuleStockInfoHandleController extends BaseController {
     @PostMapping(value = "/setRule")
     public AjaxResult setRule(@RequestBody AllocationRuleDto dto,@RequestParam(value = "company_code",required = false) String companyCode)
     {
-        log.info("分货单设置：{}",dto);
-        dto.setCompanyCode(companyCode);
-        Boolean aBoolean = iRuleStockInfoHandleService.setRule(dto);
-        if (!aBoolean){
-            return error("保存失败");
-        }
-        return success();
+        return error("请刷新页面，使用新的分货工作台设置规则");
     }
 
     @RequiresPermissions("ruleStock:info:query")
     @GetMapping(value = "/getInfoDetails/{id}")
     public AjaxResult getInfoDetails(@PathVariable("id") Long id,@RequestParam(value = "company_code",required = false) String companyCode)
     {
-        return success(iRuleStockInfoHandleService.getInfoDetails(id,companyCode));
+        return error("请刷新页面，使用新的分货详情接口");
     }
 
-    //@RequiresPermissions("ruleStock:info:toExamine")
+    @RequiresPermissions("ruleStock:info:edit")
     @GetMapping(value = "/toExamine/{id}")
     public AjaxResult toExamine(@PathVariable("id") Long id,@RequestParam(value = "company_code",required = false) String companyCode){
-        return success(iRuleStockInfoHandleService.toExamine(id,companyCode));
+        return error("审核必须通过分货工作台的 POST 执行接口提交");
     }
 }

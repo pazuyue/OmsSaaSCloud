@@ -1,5 +1,6 @@
 <template>
   <div class="app-container inventory-workspace">
+    <el-button v-if="productReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(productReturn)">返回商品库存</el-button>
     <filter-panel :model="query" :primary-fields="['storeCode', 'skuSn']">
       <el-form :inline="true" size="small" @submit.native.prevent="search">
         <el-form-item label="虚仓" prop="storeCode">
@@ -47,43 +48,47 @@
 
     <el-drawer title="库存详情" :visible.sync="drawer" :size="mobile ? '100%' : 'min(1080px, 86vw)'" append-to-body custom-class="inventory-drawer" @closed="closeDetail">
       <div v-if="detail" v-loading="detailLoading" class="inventory-detail">
-        <div class="detail-heading"><div><h3>{{ goodsName(detail.skuSn) }}</h3><p>{{ detail.skuSn }} <span class="muted">· {{ storeName(detail.storeCode) }} / {{ detail.storeCode }}</span></p></div><el-button size="small" icon="el-icon-refresh" @click="refreshDetail">刷新</el-button></div>
-        <el-alert v-if="detailError" title="详情刷新失败，请重试" type="error" :closable="false" show-icon />
-        <el-alert v-else-if="!detail.consistent" title="汇总与批次库存不一致" type="warning" show-icon :closable="false" description="下表为当前虚仓全部批次的核对结果。请按来源单据核实差异；处理前暂不允许调整库存。" />
-        <div class="balance-grid">
-          <div class="balance-head"><span>数量口径</span><span>仓库汇总</span><span>批次合计</span><span>差额</span></div>
-          <div v-for="field in quantityFields" :key="field.key" class="balance-row"><span>{{ field.label }}</span><strong>{{ detail[field.key] }}</strong><span>{{ detail.batchTotals[field.key] }}</span><span :class="{ difference: difference(field.key) !== 0 }">{{ difference(field.key) }}</span></div>
-        </div>
-        <el-tabs v-model="activeTab" @tab-click="loadTab">
-          <el-tab-pane label="批次明细" name="batches">
-            <div class="detail-toolbar"><el-input v-model="batchQuery.batchCode" clearable placeholder="搜索批次编码" size="small" @keyup.enter.native="searchBatches" @clear="searchBatches" /><el-button size="small" @click="searchBatches">查询</el-button><el-button v-hasPermi="['wmsInventoryBatch:batch:export']" size="small" @click="exportBatches">导出当前页</el-button></div>
-            <div v-if="batchError" class="load-error">批次加载失败。<el-button type="text" @click="loadBatches">重新加载</el-button></div>
-            <el-table v-loading="batchLoading" :data="batches" :empty-text="batchError ? '加载失败' : detail.consistent ? '该虚仓暂无批次记录' : '未找到匹配批次，请核对仓库编码及入库来源'">
-              <el-table-column label="批次编码" prop="batchCode" min-width="150" show-overflow-tooltip />
-              <el-table-column v-for="field in quantityFields" :key="field.key" :label="field.label" :prop="field.key" width="95" align="right" />
-              <el-table-column label="批次成本" prop="transactionPrice" width="95" align="right" />
-              <el-table-column label="操作" width="95" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['wmsInventory:inventory:edit']" type="text" :disabled="!detail.consistent || detailError" @click="openAdjustment(s.row)">库存调整</el-button></template></el-table-column>
+        <batch-trace v-if="selectedBatch" :key="selectedBatch.id" :batch-id="Number(selectedBatch.id)" :inventory="detail" :initial-tab="batchTraceTab" @back="selectedBatch = null" @rule="goBatchRule" />
+        <template v-else>
+          <el-button v-if="productReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(productReturn)">返回商品库存</el-button>
+          <div class="detail-heading"><div><h3>{{ goodsName(detail.skuSn) }}</h3><p>{{ detail.skuSn }} <span class="muted">· {{ storeName(detail.storeCode) }} / {{ detail.storeCode }}</span></p></div><el-button size="small" icon="el-icon-refresh" @click="refreshDetail">刷新</el-button></div>
+          <el-alert v-if="detailError" title="详情刷新失败，请重试" type="error" :closable="false" show-icon />
+          <el-alert v-else-if="!detail.consistent" title="汇总与批次库存不一致" type="warning" show-icon :closable="false" description="下表为当前虚仓全部批次的核对结果。请按来源单据核实差异；处理前暂不允许调整库存。" />
+          <div class="balance-grid">
+            <div class="balance-head"><span>数量口径</span><span>仓库汇总</span><span>批次合计</span><span>差额</span></div>
+            <div v-for="field in quantityFields" :key="field.key" class="balance-row"><span>{{ field.label }}</span><strong>{{ detail[field.key] }}</strong><span>{{ detail.batchTotals[field.key] }}</span><span :class="{ difference: difference(field.key) !== 0 }">{{ difference(field.key) }}</span></div>
+          </div>
+          <el-tabs v-model="activeTab" @tab-click="loadTab">
+            <el-tab-pane label="批次明细" name="batches">
+              <div class="detail-toolbar"><el-input v-model="batchQuery.batchCode" clearable placeholder="搜索批次编码" size="small" @keyup.enter.native="searchBatches" @clear="searchBatches" /><el-button size="small" @click="searchBatches">查询</el-button><el-button v-hasPermi="['wmsInventoryBatch:batch:export']" size="small" @click="exportBatches">导出当前页</el-button></div>
+              <div v-if="batchError" class="load-error">批次加载失败。<el-button type="text" @click="loadBatches">重新加载</el-button></div>
+              <el-table v-loading="batchLoading" :data="batches" :empty-text="batchError ? '加载失败' : detail.consistent ? '该虚仓暂无批次记录' : '未找到匹配批次，请核对仓库编码及入库来源'">
+                <el-table-column label="批次编码" min-width="150"><template slot-scope="s"><div>{{ s.row.batchCode }}</div><el-button v-hasPermi="['wmsInventoryBatch:batch:query']" type="text" @click="openBatch(s.row)">查看详情</el-button></template></el-table-column>
+                <el-table-column v-for="field in quantityFields" :key="field.key" :label="field.label" :prop="field.key" width="95" align="right" />
+                <el-table-column label="批次成本" prop="transactionPrice" width="95" align="right" />
+                <el-table-column label="操作" width="95" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['wmsInventory:inventory:edit']" type="text" :disabled="!detail.consistent || detailError" @click="openAdjustment(s.row)">库存调整</el-button></template></el-table-column>
+              </el-table>
+              <pagination v-show="batchTotal > 0" :total="batchTotal" :page.sync="batchQuery.pageNum" :limit.sync="batchQuery.pageSize" :page-sizes="[10, 20, 50, 100]" @pagination="loadBatches" />
+            </el-tab-pane>
+            <el-tab-pane label="预占记录" name="reservations" />
+            <el-tab-pane label="库存流水" name="history" />
+          </el-tabs>
+          <div v-if="activeTab !== 'batches'">
+            <p class="muted">{{ activeTab === 'reservations' ? '按来源单据记录预占与释放；历史导入库存未补造明细。' : '记录本次升级后的入库、调整、预占和释放。' }}</p>
+            <div v-if="historyError" class="load-error">记录加载失败。<el-button type="text" @click="loadHistory">重新加载</el-button></div>
+            <el-table v-loading="historyLoading" :data="history" :empty-text="historyError ? '加载失败' : '暂无可追溯记录'">
+              <el-table-column label="时间" prop="operationTime" width="165" />
+              <el-table-column label="类型" width="90"><template slot-scope="s">{{ operationName(s.row.operationType) }}</template></el-table-column>
+              <el-table-column label="批次" prop="batchCode" min-width="130" show-overflow-tooltip />
+              <el-table-column label="来源单号" prop="relationSn" min-width="150" show-overflow-tooltip />
+              <el-table-column label="数量变化" width="100" align="right"><template slot-scope="s">{{ s.row.changeQuantity > 0 ? '+' : '' }}{{ s.row.changeQuantity }}</template></el-table-column>
+              <el-table-column label="批次数量变化" min-width="190"><template slot-scope="s"><div>{{ s.row.inventoryType === 'CP' ? '次品' : '正品' }}可用 {{ s.row.inventoryType === 'CP' ? s.row.oldCpAvailableNumber : s.row.oldZpAvailableNumber }} → {{ s.row.inventoryType === 'CP' ? s.row.newCpAvailableNumber : s.row.newZpAvailableNumber }}</div><span class="muted">正品预占 {{ s.row.oldZpLockNumber }} → {{ s.row.newZpLockNumber }}</span></template></el-table-column>
+              <el-table-column label="原因" prop="changeReason" min-width="150" show-overflow-tooltip />
+              <el-table-column label="操作人" prop="operatorName" width="95" />
             </el-table>
-            <pagination v-show="batchTotal > 0" :total="batchTotal" :page.sync="batchQuery.pageNum" :limit.sync="batchQuery.pageSize" :page-sizes="[10, 20, 50, 100]" @pagination="loadBatches" />
-          </el-tab-pane>
-          <el-tab-pane label="预占记录" name="reservations" />
-          <el-tab-pane label="库存流水" name="history" />
-        </el-tabs>
-        <div v-if="activeTab !== 'batches'">
-          <p class="muted">{{ activeTab === 'reservations' ? '按来源单据记录预占与释放；历史导入库存未补造明细。' : '记录本次升级后的入库、调整、预占和释放。' }}</p>
-          <div v-if="historyError" class="load-error">记录加载失败。<el-button type="text" @click="loadHistory">重新加载</el-button></div>
-          <el-table v-loading="historyLoading" :data="history" :empty-text="historyError ? '加载失败' : '暂无可追溯记录'">
-            <el-table-column label="时间" prop="operationTime" width="165" />
-            <el-table-column label="类型" width="90"><template slot-scope="s">{{ operationName(s.row.operationType) }}</template></el-table-column>
-            <el-table-column label="批次" prop="batchCode" min-width="130" show-overflow-tooltip />
-            <el-table-column label="来源单号" prop="relationSn" min-width="150" show-overflow-tooltip />
-            <el-table-column label="数量变化" width="100" align="right"><template slot-scope="s">{{ s.row.changeQuantity > 0 ? '+' : '' }}{{ s.row.changeQuantity }}</template></el-table-column>
-            <el-table-column label="批次数量变化" min-width="190"><template slot-scope="s"><div>{{ s.row.inventoryType === 'CP' ? '次品' : '正品' }}可用 {{ s.row.inventoryType === 'CP' ? s.row.oldCpAvailableNumber : s.row.oldZpAvailableNumber }} → {{ s.row.inventoryType === 'CP' ? s.row.newCpAvailableNumber : s.row.newZpAvailableNumber }}</div><span class="muted">正品预占 {{ s.row.oldZpLockNumber }} → {{ s.row.newZpLockNumber }}</span></template></el-table-column>
-            <el-table-column label="原因" prop="changeReason" min-width="150" show-overflow-tooltip />
-            <el-table-column label="操作人" prop="operatorName" width="95" />
-          </el-table>
-          <pagination v-show="historyTotal > 0" :total="historyTotal" :page.sync="historyQuery.pageNum" :limit.sync="historyQuery.pageSize" :page-sizes="[10, 20, 50, 100]" @pagination="loadHistory" />
-        </div>
+            <pagination v-show="historyTotal > 0" :total="historyTotal" :page.sync="historyQuery.pageNum" :limit.sync="historyQuery.pageSize" :page-sizes="[10, 20, 50, 100]" @pagination="loadHistory" />
+          </div>
+        </template>
       </div>
     </el-drawer>
 
@@ -106,15 +111,17 @@
 import { inventoryList, inventoryDetail, inventoryHistory, adjustInventory, lookupGoods, lookupStores } from '@/api/wmsInventory/workspace'
 import { listInventoryBatch } from '@/api/wmsInventoryBatch/wmsInventoryBatch'
 import { saveAs } from 'file-saver'
+import BatchTrace from './components/BatchTrace'
 
 const defaults = () => ({ pageNum: 1, pageSize: 20, storeCode: '', skuSn: '', onlyStock: false, abnormal: false })
 export default {
   name: 'Inventory',
+  components: { BatchTrace },
   data() {
     return {
       query: defaults(), rows: [], total: 0, loading: false, listError: false, showDefective: true,
       goodsOptions: [], storeOptions: [], goodsMap: {}, storeMap: {}, goodsSearching: false, storeSearching: false,
-      drawer: false, detail: null, detailLoading: false, detailError: false, activeTab: 'batches',
+      drawer: false, detail: null, detailLoading: false, detailError: false, activeTab: 'batches', selectedBatch: null, batchTraceTab: 'history',
       batches: [], batchTotal: 0, batchLoading: false, batchError: false, batchQuery: { pageNum: 1, pageSize: 20, batchCode: '' },
       history: [], historyTotal: 0, historyLoading: false, historyError: false, historyQuery: { pageNum: 1, pageSize: 20 },
       adjustOpen: false, adjustBatch: null, saving: false, adjustment: {},
@@ -123,6 +130,7 @@ export default {
     }
   },
   computed: {
+    productReturn() { const value = this.$route.query.productReturn; return typeof value === 'string' && /^\/oms-inventory\/productInventory(?:\?|$)/.test(value) ? value : '' },
     mobile() { return this.$store.state.app.device === 'mobile' },
     adjustmentBefore() {
       const prefix = this.adjustment.inventoryType === 'CP' ? 'cp' : 'zp'
@@ -130,12 +138,16 @@ export default {
       return { actual: batch[prefix + 'ActualNumber'] || 0, available: batch[prefix + 'AvailableNumber'] || 0, locked: batch[prefix + 'LockNumber'] || 0 }
     }
   },
-  created() { this.listSeq = 0; this.detailSeq = 0; this.batchSeq = 0; this.historySeq = 0; this.goodsSeq = 0; this.storeSeq = 0; this.loadList(); this.searchStores('') },
+  watch: { '$route.query.inventoryId'() { if (this.$route.path === '/oms-inventory/wmsInventory') this.openLinkedInventory() } },
+  created() { this.listSeq = 0; this.detailSeq = 0; this.batchSeq = 0; this.historySeq = 0; this.goodsSeq = 0; this.storeSeq = 0; const q = this.$route.query; if (q.skuSn) this.query.skuSn = String(q.skuSn); if (q.storeCode) this.query.storeCode = String(q.storeCode); this.query.pageNum = Math.max(1, Math.min(100000, Number(q.pageNum) || 1)); this.query.pageSize = [10, 20, 50, 100].includes(Number(q.pageSize)) ? Number(q.pageSize) : 20; this.query.onlyStock = q.onlyStock === 'true'; this.query.abnormal = q.abnormal === 'true'; this.loadList(); this.searchStores(''); this.openLinkedInventory() },
   beforeDestroy() { clearTimeout(this.goodsTimer); clearTimeout(this.storeTimer); this.listSeq++; this.detailSeq++; this.batchSeq++; this.historySeq++ },
   methods: {
+    async openLinkedInventory() { const id = this.$route.query.inventoryId; if (!/^\d+$/.test(id || '')) return; try { const r = await inventoryDetail(id); if (String(this.$route.query.inventoryId) === String(id) && this.$route.path === '/oms-inventory/wmsInventory') { this.loadNames([r.data]); this.openDetail(r.data); const q = this.$route.query; this.batchQuery.batchCode = String(q.batchCode || ''); this.batchQuery.pageNum = Math.max(1, Math.min(100000, Number(q.batchPage) || 1)); if (/^\d+$/.test(q.batchId || '')) { this.batchTraceTab = q.batchTab === 'sources' ? 'sources' : 'history'; this.selectedBatch = { id: Number(q.batchId) } } } } catch (_) { /* Request layer displays missing or unauthorized records. */ } },
+    openBatch(row) { this.batchTraceTab = 'history'; this.selectedBatch = row },
+    goBatchRule({ ruleId, tab }) { const query = { ...this.query, inventoryId: this.detail.id, batchId: this.selectedBatch.id, batchTab: tab, batchCode: this.batchQuery.batchCode, batchPage: this.batchQuery.pageNum }; if (this.productReturn) query.productReturn = this.productReturn; const inventoryReturn = this.$router.resolve({ path: '/oms-inventory/wmsInventory', query }).route.fullPath; this.$router.push({ path: '/oms-inventory/ruleStock', query: { ruleId, inventoryReturn }}) },
     goodsName(sku) { return this.goodsMap[sku] || '商品资料未匹配' },
     storeName(code) { return this.storeMap[code] || '仓库资料未匹配' },
-    operationName(type) { return { ADJUST: '库存调整', RECEIVE: '入库', LOCK: '预占', UNLOCK: '释放' }[type] || type },
+    operationName(type) { return { ADJUST: '库存调整', RECEIVE: '入库', LOCK: '预占', UNLOCK: '释放', CONSUME: '出库' }[type] || type },
     difference(key) { return Number(this.detail[key]) - Number(this.detail.batchTotals[key]) },
     search() { this.query.pageNum = 1; this.loadList() },
     reset() { this.query = defaults(); this.loadList() },
@@ -170,13 +182,14 @@ export default {
       }, 300)
     },
     openDetail(row) {
+      this.selectedBatch = null
       this.detailSeq++; this.batchSeq++; this.historySeq++
       this.detail = row; this.drawer = true; this.detailError = false; this.activeTab = 'batches'
       this.batches = []; this.batchTotal = 0; this.history = []; this.historyTotal = 0
       this.batchQuery = { pageNum: 1, pageSize: 20, batchCode: '' }; this.historyQuery = { pageNum: 1, pageSize: 20 }
       this.refreshDetail()
     },
-    closeDetail() { this.detailSeq++; this.batchSeq++; this.historySeq++ },
+    closeDetail() { this.detailSeq++; this.batchSeq++; this.historySeq++; this.selectedBatch = null },
     async refreshDetail() {
       const seq = ++this.detailSeq; this.detailLoading = true; this.detailError = false
       try { const r = await inventoryDetail(this.detail.id); if (seq !== this.detailSeq) return; this.detail = r.data; this.loadTab() } catch (e) { if (seq === this.detailSeq) this.detailError = true } finally { if (seq === this.detailSeq) this.detailLoading = false }

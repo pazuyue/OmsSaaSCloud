@@ -30,6 +30,22 @@ public class WmsSimulationStoreInfoController extends BaseController
     @Resource
     private WmsSimulationStoreInfoService wmsSimulationStoreInfoService;
 
+    @RequiresPermissions(value={"ruleStock:info:list","ruleStock:info:edit","ruleStock:info:add"}, logical=com.ruoyi.common.security.annotation.Logical.OR)
+    @GetMapping("/allocationLookup")
+    public AjaxResult allocationLookup(@RequestParam(required=false) List<String> codes,
+                                      @RequestParam(defaultValue="") String keyword) {
+        com.ruoyi.system.api.model.LoginUser user=com.ruoyi.common.security.utils.SecurityUtils.getLoginUser();
+        String company=user==null?null:user.getCompanyCode();
+        if ((company==null || company.isEmpty()) && user!=null && user.getSysUser()!=null) company=user.getSysUser().getLoginCompanyCode();
+        if(company==null || company.isEmpty()) return error("请先选择登录公司");
+        if(keyword.length()>100 || (codes!=null && codes.size()>100)) return error("查询条件过多");
+        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<WmsSimulationStoreInfo> query=new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
+        query.select("wms_simulation_code","wms_simulation_name").eq("company_code",company);
+        if(codes!=null && !codes.isEmpty()) query.in("wms_simulation_code",codes);
+        else if(!keyword.trim().isEmpty()) query.and(q->q.likeRight("wms_simulation_code",keyword.trim()).or().likeRight("wms_simulation_name",keyword.trim()));
+        return success(wmsSimulationStoreInfoService.list(query.orderByAsc("wms_simulation_code").last("LIMIT 100")));
+    }
+
     @RequiresPermissions("wmsInventory:inventory:list")
     @GetMapping("/inventoryLookup")
     public AjaxResult inventoryLookup(@RequestParam(required=false) List<String> codes,
