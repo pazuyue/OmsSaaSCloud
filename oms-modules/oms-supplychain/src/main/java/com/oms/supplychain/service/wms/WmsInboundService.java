@@ -89,7 +89,7 @@ public class WmsInboundService {
             String next="等待仓库收货回传后自动入账";
             if(notFound){message="仓库返回查无单据，请核对仓库单号及受理记录";next="核对对接配置和仓库受理记录；本次查询不会重新下发";}
             if(action.equals("QUERY")) {
-                if(!known&&reply.success){message="仓库查询未返回可识别的业务状态："+reply.status;next="查看交互日志，核对接口是否支持入库状态查询";}
+                if(!known&&reply.success&&!notFound){message="仓库查询未返回可识别的业务状态："+reply.status;next="查看交互日志，核对接口是否支持入库状态查询";}
                 if(!reply.success)next="查看仓库错误信息；查无单据也不能直接重新下发，请先核对仓库";
                 if(reply.success&&Arrays.asList("FULFILLED","CLOSED").contains(reply.status)&&!"COMPLETE".equals(after.get("receipt_state"))){message="仓库已完成，收货回传待核对";next="联系仓库补传完整实收明细；查询状态不会增加库存";}
                 db.jdbc.update("UPDATE wms_inbound_task SET warehouse_status=CASE WHEN ? THEN ? ELSE warehouse_status END,last_query_result=?,last_query_time=NOW(),query_message=? WHERE id=? AND company_code=?",reply.success&&known,reply.status,outcome,message,taskId,company);

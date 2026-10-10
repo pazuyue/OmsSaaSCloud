@@ -37,6 +37,8 @@ def main():
   assert json.loads((LOGS/'wms-http-last-request.json').read_text(encoding='utf-8'))['valid']
   assert read('purchase',po)['numberActually']==0
   ticket=read('ticket',t)
+  query=post(f'/supplychain/wmsIntegration/tickets/{t}/query')['data'];assert query['success'] and query['warehouseStatus']=='ACCEPT',query
+  assert read('ticket',t)['progress']=='PROCESSING'
   body=json.dumps(dict(entryOrder=dict(entryOrderCode=ticket['sn'],entryOrderId='UI-EXT-ORDER',outBizCode=prefix+'-M1',ownerCode='UI-O',warehouseCode='UI-W',status='FULFILLED',confirmType='0',totalOrderLines=1),orderLines=[dict(itemCode=sku,ownerCode='UI-O',actualQty=5,batchs=[dict(batchCode=prefix+'-B1',inventoryType='ZP',actualQty=3),dict(batchCode=prefix+'-B2',inventoryType='CC',actualQty=2)])]),ensure_ascii=False,separators=(',',':'))
   params=dict(app_key='UI-APP',customerId='UI-CUSTOMER',method='jingdong.hufu.entryorder.confirm',v='1.0',sign_method='md5',format='json',timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
   params['sign']=hashlib.md5(('ui-test-secret'+''.join(k+v for k,v in sorted(params.items()))+body+'ui-test-secret').encode()).hexdigest().upper()
@@ -51,6 +53,9 @@ def main():
   except AssertionError:
    print('Posting diagnostics:',read('ticket',t),flush=True);raise
   assert read('purchase',po)['numberActually']==5 and read('purchase',po)['poState']==4
+  ticket=read('ticket',t);assert ticket['progress']=='COMPLETE' and ticket['numberPosted']==5 and ticket['numberPending']==0,ticket
+  batches=request(ROOT+f'/ticket/{t}/batches',token=token);assert batches['total']==2 and all(b['posted']==1 for b in batches['rows']),batches
+  filtered=request(ROOT+'/ticket/list?progress=COMPLETE&ownerId='+str(owner)+'&realStoreId='+str(real)+'&provider=JD_HUFU&postingState=POSTED',token=token);assert filtered['total']==1,filtered
   subprocess.run(['wsl','-d','Ubuntu-24.04','--','python3','/mnt/d/Users/yueguang/OmsSaaSCloud/docker/local/verify_wms_stock.py',prefix],check=True)
   logs=request('/supplychain/wmsIntegration/logs',token=token)['data']
   assert any(l['direction']=='IN' and l['result']=='FAILED' and l['connection_id']==connection for l in logs)
@@ -64,12 +69,19 @@ def main():
    page.get_by_role('button',name='仓库对接配置',exact=True).click();expect(page.locator('.el-dialog:visible')).to_contain_text('京东虎符');page.screenshot(path=str(LOGS/'wms-connections-ui.png'),full_page=True,animations='disabled')
    page.locator('.el-dialog:visible').get_by_role('button',name='关闭',exact=True).click()
    page.goto(BASE+'/oms-supplychain/wmsTickets?sn='+ticket['sn'],wait_until='networkidle');page.get_by_role('button',name='详情',exact=True).last.click();drawer=page.locator('.el-drawer:visible')
-   expect(drawer.locator('.wms-inbound-panel')).to_contain_text('收货结束');expect(drawer).to_contain_text('全部实收入账');page.screenshot(path=str(LOGS/'wms-inbound-completed.png'),full_page=True,animations='disabled')
+   expect(drawer.locator('.ticket-summary')).to_contain_text('收货结束');expect(drawer).to_contain_text('全部实收入账');page.screenshot(path=str(LOGS/'wms-inbound-completed.png'),full_page=True,animations='disabled')
+   expect(drawer.locator('.detail-heading h2')).to_have_text('采购入库')
+   drawer.get_by_role('tab',name='实际收货批次',exact=True).click();expect(drawer.locator('#pane-batches')).to_contain_text(prefix+'-B1');expect(drawer.locator('#pane-batches')).to_contain_text(prefix+'-B2');page.screenshot(path=str(LOGS/'wms-actual-batches.png'),full_page=True,animations='disabled')
+   drawer.get_by_role('tab',name='交互日志',exact=True).click();expect(drawer.locator('#pane-logs')).to_contain_text('下发入库')
+   (LOGS/'wms-http-query.json').write_text(json.dumps(dict(flag='failure',message='测试仓库查询拒绝')),encoding='utf-8')
+   drawer.get_by_role('button',name='查询仓库状态',exact=True).click();expect(page.locator('.el-message--warning')).to_contain_text('测试仓库查询拒绝');expect(drawer).to_contain_text('已完成')
+   (LOGS/'wms-http-query.json').unlink()
    drawer.get_by_role('button',name='交互日志',exact=True).click();dialog=page.locator('.el-dialog:visible');expect(dialog).to_contain_text(ticket['sn']);page.screenshot(path=str(LOGS/'wms-interaction-logs.png'),full_page=True,animations='disabled')
    assert not errors,errors
    browser.close()
   print('PASS gateway signed callback, scheduled dispatch, inventory, deduplication and WMS UI',flush=True)
  finally:
+  (LOGS/'wms-http-query.json').unlink(missing_ok=True)
   subprocess.run(['wsl','-d','Ubuntu-24.04','--','python3','/mnt/d/Users/yueguang/OmsSaaSCloud/docker/local/cleanup_purchase_ui.py',prefix],check=True)
   request('/auth/logout',{},token,method='DELETE')
 

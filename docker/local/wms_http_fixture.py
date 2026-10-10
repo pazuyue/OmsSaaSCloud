@@ -13,6 +13,8 @@ class Handler(BaseHTTPRequestHandler):
         (folder/'wms-http-last-request.json').write_text(json.dumps({'valid':valid,'body':body,'method':params.get('method')},ensure_ascii=False),encoding='utf-8')
         if params.get('format')=='json':reply=json.dumps({'flag':'success' if valid else 'failure','entryOrderId':'UI-EXT-ORDER','status':'ACCEPT'})
         else:reply='<response><flag>'+('success' if valid else 'failure')+'</flag><entryOrderId>UI-EXT-ORDER</entryOrderId><status>ACCEPT</status></response>'
+        if valid and params.get('method','').endswith('.query') and (folder/'wms-http-query.json').exists():
+            reply=(folder/'wms-http-query.json').read_text(encoding='utf-8')
         payload=reply.encode();self.send_response(200);self.end_headers();self.wfile.write(payload)
     def log_message(self,*args):pass
 

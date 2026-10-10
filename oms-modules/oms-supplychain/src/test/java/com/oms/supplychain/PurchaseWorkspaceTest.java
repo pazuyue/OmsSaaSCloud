@@ -268,6 +268,9 @@ public class PurchaseWorkspaceTest {
             assertEquals(true,service.detail("QM","ticket",t).get("receiptMissing"));assertEquals("ATTENTION",service.detail("QM","ticket",t).get("progress"));assertEquals(0,calls.get());
             response.set("<response><flag>failure</flag><message>仓库查询拒绝</message></response>");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("FAILED",query.get("outcome"));assertEquals(false,query.get("localUpdated"));assertEquals("ACCEPTED",inbound().task("QM",t).get("dispatch_state"));
             response.set("<response><flag>success</flag><status>UNRECOGNIZED</status></response>");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("UNSUPPORTED",query.get("outcome"));
+            response.set("<response><flag>failure</flag><code>NOT_FOUND</code><message>查无单据</message></response>");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("NOT_FOUND",query.get("outcome"));assertEquals("ACCEPTED",inbound().task("QM",t).get("dispatch_state"));
+            assertEquals("FULFILLED",inbound().task("QM",t).get("warehouse_status"));
+            response.set("malformed response");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("FAILED",query.get("outcome"));
             assertEquals(0,calls.get());assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM wms_receipt_line",Integer.class));
         } finally {server.stop(0);}
     }
