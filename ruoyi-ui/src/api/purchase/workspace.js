@@ -7,3 +7,5 @@ export const save = (kind, data) => request({ url: `${root}/${kind}`, method: 'p
 export const action = (kind, id, operation, data = {}) => request({ url: `${root}/${kind}/${id}/${operation}`, method: 'post', data, timeout: 120000 })
 export const removeSupplier = id => request({ url: `${root}/supplier/${id}`, method: 'delete' })
 export const previewImport = file => { const data = new FormData(); data.append('file', file); return request({ url: root + '/importPreview', method: 'post', data, timeout: 120000 }) }
+
+export const receiptBatches = (id, params) => request({ url: `${root}/ticket/${id}/batches`, params })

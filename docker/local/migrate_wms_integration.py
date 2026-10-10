@@ -12,6 +12,11 @@ def apply(db='qm_oms_saas_commodity', backup=True):
             docker_db('mysqldump', '--single-transaction', '--no-tablespaces', db, output=output)
         print('Backup:', path.name)
     execute((HERE / 'migrations/20261010_wms_integration.sql').read_text(encoding='utf-8'), db)
+    task_fields = {'warehouse_status': "VARCHAR(40) NOT NULL DEFAULT '' COMMENT '最近查询的仓库状态，仅展示，不替代实收回传'", 'last_query_result': "VARCHAR(24) NOT NULL DEFAULT '' COMMENT '最近查询结果：SUCCESS、FAILED、TIMEOUT、UNKNOWN、UNSUPPORTED'", 'last_query_time': "DATETIME NULL COMMENT '最近主动查询时间'", 'query_message': "VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '最近仓库查询说明'", 'cancel_reason': "VARCHAR(500) NOT NULL DEFAULT '' COMMENT '用户申请取消原因'"}
+    task_columns = {r.split('\t')[0] for r in execute('SHOW COLUMNS FROM wms_inbound_task', db).splitlines()}
+    for name, ddl in task_fields.items():
+        if name not in task_columns:
+            execute(f'ALTER TABLE wms_inbound_task ADD COLUMN {name} {ddl}', db)
     fields = {
         'inbound_mode': "TINYINT NULL COMMENT '虚仓入库方式：1 WMS回传、2自动虚拟；必须明确配置'",
         'outbound_mode': "TINYINT NULL COMMENT '虚仓出库方式：1 WMS回传、2自动虚拟；本期仅维护配置'",

@@ -96,10 +96,10 @@ def main():
             page.goto(BASE+'/oms-supplychain/wmsTickets?sn='+t['sn'],wait_until='networkidle')
             page.get_by_role('button',name='详情',exact=True).last.click();drawer=page.locator('.el-drawer:visible')
             expect(drawer).to_contain_text(product['skuSn'])
-            expect(drawer).to_contain_text('入账成功')
+            expect(drawer).to_contain_text('全部实收入账')
             assert read('receipt',nid)['noState']==4 and read('purchase',pid)['numberActually']==6
             assert t['statusTicket']==2 and t['inventoryStatus']==2
-            expect(drawer.get_by_role('button',name='完成虚拟入库',exact=True)).to_have_count(0)
+            expect(drawer.get_by_role('button',name='重试虚拟入库',exact=True)).to_have_count(0)
             page.screenshot(path=str(LOGS/'purchase-ui-ticket-detail.png'),full_page=True)
             post(f'/ticket/{tid}/post');assert read('purchase',pid)['numberActually']==6
             rejected(ROOT+f'/ticket/{tid}/cancel',{'reason':'不允许作废已入账单'})

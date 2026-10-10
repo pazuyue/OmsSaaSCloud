@@ -64,7 +64,7 @@ def main():
    page.get_by_role('button',name='仓库对接配置',exact=True).click();expect(page.locator('.el-dialog:visible')).to_contain_text('京东虎符');page.screenshot(path=str(LOGS/'wms-connections-ui.png'),full_page=True,animations='disabled')
    page.locator('.el-dialog:visible').get_by_role('button',name='关闭',exact=True).click()
    page.goto(BASE+'/oms-supplychain/wmsTickets?sn='+ticket['sn'],wait_until='networkidle');page.get_by_role('button',name='详情',exact=True).last.click();drawer=page.locator('.el-drawer:visible')
-   expect(drawer.locator('.wms-inbound-panel')).to_contain_text('收货完成');expect(drawer).to_contain_text('入账成功');page.screenshot(path=str(LOGS/'wms-inbound-completed.png'),full_page=True,animations='disabled')
+   expect(drawer.locator('.wms-inbound-panel')).to_contain_text('收货结束');expect(drawer).to_contain_text('全部实收入账');page.screenshot(path=str(LOGS/'wms-inbound-completed.png'),full_page=True,animations='disabled')
    drawer.get_by_role('button',name='交互日志',exact=True).click();dialog=page.locator('.el-dialog:visible');expect(dialog).to_contain_text(ticket['sn']);page.screenshot(path=str(LOGS/'wms-interaction-logs.png'),full_page=True,animations='disabled')
    assert not errors,errors
    browser.close()

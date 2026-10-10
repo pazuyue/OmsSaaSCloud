@@ -29,12 +29,12 @@ public class QimenProtocol implements WmsProtocol {
     private String body(String action,Map<String,Object> task,Map<String,Object> ticket,List<Map<String,Object>> lines){
         String sn=tag("entryOrderCode",task.get("ticket_sn")),owner=tag("ownerCode",task.get("external_owner")),warehouse=tag("warehouseCode",task.get("external_warehouse"));
         if(action.equals("QUERY"))return "<request>"+sn+tag("entryOrderId",task.get("external_order"))+owner+warehouse+tag("page",1)+tag("pageSize",100)+"</request>";
-        if(action.equals("CANCEL"))return "<request>"+tag("orderCode",task.get("ticket_sn"))+tag("orderId",task.get("external_order"))+tag("orderType","CGRK")+owner+warehouse+tag("cancelReason","OMS申请取消采购入库")+"</request>";
+        if(action.equals("CANCEL"))return "<request>"+tag("orderCode",task.get("ticket_sn"))+tag("orderId",task.get("external_order"))+tag("orderType","CGRK")+owner+warehouse+tag("cancelReason",task.get("cancel_reason"))+"</request>";
         StringBuilder b=new StringBuilder("<request><entryOrder>");b.append(sn).append(owner).append(warehouse).append(tag("orderType","CGRK")).append(tag("purchaseOrderCode",ticket.get("original_sn"))).append(tag("totalOrderLines",lines.size())).append("</entryOrder><orderLines>");
         for(Map<String,Object> l:lines)b.append("<orderLine>").append(tag("orderLineNo",l.get("id"))).append(tag("itemCode",l.get("sku_sn"))).append(tag("itemName",l.get("goods_name"))).append(owner).append(tag("planQty",l.get("number_expected"))).append(tag("inventoryType","ZP")).append(tag("batchCode",l.get("batch_code"))).append(tag("purchasePrice",l.get("purchase_price"))).append("</orderLine>");
         return b.append("</orderLines></request>").toString();
     }
-    public Reply reply(String action,String body){Element root=parse(body);require(root.getTagName().equals("response"),"仓库响应不是标准 response 报文");Reply r=new Reply();r.success=value(root,"flag").equalsIgnoreCase("success");r.message=value(root,"message");r.externalOrder=value(root,"entryOrderId");r.status=value(root,"status");return r;}
+    public Reply reply(String action,String body){Element root=parse(body);require(root.getTagName().equals("response"),"仓库响应不是标准 response 报文");Reply r=new Reply();r.code=value(root,"code");r.success=value(root,"flag").equalsIgnoreCase("success");r.message=value(root,"message");r.externalOrder=value(root,"entryOrderId");r.status=value(root,"status");return r;}
     public Receipt callback(Map<String,Object> config,String secret,Map<String,String> p,String body){
         require("taobao.qimen.entryorder.confirm".equals(p.get("method")),"不支持的仓库回传动作");
         require("md5".equals(p.get("sign_method"))&&"2.0".equals(p.get("v")),"仓库回传协议版本或签名算法不匹配");

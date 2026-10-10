@@ -16,7 +16,7 @@ def main():
     else:
         assert len(base64.b64decode(match.group(1).strip(),validate=True))==32,'Invalid WMS encryption key'
     parent=int(execute("SELECT menu_id FROM sys_menu WHERE component='oms/simulationStore/index' LIMIT 1").strip())
-    for index,(title,permission) in enumerate([('维护仓库对接配置','warehouse:wms:config'),('查看仓库交互日志','warehouse:wms:log'),('查看仓库交互报文','warehouse:wms:payload')]):
+    for index,(title,permission) in enumerate([('维护仓库对接配置','warehouse:wms:config'),('查看仓库交互日志','warehouse:wms:log'),('查看仓库交互报文','warehouse:wms:payload'),('查询仓库状态','warehouse:tickets:queryWarehouse')]):
         menu=ensure_menu(title,parent,'',kind='F',permission=permission,order=20+index)
         execute(f'INSERT INTO sys_role_menu(role_id,menu_id) SELECT 1,{menu} WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu WHERE role_id=1 AND menu_id={menu})')
     print('WMS encryption key ready (not displayed); configuration/log/payload permissions installed')

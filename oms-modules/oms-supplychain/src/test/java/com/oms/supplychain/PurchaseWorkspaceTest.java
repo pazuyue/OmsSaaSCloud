@@ -219,10 +219,65 @@ public class PurchaseWorkspaceTest {
     }
     @Test void qimenHttpSigningAndMultibatchCallbackPostExactlyOnce() throws Exception {httpRoundTrip("QIMEN");}
     @Test void jdHufuHttpSigningAndMultibatchCallbackPostExactlyOnce() throws Exception {httpRoundTrip("JD_HUFU");}
-    @Test void pendingTaskCanCancelLocallyWithoutCallingWarehouse(){long t=realTicket(5);inbound().cancel("QM",t);assertEquals("CANCELED",inbound().task("QM",t).get("dispatch_state"));assertEquals(5,service.detail("QM","ticket",t).get("statusTicket"));assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM wms_interaction_log",Integer.class));}
+    @Test void pendingTaskCanCancelLocallyWithoutCallingWarehouse(){long t=realTicket(5);inbound().cancel("QM",t,"测试取消","tester");assertEquals("CANCELED",inbound().task("QM",t).get("dispatch_state"));assertEquals(5,service.detail("QM","ticket",t).get("statusTicket"));assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM wms_interaction_log",Integer.class));}
     @Test void signedCancellationIsIdempotentAndCannotBeFollowedByReceipt(){long t=realTicket(5);accepted(t);Map<String,Object> task=inbound().task("QM",t);WmsProtocol.Receipt cancel=confirmation(t,"CANCEL",0,0,false);cancel.lines.clear();cancel.status="CANCELED";inbound().accept("QM",task,cancel);inbound().accept("QM",task,cancel);assertEquals("CANCELED",inbound().task("QM",t).get("dispatch_state"));assertThrows(IllegalArgumentException.class,()->inbound().accept("QM",task,confirmation(t,"LATE",1,0,true)));}
     @Test void finalShortReceiptCannotConsumeQuantityReallocatedToAnotherDelivery(){long t=realTicket(5);accepted(t);Map<String,Object> task=inbound().task("QM",t);inbound().accept("QM",task,confirmation(t,"FINAL",3,0,true));inbound().post("QM",t);long po=db.queryForObject("SELECT id FROM po_info",Long.class);receipt(po,2);assertThrows(IllegalArgumentException.class,()->inbound().accept("QM",task,confirmation(t,"LATE",2,0,false)));assertEquals(3,((Number)service.detail("QM","ticket",t).get("numberActually")).intValue());}
     @Test void concurrentDuplicateCallbacksAndPostingAreSerialized() throws Exception {long t=realTicket(5);accepted(t);Map<String,Object> task=inbound().task("QM",t);WmsProtocol.Receipt r=confirmation(t,"SAME",5,0,true);ExecutorService pool=Executors.newFixedThreadPool(2);try{CountDownLatch gate=new CountDownLatch(1);Callable<Boolean> run=()->{gate.await();inbound().accept("QM",task,r);return inbound().post("QM",t);};Future<Boolean>a=pool.submit(run),b=pool.submit(run);gate.countDown();assertTrue(a.get(20,TimeUnit.SECONDS));assertTrue(b.get(20,TimeUnit.SECONDS));assertEquals(1,calls.get());assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM wms_receipt_event",Integer.class));}finally{pool.shutdownNow();}}
     @Test void incompleteReceiptAndUnsafeXmlAreRejected(){long t=realTicket(5);accepted(t);Map<String,Object> task=inbound().task("QM",t);WmsProtocol.Receipt r=confirmation(t,"FRAGMENT",3,0,true);r.totalLines=2;r.sourceLineCount=1;assertThrows(IllegalArgumentException.class,()->inbound().accept("QM",task,r));String body="<!DOCTYPE request [<!ENTITY x SYSTEM 'file:///etc/passwd'>]><request><entryOrder>&x;</entryOrder></request>";assertThrows(IllegalArgumentException.class,()->new QimenProtocol().callback(m("app_key","APP","customer_id","CUSTOMER"),"test-secret",signed("QIMEN",body),body));assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM wms_receipt_event",Integer.class));}
+
+    @Test void ticketReadModelSeparatesPartialPostingFinalShortAndComplete() {
+        long t=realTicket(10);accepted(t);Map<String,Object> task=inbound().task("QM",t);
+        inbound().accept("QM",task,confirmation(t,"FIRST",3,0,false));inbound().post("QM",t);
+        Map<String,Object> d=service.detail("QM","ticket",t);
+        assertEquals("PROCESSING",d.get("progress"));assertNull(d.get("shortQuantity"));assertEquals(3,((Number)d.get("numberPosted")).intValue());
+        assertEquals("全部实收入账",d.get("postingLabel"));
+        inbound().accept("QM",task,confirmation(t,"FINAL",5,0,true));
+        d=service.detail("QM","ticket",t);assertEquals("PROCESSING",d.get("progress"));assertEquals("部分入账",d.get("postingLabel"));assertEquals(5,((Number)d.get("numberPending")).intValue());
+        fail.add("A");inbound().post("QM",t);assertEquals("ATTENTION",service.detail("QM","ticket",t).get("progress"));
+        assertEquals(1,service.page("QM","ticket",m("progress","ATTENTION"),1,10).getTotal());
+        fail.clear();inbound().post("QM",t);d=service.detail("QM","ticket",t);assertEquals("COMPLETE",d.get("progress"));assertEquals("已完成 · 短收 2",d.get("progressLabel"));
+        List<Map<String,Object>> exported=service.exportRows("QM","ticket",m("progress","COMPLETE","actualWarehouse",1,"provider","QIMEN"));
+        assertEquals(1,exported.size());assertEquals(d.get("progressLabel"),exported.get(0).get("progressLabel"));
+        assertEquals(0,service.page("QM","ticket",m("progress","ATTENTION"),1,10).getTotal());
+        assertEquals(1,service.page("QM","line",m("progress","COMPLETE"),1,10).getTotal());
+        long po=db.queryForObject("SELECT id FROM po_info WHERE po_sn=?",Long.class,d.get("originalSn"));
+        assertEquals(d.get("progressLabel"),((List<Map<String,Object>>)service.detail("QM","purchase",po).get("tickets")).get(0).get("progressLabel"));
+    }
+
+    @Test void actualBatchPaginationShowsReceiptBatchesAndEnforcesCompanyScope() {
+        long t=realTicket(5);accepted(t);Map<String,Object> task=inbound().task("QM",t);
+        WmsProtocol.Receipt first=confirmation(t,"FIRST",3,0,false);first.lines.get(0).batch="ACTUAL-1";
+        WmsProtocol.Receipt second=confirmation(t,"SECOND",0,2,true);second.lines.get(0).batch="ACTUAL-2";
+        inbound().accept("QM",task,first);inbound().post("QM",t);inbound().accept("QM",task,second);
+        assertEquals(2,service.receiptBatches("QM",t,1,1).getTotal());
+        Map<String,Object> newest=(Map<String,Object>)service.receiptBatches("QM",t,1,1).getRows().get(0);
+        assertEquals("ACTUAL-2",newest.get("batchCode"));assertEquals(0,newest.get("posted"));
+        Map<String,Object> earlier=(Map<String,Object>)service.receiptBatches("QM",t,2,1).getRows().get(0);
+        assertEquals("ACTUAL-1",earlier.get("batchCode"));assertEquals(1,earlier.get("posted"));
+        assertThrows(IllegalArgumentException.class,()->service.receiptBatches("OTHER",t,1,20));
+        assertThrows(IllegalArgumentException.class,()->inbound().cancel("QM",t,"取消","tester"));
+    }
+
+    @Test void warehouseQueryReportsFailureAndNeverPostsFromStatusAlone() throws Exception {
+        com.sun.net.httpserver.HttpServer server=com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1",0),0);
+        java.util.concurrent.atomic.AtomicReference<String> response=new java.util.concurrent.atomic.AtomicReference<>("<response><flag>success</flag><status>FULFILLED</status><entryOrderId>REMOTE</entryOrderId></response>");
+        server.createContext("/router",exchange->{try{byte[] bytes=response.get().getBytes(java.nio.charset.StandardCharsets.UTF_8);exchange.sendResponseHeaders(200,bytes.length);exchange.getResponseBody().write(bytes);}finally{exchange.close();}});server.start();
+        try {
+            realVirtual("QIMEN","http://127.0.0.1:"+server.getAddress().getPort()+"/router");long po=purchase(line("A",5,"2"));service.approve("QM",po,"tester");long t=service.approveReceipt("QM",receipt(po,5),"tester");accepted(t);
+            Map<String,Object> query=inbound().query("QM",t);assertEquals(true,query.get("success"));assertEquals("FULFILLED",query.get("warehouseStatus"));assertEquals(true,query.get("localUpdated"));
+            assertEquals(true,service.detail("QM","ticket",t).get("receiptMissing"));assertEquals("ATTENTION",service.detail("QM","ticket",t).get("progress"));assertEquals(0,calls.get());
+            response.set("<response><flag>failure</flag><message>仓库查询拒绝</message></response>");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("FAILED",query.get("outcome"));assertEquals(false,query.get("localUpdated"));assertEquals("ACCEPTED",inbound().task("QM",t).get("dispatch_state"));
+            response.set("<response><flag>success</flag><status>UNRECOGNIZED</status></response>");query=inbound().query("QM",t);assertEquals(false,query.get("success"));assertEquals("UNSUPPORTED",query.get("outcome"));
+            assertEquals(0,calls.get());assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM wms_receipt_line",Integer.class));
+        } finally {server.stop(0);}
+    }
+
+    @Test void cancellationRequiresReasonAndKeepsAuditTrail() {
+        long t=realTicket(5);assertThrows(IllegalArgumentException.class,()->inbound().cancel("QM",t," ","tester"));
+        assertEquals("PENDING",inbound().task("QM",t).get("dispatch_state"));
+        inbound().cancel("QM",t,"采购调整","tester");assertEquals("采购调整",inbound().task("QM",t).get("cancel_reason"));
+        assertEquals("CANCELED",service.detail("QM","ticket",t).get("progress"));assertEquals(1,service.page("QM","ticket",m("progress","CANCELED"),1,10).getTotal());
+        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM purchase_event WHERE action='申请取消入库' AND message LIKE '%采购调整%'",Integer.class));
+    }
 
 }

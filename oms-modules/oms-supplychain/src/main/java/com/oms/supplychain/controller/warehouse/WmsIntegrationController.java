@@ -25,7 +25,14 @@ public class WmsIntegrationController {
     @GetMapping("/wmsIntegration/connections") public AjaxResult connections(){AuthUtil.checkPermiOr("warehouse:wms:config","warehouse:simulationStoreInfo:edit","warehouse:simulationStoreInfo:add");return AjaxResult.success(connections.list(company()));}
     @PostMapping("/wmsIntegration/connections") public AjaxResult save(@RequestBody Map<String,Object> body){AuthUtil.checkPermi("warehouse:wms:config");return AjaxResult.success(connections.save(company(),body));}
     @GetMapping("/wmsIntegration/tickets/{id}") public AjaxResult task(@PathVariable long id){AuthUtil.checkPermiOr("warehouse:tickets:query","warehouse:poInfo:query");return AjaxResult.success(inbound.task(company(),id));}
-    @PostMapping("/wmsIntegration/tickets/{id}/{action}") public AjaxResult action(@PathVariable long id,@PathVariable String action){if(!"cancel".equals(action))AuthUtil.checkPermi("warehouse:tickets:retry");switch(action){case "retry":inbound.retry(company(),id);break;case "query":inbound.query(company(),id);break;case "cancel":AuthUtil.checkPermi("warehouse:tickets:remove");inbound.cancel(company(),id);break;default:throw new IllegalArgumentException("未知仓库操作");}return AjaxResult.success();}
+    @PostMapping("/wmsIntegration/tickets/{id}/{action}") public AjaxResult action(@PathVariable long id,@PathVariable String action,@RequestBody(required=false) Map<String,Object> body){
+        switch(action){
+            case "retry":AuthUtil.checkPermi("warehouse:tickets:retry");inbound.retry(company(),id);return AjaxResult.success(map("success",true,"message","已安排重试下发，请刷新进度"));
+            case "query":AuthUtil.checkPermi("warehouse:tickets:queryWarehouse");return AjaxResult.success(inbound.query(company(),id));
+            case "cancel":AuthUtil.checkPermi("warehouse:tickets:remove");return AjaxResult.success(inbound.cancel(company(),id,body==null?"":text(body.get("reason")),com.ruoyi.common.security.utils.SecurityUtils.getUsername()));
+            default:throw new IllegalArgumentException("未知仓库操作");
+        }
+    }
     @GetMapping("/wmsIntegration/logs") public AjaxResult logs(@RequestParam(defaultValue="") String sn,@RequestParam(defaultValue="1") int page){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.list(company(),sn,page));}
     @GetMapping("/wmsIntegration/logs/{id}") public AjaxResult log(@PathVariable long id){AuthUtil.checkPermi("warehouse:wms:payload");return AjaxResult.success(logs.detail(company(),id));}
     /** Only this exact public route bypasses user login. Provider signatures authenticate the body. */

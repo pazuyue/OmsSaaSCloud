@@ -11,7 +11,7 @@ public interface WmsProtocol {
     String acknowledgement(boolean success,String message);
     String contentType();
     class Wire { public String url,body,contentType; public Wire(String u,String b,String c){url=u;body=b;contentType=c;} }
-    class Reply { public boolean success;public String externalOrder="",status="",message=""; }
+    class Reply { public boolean success;public String externalOrder="",status="",message="",code=""; }
     class Receipt {
         public String ticketSn,externalOrder,messageId,warehouse,owner,status;
         public boolean complete;
