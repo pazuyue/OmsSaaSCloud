@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="仓库对接配置" :visible.sync="visible" width="960px" append-to-body :close-on-click-modal="false" @open="load">
-    <el-alert title="配置可由多个虚仓复用；外部仓库、货主编码在虚仓维护。停用配置暂停新下发，已下发单据仍接收回传。" type="info" :closable="false" class="mb8" />
+    <el-alert title="配置可由多个虚仓复用；外部仓库、货主编码在虚仓维护。停用后，关联虚仓暂停新的真实入库业务；已下发单据继续接收仓库回传并入账。" type="info" :closable="false" class="mb8" />
     <el-button size="small" type="primary" @click="edit()">新增对接配置</el-button>
     <el-table v-loading="loading" :data="rows" empty-text="尚未配置仓库平台">
       <el-table-column label="名称" prop="name" min-width="150" /><el-table-column label="平台" width="130"><template slot-scope="s">{{ s.row.provider === 'QIMEN' ? '奇门' : '京东虎符' }}</template></el-table-column><el-table-column label="环境" width="85"><template slot-scope="s">{{ s.row.environment === 'TEST' ? '测试' : '正式' }}</template></el-table-column><el-table-column label="状态" width="85"><template slot-scope="s">{{ s.row.enabled ? '启用' : '停用' }}</template></el-table-column><el-table-column label="回调路径" min-width="290"><template slot-scope="s"><span class="callback-path">{{ callback(s.row) }}</span><el-button type="text" size="mini" @click="copy(callback(s.row))">复制路径</el-button></template></el-table-column><el-table-column label="操作" width="80"><template slot-scope="s"><el-button type="text" @click="edit(s.row)">修改</el-button></template></el-table-column>
@@ -16,7 +16,11 @@
         <el-form-item label="AppKey" prop="app_key" :rules="required"><el-input v-model.trim="form.app_key" autocomplete="off" /></el-form-item>
         <el-form-item label="应用密钥" prop="secret" :rules="form.id ? [] : required"><el-input v-model="form.secret" type="password" show-password autocomplete="new-password" :placeholder="form.id ? '留空保留现有密钥' : '输入平台应用密钥'" /></el-form-item>
         <el-form-item label="customerId" prop="customer_id" :rules="required"><el-input v-model.trim="form.customer_id" placeholder="平台分配的商家 / 客户标识" /></el-form-item>
-        <el-form-item label="允许下发"><el-switch v-model="form.enabled" :active-value="1" :inactive-value="0" /></el-form-item>
+        <el-form-item label="对接配置状态">
+          <el-radio-group v-model="form.enabled"><el-radio :label="1">启用</el-radio><el-radio :label="0">停用</el-radio></el-radio-group>
+          <div class="hint">停用后，关联虚仓暂停新的真实入库业务；已下发单据继续接收仓库回传并入账。</div>
+          <div v-if="!form.id" class="hint">新建配置默认停用，填写并核对完成后再启用。</div>
+        </el-form-item>
       </el-form>
       <div slot="footer"><el-button :disabled="saving" @click="editing = false">取消</el-button><el-button type="primary" :loading="saving" @click="save">保存配置</el-button></div>
     </el-dialog>
