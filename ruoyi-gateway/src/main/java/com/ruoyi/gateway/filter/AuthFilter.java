@@ -46,6 +46,14 @@ public class AuthFilter implements GlobalFilter, Ordered
         ServerHttpRequest.Builder mutate = request.mutate();
 
         String url = request.getURI().getPath();
+        if (WmsCallbackRoute.matches(request))
+        {
+            removeHeader(mutate, SecurityConstants.FROM_SOURCE);
+            removeHeader(mutate, SecurityConstants.USER_KEY);
+            removeHeader(mutate, SecurityConstants.DETAILS_USER_ID);
+            removeHeader(mutate, SecurityConstants.DETAILS_USERNAME);
+            return chain.filter(exchange.mutate().request(mutate.build()).build());
+        }
         // 跳过不需要验证的路径
         if (StringUtils.matches(url, ignoreWhite.getWhites()))
         {

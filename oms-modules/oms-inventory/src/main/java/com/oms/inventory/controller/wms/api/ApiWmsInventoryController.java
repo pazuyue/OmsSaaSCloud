@@ -35,8 +35,7 @@ public class ApiWmsInventoryController extends BaseController {
             BeanUtil.copyProperties(dto.getWmsInventoryBatch(), wmsInventoryBatch);
             wmsInventoryBatch.setCompanyCode(company_code);
             String relationSn = dto.getRelationSn();
-            wmsInventoryBatchService.addInventory(wmsInventoryBatch,relationSn);
-            return success();
+            return success(wmsInventoryBatchService.addInventory(wmsInventoryBatch,relationSn));
         } catch (Throwable e) {
             return error(e.getMessage());
         }

@@ -41,12 +41,13 @@ public class QimenProtocol implements WmsProtocol {
         require(text(config.get("app_key")).equals(p.get("app_key")),"回传应用不匹配");
         require(text(config.get("customer_id")).equals(text(p.get("customerId"))),"回传客户标识不匹配");
         LocalDateTime sent;try{sent=LocalDateTime.parse(p.get("timestamp"),TIME);}catch(Exception e){throw new IllegalArgumentException("回传时间格式无效");}
-        require(Math.abs(Duration.between(sent,LocalDateTime.now(ZoneId.of("Asia/Shanghai"))).toSeconds())<=600,"回传时间超出允许范围");
+        require(Math.abs(Duration.between(sent,LocalDateTime.now(ZoneId.of("Asia/Shanghai"))).getSeconds())<=600,"回传时间超出允许范围");
         require(MessageDigest.isEqual(sign(p,body,secret).getBytes(StandardCharsets.UTF_8),text(p.get("sign")).getBytes(StandardCharsets.UTF_8)),"仓库回传验签失败");
         Element root=parse(body),head=child(root,"entryOrder");require(head!=null,"回传缺少入库单信息");
         Receipt r=new Receipt();r.ticketSn=value(head,"entryOrderCode");r.externalOrder=value(head,"entryOrderId");r.messageId=value(head,"outBizCode");r.warehouse=value(head,"warehouseCode");r.owner=value(head,"ownerCode");r.status=value(head,"status");r.complete="FULFILLED".equals(r.status)||"CLOSED".equals(r.status)||"0".equals(value(head,"confirmType"));
         if(!value(head,"totalOrderLines").isEmpty())r.totalLines=quantity(value(head,"totalOrderLines"));
         Element container=child(root,"orderLines");if(container!=null)for(Element line:children(container,"orderLine")){
+            r.sourceLineCount++;
             String sku=value(line,"itemCode"),owner=value(line,"ownerCode");int actual=quantity(value(line,"actualQty"));Element batches=child(line,"batchs");
             if(batches!=null&&!children(batches,"batch").isEmpty()){
                 int sum=0;for(Element batch:children(batches,"batch")){int n=quantity(value(batch,"actualQty"));sum=Math.addExact(sum,n);r.lines.add(line(sku,owner,value(batch,"batchCode"),value(batch,"inventoryType"),n));}require(sum==actual,"批次数量与明细实收数量不一致");
@@ -58,8 +59,8 @@ public class QimenProtocol implements WmsProtocol {
     private int quantity(String s){long v=id(s);require(v>=0&&v<=100000000,"回传数量超出范围");return (int)v;}
     public String acknowledgement(boolean success,String message){return "<response>"+tag("flag",success?"success":"failure")+tag("code",success?"0":"OMS_REJECTED")+tag("message",message)+"</response>";}
     public static String sign(Map<String,String> params,String body,String secret){StringBuilder s=new StringBuilder(secret);new TreeMap<>(params).forEach((k,v)->{if(!k.equals("sign")&&v!=null&&!v.isEmpty())s.append(k).append(v);});s.append(body).append(secret);return hash("MD5",s.toString());}
-    public static String hash(String algorithm,String value){try{return HexFormat.of().withUpperCase().formatHex(MessageDigest.getInstance(algorithm).digest(value.getBytes(StandardCharsets.UTF_8)));}catch(Exception e){throw new IllegalStateException(e);}}
-    private static String enc(String v){return URLEncoder.encode(v,StandardCharsets.UTF_8);}
+    public static String hash(String algorithm,String value){try{byte[] bytes=MessageDigest.getInstance(algorithm).digest(value.getBytes(StandardCharsets.UTF_8));char[] hex="0123456789ABCDEF".toCharArray(),out=new char[bytes.length*2];for(int i=0;i<bytes.length;i++){int n=bytes[i]&255;out[i*2]=hex[n>>>4];out[i*2+1]=hex[n&15];}return new String(out);}catch(Exception e){throw new IllegalStateException(e);}}
+    public static String enc(String v){try{return URLEncoder.encode(v,"UTF-8");}catch(java.io.UnsupportedEncodingException e){throw new IllegalStateException(e);}}
     public static String tag(String key,Object value){return "<"+key+">"+escape(text(value))+"</"+key+">";}
     private static String escape(String v){return v.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("'","&apos;");}
     private static Element parse(String body){try{require(body.length()<=1024*1024,"仓库报文超过1MB");DocumentBuilderFactory f=DocumentBuilderFactory.newInstance();f.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);f.setFeature("http://xml.org/sax/features/external-general-entities",false);f.setFeature("http://xml.org/sax/features/external-parameter-entities",false);f.setXIncludeAware(false);f.setExpandEntityReferences(false);return f.newDocumentBuilder().parse(new InputSource(new StringReader(body))).getDocumentElement();}catch(IllegalArgumentException e){throw e;}catch(Exception e){throw new IllegalArgumentException("仓库XML报文格式错误");}}

@@ -25,9 +25,9 @@ def main():
     def master(kind, body): return request('/supplychain/'+kind,body,token)['data']
     try:
         owner=master('owner',{'ownerCode':prefix+'-O','ownerName':prefix+'货主','isEnable':2})
-        warehouse=master('realStore',{'realStoreCode':prefix+'-W','wmsName':prefix+'实仓','status':2,'wmsType':1,'actualWarehouse':2})
-        relation=master('ownerWarehouse',{'ownerId':owner,'realStoreId':warehouse,'wmsOwnerCode':prefix,'status':2,'isSync':1})
-        master('simulationStore',{'wmsSimulationCode':prefix+'-V','wmsSimulationName':prefix+'虚仓','ownerWarehouseId':relation,'status':2})
+        warehouse=master('realStore',{'realStoreCode':prefix+'-W','wmsName':prefix+'实仓','status':2,'wmsType':1})
+        relation=master('ownerWarehouse',{'ownerId':owner,'realStoreId':warehouse,'status':2})
+        master('simulationStore',{'wmsSimulationCode':prefix+'-V','wmsSimulationName':prefix+'虚仓','inboundMode':2,'outboundMode':2,'ownerWarehouseId':relation,'status':2})
         # The existing catalog only supplies dimension IDs, never an existing stock SKU.
         catalog=request('/goods/info/options',token=token)['data']
         product={'skuSn':prefix+'-SKU','goodsSn':prefix,'goodsName':prefix+'验收商品','marketPrice':10,'validity':30}

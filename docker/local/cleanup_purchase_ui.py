@@ -12,6 +12,10 @@ def cleanup(prefix):
     no = "SELECT no_sn FROM no_tickets WHERE po_sn IN ("+po+")"
     ticket = "SELECT sn FROM wms_tickets WHERE original_sn IN ("+po+")"
     statements = [
+        f'DELETE FROM wms_interaction_log WHERE connection_id IN (SELECT id FROM wms_connection WHERE name LIKE {pattern})',
+        f'DELETE FROM wms_receipt_line WHERE task_id IN (SELECT id FROM wms_inbound_task WHERE ticket_sn IN ({ticket}))',
+        f'DELETE FROM wms_receipt_event WHERE task_id IN (SELECT id FROM wms_inbound_task WHERE ticket_sn IN ({ticket}))',
+        f'DELETE FROM wms_inbound_task WHERE ticket_sn IN ({ticket})',
         f'DELETE FROM purchase_event WHERE document_sn IN ({po}) OR document_sn IN ({no}) OR document_sn IN ({ticket}) OR document_sn IN (SELECT supplier_sn FROM supplier_info WHERE supplier_name LIKE {pattern})',
         f'DELETE FROM wms_tickets_goods WHERE sn IN ({ticket})',
         f'DELETE FROM no_tickets_goods WHERE no_sn IN ({no})',
@@ -26,6 +30,7 @@ def cleanup(prefix):
     execute('START TRANSACTION;'+';'.join([
         f'DELETE FROM goods_sku_sn_info WHERE sku_sn LIKE {pattern}',
         f'DELETE FROM wms_simulation_store_info WHERE wms_simulation_code LIKE {pattern}',
+        f'DELETE FROM wms_connection WHERE name LIKE {pattern}',
         f'DELETE FROM owner_warehouse WHERE owner_id IN (SELECT id FROM owner_info WHERE owner_code LIKE {pattern})',
         f'DELETE FROM owner_info WHERE owner_code LIKE {pattern}',
         f'DELETE FROM wms_real_store_info WHERE real_store_code LIKE {pattern}',

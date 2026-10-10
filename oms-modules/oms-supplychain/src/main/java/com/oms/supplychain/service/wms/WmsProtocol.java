@@ -16,6 +16,7 @@ public interface WmsProtocol {
         public String ticketSn,externalOrder,messageId,warehouse,owner,status;
         public boolean complete;
         public Integer totalLines;
+        public int sourceLineCount;
         public List<Line> lines=new ArrayList<>();
     }
     class Line { public String sku,batch,owner;public int good,bad; }

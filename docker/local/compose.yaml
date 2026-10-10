@@ -578,7 +578,9 @@
         "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
         "SPRING_CLOUD_SENTINEL_ENABLED": "false",
         "SPRING_CLOUD_SENTINEL_EAGER": "false",
-        "SPRING_REDIS_HOST": "redis"
+        "SPRING_REDIS_HOST": "redis",
+        "OMS_WMS_ENCRYPTION_KEY": "${OMS_WMS_ENCRYPTION_KEY}",
+        "OMS_WMS_TENANT_ROUTES": "QM=master"
       },
       "volumes": [
         "./artifacts/oms-supplychain.jar:/app/app.jar:ro"

@@ -33,11 +33,9 @@ ALTER TABLE `owner_warehouse`
   MODIFY COLUMN `company_code` varchar(255) NOT NULL COMMENT '所属公司编码，货主、实仓及引用虚仓必须属于同一公司',
   MODIFY COLUMN `owner_id` int(11) NOT NULL COMMENT '货主ID，关联owner_info.id',
   MODIFY COLUMN `real_store_id` int(11) NOT NULL COMMENT '实体仓库ID，关联wms_real_store_info.id',
-  MODIFY COLUMN `wms_owner_code` varchar(255) NOT NULL COMMENT '该货主在关联实仓WMS中的货主编码，用于仓库对接',
   MODIFY COLUMN `status` tinyint(4) NOT NULL DEFAULT '2' COMMENT '关联启用状态：1停用，2启用；业务可用还需货主和实仓启用',
-  MODIFY COLUMN `is_sync` tinyint(4) NOT NULL DEFAULT '1' COMMENT '该货主与实仓的WMS同步配置：1不同步，2同步；其他值待维护',
   MODIFY COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '关联创建时间',
   MODIFY COLUMN `modify_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '关联最近修改时间',
-  COMMENT='货主与实体仓库多对多关联表，维护WMS货主编码及关联状态，作为虚仓固定归属依据',
+  COMMENT='货主与实体仓库多对多关联表，维护关联状态，作为虚仓固定归属依据',
   ALGORITHM=INPLACE,
   LOCK=NONE;

@@ -39,17 +39,17 @@ def main():
         assert result['code'] != 200, path
 
     try:
-        warehouses = [create('realStore', {'realStoreCode': prefix + '-W' + str(i), 'wmsName': prefix + ('广州仓' if i == 0 else '杭州仓'), 'status': 2, 'wmsType': 1, 'actualWarehouse': 1, 'director': '验收负责人', 'mobilePhone': '020-12345678', 'province': '广东省', 'city': '广州市', 'district': '天河区', 'address': '验收地址'}) for i in range(2)]
+        warehouses = [create('realStore', {'realStoreCode': prefix + '-W' + str(i), 'wmsName': prefix + ('广州仓' if i == 0 else '杭州仓'), 'status': 2, 'wmsType': 1, 'director': '验收负责人', 'mobilePhone': '020-12345678', 'province': '广东省', 'city': '广州市', 'district': '天河区', 'address': '验收地址'}) for i in range(2)]
         owner = create('owner', {'ownerCode': prefix + '-O', 'ownerName': prefix + '多仓货主', 'isEnable': 2})
-        relations = [create('ownerWarehouse', {'ownerId': owner, 'realStoreId': w, 'wmsOwnerCode': prefix + '-EXTERNAL', 'status': 2, 'isSync': 1}) for w in warehouses]
-        virtual = create('simulationStore', {'wmsSimulationCode': prefix + '-V', 'wmsSimulationName': prefix + '固定虚仓', 'ownerWarehouseId': relations[0], 'status': 2})
+        relations = [create('ownerWarehouse', {'ownerId': owner, 'realStoreId': w, 'status': 2}) for w in warehouses]
+        virtual = create('simulationStore', {'wmsSimulationCode': prefix + '-V', 'wmsSimulationName': prefix + '固定虚仓', 'inboundMode':2,'outboundMode':2,'ownerWarehouseId': relations[0], 'status': 2})
         detail = request('/supplychain/simulationStore/' + str(virtual), token=token)['data']
         assert detail['realStoreCode'] == prefix + '-W0' and detail['ownerCode'] == prefix + '-O'
         rejected('/supplychain/simulationStore', dict(detail, ownerWarehouseId=relations[1]), 'PUT')
         rejected('/supplychain/ownerWarehouse/' + str(relations[0]), method='DELETE')
         rejected('/supplychain/owner/list?company_code=OTHER')
         assert request('/supplychain/realStore/list?status=-99', token=token)['total'] == 0
-        assert request('/supplychain/realStore/list?actualWarehouse=-99', token=token)['total'] == 0
+        assert request('/supplychain/simulationStore/list?inboundMode=-99', token=token)['total'] == 0
         assert request('/supplychain/realStore/list?director=NONEXISTENT_REVIEW', token=token)['total'] == 0
         page1 = request('/supplychain/realStore/list?pageNum=1&pageSize=1&ownerId=' + str(owner), token=token)
         page2 = request('/supplychain/realStore/list?pageNum=2&pageSize=1&ownerId=' + str(owner), token=token)

@@ -41,7 +41,7 @@ public class WarehouseWorkspaceService {
         if("realStore".equals(kind))return "SELECT w.*, (SELECT COUNT(*) FROM owner_warehouse r WHERE r.real_store_id=w.id AND UPPER(r.company_code)=UPPER(w.company_code)) owner_count, (SELECT COUNT(*) FROM wms_simulation_store_info v JOIN owner_warehouse r ON r.id=v.owner_warehouse_id WHERE r.real_store_id=w.id AND UPPER(v.company_code)=UPPER(w.company_code)) virtual_count FROM wms_real_store_info w";
         String joins=" LEFT JOIN owner_info o ON o.id=r.owner_id AND UPPER(o.company_code)=UPPER(r.company_code) LEFT JOIN wms_real_store_info w ON w.id=r.real_store_id AND UPPER(w.company_code)=UPPER(r.company_code)";
         if("ownerWarehouse".equals(kind))return "SELECT r.*,o.owner_code,o.owner_name,o.is_enable owner_status,w.real_store_code,w.wms_name,w.status warehouse_status,CASE WHEN o.id IS NOT NULL AND w.id IS NOT NULL THEN 1 ELSE 0 END relation_valid, CASE WHEN r.status=2 AND o.is_enable=2 AND w.status=2 THEN 1 ELSE 0 END effective_enabled, (SELECT COUNT(*) FROM wms_simulation_store_info v WHERE v.owner_warehouse_id=r.id AND UPPER(v.company_code)=UPPER(r.company_code)) virtual_count FROM owner_warehouse r"+joins;
-        if("simulationStore".equals(kind))return "SELECT v.id,v.status,v.wms_simulation_code,v.wms_simulation_name,v.owner_warehouse_id,v.inbound_mode,v.outbound_mode,v.connection_id,v.external_warehouse,v.external_owner,v.company_code,v.create_time,v.modify_time,o.id owner_id,o.owner_code,o.owner_name,w.id real_store_id,w.real_store_code,w.wms_name,r.status relation_status,o.is_enable owner_status,w.status warehouse_status, CASE WHEN r.id IS NOT NULL AND o.id IS NOT NULL AND w.id IS NOT NULL THEN 1 ELSE 0 END relation_valid, CASE WHEN v.status=2 AND r.status=2 AND o.is_enable=2 AND w.status=2 THEN 1 ELSE 0 END effective_enabled FROM wms_simulation_store_info v LEFT JOIN owner_warehouse r ON r.id=v.owner_warehouse_id AND UPPER(r.company_code)=UPPER(v.company_code)"+joins;
+        if("simulationStore".equals(kind))return "SELECT v.id,v.status,v.wms_simulation_code,v.wms_simulation_name,v.owner_warehouse_id,v.inbound_mode,v.outbound_mode,v.connection_id,v.external_warehouse,v.external_owner,v.company_code,v.create_time,v.modify_time,o.id owner_id,o.owner_code,o.owner_name,w.id real_store_id,w.real_store_code,w.wms_name,r.status relation_status,o.is_enable owner_status,w.status warehouse_status, CASE WHEN r.id IS NOT NULL AND o.id IS NOT NULL AND w.id IS NOT NULL THEN 1 ELSE 0 END relation_valid, CASE WHEN v.status=2 AND r.status=2 AND o.is_enable=2 AND w.status=2 AND v.inbound_mode IN (1,2) AND v.outbound_mode IN (1,2) AND ((v.inbound_mode=2 AND v.outbound_mode=2) OR (v.external_warehouse<>'' AND v.external_owner<>'' AND EXISTS(SELECT 1 FROM wms_connection c WHERE c.id=v.connection_id AND UPPER(c.company_code)=UPPER(v.company_code) AND c.enabled=1))) THEN 1 ELSE 0 END effective_enabled FROM wms_simulation_store_info v LEFT JOIN owner_warehouse r ON r.id=v.owner_warehouse_id AND UPPER(r.company_code)=UPPER(v.company_code)"+joins;
         throw bad("未知仓库资料类型");
     }
     private Map<String,Object> camel(Map<String,Object> source) {
@@ -164,7 +164,7 @@ public class WarehouseWorkspaceService {
         List<Object> args=new ArrayList<>(fields.values());args.add(id);args.add(company);
         jdbc.update("UPDATE "+table(kind)+" SET "+fields.keySet().stream().map(k->k+"=?").collect(Collectors.joining(","))+" WHERE id=? AND UPPER(company_code)=?",args.toArray());
         return id;
-        }catch(DuplicateKeyException e){throw bad("编码、货主实仓关联或该实仓的 WMS 货主编码已存在，请刷新后重试");}
+        }catch(DuplicateKeyException e){throw bad("编码或货主实仓关联已存在，请刷新后重试");}
     }
     private String code(String company,String kind,Map<String,Object> input,Map<String,Object> old,String key) {
         String value=required(input,key,"编码",64);if(value.matches(".*\\s.*"))throw bad("编码不能包含空白字符");
@@ -220,7 +220,7 @@ public class WarehouseWorkspaceService {
         }
         if(number(row.get("relationValid"),0)!=1)throw bad("虚仓的货主与实体仓库关联不完整");
         if(requireEnabled && !Arrays.asList(1L,2L).contains(number(row.get("inboundMode"),0)))throw bad("请先维护虚仓入库执行方式");
-        if(requireEnabled && number(row.get("effectiveEnabled"),0)!=1)throw bad("虚仓、关联、货主或实体仓库已停用，不能创建新业务单据");
+        if(requireEnabled && number(row.get("effectiveEnabled"),0)!=1)throw bad("虚仓关联未启用，或执行方式、仓库对接配置不可用，不能创建新业务单据");
         OwnerInfoDto owner=convert(detail(company,"owner",number(row.get("ownerId"),0)),OwnerInfoDto.class);
         WmsRealStoreInfo warehouse=convert(detail(company,"realStore",number(row.get("realStoreId"),0)),WmsRealStoreInfo.class);
         owner.setRealStoreCode(warehouse.getRealStoreCode());owner.setRealStoreInfo(warehouse);

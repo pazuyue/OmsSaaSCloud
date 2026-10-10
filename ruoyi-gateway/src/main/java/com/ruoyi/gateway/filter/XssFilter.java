@@ -42,6 +42,9 @@ public class XssFilter implements GlobalFilter, Ordered
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
     {
         ServerHttpRequest request = exchange.getRequest();
+        // Signature verification requires exact bytes. The callback parser validates the payload;
+        // log viewers render escaped text, never HTML.
+        if (WmsCallbackRoute.matches(request)) return chain.filter(exchange);
         // xss开关未开启 或 通过nacos关闭，不过滤
         if (!xss.getEnabled())
         {

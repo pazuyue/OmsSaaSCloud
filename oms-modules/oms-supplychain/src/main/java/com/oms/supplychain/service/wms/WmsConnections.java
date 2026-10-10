@@ -25,7 +25,7 @@ public class WmsConnections {
         require(Arrays.asList("QIMEN","JD_HUFU").contains(provider),"当前仅允许已登记的平台协议");
         String version=required(body,"api_version",8);require(provider.equals("QIMEN")?version.equals("2.0"):Arrays.asList("1.0","2.0").contains(version),"请选择平台支持的协议版本");
         require(Arrays.asList("TEST","PRODUCTION").contains(environment),"请选择测试或正式环境");
-        String endpoint=required(body,"endpoint",500),appKey=required(body,"app_key",200),customer=text(body.get("customer_id"));
+        String endpoint=required(body,"endpoint",500),appKey=required(body,"app_key",200),customer=required(body,"customer_id",200);
         URI uri=URI.create(endpoint);require(uri.getHost()!=null&&uri.getUserInfo()==null&&uri.getQuery()==null&&uri.getFragment()==null,"接口地址不能含账号、参数或片段");
         require("https".equalsIgnoreCase(uri.getScheme())||("TEST".equals(environment)&&"http".equalsIgnoreCase(uri.getScheme())),"正式环境必须使用 HTTPS");
         int enabled=Boolean.TRUE.equals(body.get("enabled"))||"1".equals(text(body.get("enabled")))?1:0;
