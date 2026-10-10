@@ -25,6 +25,7 @@ public class RemoteTChannelController extends BaseController {
      * 查询店铺信息列表
      */
     @PostMapping("/list")
+    @RequiresPermissions(value={"channel:channel:list","ruleStock:info:list","ruleStock:info:edit","ruleStock:info:add"},logical=com.ruoyi.common.security.annotation.Logical.OR)
     public TableDataInfo list(TChannel tChannel)
     {
         List<TChannel> list = tChannelService.selectTChannelList(tChannel);

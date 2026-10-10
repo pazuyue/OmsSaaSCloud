@@ -688,7 +688,9 @@
         "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
         "SPRING_CLOUD_SENTINEL_ENABLED": "false",
         "SPRING_CLOUD_SENTINEL_EAGER": "false",
-        "SPRING_REDIS_HOST": "redis"
+        "SPRING_REDIS_HOST": "redis",
+        "OMS_CHANNEL_ENCRYPTION_KEY": "${OMS_CHANNEL_ENCRYPTION_KEY}",
+        "OMS_CHANNEL_SIMULATION_ENABLED": "true"
       },
       "volumes": [
         "./artifacts/oms-channel.jar:/app/app.jar:ro"

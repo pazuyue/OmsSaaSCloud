@@ -30,6 +30,7 @@ import Layout from '@/layout'
 
 // 公共路由
 export const constantRoutes = [
+  { path: '/channel-authorize', component: () => import('@/views/oms/channel/AuthorizeCallback'), hidden: true },
   {
     path: '/redirect',
     component: Layout,

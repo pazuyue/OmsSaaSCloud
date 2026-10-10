@@ -1,5 +1,10 @@
 <template>
   <div class="app-container">
+    <div class="channel-platform-toolbar">
+      <div><h2>店铺管理</h2><p>维护店铺资料，查看平台服务订购、授权及交互情况。</p></div>
+      <div><el-button v-hasPermi="['channel:platform:query']" @click="$refs.platform.manage('apps')">平台应用</el-button><el-button v-hasPermi="['channel:platform:query']" @click="$refs.platform.manage('reminders')">到期提醒</el-button><el-button v-hasPermi="['channel:platform:log']" @click="$refs.platform.manage('logs')">交互日志</el-button></div>
+    </div>
+    <platform-workspace ref="platform" @changed="getList" />
     <filter-panel :model="queryParams" :primary-fields="['channelName', 'outCorrelationCode', 'channelType']" v-show="showSearch">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="渠道名称" prop="channelName">
@@ -73,7 +78,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:channel:add']"
+          v-hasPermi="['channel:channel:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -84,7 +89,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:channel:edit']"
+          v-hasPermi="['channel:channel:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -95,7 +100,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:channel:remove']"
+          v-hasPermi="['channel:channel:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -105,7 +110,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:channel:export']"
+          v-hasPermi="['channel:channel:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -115,6 +120,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column min-width="120" label="渠道ID" align="center" prop="channelId" />
       <el-table-column min-width="120" label="渠道名称" align="center" prop="channelName" />
+      <el-table-column label="平台服务 / 授权" min-width="300"><template slot-scope="s"><template v-if="s.row.channelType === 'TM'"><div class="platform-tags"><el-tag v-if="platformState(s.row).simulation" type="warning" size="small">模拟</el-tag><el-tag size="small" :type="tagType(platformState(s.row).service_label)">服务：{{ platformState(s.row).service_label || '加载中' }}</el-tag><el-tag size="small" :type="tagType(platformState(s.row).auth_label)">授权：{{ platformState(s.row).auth_label || '加载中' }}</el-tag></div><small class="platform-hint">{{ platformState(s.row).availability }}</small></template><span v-else>当前平台暂未接入</span></template></el-table-column>
       <el-table-column min-width="120" label="外部关联编码" align="center" prop="outCorrelationCode" />
       <el-table-column min-width="120" label="渠道平台" align="center" prop="channelType">
         <template slot-scope="scope">
@@ -152,22 +158,23 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="215" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="280" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button v-if="scope.row.channelType === 'TM'" v-hasPermi="['channel:platform:query']" size="mini" type="text" @click="$refs.platform.open(scope.row.channelId)">平台对接</el-button>
           <el-button v-hasPermi="['channelInventory:inventory:list']" size="mini" type="text" @click="$router.push({ path: '/oms-inventory/channelInventory', query: { channelId: scope.row.channelId }})">库存</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:channel:edit']"
+            v-hasPermi="['channel:channel:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:channel:remove']"
+            v-hasPermi="['channel:channel:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -251,12 +258,17 @@
 
 <script>
 import { listChannel, getChannel, delChannel, addChannel, updateChannel } from "@/api/channel/channel";
+import PlatformWorkspace from './PlatformWorkspace'
+import { platformGet } from '@/api/channel/platform'
 
 export default {
   name: "Channel",
+  components: { PlatformWorkspace },
   dicts: ['oms_switch', 'channel_type', 'm_model_type'],
   data() {
     return {
+      platformStates: {},
+      loadSequence: 0,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -322,14 +334,20 @@ export default {
     this.getList();
   },
   methods: {
+    platformState(row) { return this.platformStates[row.channelId] || {} },
+    tagType(label) { return ['已授权', '服务有效'].includes(label) ? 'success' : ['即将到期', '已过期', '已到期', '授权失效'].includes(label) ? 'warning' : 'info' },
     /** 查询店铺信息列表 */
     getList() {
       this.loading = true;
+      const sequence = ++this.loadSequence;
       listChannel(this.queryParams).then(response => {
+        if (sequence !== this.loadSequence) return;
         this.channelList = response.rows;
         this.total = response.total;
-        this.loading = false;
-      });
+        this.platformStates = {};
+        const ids = response.rows.filter(r => r.channelType === 'TM').map(r => r.channelId);
+        if (ids.length) platformGet('/summaries', { ids: ids.join(',') }).then(r => { if (sequence === this.loadSequence) this.platformStates = Object.fromEntries(r.data.map(s => [s.channel_id, s])); }).catch(() => { if (sequence === this.loadSequence) this.platformStates = Object.fromEntries(ids.map(id => [id, { service_label: '加载失败', auth_label: '加载失败', availability: '请刷新列表重试' }])); });
+      }).finally(() => { if (sequence === this.loadSequence) this.loading = false; });
     },
     // 取消按钮
     cancel() {
@@ -422,3 +440,4 @@ export default {
   }
 };
 </script>
+<style scoped>.channel-platform-toolbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.channel-platform-toolbar h2{margin:0 0 10px}.channel-platform-toolbar p,.platform-hint{color:#8490a2}.platform-tags{display:flex;gap:6px;margin-bottom:6px}.platform-hint{display:block;line-height:1.5}</style>
