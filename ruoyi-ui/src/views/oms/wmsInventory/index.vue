@@ -1,6 +1,7 @@
 <template>
   <div class="app-container inventory-workspace">
     <el-button v-if="productReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(productReturn)">返回商品库存</el-button>
+    <el-button v-else-if="channelReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(channelReturn)">返回渠道库存</el-button>
     <filter-panel :model="query" :primary-fields="['storeCode', 'skuSn']">
       <el-form :inline="true" size="small" @submit.native.prevent="search">
         <el-form-item label="虚仓" prop="storeCode">
@@ -48,6 +49,7 @@
 
     <el-drawer title="库存详情" :visible.sync="drawer" :size="mobile ? '100%' : 'min(1080px, 86vw)'" append-to-body custom-class="inventory-drawer" @closed="closeDetail">
       <div v-if="detail" v-loading="detailLoading" class="inventory-detail">
+        <el-button v-if="channelReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(channelReturn)">返回渠道库存</el-button>
         <batch-trace v-if="selectedBatch" :key="selectedBatch.id" :batch-id="Number(selectedBatch.id)" :inventory="detail" :initial-tab="batchTraceTab" @back="selectedBatch = null" @rule="goBatchRule" />
         <template v-else>
           <el-button v-if="productReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(productReturn)">返回商品库存</el-button>
@@ -74,7 +76,7 @@
             <el-tab-pane label="库存流水" name="history" />
           </el-tabs>
           <div v-if="activeTab !== 'batches'">
-            <p class="muted">{{ activeTab === 'reservations' ? '按来源单据记录预占与释放；历史导入库存未补造明细。' : '记录本次升级后的入库、调整、预占和释放。' }}</p>
+            <p class="muted">{{ activeTab === 'reservations' ? '按来源单据记录预占与释放。' : '记录入库、调整、预占和释放。' }}</p>
             <div v-if="historyError" class="load-error">记录加载失败。<el-button type="text" @click="loadHistory">重新加载</el-button></div>
             <el-table v-loading="historyLoading" :data="history" :empty-text="historyError ? '加载失败' : '暂无可追溯记录'">
               <el-table-column label="时间" prop="operationTime" width="165" />
@@ -130,6 +132,7 @@ export default {
     }
   },
   computed: {
+    channelReturn() { const value = this.$route.query.channelReturn; return typeof value === 'string' && /^\/oms-inventory\/channelInventory(?:\?|$)/.test(value) ? value : '' },
     productReturn() { const value = this.$route.query.productReturn; return typeof value === 'string' && /^\/oms-inventory\/productInventory(?:\?|$)/.test(value) ? value : '' },
     mobile() { return this.$store.state.app.device === 'mobile' },
     adjustmentBefore() {
@@ -138,13 +141,16 @@ export default {
       return { actual: batch[prefix + 'ActualNumber'] || 0, available: batch[prefix + 'AvailableNumber'] || 0, locked: batch[prefix + 'LockNumber'] || 0 }
     }
   },
-  watch: { '$route.query.inventoryId'() { if (this.$route.path === '/oms-inventory/wmsInventory') this.openLinkedInventory() } },
+  watch: {
+    '$route.query.inventoryId'() { if (this.$route.path === '/oms-inventory/wmsInventory') this.openLinkedInventory() },
+    '$route.query.storeCode'(value) { if (this.$route.path === '/oms-inventory/wmsInventory' && value !== undefined && String(value) !== this.query.storeCode) { this.query = { ...defaults(), storeCode: String(value), skuSn: String(this.$route.query.skuSn || '') }; this.loadList(); this.searchStores(String(value)) } }
+  },
   created() { this.listSeq = 0; this.detailSeq = 0; this.batchSeq = 0; this.historySeq = 0; this.goodsSeq = 0; this.storeSeq = 0; const q = this.$route.query; if (q.skuSn) this.query.skuSn = String(q.skuSn); if (q.storeCode) this.query.storeCode = String(q.storeCode); this.query.pageNum = Math.max(1, Math.min(100000, Number(q.pageNum) || 1)); this.query.pageSize = [10, 20, 50, 100].includes(Number(q.pageSize)) ? Number(q.pageSize) : 20; this.query.onlyStock = q.onlyStock === 'true'; this.query.abnormal = q.abnormal === 'true'; this.loadList(); this.searchStores(''); this.openLinkedInventory() },
   beforeDestroy() { clearTimeout(this.goodsTimer); clearTimeout(this.storeTimer); this.listSeq++; this.detailSeq++; this.batchSeq++; this.historySeq++ },
   methods: {
     async openLinkedInventory() { const id = this.$route.query.inventoryId; if (!/^\d+$/.test(id || '')) return; try { const r = await inventoryDetail(id); if (String(this.$route.query.inventoryId) === String(id) && this.$route.path === '/oms-inventory/wmsInventory') { this.loadNames([r.data]); this.openDetail(r.data); const q = this.$route.query; this.batchQuery.batchCode = String(q.batchCode || ''); this.batchQuery.pageNum = Math.max(1, Math.min(100000, Number(q.batchPage) || 1)); if (/^\d+$/.test(q.batchId || '')) { this.batchTraceTab = q.batchTab === 'sources' ? 'sources' : 'history'; this.selectedBatch = { id: Number(q.batchId) } } } } catch (_) { /* Request layer displays missing or unauthorized records. */ } },
     openBatch(row) { this.batchTraceTab = 'history'; this.selectedBatch = row },
-    goBatchRule({ ruleId, tab }) { const query = { ...this.query, inventoryId: this.detail.id, batchId: this.selectedBatch.id, batchTab: tab, batchCode: this.batchQuery.batchCode, batchPage: this.batchQuery.pageNum }; if (this.productReturn) query.productReturn = this.productReturn; const inventoryReturn = this.$router.resolve({ path: '/oms-inventory/wmsInventory', query }).route.fullPath; this.$router.push({ path: '/oms-inventory/ruleStock', query: { ruleId, inventoryReturn }}) },
+    goBatchRule({ ruleId, tab }) { const query = { ...this.query, inventoryId: this.detail.id, batchId: this.selectedBatch.id, batchTab: tab, batchCode: this.batchQuery.batchCode, batchPage: this.batchQuery.pageNum }; if (this.productReturn) query.productReturn = this.productReturn; if (this.channelReturn) query.channelReturn = this.channelReturn; const inventoryReturn = this.$router.resolve({ path: '/oms-inventory/wmsInventory', query }).route.fullPath; this.$router.push({ path: '/oms-inventory/ruleStock', query: { ruleId, inventoryReturn }}) },
     goodsName(sku) { return this.goodsMap[sku] || '商品资料未匹配' },
     storeName(code) { return this.storeMap[code] || '仓库资料未匹配' },
     operationName(type) { return { ADJUST: '库存调整', RECEIVE: '入库', LOCK: '预占', UNLOCK: '释放', CONSUME: '出库' }[type] || type },

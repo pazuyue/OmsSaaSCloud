@@ -1,6 +1,5 @@
--- Historical balances are deliberately not inferred from aggregate stock.
-ALTER TABLE rule_stock_result ADD COLUMN source_tracked TINYINT NOT NULL DEFAULT 0,
-  ADD COLUMN occupied_quantity INT NOT NULL DEFAULT 0,
+-- Per-document reservation balances and order sources.
+ALTER TABLE rule_stock_result ADD COLUMN occupied_quantity INT NOT NULL DEFAULT 0,
   ADD COLUMN consumed_quantity INT NOT NULL DEFAULT 0,
   ADD COLUMN released_quantity INT NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS rule_stock_reservation (

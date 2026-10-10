@@ -63,7 +63,7 @@ public class AllocationWorkspaceService {
         if(!rows.isEmpty()) {
             List<Object> ids=new ArrayList<>();ids.add(company);rows.forEach(row->ids.add(row.get("id")));
             Map<Long,Map<String,Object>> balances=new HashMap<>();
-            for(Map<String,Object> row:jdbc.query("SELECT rule_id,SUM(allocated_quantity) AS original_quantity,SUM(occupied_quantity) AS occupied_quantity,SUM(consumed_quantity) AS consumed_quantity,SUM(released_quantity) AS released_quantity,SUM(allocated_quantity-occupied_quantity-consumed_quantity-released_quantity) AS releasable_quantity,MIN(source_tracked) AS source_tracked FROM rule_stock_result WHERE company_code=? AND rule_id IN ("+marks(rows.size())+") AND status='SUCCESS' GROUP BY rule_id",ROW,ids.toArray()))balances.put(number(row,"ruleId"),row);
+            for(Map<String,Object> row:jdbc.query("SELECT rule_id,SUM(allocated_quantity) AS original_quantity,SUM(occupied_quantity) AS occupied_quantity,SUM(consumed_quantity) AS consumed_quantity,SUM(released_quantity) AS released_quantity,SUM(allocated_quantity-occupied_quantity-consumed_quantity-released_quantity) AS releasable_quantity FROM rule_stock_result WHERE company_code=? AND rule_id IN ("+marks(rows.size())+") AND status='SUCCESS' GROUP BY rule_id",ROW,ids.toArray()))balances.put(number(row,"ruleId"),row);
             for(Map<String,Object> row:rows)row.put("reservationBalance",balances.get(number(row,"id")));
         }
         return page(rows,total);
@@ -269,7 +269,7 @@ public class AllocationWorkspaceService {
             } else {
                 require(number(rule,"allocationType")==2 && (status==5 || status==7 || status==8 || status==11),"当前单据不能释放锁库");
                 int count=jdbc.update("UPDATE rule_stock_result SET release_status='PENDING',release_error='' WHERE rule_id=? AND status='SUCCESS' AND release_status IN ('NONE','FAILED','PARTIAL')",id);
-                require(count>0,"没有可释放的锁库记录；历史单据须核对原始锁库来源");
+                require(count>0,"没有可释放的锁库记录");
                 jdbc.update("UPDATE rule_stock_info SET status=9,run_action='RELEASE',revision=revision+1 WHERE id=?",id);
             }
             return null;
@@ -381,7 +381,7 @@ public class AllocationWorkspaceService {
         List<Map<String,Object>> rows=jdbc.query("SELECT * FROM rule_stock_result"+where+" ORDER BY sku_sn LIMIT ? OFFSET ?",ROW,args.toArray());
         for(Map<String,Object> row:rows){
             Object detail=row.remove("detailJson");if(detail!=null)row.put("detail",decode(detail.toString()));
-            row.put("releasableQuantity",number(row,"sourceTracked")==1?number(row,"allocatedQuantity")-number(row,"occupiedQuantity")-number(row,"consumedQuantity")-number(row,"releasedQuantity"):null);
+            row.put("releasableQuantity",number(row,"allocatedQuantity")-number(row,"occupiedQuantity")-number(row,"consumedQuantity")-number(row,"releasedQuantity"));
         }
         return page(rows,total);
     }

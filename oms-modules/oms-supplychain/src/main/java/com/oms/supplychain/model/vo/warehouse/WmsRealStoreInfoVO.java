@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 public class WmsRealStoreInfoVO {
 
     private Long id;
+    private Byte status;
     /**
      * 1:电商仓，2：门店仓，3：零售仓
      */
@@ -68,6 +69,5 @@ public class WmsRealStoreInfoVO {
      */
     private String companyCode;
 
-    @NotNull(message = "出入库类型不能为空")
-    private Integer actualWarehouse;
+
 }

@@ -14,7 +14,7 @@ public final class InventoryCompany {
             code = user.getSysUser().getLoginCompanyCode();
         }
         if (code == null || code.trim().isEmpty()) throw new IllegalArgumentException("请先选择登录公司");
-        // Legacy local data contains both QM and qm. Codes are canonicalized on all new writes.
+        // Company identity is case-insensitive; use one canonical form on every write.
         return code.trim().toUpperCase(java.util.Locale.ROOT);
     }
 }

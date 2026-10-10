@@ -34,14 +34,14 @@ public class AllocationReservationService {
             }
         }
         if(!inserts.isEmpty())jdbc.batchUpdate("INSERT INTO rule_stock_reservation(company_code,rule_id,sku_sn,channel_id,batch_id,original_quantity) VALUES (?,?,?,?,?,?)",inserts);
-        jdbc.update("UPDATE rule_stock_result SET source_tracked=1 WHERE rule_id=? AND sku_sn=?",rule,sku);
+
     }
 
     private List<Map<String,Object>> sources(String company,long rule,String sku) {
         return jdbc.query("SELECT * FROM rule_stock_reservation WHERE company_code=? AND rule_id=? AND sku_sn=? ORDER BY channel_id,batch_id FOR UPDATE",ROW,company,rule,sku);
     }
     private void tracked(Map<String,Object> result) {
-        require(number(result,"sourceTracked")==1,"历史记录缺少锁库来源余额，不能推算剩余数量，请先核对原始业务记录");
+
         require("SUCCESS".equals(result.get("status")),"分货尚未成功，不能使用锁库库存");
     }
     private void checkSources(List<Map<String,Object>> rows,Map<String,Object> result) {

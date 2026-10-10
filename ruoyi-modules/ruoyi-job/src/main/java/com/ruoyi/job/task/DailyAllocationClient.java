@@ -9,8 +9,8 @@ import java.util.Map;
 
 @FeignClient(contextId="dailyAllocationClient",name="oms-inventory",configuration=DailyAllocationClient.Config.class)
 public interface DailyAllocationClient {
-    @PostMapping("/allocation/internal/daily-scan")
-    R<Map<String,Object>> scan(@RequestHeader(SecurityConstants.FROM_SOURCE) String source,@RequestParam("company_code") String company);
+    @PostMapping("/allocation/internal/daily-scan-all")
+    R<Map<String,Object>> scanAll(@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     class Config {
         @Bean public feign.Request.Options dailyOptions(){return new feign.Request.Options(5000,45000);}
         @Bean public feign.Retryer dailyRetryer(){return feign.Retryer.NEVER_RETRY;}

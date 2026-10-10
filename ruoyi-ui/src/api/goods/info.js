@@ -5,6 +5,8 @@ export function listInfo(data) {
   return request({
     url: '/goods/info/list',
     method: 'post',
+    headers: { repeatSubmit: false },
+    params: { pageNum: data.pageNum, pageSize: data.pageSize },
     data: data
   })
 }
@@ -14,6 +16,8 @@ export function exportListInfo(query) {
   return request({
     url: '/goods/goodsAdministration/list',
     method: 'post',
+    headers: { repeatSubmit: false },
+    params: { pageNum: query.pageNum, pageSize: query.pageSize, errorsOnly: query.errorsOnly || false },
     data: query
   })
 }
@@ -22,8 +26,17 @@ export function toExamine(data) {
   return request({
     url: '/goods/goodsAdministration/toExamine',
     method: 'post',
+    timeout: 120000,
     params: data
   })
+}
+
+export function goodsOptions() {
+  return request({ url: '/goods/info/options', method: 'get' })
+}
+
+export function importBatch(batch) {
+  return request({ url: '/goods/goodsAdministration/batch', method: 'get', params: { import_batch: batch } })
 }
 
 // 查询产品信息详细

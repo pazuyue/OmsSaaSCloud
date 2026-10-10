@@ -42,6 +42,9 @@ public class GoodsSize implements Serializable {
     @Excel(name = "尺码编码")
     private String outSizeCode;
 
+    @Excel(name = "排序")
+    private Integer sortOrder;
+
     /**
      * 创建时间
      */

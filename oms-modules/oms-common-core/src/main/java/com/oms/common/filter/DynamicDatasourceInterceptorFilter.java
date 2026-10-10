@@ -4,6 +4,7 @@ import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
+import com.ruoyi.common.core.constant.SecurityConstants;
 import com.ruoyi.common.security.service.TokenService;
 import com.ruoyi.system.api.model.LoginUser;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,22 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         String company_code = req.getParameter("company_code");
         String requestURI = req.getRequestURI();
 
+        // The authenticated internal coordinator selects exact configured routes itself.
+        // Public gateway requests cannot carry FROM_SOURCE; controller also requires @InnerAuth.
+        if ("/allocation/internal/daily-scan-all".equals(requestURI) && "POST".equals(req.getMethod())
+                && SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE))) {
+            DynamicDataSourceContextHolder.clear();
+            try { chain.doFilter(requestWrapper, resp); }
+            finally { DynamicDataSourceContextHolder.clear(); }
+            return;
+        }
+
+        if ("POST".equals(req.getMethod()) && requestURI.matches("^/wmsCallback/[A-Za-z0-9_-]{1,64}/[a-f0-9]{32}$")) {
+            DynamicDataSourceContextHolder.clear();
+            try { chain.doFilter(req, resp); }
+            finally { DynamicDataSourceContextHolder.clear(); }
+            return;
+        }
         if (isExcluded(requestURI)) {
             // 在排除列表中，跳过
             //log.debug("在排除列表中，跳过");
@@ -61,6 +78,18 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         }
         log.debug("requestURI:" + requestURI);
         log.debug("company_code:" + company_code);
+        // Public master routes always use the authenticated datasource.
+        // A company parameter may select an internal service route, but never another user's master data.
+        if (requestURI.matches("^/(info|category|color|size|goodsAdministration|owner|realStore|simulationStore|ownerWarehouse|warehouseWorkspace|purchaseWorkspace|wmsIntegration|supplier|poInfo|noTickets|noTicketsGoods|noTicketsGoodsTmp|tmp|tickets)(/.*)?$")) {
+            String authenticated = getCompanyCode();
+            if (company_code != null && !company_code.trim().equalsIgnoreCase(authenticated.trim())) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.setContentType("application/json;charset=UTF-8");
+                resp.getWriter().write(new ObjectMapper().writeValueAsString(error("不能操作其他公司的基础资料")));
+                return;
+            }
+            company_code = authenticated;
+        }
         if (Objects.isNull(company_code)) {
             try {
                 company_code = this.getCompanyCode();
@@ -84,7 +113,8 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         //切换到对应poolName的数据源
         DynamicDataSourceContextHolder.clear();
         DynamicDataSourceContextHolder.push(company_code);
-        chain.doFilter(requestWrapper, resp);
+        try { chain.doFilter(requestWrapper, resp); }
+        finally { DynamicDataSourceContextHolder.clear(); }
     }
 
 

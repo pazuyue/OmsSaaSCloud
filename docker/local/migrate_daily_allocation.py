@@ -1,4 +1,4 @@
-"""Add scheduled ordinary allocation without enabling any historical rule or changing stock."""
+"""Initialize scheduled ordinary allocation."""
 from local_db import HERE, execute
 DB = 'qm_oms_saas_inventory'
 
@@ -35,11 +35,9 @@ def main():
                         execute(f'ALTER TABLE {table} MODIFY COLUMN {definition}', DB)
                 comment = sql.rsplit("COMMENT=", 1)[1]
                 execute(f'ALTER TABLE {table} COMMENT={comment}', DB)
-    execute("""INSERT INTO sys_job(job_name,job_group,invoke_target,cron_expression,misfire_policy,concurrent,status,create_by,create_time,remark)
-SELECT '日常分货规则扫描','DEFAULT',\"dailyAllocationTask.scan('qm')\",'0/10 * * * * ?','3','1','0','admin',NOW(),'按公司qm的分货单有效期和间隔扫描，分批处理普通配额，禁止并发，错过触发不补跑'
-WHERE NOT EXISTS (SELECT 1 FROM sys_job WHERE invoke_target IN ('dailyAllocationTask.scan()',\"dailyAllocationTask.scan('qm')\"))""", 'ry-cloud')
-    execute("""UPDATE sys_job SET invoke_target=\"dailyAllocationTask.scan('qm')\" WHERE invoke_target='dailyAllocationTask.scan()' AND job_name='日常分货规则扫描'""", 'ry-cloud')
-    print('Daily allocation schema and existing Quartz job registered; historical rules remain unscheduled')
+    from migrate_daily_scan import ensure_unified_job
+    ensure_unified_job()
+    print('Daily allocation schema and unified Quartz task ready')
 
 if __name__ == '__main__':
     main()

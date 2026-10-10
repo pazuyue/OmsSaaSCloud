@@ -1,38 +1,27 @@
 package com.oms.goods.controller.goods;
-
-import java.util.List;
-import java.io.IOException;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
-import com.oms.goods.model.entity.goods.GoodsSkuSnInfo;
-import com.oms.goods.service.goods.GoodsSkuSnInfoService;
+import com.oms.goods.service.goods.GoodsCompany;
+import com.oms.goods.service.goods.impl.GoodsWorkspaceService;
+import com.oms.goods.model.vo.export.GoodsExportRow;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
-import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
-import com.ruoyi.common.security.annotation.RequiresPermissions;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.web.page.TableDataInfo;
+import com.ruoyi.common.security.annotation.*;
+import com.ruoyi.common.security.utils.SecurityUtils;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.stream.Collectors;
 
-/**
- * 产品信息Controller
- *
- * @author ruoyi
- * @date 2024-08-01
- */
-@RestController
-@RequestMapping("/info")
-public class GoodsSkuSnInfoController extends BaseController
-{
-    @Resource
-    private GoodsSkuSnInfoService goodsSkuSnInfoService;
-
+@RestController @RequestMapping("/info")
+public class GoodsSkuSnInfoController extends BaseController {
+    @Resource private GoodsWorkspaceService workspace;
+    @Resource private com.oms.goods.service.goods.GoodsSkuSnInfoService goodsSkuSnInfoService;
     /** Bounded inventory lookup: one request for a page of SKUs, or a small search result. */
-    @RequiresPermissions("wmsInventory:inventory:list")
+    @RequiresPermissions(value={"wmsInventory:inventory:list","channelInventory:inventory:list"},logical=com.ruoyi.common.security.annotation.Logical.OR)
     @GetMapping("/inventoryLookup")
     public AjaxResult inventoryLookup(@RequestParam(required=false) List<String> skus,
                                       @RequestParam(required=false) String keyword) {
@@ -40,7 +29,7 @@ public class GoodsSkuSnInfoController extends BaseController
         String company = user.getCompanyCode();
         if (company == null || company.isEmpty()) company = user.getSysUser().getLoginCompanyCode();
         if (company == null || company.isEmpty()) return error("请先选择登录公司");
-        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<GoodsSkuSnInfo> query = new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
+        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<com.oms.goods.model.entity.goods.GoodsSkuSnInfo> query = new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
         query.select("sku_sn", "goods_name", "barcode_sn").eq("company_code",company);
         if (skus != null && !skus.isEmpty()) {
             if (skus.size()>100) return error("每次最多查询 100 个 SKU");
@@ -54,73 +43,35 @@ public class GoodsSkuSnInfoController extends BaseController
         return success(goodsSkuSnInfoService.list(query.orderByAsc("sku_sn").last("LIMIT 100")));
     }
 
-    /**
-     * 查询产品信息列表
-     */
-    @RequiresPermissions("goods:info:list")
-    @PostMapping("/list")
-    public TableDataInfo list(@RequestBody GoodsSkuSnInfo goodsSkuSnInfo)
-    {
-        startPage();
-        List<GoodsSkuSnInfo> list = goodsSkuSnInfoService.selectGoodsSkuSnInfoList(goodsSkuSnInfo);
-        return getDataTable(list);
-    }
 
-    /**
-     * 导出产品信息列表
-     */
-    @RequiresPermissions("goods:info:export")
-    @Log(title = "产品信息", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, GoodsSkuSnInfo goodsSkuSnInfo)
-    {
-        List<GoodsSkuSnInfo> list = goodsSkuSnInfoService.selectGoodsSkuSnInfoList(goodsSkuSnInfo);
-        ExcelUtil<GoodsSkuSnInfo> util = new ExcelUtil<GoodsSkuSnInfo>(GoodsSkuSnInfo.class);
-        util.exportExcel(response, list, "产品信息数据");
+    @RequiresPermissions("goods:info:list") @PostMapping("/list")
+    public TableDataInfo list(@RequestBody Map<String,Object> filter,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="10") int pageSize) {
+        return workspace.goodsPage(GoodsCompany.current(),filter,pageNum,pageSize);
     }
-
-    /**
-     * 获取产品信息详细信息
-     */
-    @RequiresPermissions("goods:info:query")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(goodsSkuSnInfoService.selectGoodsSkuSnInfoById(id));
+    @RequiresPermissions(value={"goods:info:list","goods:info:add","goods:info:edit","goods:info:import"},logical=Logical.OR)
+    @GetMapping("/options")
+    public AjaxResult options(){return success(workspace.options(GoodsCompany.current()));}
+    @RequiresPermissions("goods:info:export") @PostMapping("/export")
+    @Log(title="商品资料",businessType=BusinessType.EXPORT)
+    public void export(HttpServletResponse response,@RequestParam Map<String,Object> filter) {
+        List<GoodsExportRow> rows=workspace.goodsExport(GoodsCompany.current(),filter).stream().map(r->workspace.convert(r,GoodsExportRow.class)).collect(Collectors.toList());
+        new ExcelUtil<>(GoodsExportRow.class).exportExcel(response,rows,"商品资料");
     }
-
-    /**
-     * 新增产品信息
-     */
-    @RequiresPermissions("goods:info:add")
-    @Log(title = "产品信息", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody GoodsSkuSnInfo goodsSkuSnInfo)
-    {
-        return toAjax(goodsSkuSnInfoService.insertGoodsSkuSnInfo(goodsSkuSnInfo));
+    @RequiresPermissions("goods:info:query") @GetMapping("/{id}")
+    public AjaxResult getInfo(@PathVariable long id){return success(workspace.goodsDetail(GoodsCompany.current(),id));}
+    @RequiresPermissions("goods:info:add") @PostMapping
+    @Log(title="商品资料",businessType=BusinessType.INSERT)
+    public AjaxResult add(@RequestBody Map<String,Object> data) {
+        if(data.get("id")!=null)throw new IllegalArgumentException("新增商品不能指定 ID");
+        return success(workspace.saveGoods(GoodsCompany.current(),data,SecurityUtils.getUsername()));
     }
-
-    /**
-     * 修改产品信息
-     */
-    @RequiresPermissions("goods:info:edit")
-    @Log(title = "产品信息", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody GoodsSkuSnInfo goodsSkuSnInfo)
-    {
-        return toAjax(goodsSkuSnInfoService.updateGoodsSkuSnInfo(goodsSkuSnInfo));
+    @RequiresPermissions("goods:info:edit") @PutMapping
+    @Log(title="商品资料",businessType=BusinessType.UPDATE)
+    public AjaxResult edit(@RequestBody Map<String,Object> data) {
+        if(data.get("id")==null || Long.parseLong(String.valueOf(data.get("id")))<=0)throw new IllegalArgumentException("请选择要修改的商品");
+        return success(workspace.saveGoods(GoodsCompany.current(),data,SecurityUtils.getUsername()));
     }
-
-    /**
-     * 删除产品信息
-     */
-    @RequiresPermissions("goods:info:remove")
-    @Log(title = "产品信息", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
-        return toAjax(goodsSkuSnInfoService.deleteGoodsSkuSnInfoByIds(ids));
-    }
-
+    @RequiresPermissions("goods:info:remove") @DeleteMapping("/{ids}")
+    @Log(title="商品资料",businessType=BusinessType.DELETE)
+    public AjaxResult remove(@PathVariable List<Long> ids){return toAjax(workspace.deleteGoods(GoodsCompany.current(),ids));}
 }
-

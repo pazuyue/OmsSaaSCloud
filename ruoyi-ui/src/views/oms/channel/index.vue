@@ -152,8 +152,9 @@
           <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="160" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column width="215" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button v-hasPermi="['channelInventory:inventory:list']" size="mini" type="text" @click="$router.push({ path: '/oms-inventory/channelInventory', query: { channelId: scope.row.channelId }})">库存</el-button>
           <el-button
             size="mini"
             type="text"

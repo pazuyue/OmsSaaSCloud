@@ -25,6 +25,7 @@ public class NoTicketsGoodsServiceImpl extends ServiceImpl<NoTicketsGoodsMapper,
     @Override
     public List<NoTicketsGoods> selectNoTicketsGoodsList(NoTicketsGoods noTicketsGoods) {
         QueryWrapper<NoTicketsGoods> queryWrapper = new QueryWrapper<>();
+        if (noTicketsGoods.getCompanyCode() != null) queryWrapper.apply("UPPER(company_code)={0}", noTicketsGoods.getCompanyCode().toUpperCase(java.util.Locale.ROOT));
         if (!StrUtil.isBlank(noTicketsGoods.getNoSn())){
             queryWrapper.eq("no_sn",noTicketsGoods.getNoSn());
         }

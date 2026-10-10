@@ -37,7 +37,7 @@ public class TChannelController extends BaseController
     @Resource
     private ITChannelService tChannelService;
 
-    @RequiresPermissions(value={"ruleStock:info:list","ruleStock:info:edit","ruleStock:info:add"}, logical=com.ruoyi.common.security.annotation.Logical.OR)
+    @RequiresPermissions(value={"ruleStock:info:list","ruleStock:info:edit","ruleStock:info:add","channelInventory:inventory:list"}, logical=com.ruoyi.common.security.annotation.Logical.OR)
     @GetMapping("/allocationLookup")
     public AjaxResult allocationLookup(@org.springframework.web.bind.annotation.RequestParam(required=false) List<Integer> ids,
                                       @org.springframework.web.bind.annotation.RequestParam(defaultValue="") String keyword) {

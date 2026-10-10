@@ -1,70 +1,26 @@
 package com.oms.goods.service.goods.impl;
-
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.oms.goods.service.goods.*;
+import com.oms.goods.model.entity.goods.*;
+import com.oms.goods.mapper.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.oms.goods.mapper.GoodsColorMapper;
-import com.oms.goods.mapper.GoodsSizeMapper;
-import com.oms.goods.model.entity.goods.GoodsColor;
-import com.oms.goods.model.entity.goods.GoodsSize;
-import com.oms.goods.service.goods.GoodsColorService;
-import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import java.util.Arrays;
-import java.util.List;
-
-
-@Service
-public class GoodsColorServiceImpl extends ServiceImpl<GoodsColorMapper, GoodsColor> implements GoodsColorService {
-
-
-    @Override
-    public Integer selectOrSaveByColorName(String color_name,String company_code) {
-        QueryWrapper<GoodsColor> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("color_name",color_name);
-        GoodsColor goodsColor = this.baseMapper.selectOne(queryWrapper);
-        if (ObjectUtil.isEmpty(goodsColor)){
-            GoodsColor color = new GoodsColor();
-            color.setColorName("color_name");
-            color.setCompanyCode(company_code);
-            return this.baseMapper.insert(color);
-        }
-
-        return goodsColor.getId();
+@Service public class GoodsColorServiceImpl extends ServiceImpl<GoodsColorMapper,GoodsColor> implements GoodsColorService {
+    @Resource private GoodsWorkspaceService workspace;
+    public Integer selectOrSaveByColorName(String name,String company) {
+        String scope=GoodsCompany.check(company);
+        List<Map<String,Object>> rows=workspace.masterList(scope,"color",Collections.emptyMap()).stream().filter(r->name.equals(r.get("colorName"))).collect(Collectors.toList());
+        if(rows.size()!=1)throw new IllegalArgumentException("请先维护唯一的Color基础资料："+name);
+        return ((Number)rows.get(0).get("id")).intValue();
     }
-
-    @Override
-    public GoodsColor selectGoodsColorById(Integer id) {
-        return this.getById(id);
-    }
-
-    @Override
-    public List<GoodsColor> selectGoodsColorList(GoodsColor goodsColor) {
-        QueryWrapper<GoodsColor> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotEmpty(goodsColor.getCompanyCode()),"company_code", goodsColor.getCompanyCode());
-        queryWrapper.eq(StringUtils.isNotEmpty(goodsColor.getColorName()),"color_name",goodsColor.getColorName());
-        queryWrapper.eq(StringUtils.isNotEmpty(goodsColor.getOutColorCode()),"out_color_code",goodsColor.getOutColorCode());
-        return this.list(queryWrapper);
-    }
-
-    @Override
-    public int insertGoodsColor(GoodsColor goodsColor) {
-        return this.baseMapper.insert(goodsColor);
-    }
-
-    @Override
-    public int updateGoodsColor(GoodsColor goodsColor) {
-        return this.baseMapper.updateById(goodsColor);
-    }
-
-    @Override
-    public int deleteGoodsColorByIds(Integer[] ids) {
-        return this.baseMapper.deleteBatchIds(Arrays.asList(ids));
-    }
-
-    @Override
-    public int deleteGoodsColorById(Integer id) {
-        return this.baseMapper.deleteById(id);
-    }
+    public GoodsColor selectGoodsColorById(Integer id){return workspace.convert(workspace.masterDetail(GoodsCompany.current(),"color",id),GoodsColor.class);}
+    public List<GoodsColor> selectGoodsColorList(GoodsColor filter){return workspace.masterList(GoodsCompany.current(),"color",workspace.map(filter)).stream().map(r->workspace.convert(r,GoodsColor.class)).collect(Collectors.toList());}
+    public int insertGoodsColor(GoodsColor data){workspace.saveMaster(GoodsCompany.current(),"color",workspace.map(data));return 1;}
+    public int updateGoodsColor(GoodsColor data){workspace.saveMaster(GoodsCompany.current(),"color",workspace.map(data));return 1;}
+    public int deleteGoodsColorByIds(Integer[] ids){return workspace.deleteMaster(GoodsCompany.current(),"color",Arrays.stream(ids).map(Integer::longValue).collect(Collectors.toList()));}
+    public int deleteGoodsColorById(Integer id){return workspace.deleteMaster(GoodsCompany.current(),"color",Collections.singletonList(id.longValue()));}
 }

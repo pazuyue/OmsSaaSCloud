@@ -5,6 +5,7 @@ ALTER TABLE rule_stock_info ADD COLUMN interval_minutes INT NOT NULL DEFAULT 5 C
   ADD COLUMN next_run_at DATETIME NULL COMMENT '下次允许创建执行轮次的时间；运行中或停用时为空',
   ADD COLUMN active_run_id BIGINT NULL COMMENT '当前未完成日常执行轮次ID，关联rule_stock_daily_run.id',
   ADD INDEX idx_daily_due(company_code,rule_type,daily_enabled,id),
+  ADD INDEX idx_daily_company_scan(rule_type,daily_enabled,company_code),
   ADD INDEX idx_daily_priority(company_code,rule_type,daily_enabled,daily_priority,id);
 ALTER TABLE rule_stock_channel_info ADD INDEX idx_channel_rule(channel_id,rule_id);
 CREATE TABLE IF NOT EXISTS rule_stock_daily_run (

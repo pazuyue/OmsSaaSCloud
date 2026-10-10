@@ -2,6 +2,7 @@
   <div class="app-container allocation-workspace">
     <el-button v-if="inventoryReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(inventoryReturn)">返回批次详情</el-button>
     <el-button v-else-if="productReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(productReturn)">返回商品库存</el-button>
+    <el-button v-else-if="channelReturn" type="text" icon="el-icon-arrow-left" @click="$router.push(channelReturn)">返回渠道库存</el-button>
     <template v-if="!opened">
       <div class="allocation-heading">
         <div><span class="eyebrow">INVENTORY ALLOCATION</span><h1>分货管理</h1><p>为渠道配置库存配额，查看每个商品的执行结果。</p></div>
@@ -17,16 +18,16 @@
         <div v-if="listError" class="load-error">加载失败 <el-button type="text" @click="loadList">重新加载</el-button></div>
         <el-table v-else v-loading="loading" :data="rows" empty-text="暂无分货单，点击右上角新建">
           <el-table-column label="分货单" min-width="250"><template slot-scope="s"><el-button type="text" class="rule-name" @click="open(s.row.id)">{{ s.row.ruleName }}</el-button><div class="secondary">{{ s.row.ruleCode }}</div></template></el-table-column>
-          <el-table-column label="状态" width="115"><template slot-scope="s"><el-tag size="small" :type="statusColor(s.row.status)">{{ statuses[s.row.status] || '历史状态' }}</el-tag></template></el-table-column>
+          <el-table-column label="状态" width="115"><template slot-scope="s"><el-tag size="small" :type="statusColor(s.row.status)">{{ statuses[s.row.status] || '状态异常' }}</el-tag></template></el-table-column>
           <el-table-column label="执行方式" width="130"><template slot-scope="s">{{ ruleTypes[s.row.ruleType] || '未知规则' }}</template></el-table-column>
           <el-table-column label="日常调度" min-width="220"><template slot-scope="s"><template v-if="s.row.ruleType === 1"><div>{{ s.row.dailyEnabled ? '已启用' : '未启用' }} · 每 {{ s.row.intervalMinutes }} 分钟</div><div class="secondary">{{ s.row.startTime }} 至 {{ s.row.endTime }}</div><div class="secondary">{{ s.row.activeRunId ? '当前轮次：' + s.row.activeRunId : '下次：' + (s.row.nextRunAt || '—') }}</div></template><span v-else>—</span></template></el-table-column>
           <el-table-column label="库存方式" width="110"><template slot-scope="s">{{ s.row.allocationType === 2 ? '锁库分货' : '普通配额' }}</template></el-table-column>
           <el-table-column label="锁库进度" min-width="270"><template slot-scope="s">
-            <template v-if="s.row.allocationType === 2 && s.row.reservationBalance && Number(s.row.reservationBalance.sourceTracked) === 1">
+            <template v-if="s.row.allocationType === 2 && s.row.reservationBalance">
               <div>已释放 <strong>{{ s.row.reservationBalance.releasedQuantity }}</strong> · 可释放 <strong>{{ s.row.reservationBalance.releasableQuantity }}</strong></div>
               <div class="secondary">原锁库 {{ s.row.reservationBalance.originalQuantity }} · 订单占用 {{ s.row.reservationBalance.occupiedQuantity }} · 已出库 {{ s.row.reservationBalance.consumedQuantity }}</div>
             </template>
-            <span v-else class="secondary">{{ s.row.allocationType !== 2 ? '—' : s.row.reservationBalance ? '历史来源待核对' : '暂无锁库明细' }}</span>
+            <span v-else class="secondary">{{ s.row.allocationType !== 2 ? '—' : '暂无锁库明细' }}</span>
           </template></el-table-column>
           <el-table-column label="分配策略" min-width="145"><template slot-scope="s">{{ s.row.ruleMode === 2 ? '按优先级分配' : s.row.ruleMode === 1 ? '渠道独立配额' : '待配置' }}</template></el-table-column>
           <el-table-column label="商品范围" width="110"><template slot-scope="s">{{ s.row.ruleRange === 1 ? '全部商品' : '指定商品' }}</template></el-table-column>
@@ -110,7 +111,7 @@
                 <el-table-column label="SKU" prop="skuSn" min-width="150" /><el-table-column label="分货结果" width="100"><template slot-scope="s"><el-tag size="small" :type="s.row.status === 'FAILED' ? 'danger' : s.row.status === 'SUCCESS' ? 'success' : 'info'">{{ resultNames[s.row.status] }}</el-tag></template></el-table-column>
                 <el-table-column :label="form.allocationType === 2 ? '原锁库' : '配额合计'" prop="allocatedQuantity" width="100" />
                 <template v-if="form.allocationType === 2">
-                  <el-table-column v-for="c in balanceColumns" :key="c.key" :label="c.label" width="105"><template slot-scope="s">{{ Number(s.row.sourceTracked) === 1 ? s.row[c.key] : '待核对' }}</template></el-table-column>
+                  <el-table-column v-for="c in balanceColumns" :key="c.key" :label="c.label" width="105"><template slot-scope="s">{{ s.row[c.key] }}</template></el-table-column>
                   <el-table-column label="释放结果" width="115"><template slot-scope="s">{{ releaseNames[s.row.releaseStatus] }}</template></el-table-column>
                 </template>
                 <el-table-column label="处理说明" min-width="220"><template slot-scope="s"><span class="danger">{{ s.row.releaseError || s.row.errorMessage }}</span><span v-if="!s.row.releaseError && !s.row.errorMessage">{{ s.row.status === 'SUCCESS' ? '已提交，展开查看渠道明细' : '等待处理' }}</span></template></el-table-column>
@@ -170,6 +171,7 @@ export default {
     }
   },
   computed: {
+    channelReturn() { const value = this.$route.query.channelReturn; return typeof value === 'string' && /^\/oms-inventory\/channelInventory(?:\?|$)/.test(value) ? value : '' },
     inventoryReturn() { const value = this.$route.query.inventoryReturn; return typeof value === 'string' && /^\/oms-inventory\/wmsInventory(?:\?|$)/.test(value) ? value : '' },
     productReturn() { const value = this.$route.query.productReturn; return typeof value === 'string' && /^\/oms-inventory\/productInventory(?:\?|$)/.test(value) ? value : '' },
     mobile() { return this.$store.state.app.device === 'mobile' },

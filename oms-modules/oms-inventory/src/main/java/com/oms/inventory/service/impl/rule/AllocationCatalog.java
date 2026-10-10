@@ -27,6 +27,10 @@ public class AllocationCatalog {
         return data(channel ? channels.lookup(Collections.emptyList(),keyword,company(),authorization()) : stores.lookup(Collections.emptyList(),keyword,company(),authorization()));
     }
 
+    public List<Map<String,Object>> lookupChannels(List<Integer> ids,String keyword) {
+        return data(channels.lookup(ids,keyword,company(),authorization()));
+    }
+
     @SuppressWarnings("unchecked")
     private List<Map<String,Object>> data(AjaxResult response) {
         if (response == null || !Integer.valueOf(200).equals(response.get("code")))

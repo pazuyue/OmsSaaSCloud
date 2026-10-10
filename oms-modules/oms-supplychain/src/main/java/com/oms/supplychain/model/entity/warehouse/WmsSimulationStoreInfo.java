@@ -24,6 +24,7 @@ public class WmsSimulationStoreInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    private Long ownerWarehouseId;
 
     /**
      * 1: 未开启，2:开启

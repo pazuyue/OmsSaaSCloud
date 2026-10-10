@@ -41,12 +41,13 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
 
     @Override
     public SupplierInfo selectSupplierInfoById(Integer id) {
-        return this.baseMapper.selectById(id);
+        return this.getOne(new QueryWrapper<SupplierInfo>().eq("id",id).apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current()));
     }
 
     @Override
     public List<SupplierInfo> selectSupplierInfoList(SupplierInfo supplierInfo) {
         QueryWrapper<SupplierInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current());
         if (!StrUtil.isBlank(supplierInfo.getSupplierName())){
             queryWrapper.eq("supplier_name",supplierInfo.getSupplierName());
         }
@@ -73,7 +74,8 @@ public class SupplierInfoServiceImpl extends ServiceImpl<SupplierInfoMapper, Sup
     @Override
     public List<SupplierInfo> listSupplier(String companyCode) {
         QueryWrapper<SupplierInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("company_code",companyCode);
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.check(companyCode));
+        queryWrapper.eq("status",2);
         queryWrapper.orderByDesc("modify_time");
         queryWrapper.select("supplier_sn","supplier_name"); // 选择  字段
         return this.list(queryWrapper);

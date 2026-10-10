@@ -17,6 +17,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>oms-common-core</artifactId>
             <version>3.6.4</version>

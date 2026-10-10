@@ -49,12 +49,13 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
 
     @Override
     public NoTicketsGoodsTmp selectNoTicketsGoodsTmpById(Long id) {
-        return this.baseMapper.selectById(id);
+        return this.baseMapper.selectOne(new QueryWrapper<NoTicketsGoodsTmp>().eq("id",id).apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current()));
     }
 
     @Override
     public List<NoTicketsGoodsTmp> selectNoTicketsGoodsTmpList(NoTicketsGoodsTmp noTicketsGoodsTmp) {
         QueryWrapper<NoTicketsGoodsTmp> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current());
         if (!StrUtil.isBlank(noTicketsGoodsTmp.getNoSn())){
             queryWrapper.eq("no_sn",noTicketsGoodsTmp.getNoSn());
         }
@@ -142,7 +143,7 @@ public class NoTicketsGoodsTmpServiceImpl extends ServiceImpl<NoTicketsGoodsTmpM
             NoTicketsGoods noTicketsGoods = formatNoTicketsGoods(tmp);
             ticketsGoodsList.add(noTicketsGoods);
             numberExpected = numberExpected + noTicketsGoods.getZpNumberExpected();
-            priceExpected = priceExpected.add(noTicketsGoods.getPurchasePrice());
+            priceExpected = priceExpected.add(noTicketsGoods.getPurchasePrice().multiply(BigDecimal.valueOf(noTicketsGoods.getZpNumberExpected())));
         }
 
         return saveNoTicketsGoods(ticketsGoodsList,numberExpected,priceExpected,noTickets);

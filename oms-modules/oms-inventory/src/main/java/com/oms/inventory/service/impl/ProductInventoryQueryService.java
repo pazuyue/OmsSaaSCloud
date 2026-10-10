@@ -92,10 +92,10 @@ public class ProductInventoryQueryService {
         }
         for(Map<String,Object> row:rows) {
             Object raw=row.remove("detailJson");Map<Long,String> names=new HashMap<>();
-            try {Map<String,Object> detail=json.readValue(String.valueOf(raw),new TypeReference<Map<String,Object>>(){});for(Map<String,Object> c:(List<Map<String,Object>>)detail.get("channels"))names.put(number(c,"channelId"),String.valueOf(c.get("channelName")));}catch(Exception ignored){/* Historical metadata can be incomplete; stock balances stay unknown. */}
+            try {Map<String,Object> detail=json.readValue(String.valueOf(raw),new TypeReference<Map<String,Object>>(){});for(Map<String,Object> c:(List<Map<String,Object>>)detail.get("channels"))names.put(number(c,"channelId"),String.valueOf(c.get("channelName")));}catch(Exception error){throw new IllegalStateException("分货执行快照格式不正确",error);}
             List<Map<String,Object>> sources=sourceByRule.getOrDefault(number(row,"ruleId"),Collections.emptyList());
             for(Map<String,Object> source:sources)source.put("channelName",names.getOrDefault(number(source,"channelId"),"渠道 "+source.get("channelId")));
-            row.put("channels",sources);row.put("releasableQuantity",number(row,"sourceTracked")==1?number(row,"allocatedQuantity")-number(row,"occupiedQuantity")-number(row,"consumedQuantity")-number(row,"releasedQuantity"):null);
+            row.put("channels",sources);row.put("releasableQuantity",number(row,"allocatedQuantity")-number(row,"occupiedQuantity")-number(row,"consumedQuantity")-number(row,"releasedQuantity"));
         }
         return page(rows,total);
     }

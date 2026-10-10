@@ -10,11 +10,17 @@ def main():
     database='inventory_workspace_test'
     if sys.argv[1:]==['--cleanup']:
         execute('DROP DATABASE IF EXISTS inventory_workspace_test')
+        execute('DROP DATABASE IF EXISTS inventory_workspace_test_other')
         print('Disposable inventory test schema removed')
         return
     execute('CREATE DATABASE IF NOT EXISTS '+database+' CHARACTER SET utf8mb4')
+    execute('CREATE DATABASE IF NOT EXISTS inventory_workspace_test_other CHARACTER SET utf8mb4')
     for table in ['oms_inventory','wms_inventory','wms_inventory_batch','wms_inventory_change_history','oms_channel_inventory','rule_stock_info','rule_stock_store_code_info','rule_stock_channel_info','rule_stock_goods_info','rule_stock_result','rule_stock_reservation','rule_stock_order_reservation','rule_stock_reservation_event','rule_stock_daily_run','rule_stock_daily_item']:
         execute(f'CREATE TABLE IF NOT EXISTS {database}.{table} LIKE qm_oms_saas_inventory.{table}')
+        execute(f'CREATE TABLE IF NOT EXISTS inventory_workspace_test_other.{table} LIKE qm_oms_saas_inventory.{table}')
+    from retire_compatibility_schema import apply as retire
+    retire(database,backup=False)
+    retire('inventory_workspace_test_other',backup=False)
     for table,name,columns in [('wms_inventory','idx_inventory_company_page','company_code,id'),('wms_inventory_batch','idx_batch_company_page','company_code,sku_sn,store_code,id')]:
         if execute(f"SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='{table}' AND index_name='{name}'",database).strip()=='0':
             execute(f'ALTER TABLE {table} ADD INDEX {name} ({columns})',database)
@@ -28,9 +34,11 @@ def main():
     shutil.copy2(ROOT/product,cache/'source'/product)
     daily='oms-modules/oms-inventory/src/test/java/com/oms/inventory/DailyAllocationTest.java'
     shutil.copy2(ROOT/daily,cache/'source'/daily)
+    coordinator='oms-modules/oms-inventory/src/test/java/com/oms/inventory/DailyCoordinatorTest.java'
+    shutil.copy2(ROOT/coordinator,cache/'source'/coordinator)
     env=dict(os.environ,INVENTORY_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{database}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai',INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     mvn=ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'
-    command=[str(mvn),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-inventory','-Dtest=InventoryTransactionsTest,AllocationWorkspaceTest,ProductInventoryQueryTest,DailyAllocationTest','-DfailIfNoTests=false','test']
+    command=[str(mvn),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-inventory','-Dtest=InventoryTransactionsTest,AllocationWorkspaceTest,ProductInventoryQueryTest,DailyAllocationTest,DailyCoordinatorTest','-DfailIfNoTests=false','test']
     with (ROOT/'docker/local/logs/inventory-tests.log').open('w') as log:
         result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
     print('Inventory MySQL integration tests exit:',result.returncode)
@@ -49,7 +57,11 @@ def main():
         daily_summary=ET.parse(report.with_name('TEST-com.oms.inventory.DailyAllocationTest.xml')).getroot().attrib
         assert int(daily_summary['tests'])>=11 and int(daily_summary.get('skipped',0))==0,daily_summary
         print('Daily allocation tests:',daily_summary['tests'],'failures:',daily_summary['failures'],'errors:',daily_summary['errors'])
+        coordinator_summary=ET.parse(report.with_name('TEST-com.oms.inventory.DailyCoordinatorTest.xml')).getroot().attrib
+        assert int(coordinator_summary['tests'])>=9 and int(coordinator_summary.get('skipped',0))==0,coordinator_summary
+        print('Unified company scan tests:',coordinator_summary['tests'],'failures:',coordinator_summary['failures'],'errors:',coordinator_summary['errors'])
         execute('DROP DATABASE inventory_workspace_test')
+        execute('DROP DATABASE inventory_workspace_test_other')
     raise SystemExit(result.returncode)
 
 if __name__=='__main__':main()

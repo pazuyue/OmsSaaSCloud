@@ -34,6 +34,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTickets> implements IWmsTicketsService {
+    @Resource private WarehouseWorkspaceService warehouseWorkspace;
 
     @Resource
     private IWmsTicketsGoodsService wmsTicketsGoodsService;
@@ -48,12 +49,13 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
 
     @Override
     public WmsTickets selectWmsTicketsById(Integer id) {
-        return this.baseMapper.selectById(id);
+        return this.getOne(new QueryWrapper<WmsTickets>().eq("id",id).apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current()));
     }
 
     @Override
     public List<WmsTickets> selectWmsTicketsList(WmsTickets wmsTickets) {
         QueryWrapper<WmsTickets> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current());
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsTickets.getSn()),"sn",wmsTickets.getSn());
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsTickets.getRelationSn()),"relation_sn",wmsTickets.getRelationSn());
         queryWrapper.eq(ObjectUtil.isNotEmpty(wmsTickets.getOriginalSn()),"original_sn",wmsTickets.getOriginalSn());
@@ -63,7 +65,13 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
 
     @Override
     public int insertWmsTickets(WmsTickets wmsTickets) {
-
+        String company=com.oms.supplychain.service.warehouse.WarehouseCompany.check(wmsTickets.getCompanyCode());
+        com.oms.supplychain.model.dto.warehouse.SimulationStoreInfoDto store=warehouseWorkspace.resolve(company,wmsTickets.getWmsSimulationCode(),true);
+        wmsTickets.setCompanyCode(company);
+        wmsTickets.setRealStoreCode(store.getOwnerInfo().getRealStoreCode());
+        wmsTickets.setCustomerNo(store.getExternalOwner());
+        wmsTickets.setActualWarehouse(store.getInboundMode());
+        wmsTickets.setStoreType(store.getOwnerInfo().getRealStoreInfo().getWmsType().intValue());
         return this.baseMapper.insert(wmsTickets);
     }
 
@@ -103,9 +111,12 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             return false;
         }
 
+        if (wmsTickets.getStatusTicket() == DocumentState.STATUS_TICKET_PROCESSED.getCode()) return true;
+        boolean allSucceeded = true;
         // 获取票证关联的货物列表
         List<WmsTicketsGoods> wmsTicketsGoodsList = wmsTickets.getWmsTicketsGoodsList();
         for (WmsTicketsGoods wmsTicketsGoods : wmsTicketsGoodsList) {
+            if (java.util.Objects.equals(wmsTicketsGoods.getInventoryIsHandle(), DocumentState.PROCESSED_SUCCESS.getCode())) continue;
             // 初始化库存批次对象，准备更新库存
             WmsInventoryBatch inventoryBatch = new WmsInventoryBatch();
             inventoryBatch.setStoreCode(wmsTickets.getWmsSimulationCode());
@@ -129,7 +140,8 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
             // 调用远程服务，执行库存更新操作
             R<Boolean> result = remoteInventoryService.addInventory(wmsInventoryBatchDto, wmsTickets.getCompanyCode());
             log.info("库存处理结果：{}",result);
-            if (!R.isSuccess(result)){
+            if (result == null || !R.isSuccess(result) || Boolean.FALSE.equals(result.getData())){
+                allSucceeded = false;
                 // 如果库存更新失败，记录日志并更新货物状态为处理失败
                 log.info("库存处理失败");
                 WmsTicketsGoods updateWmsTticetGoods = new WmsTicketsGoods();
@@ -142,10 +154,11 @@ public class WmsTicketsServiceImpl extends ServiceImpl<WmsTicketsMapper, WmsTick
                 WmsTicketsGoods updateWmsTticetGoods = new WmsTicketsGoods();
                 updateWmsTticetGoods.setId(wmsTicketsGoods.getId());
                 updateWmsTticetGoods.setInventoryIsHandle(DocumentState.PROCESSED_SUCCESS.getCode());
-                wmsTicketsGoodsService.updateById(wmsTicketsGoods);
+                wmsTicketsGoodsService.updateById(updateWmsTticetGoods);
             }
         }
 
+        if (!allSucceeded) return false;
         // 更新票证状态，表示已处理完成
         WmsTickets tickets = new WmsTickets();
         Date date = new Date();

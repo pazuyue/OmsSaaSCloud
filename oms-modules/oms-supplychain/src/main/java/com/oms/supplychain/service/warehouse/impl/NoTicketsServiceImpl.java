@@ -32,7 +32,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Resource
     private INoTicketsGoodsService noTicketsGoodsService;
     @Resource
-    private WmsSimulationStoreInfoMapper simulationStoreInfoMapper;
+    private WarehouseWorkspaceService warehouseWorkspace;
     @Resource
     private IWmsTicketsService wmsTicketsService;
     @Resource
@@ -40,7 +40,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
     @Override
     public NoTickets selectNoTicketsById(Integer id) {
-        return this.baseMapper.selectById(id);
+        return this.baseMapper.selectOne(new QueryWrapper<NoTickets>().eq("id",id).apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current()));
     }
 
     @Override
@@ -51,6 +51,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
     @Override
     public List<NoTickets> selectNoTicketsList(NoTickets noTickets) {
         QueryWrapper<NoTickets> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current());
         if (!StrUtil.isBlank(noTickets.getNoSn())) {
             queryWrapper.eq("no_sn", noTickets.getNoSn());
         }
@@ -68,6 +69,9 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
 
     @Override
     public int insertNoTickets(NoTickets noTickets) {
+        String company=com.oms.supplychain.service.warehouse.WarehouseCompany.check(noTickets.getCompanyCode());
+        warehouseWorkspace.resolve(company,noTickets.getWmsSimulationCode(),true);
+        noTickets.setCompanyCode(company);
         String batchCode = IdUtil.simpleUUID();
         String operName = SecurityUtils.getUsername();
         String noSn = "NO_" + batchCode;
@@ -213,7 +217,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         String sn = "CG_" + IdUtil.simpleUUID();
         String operName = SecurityUtils.getUsername();
         // 根据采购单中的模拟仓库编码查询模拟仓库信息
-        SimulationStoreInfoDto simulationStoreInfo = simulationStoreInfoMapper.selectSimulationStoreInfoWtihOwnerInfo(noTickets.getWmsSimulationCode());
+        SimulationStoreInfoDto simulationStoreInfo = warehouseWorkspace.resolve(noTickets.getCompanyCode(), noTickets.getWmsSimulationCode(), true);
 
         // 如果找不到指定编码的模拟仓库信息，抛出异常
         if (ObjectUtil.isEmpty(simulationStoreInfo))
@@ -237,7 +241,9 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         tickets.setWmsSimulationCode(simulationStoreInfo.getWmsSimulationCode());
         tickets.setWmsSimulationName(simulationStoreInfo.getWmsSimulationName());
         // 设置仓库类型为电商仓库
-        tickets.setStoreType(DocumentState.E_COMMERCE_WAREHOUSE.getCode());
+        tickets.setStoreType(simulationStoreInfo.getOwnerInfo().getRealStoreInfo().getWmsType().intValue());
+        tickets.setRealStoreCode(simulationStoreInfo.getOwnerInfo().getRealStoreCode());
+        tickets.setCustomerNo(simulationStoreInfo.getExternalOwner());
         // 设置备注信息
         tickets.setRemark(noTickets.getRemarks());
         // 设置公司编码
@@ -245,7 +251,7 @@ public class NoTicketsServiceImpl extends ServiceImpl<NoTicketsMapper, NoTickets
         // 设置操作用户名
         tickets.setUserName(operName);
         // 设置实际仓库信息
-        tickets.setActualWarehouse(simulationStoreInfo.getOwnerInfo().getRealStoreInfo().getActualWarehouse());
+        tickets.setActualWarehouse(simulationStoreInfo.getInboundMode());
 
         // 初始化采购单商品对象，用于查询采购单商品明细
         NoTicketsGoods noTicketsGood = new NoTicketsGoods();

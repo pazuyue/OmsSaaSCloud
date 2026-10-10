@@ -6,9 +6,9 @@
       <h3>批次 {{ detail.batchCode }}</h3><p class="muted">{{ detail.skuSn }} · {{ detail.storeCode }} · 批次成本 {{ detail.transactionPrice == null ? '—' : detail.transactionPrice }} · 更新 {{ detail.modifyTime || '—' }}</p>
       <div class="trace-balances"><div class="quantity-row muted"><span>库存类型</span><span>实际</span><span>可用</span><span>锁定</span></div><div v-for="type in qualityTypes" :key="type.key" class="quantity-row"><span>{{ type.label }}</span><strong>{{ detail[type.key + 'ActualNumber'] }}</strong><strong class="available">{{ detail[type.key + 'AvailableNumber'] }}</strong><strong>{{ detail[type.key + 'LockNumber'] }}</strong></div></div>
       <el-alert v-if="summary.inconsistent" title="来源余额与批次锁定数量不一致，请按业务单据核对。" type="warning" :closable="false" show-icon />
-      <p class="muted">本批次可追溯分货锁库 {{ summary.trackedLocked }}，其中订单占用 {{ summary.occupiedQuantity }}，未占用余额 {{ summary.releasableQuantity }}。其他或待核对的正品锁定 {{ summary.otherLocked }}<span v-if="Number(summary.unknownSources)">；{{ summary.unknownSources }} 条来源待核对</span>。</p>
+      <p class="muted">本批次可追溯分货锁库 {{ summary.trackedLocked }}，其中订单占用 {{ summary.occupiedQuantity }}，未占用余额 {{ summary.releasableQuantity }}。其他或数据异常的正品锁定 {{ summary.otherLocked }}<span v-if="Number(summary.unknownSources)">；{{ summary.unknownSources }} 条来源数据异常</span>。</p>
       <el-tabs v-model="tab" @tab-click="changeTab"><el-tab-pane label="本批次流水" name="history" /><el-tab-pane label="锁库去向" name="sources" /></el-tabs>
-      <div v-if="tab === 'history'" class="trace-toolbar"><el-select v-model="operation" clearable size="small" placeholder="全部流水类型" @change="filter"><el-option v-for="(label, key) in operationNames" :key="key" :label="label" :value="key" /></el-select><span class="muted">仅展示明确关联本批次的记录，历史缺少批次关联的流水不推算归属。</span></div>
+      <div v-if="tab === 'history'" class="trace-toolbar"><el-select v-model="operation" clearable size="small" placeholder="全部流水类型" @change="filter"><el-option v-for="(label, key) in operationNames" :key="key" :label="label" :value="key" /></el-select><span class="muted">展示本批次的全部库存流水。</span></div>
       <p v-else class="muted">以下数量仅属于当前批次。订单占用已包含在剩余锁定中，释放请进入原分货单处理。</p>
       <div v-if="rowsError" class="load-error">记录加载失败 <el-button type="text" @click="loadRows">重新加载</el-button></div>
       <el-table v-if="tab === 'history'" key="history" v-loading="rowsLoading" :data="rows" empty-text="暂无明确关联本批次的流水">
@@ -19,8 +19,8 @@
         <el-table-column label="原因" prop="changeReason" min-width="150" /><el-table-column label="操作人" prop="operatorName" width="100" />
       </el-table>
       <el-table v-else key="sources" v-loading="rowsLoading" :data="rows" empty-text="暂无可追溯的分货锁库来源">
-        <el-table-column label="分货单 / 渠道" min-width="200"><template slot-scope="s"><div>{{ s.row.ruleName || '原分货单待核对' }}</div><div class="muted">{{ s.row.ruleCode || s.row.ruleId }}</div><div>{{ s.row.channelName }}</div></template></el-table-column>
-        <el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ s.row.tracked ? s.row[c.key] : '待核对' }}</template></el-table-column>
+        <el-table-column label="分货单 / 渠道" min-width="200"><template slot-scope="s"><div>{{ s.row.ruleName || '原分货单数据异常' }}</div><div class="muted">{{ s.row.ruleCode || s.row.ruleId }}</div><div>{{ s.row.channelName }}</div></template></el-table-column>
+        <el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ s.row.tracked ? s.row[c.key] : '数据异常' }}</template></el-table-column>
         <el-table-column label="操作" width="125" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button type="text" :disabled="!s.row.tracked" @click="openOrders(s.row)">查看订单</el-button><br><el-button v-if="s.row.ruleCode" v-hasPermi="['ruleStock:info:list']" type="text" @click="goRule(s.row.ruleId)">查看分货单</el-button></template></el-table-column>
       </el-table>
       <pagination v-show="total > 0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" :page-sizes="[10,20,50,100]" @pagination="pageSources" />

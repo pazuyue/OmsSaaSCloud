@@ -103,9 +103,5 @@ public class WmsRealStoreInfo implements Serializable {
     @Excel(name = "修改时间")
     private Date modifyTime;
 
-    /**
-     * 1 真实出库 2 虚拟出库
-     */
-    @Excel(name = "出入库类型")
-    private Integer actualWarehouse;
+
 }

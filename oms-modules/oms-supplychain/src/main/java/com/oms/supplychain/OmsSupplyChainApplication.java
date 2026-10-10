@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.oms")
 @EnableRyFeignClients(basePackages = {"com.oms","com.ruoyi"})
 @SpringBootApplication
+@org.springframework.scheduling.annotation.EnableScheduling
 public class OmsSupplyChainApplication {
     public static void main(String[] args)
     {

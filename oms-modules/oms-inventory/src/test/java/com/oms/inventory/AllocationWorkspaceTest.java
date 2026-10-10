@@ -95,10 +95,10 @@ public class AllocationWorkspaceTest {
         stock("A",100);long id=create(true,2,100);start(id);finish(id);order(id,"OCCUPY","O1",100);release(id);assertEquals(11,status(id));
         order(id,"CONSUME","O1",100);assertEquals(10,status(id));assertEquals(0,scalar("SELECT released_quantity FROM rule_stock_result"));assertEquals(0,scalar("SELECT total_stock FROM oms_inventory"));
     }
-    @Test void historicalAndGenericReleaseCannotBypassAttribution(){
+    @Test void missingSourcesAndGenericReleaseCannotBypassAttribution(){
         stock("A",100);long id=create(true,2,100);start(id);finish(id);
         assertThrows(IllegalArgumentException.class,()->inventory.reserve("VERIFY",Arrays.asList("W1"),"A",BigDecimal.valueOf(100),"RULE-"+id,true));
-        db.update("UPDATE rule_stock_result SET source_tracked=0");release(id);assertEquals(8,status(id));assertEquals(100,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));
+        db.update("DELETE FROM rule_stock_reservation");release(id);assertEquals(8,status(id));assertEquals(100,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));
         assertThrows(IllegalArgumentException.class,()->order(id,"OCCUPY","O1",1));
     }
     @Test void sourceMismatchRollsBackConsumptionAndCanRetrySameRequest(){

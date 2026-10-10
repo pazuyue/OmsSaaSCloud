@@ -26,9 +26,6 @@ def main():
                     execute(f'ALTER TABLE {table} {change}', DB)
         else:
             execute(sql, DB)
-    # Rule tables use binary company comparisons. Only normalize identifiers, never quantities.
-    for table in ['rule_stock_info', 'rule_stock_channel_info', 'rule_stock_store_code_info', 'rule_stock_goods_info']:
-        execute(f'UPDATE {table} SET company_code=UPPER(TRIM(company_code)) WHERE BINARY company_code<>BINARY UPPER(TRIM(company_code))', DB)
     print('Allocation workspace migration applied; existing stock preserved')
 
 if __name__ == '__main__':

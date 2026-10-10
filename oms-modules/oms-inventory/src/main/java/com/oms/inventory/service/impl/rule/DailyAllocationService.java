@@ -58,9 +58,11 @@ public class DailyAllocationService {
         db.update("UPDATE rule_stock_info SET active_run_id=NULL,next_run_at=LEAST(end_time,TIMESTAMPADD(MINUTE,interval_minutes,NOW())) WHERE id=?",h.get("id"));
     }
     /** Bounded work; safely callable from multiple JVMs or resumed after a process restart. */
-    public void tick(String company,long id) {
+    public boolean tick(String company,long id) {
         long deadline=System.nanoTime()+2000000000L;
-        for(int i=0;i<50 && System.nanoTime()<deadline;i++) {
+        // Approved round configuration is immutable; decode once per batch, not query twice per SKU.
+        Map<Long,Map<String,Object>> configs=new HashMap<>();
+        for(int i=0;i<50 && System.nanoTime()<deadline && !Thread.currentThread().isInterrupted();i++) {
             final long[] attempted={0,0};
             try {
                 Boolean more=workspace.transaction().execute(tx->{
@@ -76,9 +78,13 @@ public class DailyAllocationService {
                     Map<String,Object> run=db.queryForObject("SELECT * FROM rule_stock_daily_run WHERE id=? FOR UPDATE",ROW,runId);
                     if("PREPARING".equals(run.get("status"))) {
                         List<Object> args=new ArrayList<>();String source=workspace.skuSource(h,args);args.add(run.get("cursorSku"));
-                        List<String> skus=db.queryForList("SELECT sku_sn FROM ("+source+") source WHERE sku_sn>? ORDER BY sku_sn LIMIT 2000",String.class,args.toArray());
-                        final long selectedRun=runId;
-                        if(!skus.isEmpty())db.batchUpdate("INSERT INTO rule_stock_daily_item(run_id,sku_sn) VALUES (?,?)",skus,500,(ps,sku)->{ps.setLong(1,selectedRun);ps.setString(2,sku);});
+                        List<String> skus=db.queryForList(source+" AND sku_sn>? ORDER BY sku_sn LIMIT 2000",String.class,args.toArray());
+                        if(!skus.isEmpty()) {
+                            List<Object> values=new ArrayList<>(skus.size()*2);for(String sku:skus){values.add(runId);values.add(sku);}
+                            // One bounded multi-row INSERT; no dependency on JDBC rewriteBatchedStatements.
+                            // Keep the source read separate so INSERT SELECT cannot lock warehouse ranges.
+                            db.update("INSERT INTO rule_stock_daily_item(run_id,sku_sn) VALUES "+String.join(",",Collections.nCopies(skus.size(),"(?,?)")),values.toArray());
+                        }
                         db.update("UPDATE rule_stock_daily_run SET total=total+?,cursor_sku=?,status=? WHERE id=?",skus.size(),skus.isEmpty()?run.get("cursorSku"):skus.get(skus.size()-1),skus.size()<2000?"RUNNING":"PREPARING",runId);
                         return true;
                     }
@@ -86,11 +92,12 @@ public class DailyAllocationService {
                     List<Map<String,Object>> todo=db.query("SELECT * FROM rule_stock_daily_item WHERE run_id=? AND status='PENDING' ORDER BY sku_sn LIMIT 1 FOR UPDATE",ROW,runId);
                     if(todo.isEmpty()){finish(h,run);return false;}
                     Map<String,Object> item=todo.get(0);attempted[0]=runId;attempted[1]=number(item,"id");
-                    Map<String,Object> detail=workspace.applyTargets(company,h,(String)item.get("skuSn"),workspace.stores(id),workspace.channels(id));
+                    Map<String,Object> config=configs.computeIfAbsent(runId,key->workspace.decode((String)run.get("configJson")));
+                    Map<String,Object> detail=workspace.applyTargets(company,h,(String)item.get("skuSn"),(List<String>)config.get("stores"),(List<Map<String,Object>>)config.get("channels"));
                     db.update("UPDATE rule_stock_daily_item SET status='SUCCESS',allocated_quantity=?,detail_json=?,attempts=attempts+1 WHERE id=?",number(detail,"total"),workspace.encode(detail),item.get("id"));
                     db.update("UPDATE rule_stock_daily_run SET success=success+1 WHERE id=?",runId);return true;
                 });
-                if(!Boolean.TRUE.equals(more))break;
+                if(!Boolean.TRUE.equals(more))return false;
             } catch(RuntimeException error) {
                 if(attempted[1]==0)throw error;
                 String message=workspace.failure(error);
@@ -102,6 +109,7 @@ public class DailyAllocationService {
                 });
             }
         }
+        return true;
     }
     public TableDataInfo runs(String company,long id,int pageNum,int pageSize) {
         workspace.rule(company,id,false);int size=Math.max(1,Math.min(100,pageSize)),offset=(Math.max(1,Math.min(100000,pageNum))-1)*size;

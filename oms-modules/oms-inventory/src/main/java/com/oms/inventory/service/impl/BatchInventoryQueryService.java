@@ -28,7 +28,7 @@ public class BatchInventoryQueryService {
 
     public Map<String,Object> detail(String company,long id) {
         Map<String,Object> row=batch(company,id);
-        String trusted="r.source_tracked=1 AND r.status='SUCCESS' AND h.allocation_type=2";
+        String trusted="r.status='SUCCESS' AND h.allocation_type=2";
         Map<String,Object> summary=jdbc.queryForObject("SELECT COUNT(*) AS source_count,COALESCE(SUM(CASE WHEN "+trusted+" THEN s.original_quantity-s.consumed_quantity-s.released_quantity ELSE 0 END),0) AS tracked_locked,COALESCE(SUM(CASE WHEN "+trusted+" THEN s.occupied_quantity ELSE 0 END),0) AS occupied_quantity,COALESCE(SUM(CASE WHEN "+trusted+" THEN s.original_quantity-s.consumed_quantity-s.released_quantity-s.occupied_quantity ELSE 0 END),0) AS releasable_quantity,COALESCE(SUM(CASE WHEN "+trusted+" THEN 0 ELSE 1 END),0) AS unknown_sources,COALESCE(SUM(s.occupied_quantity<0 OR s.consumed_quantity<0 OR s.released_quantity<0 OR s.original_quantity<s.occupied_quantity+s.consumed_quantity+s.released_quantity),0) AS invalid_sources FROM rule_stock_reservation s LEFT JOIN rule_stock_result r ON r.rule_id=s.rule_id AND r.sku_sn=s.sku_sn AND r.company_code=s.company_code LEFT JOIN rule_stock_info h ON h.id=s.rule_id AND h.company_code=s.company_code WHERE s.company_code=? AND s.sku_sn=? AND s.batch_id=?",ROW,company,row.get("skuSn"),id);
         summary.put("otherLocked",Math.max(0,number(row,"zpLockNumber")-number(summary,"trackedLocked")));
         summary.put("inconsistent",number(summary,"trackedLocked")>number(row,"zpLockNumber") || number(summary,"invalidSources")>0);
@@ -56,13 +56,13 @@ public class BatchInventoryQueryService {
         String where=" WHERE s.company_code=? AND s.sku_sn=? AND s.batch_id=?";
         long total=jdbc.queryForObject("SELECT COUNT(*) FROM rule_stock_reservation s"+where,Long.class,keys);int count=size(pageSize);
         List<Object> args=new ArrayList<>(Arrays.asList(keys));args.add(count);args.add(offset(page,count));
-        List<Map<String,Object>> rows=jdbc.query("SELECT s.*,h.rule_code,h.rule_name,h.allocation_type,r.status,r.source_tracked,r.release_status,r.detail_json FROM rule_stock_reservation s LEFT JOIN rule_stock_info h ON h.id=s.rule_id AND h.company_code=s.company_code LEFT JOIN rule_stock_result r ON r.rule_id=s.rule_id AND r.company_code=s.company_code AND r.sku_sn=s.sku_sn"+where+" ORDER BY s.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
+        List<Map<String,Object>> rows=jdbc.query("SELECT s.*,h.rule_code,h.rule_name,h.allocation_type,r.status,r.release_status,r.detail_json FROM rule_stock_reservation s LEFT JOIN rule_stock_info h ON h.id=s.rule_id AND h.company_code=s.company_code LEFT JOIN rule_stock_result r ON r.rule_id=s.rule_id AND r.company_code=s.company_code AND r.sku_sn=s.sku_sn"+where+" ORDER BY s.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
         Map<Long,Map<Long,String>> names=new HashMap<>();
         for(Map<String,Object> source:rows) {
             long rule=number(source,"ruleId");Object raw=source.remove("detailJson");
             if(!names.containsKey(rule))names.put(rule,channelNames(raw));
             source.put("channelName",names.get(rule).getOrDefault(number(source,"channelId"),"渠道 "+source.get("channelId")));
-            boolean tracked=number(source,"sourceTracked")==1 && number(source,"allocationType")==2 && "SUCCESS".equals(source.get("status"));
+            boolean tracked=number(source,"allocationType")==2 && "SUCCESS".equals(source.get("status"));
             source.put("tracked",tracked);source.put("remainingQuantity",tracked?remaining(source):null);source.put("releasableQuantity",tracked?remaining(source)-number(source,"occupiedQuantity"):null);
         }
         return page(rows,total);
@@ -70,7 +70,7 @@ public class BatchInventoryQueryService {
 
     private Map<Long,String> channelNames(Object raw) {
         Map<Long,String> names=new HashMap<>();
-        try {Map<String,Object> detail=json.readValue(String.valueOf(raw),new TypeReference<Map<String,Object>>(){});for(Map<String,Object> c:(List<Map<String,Object>>)detail.get("channels"))names.put(number(c,"channelId"),String.valueOf(c.get("channelName")));}catch(Exception ignored){/* Missing historical labels do not change source balances. */}
+        try {Map<String,Object> detail=json.readValue(String.valueOf(raw),new TypeReference<Map<String,Object>>(){});for(Map<String,Object> c:(List<Map<String,Object>>)detail.get("channels"))names.put(number(c,"channelId"),String.valueOf(c.get("channelName")));}catch(Exception error){throw new IllegalStateException("分货执行快照格式不正确",error);}
         return names;
     }
 

@@ -15,7 +15,7 @@
       <el-table-column label="正品 · 仓库合计" align="center"><el-table-column v-for="c in stockColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s"><strong :class="{ available: c.key === 'AvailableNumber' }">{{ s.row.warehouseTotals['zp' + c.key] }}</strong></template></el-table-column></el-table-column>
       <el-table-column v-if="showDefective" label="次品 · 仓库合计" align="center"><el-table-column v-for="c in stockColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ s.row.warehouseTotals['cp' + c.key] }}</template></el-table-column></el-table-column>
       <el-table-column label="核对状态" min-width="160"><template slot-scope="s"><el-tooltip :content="s.row.checkMessage" placement="top"><el-tag size="small" :type="s.row.checkStatus === 'CONSISTENT' ? 'success' : 'warning'">{{ checkNames[s.row.checkStatus] }}</el-tag></el-tooltip><div class="muted">{{ s.row.warehouseTotals.warehouseCount || 0 }} 个仓库</div></template></el-table-column>
-      <el-table-column label="操作" width="105" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button type="text" @click="open(s.row)">查看详情</el-button></template></el-table-column>
+      <el-table-column label="操作" width="155" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button type="text" @click="open(s.row)">查看详情</el-button><el-button v-hasPermi="['channelInventory:inventory:list']" type="text" @click="goChannel(s.row)">渠道库存</el-button></template></el-table-column>
     </el-table>
     <pagination v-show="total > 0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" :page-sizes="[10,20,50,100]" @pagination="searchPage" />
     <p class="scope-note">按当前公司已记账的虚仓库存核对，包含停用仓的现存库存；不叠加实体仓数据。存在差异时，请查看仓库和批次来源。</p>
@@ -30,14 +30,14 @@
             <div class="balance-row muted"><span>数量口径</span><span>商品汇总</span><span>仓库合计</span><span>批次合计</span><span>仓库 − 商品</span></div>
             <div v-for="c in summaryColumns" :key="c.key" class="balance-row"><span>{{ c.label }}</span><strong>{{ detail[c.key] }}</strong><span>{{ detail.warehouseTotals[c.key] }}</span><span>{{ detail.batchTotals[c.key] }}</span><strong :class="{ difference: delta(c.key) !== 0 }">{{ delta(c.key) > 0 ? '+' : '' }}{{ delta(c.key) }}</strong></div>
           </div>
-          <p v-if="detail.reservationSummary" class="scope-note">可追溯分货锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}。其他或待核对的正品锁定 {{ detail.reservationSummary.otherLocked }}。订单占用已包含在锁定数量中。</p>
+          <p v-if="detail.reservationSummary" class="scope-note">可追溯分货锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}。其他或数据异常的正品锁定 {{ detail.reservationSummary.otherLocked }}。订单占用已包含在锁定数量中。</p>
           <el-tabs v-model="tab" @tab-click="changeTab">
             <el-tab-pane label="仓库分布" name="warehouses" />
             <el-tab-pane label="锁库来源" name="reservations" />
             <el-tab-pane label="库存流水" name="history" />
           </el-tabs>
-          <div v-if="tab === 'history'" class="product-toolbar"><el-select v-model="historyOperation" clearable size="small" placeholder="全部流水类型" @change="filterHistory"><el-option v-for="(label, key) in operationNames" :key="key" :label="label" :value="key" /></el-select><span class="muted">历史导入未补造流水；出库记录可查看订单行。</span></div>
-          <el-alert v-if="tab === 'reservations'" title="仅展示有执行记录的锁库分货单；来源不完整的记录显示待核对。释放请进入对应分货单。" type="info" :closable="false" />
+          <div v-if="tab === 'history'" class="product-toolbar"><el-select v-model="historyOperation" clearable size="small" placeholder="全部流水类型" @change="filterHistory"><el-option v-for="(label, key) in operationNames" :key="key" :label="label" :value="key" /></el-select><span class="muted">查看库存变动流水及关联订单行。</span></div>
+          <el-alert v-if="tab === 'reservations'" title="仅展示有执行记录的锁库分货单；来源不完整的记录显示数据异常。释放请进入对应分货单。" type="info" :closable="false" />
           <div v-if="tabError" class="load-error">记录加载失败 <el-button type="text" @click="loadTab">重新加载</el-button></div>
           <el-table v-if="tab === 'warehouses'" key="warehouses" v-loading="tabLoading" :data="tabRows" empty-text="暂无仓库明细">
             <el-table-column label="仓库" min-width="165"><template slot-scope="s"><div>{{ storeMap[s.row.storeCode] || '仓库资料未匹配' }}</div><span class="muted">{{ s.row.storeCode }}</span></template></el-table-column>
@@ -47,10 +47,10 @@
             <el-table-column label="操作" width="100" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['wmsInventory:inventory:query']" type="text" @click="goWarehouse(s.row)">查看批次</el-button></template></el-table-column>
           </el-table>
           <el-table v-else-if="tab === 'reservations'" key="reservations" v-loading="tabLoading" :data="tabRows" empty-text="暂无可追溯的分货锁库记录">
-            <el-table-column type="expand"><template slot-scope="s"><el-table :data="s.row.channels" size="small" empty-text="历史渠道来源待核对"><el-table-column label="渠道" prop="channelName" min-width="160" /><el-table-column label="涉及批次" prop="batchCount" width="95" /><el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" :prop="c.key === 'allocatedQuantity' ? 'originalQuantity' : c.key" width="100" align="right" /></el-table></template></el-table-column>
+            <el-table-column type="expand"><template slot-scope="s"><el-table :data="s.row.channels" size="small" empty-text="暂无渠道来源"><el-table-column label="渠道" prop="channelName" min-width="160" /><el-table-column label="涉及批次" prop="batchCount" width="95" /><el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" :prop="c.key === 'allocatedQuantity' ? 'originalQuantity' : c.key" width="100" align="right" /></el-table></template></el-table-column>
             <el-table-column label="分货单" min-width="200"><template slot-scope="s"><div>{{ s.row.ruleName }}</div><span class="muted">{{ s.row.ruleCode }}</span></template></el-table-column>
-            <el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ c.key === 'allocatedQuantity' || Number(s.row.sourceTracked) === 1 ? s.row[c.key] : '待核对' }}</template></el-table-column>
-            <el-table-column label="释放状态" width="110"><template slot-scope="s">{{ releaseNames[s.row.releaseStatus] || '待核对' }}</template></el-table-column>
+            <el-table-column v-for="c in sourceColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ c.key === 'allocatedQuantity' || s.row[c.key] }}</template></el-table-column>
+            <el-table-column label="释放状态" width="110"><template slot-scope="s">{{ releaseNames[s.row.releaseStatus] || '数据异常' }}</template></el-table-column>
             <el-table-column label="操作" width="105" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['ruleStock:info:list']" type="text" @click="goRule(s.row.ruleId)">查看分货单</el-button></template></el-table-column>
           </el-table>
           <el-table v-else key="history" v-loading="tabLoading" :data="tabRows" empty-text="暂无可追溯流水">
@@ -118,6 +118,7 @@ export default {
       const seq = ++this.tabSeq; const tab = this.tab; this.tabLoading = true; this.tabError = false
       try { const r = await productInventoryRows(this.detail.id, tab, { ...this.tabQuery, operation: tab === 'history' ? this.historyOperation : undefined }); if (seq !== this.tabSeq) return; this.tabRows = r.rows; this.tabTotal = r.total; if (tab === 'warehouses' && r.rows.length) { const names = await lookupStores({ codes: [...new Set(r.rows.map(row => row.storeCode))].join(',') }).catch(() => null); if (seq === this.tabSeq && names) names.data.forEach(s => this.$set(this.storeMap, s.wmsSimulationCode, s.wmsSimulationName)) } } catch (_) { if (seq === this.tabSeq) { this.tabRows = []; this.tabTotal = 0; this.tabError = true } } finally { if (seq === this.tabSeq) this.tabLoading = false }
     },
+    goChannel(row) { this.$router.push({ path: '/oms-inventory/channelInventory', query: { skuSn: row.skuSn }}) },
     goWarehouse(row) { this.$router.push({ path: '/oms-inventory/wmsInventory', query: { inventoryId: row.id, skuSn: row.skuSn, storeCode: row.storeCode, productReturn: this.$route.fullPath }}) },
     goRule(id) { this.$router.push({ path: '/oms-inventory/ruleStock', query: { ruleId: id, productReturn: this.$route.fullPath }}) }
   }

@@ -1,104 +1,49 @@
 package com.oms.goods.controller.goods;
-
-import java.util.List;
-import java.io.IOException;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
-import com.oms.goods.model.entity.goods.GoodsSize;
-import com.oms.goods.service.goods.GoodsSizeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
-import com.ruoyi.common.security.annotation.RequiresPermissions;
+import com.oms.goods.service.goods.GoodsCompany;
+import com.oms.goods.service.goods.impl.GoodsWorkspaceService;
+import com.oms.goods.model.vo.export.GoodsExportRow;
+import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
-import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.page.TableDataInfo;
-
-/**
- * 商品尺码Controller
- *
- * @author ruoyi
- * @date 2024-07-30
- */
-@RestController
-@RequestMapping("/size")
-public class GoodsSizeController extends BaseController
-{
-    @Resource
-    private GoodsSizeService goodsSizeService;
-
-    /**
-     * 查询商品尺码列表
-     */
-    @RequiresPermissions("goods:size:list")
-    @GetMapping("/list")
-    public TableDataInfo list(GoodsSize goodsSize,@RequestParam("company_code") String company_code)
-    {
-        startPage();
-        if (company_code != null)
-            goodsSize.setCompanyCode(company_code);
-        List<GoodsSize> list = goodsSizeService.selectGoodsSizeList(goodsSize);
-        return getDataTable(list);
+import com.ruoyi.common.security.annotation.*;
+import com.ruoyi.common.security.utils.SecurityUtils;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.stream.Collectors;
+import com.oms.goods.model.entity.goods.GoodsSize;
+@RestController @RequestMapping("/size")
+public class GoodsSizeController extends BaseController {
+    @Resource private GoodsWorkspaceService workspace;
+    @RequiresPermissions("goods:size:list") @GetMapping("/list")
+    public TableDataInfo list(@RequestParam Map<String,Object> filter,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="10") int pageSize) {
+        return workspace.masterPage(GoodsCompany.current(),"size",filter,pageNum,pageSize);
     }
-
-    /**
-     * 导出商品尺码列表
-     */
-    @RequiresPermissions("goods:size:export")
-    @Log(title = "商品尺码", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, GoodsSize goodsSize)
-    {
-        List<GoodsSize> list = goodsSizeService.selectGoodsSizeList(goodsSize);
-        ExcelUtil<GoodsSize> util = new ExcelUtil<GoodsSize>(GoodsSize.class);
-        util.exportExcel(response, list, "商品尺码数据");
+    @RequiresPermissions("goods:size:export") @PostMapping("/export")
+    @Log(title="商品尺码",businessType=BusinessType.EXPORT)
+    public void export(HttpServletResponse response,@RequestParam Map<String,Object> filter) {
+        List<GoodsSize> rows=workspace.masterList(GoodsCompany.current(),"size",filter).stream().map(r->workspace.convert(r,GoodsSize.class)).collect(Collectors.toList());
+        new ExcelUtil<>(GoodsSize.class).exportExcel(response,rows,"商品尺码");
     }
-
-    /**
-     * 获取商品尺码详细信息
-     */
-    @RequiresPermissions("goods:size:query")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Integer id)
-    {
-        return success(goodsSizeService.selectGoodsSizeById(id));
+    @RequiresPermissions("goods:size:query") @GetMapping("/{id}")
+    public AjaxResult getInfo(@PathVariable long id){return success(workspace.masterDetail(GoodsCompany.current(),"size",id));}
+    @RequiresPermissions("goods:size:add") @PostMapping
+    @Log(title="商品尺码",businessType=BusinessType.INSERT)
+    public AjaxResult add(@RequestBody Map<String,Object> data){
+        if(data.get("id")!=null)throw new IllegalArgumentException("新增不能指定 ID");
+        return success(workspace.saveMaster(GoodsCompany.current(),"size",data));
     }
-
-    /**
-     * 新增商品尺码
-     */
-    @RequiresPermissions("goods:size:add")
-    @Log(title = "商品尺码", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody GoodsSize goodsSize,@RequestParam("company_code") String company_code)
-    {
-        goodsSize.setCompanyCode(company_code);
-        return toAjax(goodsSizeService.insertGoodsSize(goodsSize));
+    @RequiresPermissions("goods:size:edit") @PutMapping
+    @Log(title="商品尺码",businessType=BusinessType.UPDATE)
+    public AjaxResult edit(@RequestBody Map<String,Object> data){
+        if(data.get("id")==null || Long.parseLong(String.valueOf(data.get("id")))<=0)throw new IllegalArgumentException("请选择要修改的资料");
+        return success(workspace.saveMaster(GoodsCompany.current(),"size",data));
     }
-
-    /**
-     * 修改商品尺码
-     */
-    @RequiresPermissions("goods:size:edit")
-    @Log(title = "商品尺码", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody GoodsSize goodsSize)
-    {
-        return toAjax(goodsSizeService.updateGoodsSize(goodsSize));
-    }
-
-    /**
-     * 删除商品尺码
-     */
-    @RequiresPermissions("goods:size:remove")
-    @Log(title = "商品尺码", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Integer[] ids)
-    {
-        return toAjax(goodsSizeService.deleteGoodsSizeByIds(ids));
-    }
+    @RequiresPermissions("goods:size:remove") @DeleteMapping("/{ids}")
+    @Log(title="商品尺码",businessType=BusinessType.DELETE)
+    public AjaxResult remove(@PathVariable List<Long> ids){return toAjax(workspace.deleteMaster(GoodsCompany.current(),"size",ids));}
 }
-

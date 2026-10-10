@@ -24,16 +24,18 @@ import java.util.List;
  */
 @Service
 public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> implements PoInfoService {
+    @javax.annotation.Resource private WarehouseWorkspaceService warehouseWorkspace;
 
 
     @Override
     public PoInfo selectPoInfoById(Integer id) {
-        return this.getById(id);
+        return this.getOne(new QueryWrapper<PoInfo>().eq("id",id).apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current()));
     }
 
     @Override
     public List<PoInfo> selectPoInfoList(PoInfo poInfo) {
         QueryWrapper<PoInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("UPPER(company_code)={0}",com.oms.supplychain.service.warehouse.WarehouseCompany.current());
         if (!StrUtil.isBlank(poInfo.getPoName())){
             queryWrapper.eq("po_name",poInfo.getPoName());
         }
@@ -70,6 +72,9 @@ public class PoInfoServiceImpl extends ServiceImpl<PoInfoMapper, PoInfo> impleme
 
     @Override
     public int insertPoInfo(PoInfo poInfo, String companyCode) {
+        companyCode=com.oms.supplychain.service.warehouse.WarehouseCompany.check(companyCode);
+        com.oms.supplychain.model.dto.warehouse.SimulationStoreInfoDto store=warehouseWorkspace.resolve(companyCode,poInfo.getWmsSimulationCode(),true);
+        poInfo.setActualWarehouse(store.getInboundMode().byteValue());
         String poSn = "PO"+ IdUtil.simpleUUID();
         String operName = SecurityUtils.getUsername();
         poInfo.setPoSn(poSn);

@@ -63,12 +63,12 @@ def main():
         ('goods', '商品分类', 'category', 'oms/goods/category/index', ['GoodsCategoryController']),
         ('goods', '商品颜色', 'color', 'oms/goods/color/index', ['GoodsColorController']),
         ('goods', '商品尺码', 'size', 'oms/goods/size/index', ['GoodsSizeController']),
-        ('supplychain', '采购单', 'poInfo', 'oms/poInfo/index', ['PoInfoController', 'NoTicketsController', 'NoTicketsTmpController', 'NoTicketsGoodsController']),
-        ('supplychain', '供应商', 'supplier', 'oms/supplier/index', ['SupplierInfoController']),
+        ('supplychain', '采购单', 'poInfo', 'oms/poInfo/index', ['PurchaseWorkspaceController']),
+        ('supplychain', '供应商', 'supplier', 'oms/supplier/index', ['PurchaseWorkspaceController']),
         ('supplychain', '货主', 'owner', 'oms/owner/index', ['OwnerInfoController']),
         ('supplychain', '实体仓库', 'wmsRealStore', 'oms/wmsRealStore/index', ['WmsRealStoreInfoController']),
         ('supplychain', '虚拟仓库', 'simulationStore', 'oms/simulationStore/index', ['WmsSimulationStoreInfoController']),
-        ('supplychain', '出入库单', 'wmsTickets', 'oms/wmsTickets/index', ['WmsTicketsController']),
+        ('supplychain', '出入库单', 'wmsTickets', 'oms/wmsTickets/index', ['PurchaseWorkspaceController']),
         ('inventory', '商品库存', 'productInventory', 'oms/productInventory/index', ['ProductInventoryController']),
         ('inventory', '仓库库存', 'wmsInventory', 'oms/wmsInventory/index', ['WmsInventoryController']),
         ('inventory', '分货管理', 'ruleStock', 'oms/ruleStock/index', ['RuleStockInfoController', 'RuleStockInfoHandleController']),
@@ -88,10 +88,12 @@ def main():
         source = '\n'.join(controller_sources[c] for c in controllers)
         permissions = set(re.findall(r'@RequiresPermissions\("([^"]+)"\)', source))
         frontend = '\n'.join(p.read_text(encoding='utf-8') for p in view.parent.glob('*.vue'))
-        if path == 'poInfo':
-            frontend += (ROOT / 'ruoyi-ui/src/views/oms/noTicketsTmp/index.vue').read_text(encoding='utf-8')
         for block in re.findall(r'v-hasPermi="([^"]+)"', frontend):
             permissions.update(re.findall(r"'([^']+)'", block))
+        if path in ['poInfo','supplier','wmsTickets']:
+            prefix={'poInfo':'warehouse:poInfo','supplier':'warehouse:supplier','wmsTickets':'warehouse:tickets'}[path]
+            actions=['list','query','add','edit','remove','export'] + (['approve','receive','close'] if path=='poInfo' else ['retry'] if path=='wmsTickets' else [])
+            permissions={prefix+':'+action for action in actions}
         main_permission = next((p for p in sorted(permissions) if p.endswith(':list')), '')
         menu = ensure_menu(title, parents[group], path, component, permission=main_permission, order=index + 1)
         created_ids.append(menu)

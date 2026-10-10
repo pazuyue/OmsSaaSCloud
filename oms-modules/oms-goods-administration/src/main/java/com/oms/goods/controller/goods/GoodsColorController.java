@@ -1,101 +1,49 @@
 package com.oms.goods.controller.goods;
-
-import java.util.List;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-
-import com.oms.goods.model.entity.goods.GoodsColor;
-import com.oms.goods.service.goods.GoodsColorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
-import com.ruoyi.common.security.annotation.RequiresPermissions;
+import com.oms.goods.service.goods.GoodsCompany;
+import com.oms.goods.service.goods.impl.GoodsWorkspaceService;
+import com.oms.goods.model.vo.export.GoodsExportRow;
+import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
-import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.page.TableDataInfo;
-
-/**
- * 商品颜色Controller
- *
- * @author ruoyi
- * @date 2024-07-31
- */
-@RestController
-@RequestMapping("/color")
-public class GoodsColorController extends BaseController
-{
-    @Autowired
-    private GoodsColorService goodsColorService;
-
-    /**
-     * 查询商品颜色列表
-     */
-    @RequiresPermissions("goods:color:list")
-    @GetMapping("/list")
-    public TableDataInfo list(GoodsColor goodsColor)
-    {
-        startPage();
-        List<GoodsColor> list = goodsColorService.selectGoodsColorList(goodsColor);
-        return getDataTable(list);
+import com.ruoyi.common.security.annotation.*;
+import com.ruoyi.common.security.utils.SecurityUtils;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.stream.Collectors;
+import com.oms.goods.model.entity.goods.GoodsColor;
+@RestController @RequestMapping("/color")
+public class GoodsColorController extends BaseController {
+    @Resource private GoodsWorkspaceService workspace;
+    @RequiresPermissions("goods:color:list") @GetMapping("/list")
+    public TableDataInfo list(@RequestParam Map<String,Object> filter,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="10") int pageSize) {
+        return workspace.masterPage(GoodsCompany.current(),"color",filter,pageNum,pageSize);
     }
-
-    /**
-     * 导出商品颜色列表
-     */
-    @RequiresPermissions("goods:color:export")
-    @Log(title = "商品颜色", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, GoodsColor goodsColor)
-    {
-        List<GoodsColor> list = goodsColorService.selectGoodsColorList(goodsColor);
-        ExcelUtil<GoodsColor> util = new ExcelUtil<GoodsColor>(GoodsColor.class);
-        util.exportExcel(response, list, "商品颜色数据");
+    @RequiresPermissions("goods:color:export") @PostMapping("/export")
+    @Log(title="商品颜色",businessType=BusinessType.EXPORT)
+    public void export(HttpServletResponse response,@RequestParam Map<String,Object> filter) {
+        List<GoodsColor> rows=workspace.masterList(GoodsCompany.current(),"color",filter).stream().map(r->workspace.convert(r,GoodsColor.class)).collect(Collectors.toList());
+        new ExcelUtil<>(GoodsColor.class).exportExcel(response,rows,"商品颜色");
     }
-
-    /**
-     * 获取商品颜色详细信息
-     */
-    @RequiresPermissions("oms:color:query")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Integer id)
-    {
-        return success(goodsColorService.selectGoodsColorById(id));
+    @RequiresPermissions("goods:color:query") @GetMapping("/{id}")
+    public AjaxResult getInfo(@PathVariable long id){return success(workspace.masterDetail(GoodsCompany.current(),"color",id));}
+    @RequiresPermissions("goods:color:add") @PostMapping
+    @Log(title="商品颜色",businessType=BusinessType.INSERT)
+    public AjaxResult add(@RequestBody Map<String,Object> data){
+        if(data.get("id")!=null)throw new IllegalArgumentException("新增不能指定 ID");
+        return success(workspace.saveMaster(GoodsCompany.current(),"color",data));
     }
-
-    /**
-     * 新增商品颜色
-     */
-    @RequiresPermissions("goods:color:add")
-    @Log(title = "商品颜色", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody GoodsColor goodsColor,@RequestParam("company_code") String company_code)
-    {
-        goodsColor.setCompanyCode(company_code);
-        return toAjax(goodsColorService.insertGoodsColor(goodsColor));
+    @RequiresPermissions("goods:color:edit") @PutMapping
+    @Log(title="商品颜色",businessType=BusinessType.UPDATE)
+    public AjaxResult edit(@RequestBody Map<String,Object> data){
+        if(data.get("id")==null || Long.parseLong(String.valueOf(data.get("id")))<=0)throw new IllegalArgumentException("请选择要修改的资料");
+        return success(workspace.saveMaster(GoodsCompany.current(),"color",data));
     }
-
-    /**
-     * 修改商品颜色
-     */
-    @RequiresPermissions("goods:color:edit")
-    @Log(title = "商品颜色", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody GoodsColor goodsColor)
-    {
-        return toAjax(goodsColorService.updateGoodsColor(goodsColor));
-    }
-
-    /**
-     * 删除商品颜色
-     */
-    @RequiresPermissions("goods:color:remove")
-    @Log(title = "商品颜色", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Integer[] ids)
-    {
-        return toAjax(goodsColorService.deleteGoodsColorByIds(ids));
-    }
+    @RequiresPermissions("goods:color:remove") @DeleteMapping("/{ids}")
+    @Log(title="商品颜色",businessType=BusinessType.DELETE)
+    public AjaxResult remove(@PathVariable List<Long> ids){return toAjax(workspace.deleteMaster(GoodsCompany.current(),"color",ids));}
 }
-

@@ -11,9 +11,15 @@ public class SimulationStoreInfoDto {
     private String wmsSimulationCode;
     private String wmsSimulationName;
     private String ownerCode;
+    private Long ownerWarehouseId;
     private String ownerName;
     private String companyCode;
     private Date createTime;
     private Date modifyTime;
+    private Integer inboundMode;
+    private Integer outboundMode;
+    private Long connectionId;
+    private String externalWarehouse;
+    private String externalOwner;
     private OwnerInfoDto ownerInfo;
 }

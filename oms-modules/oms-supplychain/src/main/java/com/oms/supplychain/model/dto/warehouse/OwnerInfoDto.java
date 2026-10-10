@@ -12,6 +12,7 @@ public class OwnerInfoDto {
     private String ownerCode;
     private String ownerName;
     private String realStoreCode;
+    private String wmsOwnerCode;
     private Byte isSync;
     private Byte isEnable;
     private String companyCode;

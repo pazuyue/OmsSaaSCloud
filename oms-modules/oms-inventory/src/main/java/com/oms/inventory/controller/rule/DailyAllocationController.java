@@ -19,11 +19,15 @@ import java.util.*;
 public class DailyAllocationController {
     @Resource private DailyAllocationService daily;
     @Resource private DailyAllocationScanner scanner;
+    @Resource private DailyAllocationCoordinator coordinator;
     @Resource private AllocationWorkspaceService workspace;
     @Resource private AllocationCatalog catalog;
     @InnerAuth
     @PostMapping("/internal/daily-scan")
     public R<Map<String,Object>> scan(@RequestParam("company_code") String company){return R.ok(scanner.poll(company));}
+    @InnerAuth
+    @PostMapping("/internal/daily-scan-all")
+    public R<Map<String,Object>> scanAll(){return R.ok(coordinator.poll());}
 
     @RequiresPermissions("ruleStock:info:edit")
     @PostMapping("/{id}/daily/{action}")

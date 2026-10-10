@@ -72,9 +72,9 @@ public class ProductInventoryQueryTest {
         sb=first(batches.sources("VERIFY",b,1,20));assertEquals(6,number(sb,"releasedQuantity"));assertEquals(2,number(sb,"remainingQuantity"));assertEquals(0,number(sb,"releasableQuantity"));assertEquals(2,number(batches.detail("VERIFY",b),"zpLockNumber"));
     }
     @Test void batchUntrackedAndInvalidSourcesRemainVisibleWithoutInventedBalances(){
-        receive("VERIFY","A","W1","B1",100,0);lock();long id=batchId("B1");db.update("UPDATE rule_stock_result SET source_tracked=0");
+        receive("VERIFY","A","W1","B1",100,0);lock();long id=batchId("B1");db.update("UPDATE rule_stock_result SET status='FAILED'");
         Map<String,Object> source=first(batches.sources("VERIFY",id,1,20)),summary=map(batches.detail("VERIFY",id),"reservationSummary");assertEquals(false,source.get("tracked"));assertNull(source.get("remainingQuantity"));assertNull(source.get("releasableQuantity"));assertEquals(50,number(summary,"otherLocked"));assertEquals(1,number(summary,"unknownSources"));
-        db.update("UPDATE rule_stock_result SET source_tracked=1");db.update("UPDATE rule_stock_reservation SET occupied_quantity=60");assertEquals(true,map(batches.detail("VERIFY",id),"reservationSummary").get("inconsistent"));
+        db.update("UPDATE rule_stock_result SET status='SUCCESS'");db.update("UPDATE rule_stock_reservation SET occupied_quantity=60");assertEquals(true,map(batches.detail("VERIFY",id),"reservationSummary").get("inconsistent"));
     }
     @Test void batchHistoryAndOrdersPageWithinTheirOwnIndexes(){
         receive("VERIFY","A","W1","B1",100,0);lock();long id=batchId("B1");long source=number(first(batches.sources("VERIFY",id,1,20)),"id");
@@ -115,7 +115,7 @@ public class ProductInventoryQueryTest {
         Map<String,Object> row=row(),summary=map(row,"reservationSummary");assertEquals(90,number(row,"totalStock"));assertEquals(40,number(summary,"trackedLocked"));assertEquals(20,number(summary,"occupiedQuantity"));assertEquals(0,number(summary,"otherLocked"));assertEquals("CONSISTENT",row.get("checkStatus"));
         Map<String,Object> source=(Map<String,Object>)products.reservations("VERIFY",id(),1,20).getRows().get(0);assertEquals(20,number(source,"releasableQuantity"));assertEquals(1,((List<?>)source.get("channels")).size());
         Map<String,Object> history=(Map<String,Object>)products.history("VERIFY",id(),"CONSUME",1,20).getRows().get(0);assertEquals("ORDER-LINE-1",history.get("orderLine"));assertEquals("RULE-"+rule,history.get("relationSn"));
-        db.update("UPDATE rule_stock_result SET source_tracked=0 WHERE rule_id=?",rule);source=(Map<String,Object>)products.reservations("VERIFY",id(),1,20).getRows().get(0);assertNull(source.get("releasableQuantity"));
+        db.update("UPDATE rule_stock_result SET status='FAILED' WHERE rule_id=?",rule);assertEquals(0,products.reservations("VERIFY",id(),1,20).getTotal());
     }
     @Test void readOnlyViewsDoNotWaitForStockWriteLocks() throws Exception {
         receive("VERIFY","A","W1","B1",100,0);CountDownLatch locked=new CountDownLatch(1),release=new CountDownLatch(1);ExecutorService pool=Executors.newFixedThreadPool(2);

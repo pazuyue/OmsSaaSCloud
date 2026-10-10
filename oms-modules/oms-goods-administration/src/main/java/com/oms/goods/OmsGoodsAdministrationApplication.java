@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 //@EnableCustomConfig
 @EnableCustomSwagger2
-@EnableRyFeignClients
+@EnableRyFeignClients(basePackages = {"com.oms.goods", "com.ruoyi"})
 @SpringBootApplication
 @EnableOmsConfig
 public class OmsGoodsAdministrationApplication {
