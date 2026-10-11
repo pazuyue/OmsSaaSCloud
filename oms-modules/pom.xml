@@ -14,6 +14,7 @@
         <module>oms-supplychain</module>
         <module>oms-inventory</module>
         <module>oms-channel</module>
+        <module>oms-order</module>
     </modules>
 
     <artifactId>oms-omdules</artifactId>

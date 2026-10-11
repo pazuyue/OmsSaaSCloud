@@ -24,6 +24,9 @@ def main():
     for table,name,columns in [('wms_inventory','idx_inventory_company_page','company_code,id'),('wms_inventory_batch','idx_batch_company_page','company_code,sku_sn,store_code,id')]:
         if execute(f"SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='{table}' AND index_name='{name}'",database).strip()=='0':
             execute(f'ALTER TABLE {table} ADD INDEX {name} ({columns})',database)
+    from configure_order import install_inventory
+    install_inventory(database)
+    install_inventory('inventory_workspace_test_other')
     cache=Path.home()/'.cache/oms-local'
     source='oms-modules/oms-inventory/src/test/java/com/oms/inventory/InventoryTransactionsTest.java'
     (cache/'source'/source).parent.mkdir(parents=True,exist_ok=True)

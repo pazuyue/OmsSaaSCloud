@@ -1,0 +1,27 @@
+import request from '@/utils/request'
+const base = '/order/orders'
+export const orderCatalog = () => request({ url: `${base}/catalog` })
+export const orderList = (view, params) => request({ url: `${base}/${view}/list`, params })
+export const orderDetail = (view, id) => request({ url: `${base}/${view}/${id}` })
+export const pullConfigs = () => request({ url: `${base}/configs` })
+export const savePullConfig = data => request({ url: `${base}/configs`, method: 'post', data })
+export const verifyPullSource = data => request({ url: `${base}/configs/verify-source`, method: 'post', data })
+export const backfillOrders = data => request({ url: `${base}/backfill`, method: 'post', data })
+export const retryOrders = ids => request({ url: `${base}/platform/retry-batch`, method: 'post', data: ids })
+export const retryResults = ids => request({ url: `${base}/platform/retry-results`, method: 'post', data: ids })
+export const reserveOrders = ids => request({ url: `${base}/business/reserve-batch`, method: 'post', data: ids })
+export const reserveResults = ids => request({ url: `${base}/business/reserve-results`, method: 'post', data: ids })
+export const matchOrderProducts = (id, data) => request({ url: `${base}/platform/${id}/match-product`, method: 'post', data })
+export const retryOrder = id => request({ url: `${base}/platform/${id}/retry`, method: 'post' })
+export const retryPullTask = id => request({ url: `${base}/tasks/${id}/retry`, method: 'post' })
+export const orderPayload = id => request({ url: `${base}/platform/${id}/payload` })
+export const pushSources = () => request({ url: `${base}/sources` })
+export const savePushSource = data => request({ url: `${base}/sources`, method: 'post', data })
+export const testPushSource = data => request({ url: `${base}/sources/test`, method: 'post', data })
+export const testSavedPushSource = key => request({ url: `${base}/sources/${key}/test`, method: 'post' })
+export const deletePushSource = key => request({ url: `${base}/sources/${key}`, method: 'delete' })
+
+export const reviewOrders = (action, data) => request({ url: `${base}/business/${action}-batch`, method: 'post', data })
+
+export const voidOrders = data => request({ url: `${base}/business/void-batch`, method: 'post', data })
+export const voidResults = ids => request({ url: `${base}/business/void-results`, method: 'post', data: ids })

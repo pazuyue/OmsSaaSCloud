@@ -29,11 +29,11 @@ public class ChannelInventoryQueryService {
         List<Object> args=new ArrayList<>();args.add(company);String where=" WHERE company_code=?";
         if(channel!=null){if(channel<=0)throw new IllegalArgumentException("渠道无效");where+=" AND channel_id=?";args.add(channel);}
         if(sku!=null && !sku.trim().isEmpty()){if(sku.length()>128)throw new IllegalArgumentException("SKU 过长");where+=" AND sku_sn=?";args.add(sku.trim());}
-        if(onlyStock)where+=" AND (available_stock<>0 OR allocated_stock<>0 OR reserved_stock<>0 OR frozen_stock<>0)";
+        if(onlyStock)where+=" AND (available_stock<>0 OR allocated_stock<>0 OR reserved_stock<>0 OR frozen_stock<>0 OR pending_stock<>0)";
         long total=jdbc.queryForObject("SELECT COUNT(*) FROM oms_channel_inventory"+where,Long.class,args.toArray());
         int count=size(pageSize);args.add(count);args.add(offset(page,count));
         String index=sku!=null && !sku.trim().isEmpty()?"idx_channel_company_sku_page":channel!=null?"idx_channel_company_channel_page":"idx_channel_company_page";
-        return page(jdbc.query("SELECT id,company_code,channel_id,sku_sn,available_stock,allocated_stock,reserved_stock,frozen_stock,modify_time,version FROM oms_channel_inventory FORCE INDEX ("+index+")"+where+" ORDER BY id DESC LIMIT ? OFFSET ?",ROW,args.toArray()),total);
+        return page(jdbc.query("SELECT id,company_code,channel_id,sku_sn,available_stock,allocated_stock,reserved_stock,pending_stock,quota_stock,frozen_stock,modify_time,version FROM oms_channel_inventory FORCE INDEX ("+index+")"+where+" ORDER BY id DESC LIMIT ? OFFSET ?",ROW,args.toArray()),total);
     }
 
     private Map<String,Object> head(String company,long id) {
@@ -45,7 +45,7 @@ public class ChannelInventoryQueryService {
 
     public Map<String,Object> detail(String company,long id) {
         Map<String,Object> row=head(company,id);
-        Map<String,Object> summary=jdbc.queryForObject("SELECT COUNT(*) AS source_count,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.original_quantity-s.consumed_quantity-s.released_quantity ELSE 0 END),0) AS tracked_locked,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.occupied_quantity ELSE 0 END),0) AS occupied_quantity,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.original_quantity-s.consumed_quantity-s.released_quantity-s.occupied_quantity ELSE 0 END),0) AS releasable_quantity,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN 0 ELSE 1 END),0) AS unknown_sources,COALESCE(SUM(CASE WHEN "+VALID+" THEN 0 ELSE 1 END),0) AS invalid_sources"+SOURCE_JOINS+sourceWhere(),ROW,keys(company,row));
+        Map<String,Object> summary=jdbc.queryForObject("SELECT COUNT(*) AS source_count,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.original_quantity-s.occupied_quantity-s.consumed_quantity-s.released_quantity ELSE 0 END),0) AS tracked_locked,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.occupied_quantity ELSE 0 END),0) AS occupied_quantity,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN s.original_quantity-s.consumed_quantity-s.released_quantity-s.occupied_quantity ELSE 0 END),0) AS releasable_quantity,COALESCE(SUM(CASE WHEN "+TRUSTED+" THEN 0 ELSE 1 END),0) AS unknown_sources,COALESCE(SUM(CASE WHEN "+VALID+" THEN 0 ELSE 1 END),0) AS invalid_sources"+SOURCE_JOINS+sourceWhere(),ROW,keys(company,row));
         BigDecimal difference=decimal(row,"allocatedStock").subtract(decimal(summary,"trackedLocked"));
         summary.put("difference",difference);
         boolean negative=Arrays.asList("availableStock","allocatedStock","reservedStock","frozenStock").stream().anyMatch(k->decimal(row,k).signum()<0);

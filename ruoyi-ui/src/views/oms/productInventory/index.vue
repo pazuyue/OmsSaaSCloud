@@ -27,10 +27,10 @@
         <template v-else-if="detail.warehouseTotals">
           <el-alert v-if="detail.checkStatus !== 'CONSISTENT'" :title="detail.checkMessage" type="warning" :closable="false" show-icon />
           <div class="product-balance">
-            <div class="balance-row muted"><span>数量口径</span><span>商品汇总</span><span>仓库合计</span><span>批次合计</span><span>仓库 − 商品</span></div>
+            <div class="balance-row muted"><span>数量口径</span><span>商品汇总</span><span>仓库折算</span><span>批次折算</span><span>折算差异</span></div>
             <div v-for="c in summaryColumns" :key="c.key" class="balance-row"><span>{{ c.label }}</span><strong>{{ detail[c.key] }}</strong><span>{{ detail.warehouseTotals[c.key] }}</span><span>{{ detail.batchTotals[c.key] }}</span><strong :class="{ difference: delta(c.key) !== 0 }">{{ delta(c.key) > 0 ? '+' : '' }}{{ delta(c.key) }}</strong></div>
           </div>
-          <p v-if="detail.reservationSummary" class="scope-note">可追溯分货锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}。其他或数据异常的正品锁定 {{ detail.reservationSummary.otherLocked }}。订单占用已包含在锁定数量中。</p>
+          <p v-if="detail.reservationSummary" class="scope-note">仓库与批次按订单逻辑预占折算后核对，实物数量未因转单而改变。可追溯实物锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}。其他或数据异常的正品锁定 {{ detail.reservationSummary.otherLocked }}。</p>
           <el-tabs v-model="tab" @tab-click="changeTab">
             <el-tab-pane label="仓库分布" name="warehouses" />
             <el-tab-pane label="锁库来源" name="reservations" />
@@ -84,7 +84,7 @@ export default {
       operationNames: { RECEIVE: '入库', ADJUST: '库存调整', LOCK: '锁库', UNLOCK: '释放', CONSUME: '出库' },
       releaseNames: { NONE: '未释放', PENDING: '释放中', PARTIAL: '部分释放', RELEASED: '释放完成', FAILED: '释放失败' },
       stockColumns: [{ key: 'ActualNumber', label: '实际' }, { key: 'AvailableNumber', label: '可用' }, { key: 'LockNumber', label: '锁定' }],
-      summaryColumns: [{ key: 'totalStock', label: '总库存' }, { key: 'availableStock', label: '可用（含次品）' }, { key: 'allocatedStock', label: '锁定' }],
+      summaryColumns: [{ key: 'totalStock', label: '总库存' }, { key: 'availableStock', label: '公司可用（含次品）' }, { key: 'allocatedStock', label: '未占用锁库' }, { key: 'reservedStock', label: '订单逻辑预占' }],
       sourceColumns: [{ key: 'allocatedQuantity', label: '原锁库' }, { key: 'occupiedQuantity', label: '其中订单占用' }, { key: 'consumedQuantity', label: '已出库' }, { key: 'releasedQuantity', label: '已释放' }, { key: 'releasableQuantity', label: '可释放' }]
     }
   },

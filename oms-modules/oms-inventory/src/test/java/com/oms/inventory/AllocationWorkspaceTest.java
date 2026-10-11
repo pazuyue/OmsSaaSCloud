@@ -68,7 +68,7 @@ public class AllocationWorkspaceTest {
     @Test void partialUseOnlyReleasesUnoccupiedSourceAndCancellationCanReleaseLater(){
         stock("A",100);long id=create(true,2,100);start(id);finish(id);
         order(id,"OCCUPY","ORDER-1",50);order(id,"CONSUME","ORDER-1",30);release(id);
-        assertEquals(11,status(id));assertEquals(70,scalar("SELECT zp_actual_number FROM wms_inventory_batch"));assertEquals(50,scalar("SELECT zp_available_number FROM wms_inventory_batch"));assertEquals(20,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));assertEquals(20,channel(1,"A","allocated_stock"));
+        assertEquals(11,status(id));assertEquals(70,scalar("SELECT zp_actual_number FROM wms_inventory_batch"));assertEquals(50,scalar("SELECT zp_available_number FROM wms_inventory_batch"));assertEquals(20,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));assertEquals(0,channel(1,"A","allocated_stock"));assertEquals(20,channel(1,"A","reserved_stock"));
         assertEquals(50,scalar("SELECT released_quantity FROM rule_stock_result"));assertEquals(30,scalar("SELECT consumed_quantity FROM rule_stock_result"));assertEquals(20,scalar("SELECT occupied_quantity FROM rule_stock_result"));
         assertThrows(IllegalArgumentException.class,()->order(id,"OCCUPY","NEW-ORDER",1));release(id);assertEquals(50,scalar("SELECT released_quantity FROM rule_stock_result"));
         order(id,"CANCEL","ORDER-1",20);assertEquals(20,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));release(id);
@@ -87,7 +87,7 @@ public class AllocationWorkspaceTest {
     @Test void twoRulesSharingBatchNeverReleaseEachOthersBalance(){
         stock("A",200);long a=create(true,2,50);start(a);finish(a);long b=create(true,2,100);start(b);finish(b);
         order(a,"OCCUPY","A-ORDER",50);order(a,"CONSUME","A-ORDER",30);release(a);
-        assertEquals(120,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));assertEquals(120,channel(1,"A","allocated_stock"));
+        assertEquals(120,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));assertEquals(100,channel(1,"A","allocated_stock"));assertEquals(20,channel(1,"A","reserved_stock"));
         assertEquals(100,scalar("SELECT original_quantity-consumed_quantity-released_quantity FROM rule_stock_reservation WHERE rule_id=?",b));
         release(b);assertEquals(20,scalar("SELECT zp_lock_number FROM wms_inventory_batch"));assertEquals(150,scalar("SELECT zp_available_number FROM wms_inventory_batch"));
     }
@@ -102,10 +102,10 @@ public class AllocationWorkspaceTest {
         assertThrows(IllegalArgumentException.class,()->order(id,"OCCUPY","O1",1));
     }
     @Test void sourceMismatchRollsBackConsumptionAndCanRetrySameRequest(){
-        stock("A",100);long id=create(true,2,100);start(id);finish(id);order(id,"OCCUPY","O1",30);db.update("UPDATE oms_channel_inventory SET allocated_stock=80");
+        stock("A",100);long id=create(true,2,100);start(id);finish(id);order(id,"OCCUPY","O1",30);db.update("UPDATE oms_channel_inventory SET reserved_stock=10");
         ReservationCommand c=command("O1","request-consume-retry",20,1);assertThrows(IllegalArgumentException.class,()->reservations.order("VERIFY",id,"CONSUME",c,"tester"));
         assertEquals(100,scalar("SELECT total_stock FROM oms_inventory"));assertEquals(0,scalar("SELECT COUNT(*) FROM wms_inventory_change_history WHERE operation_type='CONSUME'"));assertEquals(30,scalar("SELECT occupied_quantity FROM rule_stock_result"));
-        db.update("UPDATE oms_channel_inventory SET allocated_stock=100");reservations.order("VERIFY",id,"CONSUME",c,"tester");assertEquals(80,scalar("SELECT total_stock FROM oms_inventory"));
+        db.update("UPDATE oms_channel_inventory SET reserved_stock=30");reservations.order("VERIFY",id,"CONSUME",c,"tester");assertEquals(80,scalar("SELECT total_stock FROM oms_inventory"));
     }
     @Test void releaseAndOrderUseSerializeWithoutDeadlockOrDoubleSettlement() throws Exception {
         stock("A",100);long id=create(true,2,100);start(id);finish(id);order(id,"OCCUPY","O1",50);

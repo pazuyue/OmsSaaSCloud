@@ -16,6 +16,7 @@ def backup(require_complete=True):
     databases = [name for name in DATABASES if name in existing]
     if require_complete and databases != DATABASES:
         raise RuntimeError('Missing databases: ' + ', '.join(set(DATABASES) - existing))
+    if 'qm_oms_saas_order' in existing: databases.append('qm_oms_saas_order')
     with path.open('xb') as output:
         # One INSERT per row lets the restore manifest describe this exact MVCC snapshot.
         # Separate SELECT COUNT queries race with active Quartz logs and business writes.

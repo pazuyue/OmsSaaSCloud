@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang=zh-CN><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=renderer content=webkit><meta name=viewport content="width=device-width,initial-scale=1"><link rel=icon href=/favicon.ico><title>OMS 工作空间</title><!--[if lt IE 11]><script>window.location.href='/html/ie.html';</script><![endif]--><style>html,
+    body,
+    #app {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+    .chromeframe {
+      margin: 0.2em 0;
+      background: #ccc;
+      color: #000;
+      padding: 0.2em 0;
+    }
+
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999999;
+    }
+
+    #loader {
+      display: block;
+      position: relative;
+      left: 50%;
+      top: 50%;
+      width: 150px;
+      height: 150px;
+      margin: -75px 0 0 -75px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -webkit-animation: spin 2s linear infinite;
+      -ms-animation: spin 2s linear infinite;
+      -moz-animation: spin 2s linear infinite;
+      -o-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+      z-index: 1001;
+    }
+
+    #loader:before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -webkit-animation: spin 3s linear infinite;
+      -moz-animation: spin 3s linear infinite;
+      -o-animation: spin 3s linear infinite;
+      -ms-animation: spin 3s linear infinite;
+      animation: spin 3s linear infinite;
+    }
+
+    #loader:after {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -moz-animation: spin 1.5s linear infinite;
+      -o-animation: spin 1.5s linear infinite;
+      -ms-animation: spin 1.5s linear infinite;
+      -webkit-animation: spin 1.5s linear infinite;
+      animation: spin 1.5s linear infinite;
+    }
+
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+
+    #loader-wrapper .loader-section {
+      position: fixed;
+      top: 0;
+      width: 51%;
+      height: 100%;
+      background: #7171C6;
+      z-index: 1000;
+      -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+      transform: translateX(0);
+    }
+
+    #loader-wrapper .loader-section.section-left {
+      left: 0;
+    }
+
+    #loader-wrapper .loader-section.section-right {
+      right: 0;
+    }
+
+
+    .loaded #loader-wrapper .loader-section.section-left {
+      -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+      transform: translateX(-100%);
+      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader-wrapper .loader-section.section-right {
+      -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+      transform: translateX(100%);
+      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader {
+      opacity: 0;
+      -webkit-transition: all 0.3s ease-out;
+      transition: all 0.3s ease-out;
+    }
+
+    .loaded #loader-wrapper {
+      visibility: hidden;
+      -webkit-transform: translateY(-100%);
+      -ms-transform: translateY(-100%);
+      transform: translateY(-100%);
+      -webkit-transition: all 0.3s 1s ease-out;
+      transition: all 0.3s 1s ease-out;
+    }
+
+    .no-js #loader-wrapper {
+      display: none;
+    }
+
+    .no-js h1 {
+      color: #222222;
+    }
+
+    #loader-wrapper .load_title {
+      font-family: 'Open Sans';
+      color: #FFF;
+      font-size: 19px;
+      width: 100%;
+      text-align: center;
+      z-index: 9999999999999;
+      position: absolute;
+      top: 60%;
+      opacity: 1;
+      line-height: 30px;
+    }
+
+    #loader-wrapper .load_title span {
+      font-weight: normal;
+      font-style: italic;
+      font-size: 13px;
+      color: #FFF;
+      opacity: 0.5;
+    }</style><link href=/static/css/chunk-libs.ea078ece.css rel=stylesheet><link href=/static/css/app.0cd1e209.css rel=stylesheet></head><body><div id=app><div id=loader-wrapper><div id=loader></div><div class="loader-section section-left"></div><div class="loader-section section-right"></div><div class=load_title>正在加载系统资源，请耐心等待</div></div></div><script>(function(c){function e(e){for(var u,d,f=e[0],k=e[1],b=e[2],t=0,r=[];t<f.length;t++)d=f[t],Object.prototype.hasOwnProperty.call(h,d)&&h[d]&&r.push(h[d][0]),h[d]=0;for(u in k)Object.prototype.hasOwnProperty.call(k,u)&&(c[u]=k[u]);o&&o(e);while(r.length)r.shift()();return a.push.apply(a,b||[]),n()}function n(){for(var c,e=0;e<a.length;e++){for(var n=a[e],u=!0,d=1;d<n.length;d++){var f=n[d];0!==h[f]&&(u=!1)}u&&(a.splice(e--,1),c=k(k.s=n[0]))}return c}var u={},d={runtime:0},h={runtime:0},a=[];function f(c){return k.p+"static/js/"+({}[c]||c)+"."+{"chunk-005cb0c7":"6182df83","chunk-0419ec66":"55f2b94f","chunk-05e4a5f2":"aeb183e7","chunk-07d2e1b3":"2ba2d6ba","chunk-17ee1abe":"3d4c9503","chunk-2a50115b":"8dd9e635","chunk-2d21d453":"fa607485","chunk-2d0d38ff":"a8001f8a","chunk-2d0de3b1":"7f5c3d44","chunk-2d212b99":"eadf8bea","chunk-3f93175c":"791fd189","chunk-4aebf114":"b33b720c","chunk-5baaf072":"5b54dec9","chunk-2d0db487":"ea93fdc2","chunk-0bfe64f8":"cb2fe232","chunk-0dc91df6":"b5cac292","chunk-1c989af5":"af3c9932","chunk-fa1c5b86":"9dd5e4fe","chunk-1dae6262":"d7faaed7","chunk-1db49098":"3e566b07","chunk-25c636a5":"0ca72074","chunk-2727631f":"0c83416b","chunk-2a22b92c":"4f1fc48c","chunk-4dfd9c96":"6b101548","chunk-2b806325":"d53e2939","chunk-2d0aaec8":"562f514b","chunk-2d0b1626":"42b98543","chunk-2d0b2b28":"6267aaf1","chunk-59ca61be":"134d522e","chunk-2d0c4a22":"01a79f76","chunk-2d0c8e18":"8d7404a9","chunk-2d0da2ea":"6e179b0f","chunk-2d0f012d":"ddeb06bb","chunk-2d20955d":"e2dc3c11","chunk-43088160":"7a525958","chunk-e13e0614":"29225819","chunk-e6492b1c":"1ae253ee","chunk-31eae13f":"2fdc9a38","chunk-4df90d92":"829a73b6","chunk-0d5b0085":"8f3dcfd0","chunk-60006966":"9dbd9af2","chunk-0eac1c2e":"28da33bd","chunk-2d222146":"17981c97","chunk-2d22252c":"d8b06586","chunk-2d225239":"be0b5975","chunk-2d230898":"c32fad86","chunk-2d238646":"21a60ed9","chunk-314a9720":"db13bde6","chunk-35800316":"53fa8368","chunk-3656460c":"4e0085b5","chunk-39413ce8":"3a1a0fba","chunk-3a08d90c":"80dac6bb","chunk-3b69bc00":"57c65028","chunk-4111e480":"b1f144b8","chunk-2d0af27d":"2bc9dd44","chunk-2d0ba939":"c5652664","chunk-2d0d7a98":"a7ef6a2c","chunk-46abc93d":"5614c9e5","chunk-46f2cf5c":"d042d779","chunk-4f55a4ac":"f6bf7ef0","chunk-4f929aaa":"9088d35f","chunk-582b2a7a":"1eb2cdae","chunk-5b83c289":"2be81735","chunk-7fa21b9b":"9f8b6e6f","chunk-5e6cf093":"aa34418f","chunk-fb8c18b8":"c4031c9a","chunk-2d0b688f":"58479e62","chunk-2d0cbe2b":"d0635e87","chunk-2d21eef7":"9bf34d4d","chunk-6746b265":"7e9e46e2","chunk-68702101":"ce693f55","chunk-6eb64248":"450c1018","chunk-6fb43a0b":"d04980d3","chunk-733d0144":"7032427d","chunk-238bf293":"740d0d88","chunk-7414c566":"eb303fc9","chunk-744ae403":"3898444a","chunk-8579d4da":"f3b5080e","chunk-8ca6a17e":"15e3f79c","chunk-8ee3fc10":"825b0a69","chunk-9052b8f2":"0c5ccf99","chunk-0a18a949":"f576f0bb","chunk-3625660e":"3edbde5e","chunk-67031d46":"590df469","chunk-b1d4be64":"b8ac1e57","chunk-d8b320e8":"30f20d95","chunk-a740994c":"f5a034c6","chunk-ae4e7c80":"fd6a7fe9","chunk-b99b9cb6":"36f3aee3","chunk-baffc7b6":"38463eb2","chunk-d19c1a98":"01b37348","chunk-e648d5fe":"938f7740","chunk-e66ee9bc":"07fd0dd4","chunk-13baba66":"99b8bd74","chunk-578a5d17":"3cde9488"}[c]+".js"}function k(e){if(u[e])return u[e].exports;var n=u[e]={i:e,l:!1,exports:{}};return c[e].call(n.exports,n,n.exports,k),n.l=!0,n.exports}k.e=function(c){var e=[],n={"chunk-0419ec66":1,"chunk-05e4a5f2":1,"chunk-07d2e1b3":1,"chunk-17ee1abe":1,"chunk-2a50115b":1,"chunk-5baaf072":1,"chunk-0dc91df6":1,"chunk-fa1c5b86":1,"chunk-1dae6262":1,"chunk-1db49098":1,"chunk-2a22b92c":1,"chunk-4dfd9c96":1,"chunk-2b806325":1,"chunk-59ca61be":1,"chunk-e13e0614":1,"chunk-4df90d92":1,"chunk-0eac1c2e":1,"chunk-314a9720":1,"chunk-35800316":1,"chunk-3656460c":1,"chunk-4111e480":1,"chunk-46abc93d":1,"chunk-46f2cf5c":1,"chunk-4f55a4ac":1,"chunk-5b83c289":1,"chunk-fb8c18b8":1,"chunk-6746b265":1,"chunk-6eb64248":1,"chunk-6fb43a0b":1,"chunk-733d0144":1,"chunk-238bf293":1,"chunk-7414c566":1,"chunk-744ae403":1,"chunk-8ca6a17e":1,"chunk-b1d4be64":1,"chunk-a740994c":1,"chunk-ae4e7c80":1,"chunk-b99b9cb6":1,"chunk-baffc7b6":1,"chunk-e648d5fe":1,"chunk-13baba66":1,"chunk-578a5d17":1};d[c]?e.push(d[c]):0!==d[c]&&n[c]&&e.push(d[c]=new Promise((function(e,n){for(var u="static/css/"+({}[c]||c)+"."+{"chunk-005cb0c7":"31d6cfe0","chunk-0419ec66":"c1c453f0","chunk-05e4a5f2":"20b33cd6","chunk-07d2e1b3":"84f98409","chunk-17ee1abe":"ecea2c5f","chunk-2a50115b":"c1c453f0","chunk-2d21d453":"31d6cfe0","chunk-2d0d38ff":"31d6cfe0","chunk-2d0de3b1":"31d6cfe0","chunk-2d212b99":"31d6cfe0","chunk-3f93175c":"31d6cfe0","chunk-4aebf114":"31d6cfe0","chunk-5baaf072":"31e6503f","chunk-2d0db487":"31d6cfe0","chunk-0bfe64f8":"31d6cfe0","chunk-0dc91df6":"c1c453f0","chunk-1c989af5":"31d6cfe0","chunk-fa1c5b86":"399595df","chunk-1dae6262":"2c1b6094","chunk-1db49098":"6a2451c8","chunk-25c636a5":"31d6cfe0","chunk-2727631f":"31d6cfe0","chunk-2a22b92c":"40f9dc87","chunk-4dfd9c96":"02e29d37","chunk-2b806325":"c1c453f0","chunk-2d0aaec8":"31d6cfe0","chunk-2d0b1626":"31d6cfe0","chunk-2d0b2b28":"31d6cfe0","chunk-59ca61be":"21daae05","chunk-2d0c4a22":"31d6cfe0","chunk-2d0c8e18":"31d6cfe0","chunk-2d0da2ea":"31d6cfe0","chunk-2d0f012d":"31d6cfe0","chunk-2d20955d":"31d6cfe0","chunk-43088160":"31d6cfe0","chunk-e13e0614":"9e50420f","chunk-e6492b1c":"31d6cfe0","chunk-31eae13f":"31d6cfe0","chunk-4df90d92":"6dfe926d","chunk-0d5b0085":"31d6cfe0","chunk-60006966":"31d6cfe0","chunk-0eac1c2e":"c5292c00","chunk-2d222146":"31d6cfe0","chunk-2d22252c":"31d6cfe0","chunk-2d225239":"31d6cfe0","chunk-2d230898":"31d6cfe0","chunk-2d238646":"31d6cfe0","chunk-314a9720":"a68e1e29","chunk-35800316":"db631dbc","chunk-3656460c":"034ab1e5","chunk-39413ce8":"31d6cfe0","chunk-3a08d90c":"31d6cfe0","chunk-3b69bc00":"31d6cfe0","chunk-4111e480":"fbb54de6","chunk-2d0af27d":"31d6cfe0","chunk-2d0ba939":"31d6cfe0","chunk-2d0d7a98":"31d6cfe0","chunk-46abc93d":"15eed033","chunk-46f2cf5c":"17fbdb6b","chunk-4f55a4ac":"5a402cd2","chunk-4f929aaa":"31d6cfe0","chunk-582b2a7a":"31d6cfe0","chunk-5b83c289":"ce2a2394","chunk-7fa21b9b":"31d6cfe0","chunk-5e6cf093":"31d6cfe0","chunk-fb8c18b8":"9173ea28","chunk-2d0b688f":"31d6cfe0","chunk-2d0cbe2b":"31d6cfe0","chunk-2d21eef7":"31d6cfe0","chunk-6746b265":"3e10cd59","chunk-68702101":"31d6cfe0","chunk-6eb64248":"38e6c961","chunk-6fb43a0b":"406bd22c","chunk-733d0144":"5b4131b7","chunk-238bf293":"b2918a49","chunk-7414c566":"35fa983d","chunk-744ae403":"dbc41950","chunk-8579d4da":"31d6cfe0","chunk-8ca6a17e":"906e9549","chunk-8ee3fc10":"31d6cfe0","chunk-9052b8f2":"31d6cfe0","chunk-0a18a949":"31d6cfe0","chunk-3625660e":"31d6cfe0","chunk-67031d46":"31d6cfe0","chunk-b1d4be64":"74496202","chunk-d8b320e8":"31d6cfe0","chunk-a740994c":"3ec3974a","chunk-ae4e7c80":"e4ba825b","chunk-b99b9cb6":"c1c453f0","chunk-baffc7b6":"d7a77e90","chunk-d19c1a98":"31d6cfe0","chunk-e648d5fe":"bbc9fa95","chunk-e66ee9bc":"31d6cfe0","chunk-13baba66":"42485abb","chunk-578a5d17":"42485abb"}[c]+".css",h=k.p+u,a=document.getElementsByTagName("link"),f=0;f<a.length;f++){var b=a[f],t=b.getAttribute("data-href")||b.getAttribute("href");if("stylesheet"===b.rel&&(t===u||t===h))return e()}var r=document.getElementsByTagName("style");for(f=0;f<r.length;f++){b=r[f],t=b.getAttribute("data-href");if(t===u||t===h)return e()}var o=document.createElement("link");o.rel="stylesheet",o.type="text/css",o.onload=e,o.onerror=function(e){var u=e&&e.target&&e.target.src||h,a=new Error("Loading CSS chunk "+c+" failed.\n("+u+")");a.code="CSS_CHUNK_LOAD_FAILED",a.request=u,delete d[c],o.parentNode.removeChild(o),n(a)},o.href=h;var i=document.getElementsByTagName("head")[0];i.appendChild(o)})).then((function(){d[c]=0})));var u=h[c];if(0!==u)if(u)e.push(u[2]);else{var a=new Promise((function(e,n){u=h[c]=[e,n]}));e.push(u[2]=a);var b,t=document.createElement("script");t.charset="utf-8",t.timeout=120,k.nc&&t.setAttribute("nonce",k.nc),t.src=f(c);var r=new Error;b=function(e){t.onerror=t.onload=null,clearTimeout(o);var n=h[c];if(0!==n){if(n){var u=e&&("load"===e.type?"missing":e.type),d=e&&e.target&&e.target.src;r.message="Loading chunk "+c+" failed.\n("+u+": "+d+")",r.name="ChunkLoadError",r.type=u,r.request=d,n[1](r)}h[c]=void 0}};var o=setTimeout((function(){b({type:"timeout",target:t})}),12e4);t.onerror=t.onload=b,document.head.appendChild(t)}return Promise.all(e)},k.m=c,k.c=u,k.d=function(c,e,n){k.o(c,e)||Object.defineProperty(c,e,{enumerable:!0,get:n})},k.r=function(c){"undefined"!==typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(c,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(c,"__esModule",{value:!0})},k.t=function(c,e){if(1&e&&(c=k(c)),8&e)return c;if(4&e&&"object"===typeof c&&c&&c.__esModule)return c;var n=Object.create(null);if(k.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:c}),2&e&&"string"!=typeof c)for(var u in c)k.d(n,u,function(e){return c[e]}.bind(null,u));return n},k.n=function(c){var e=c&&c.__esModule?function(){return c["default"]}:function(){return c};return k.d(e,"a",e),e},k.o=function(c,e){return Object.prototype.hasOwnProperty.call(c,e)},k.p="/",k.oe=function(c){throw console.error(c),c};var b=window["webpackJsonp"]=window["webpackJsonp"]||[],t=b.push.bind(b);b.push=e,b=b.slice();for(var r=0;r<b.length;r++)e(b[r]);var o=t;n()})([]);</script><script src=/static/js/chunk-elementUI.ef7743f1.js></script><script src=/static/js/chunk-libs.aa453e16.js></script><script src=/static/js/app.7a968026.js></script></body></html>

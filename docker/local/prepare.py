@@ -45,7 +45,7 @@ spring:
     host: redis
     port: 6379
 '''
-for prefix, name in [('goods', 'oms-modules-goods'), ('supplychain', 'oms-supplychain'), ('inventory', 'oms-inventory'), ('channel', 'oms-channel')]:
+for prefix, name in [('goods', 'oms-modules-goods'), ('supplychain', 'oms-supplychain'), ('inventory', 'oms-inventory'), ('channel', 'oms-channel'), ('order', 'oms-order')]:
     route = f'''        - id: {name}
           uri: lb://{name}
           predicates:
@@ -54,11 +54,13 @@ for prefix, name in [('goods', 'oms-modules-goods'), ('supplychain', 'oms-supply
             - StripPrefix=1
 '''
     configs['ruoyi-gateway-dev.yml'] = configs['ruoyi-gateway-dev.yml'].replace('      routes:\n', '      routes:\n' + route)
-    package = {'goods': 'com.oms.goods', 'supplychain': 'com.oms.supplychain', 'inventory': 'com.oms.inventory', 'channel': 'com.oms.channel'}[prefix]
+    package = {'goods': 'com.oms.goods', 'supplychain': 'com.oms.supplychain', 'inventory': 'com.oms.inventory', 'channel': 'com.oms.channel', 'order': 'com.oms.order'}[prefix]
     configs[name + '-dev.yml'] = configs['ruoyi-system-dev.yml'].replace('com.ruoyi.system', package) + '\nmybatis-plus.mapper-locations: classpath*:mapper/**/*.xml\n'
     if local_env.get('OMS_BUSINESS_DATABASES') == '1':
-        database = {'goods': 'qm_oms_saas_commodity', 'supplychain': 'qm_oms_saas_commodity', 'inventory': 'qm_oms_saas_inventory', 'channel': 'qm_oms_saas_channel'}[prefix]
+        database = {'goods': 'qm_oms_saas_commodity', 'supplychain': 'qm_oms_saas_commodity', 'inventory': 'qm_oms_saas_inventory', 'channel': 'qm_oms_saas_channel', 'order': 'qm_oms_saas_order'}[prefix]
         configs[name + '-dev.yml'] = configs[name + '-dev.yml'].replace('/ry-cloud?', '/' + database + '?')
+
+configs['oms-order-dev.yml'] += '\noms.order.encryption-key: ${OMS_ORDER_ENCRYPTION_KEY:}\nfeign.client.config.default.connectTimeout: 5000\nfeign.client.config.default.readTimeout: 30000\n'
 
 def quote(value):
     return "'" + value.replace('\\', '\\\\').replace("'", "\\'") + "'"
@@ -91,6 +93,7 @@ apps = [
     ('supplychain', 'oms-modules/oms-supplychain/target/oms-supplychain.jar', 9302),
     ('inventory', 'oms-modules/oms-inventory/target/oms-inventory.jar', 9303),
     ('channel', 'oms-modules/oms-channel/target/oms-channel.jar', 9304),
+    ('order', 'oms-modules/oms-order/target/oms-order.jar', 9305),
 ]
 for name, jar, port in apps:
     services[name] = {
@@ -102,6 +105,8 @@ for name, jar, port in apps:
         'depends_on': {x: {'condition': 'service_healthy'} for x in ['mysql', 'redis', 'nacos']},
         'healthcheck': health(['CMD-SHELL', f'curl -fsS http://localhost:{port}/actuator/health | grep -q UP']),
     }
+    if name == 'order':
+        services[name]['environment']['OMS_ORDER_ENCRYPTION_KEY']='${OMS_ORDER_ENCRYPTION_KEY:-}'
     if name == 'gateway':
         services[name]['ports'] = ['127.0.0.1:8080:8080']
     if name == 'monitor':

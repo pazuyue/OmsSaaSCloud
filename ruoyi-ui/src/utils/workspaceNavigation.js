@@ -19,6 +19,7 @@ const moduleOrder = [
   '/oms-supplychain',
   '/oms-inventory',
   '/oms-channel',
+  '/oms-order',
   '/system',
   '/monitor',
   '/tool'
@@ -27,7 +28,8 @@ const moduleNames = {
   '/oms-goods': '商品',
   '/oms-supplychain': '供应链',
   '/oms-inventory': '库存',
-  '/oms-channel': '渠道'
+  '/oms-channel': '渠道',
+  '/oms-order': '订单'
 }
 export function workspaceModules(routes) {
   return [{ path: '/index', meta: { title: '工作台', icon: 'dashboard' }, children: [] }].concat(

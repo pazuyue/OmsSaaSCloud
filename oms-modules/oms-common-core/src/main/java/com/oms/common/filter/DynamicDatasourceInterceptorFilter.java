@@ -56,7 +56,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
         // The authenticated internal coordinator selects exact configured routes itself.
         // Public gateway requests cannot carry FROM_SOURCE; controller also requires @InnerAuth.
-        if ("/allocation/internal/daily-scan-all".equals(requestURI) && "POST".equals(req.getMethod())
+        if (("/allocation/internal/daily-scan-all".equals(requestURI) || "/orders/internal/scan-all".equals(requestURI)) && "POST".equals(req.getMethod())
                 && SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE))) {
             DynamicDataSourceContextHolder.clear();
             try { chain.doFilter(requestWrapper, resp); }
@@ -80,7 +80,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         log.debug("company_code:" + company_code);
         // Public master routes always use the authenticated datasource.
         // A company parameter may select an internal service route, but never another user's master data.
-        if (requestURI.matches("^/(channel|platform|api/channel|info|category|color|size|goodsAdministration|owner|realStore|simulationStore|ownerWarehouse|warehouseWorkspace|purchaseWorkspace|wmsIntegration|supplier|poInfo|noTickets|noTicketsGoods|noTicketsGoodsTmp|tmp|tickets)(/.*)?$")) {
+        if (requestURI.matches("^/(orders(?!/internal)|channel|platform|api/channel|info|category|color|size|goodsAdministration|owner|realStore|simulationStore|ownerWarehouse|warehouseWorkspace|purchaseWorkspace|wmsIntegration|supplier|poInfo|noTickets|noTicketsGoods|noTicketsGoodsTmp|tmp|tickets)(/.*)?$")) {
             String authenticated = getCompanyCode();
             if (company_code != null && !company_code.trim().equalsIgnoreCase(authenticated.trim())) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);

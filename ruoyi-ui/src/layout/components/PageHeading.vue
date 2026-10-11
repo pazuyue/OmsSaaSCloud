@@ -10,10 +10,12 @@
 </template>
 <script>
 const descriptions = {
+  '/oms-order/business': ['查看转单后的业务订单，跟进库存预占进度与处理结果。', 'el-icon-document'],
   '/oms-goods': ['集中管理商品资料，让每一个 SKU 清晰有序。', 'el-icon-box'],
   '/oms-supplychain': ['连接采购、仓库与合作伙伴，协同处理日常业务。', 'el-icon-connection'],
   '/oms-inventory': ['查看库存明细，管理库存分配与业务规则。', 'el-icon-data-analysis'],
   '/oms-channel': ['统一维护渠道信息与业务配置。', 'el-icon-set-up'],
+  '/oms-order': ['拉取天猫平台订单，处理转单异常与库存逻辑预占。', 'el-icon-document'],
   '/system': ['管理组织、账号与权限，维护业务基础配置。', 'el-icon-setting'],
   '/monitor': ['查看运行状态与任务记录。', 'el-icon-monitor'],
   '/tool': ['管理开发工具与代码生成配置。', 'el-icon-folder-opened']
@@ -22,7 +24,7 @@ export default {
   computed: {
     definition() {
       return (
-        descriptions['/' + this.$route.path.split('/')[1]] || [
+        descriptions[this.$route.path] || descriptions['/' + this.$route.path.split('/')[1]] || [
           '查看并管理当前页面的信息。',
           'el-icon-document'
         ]

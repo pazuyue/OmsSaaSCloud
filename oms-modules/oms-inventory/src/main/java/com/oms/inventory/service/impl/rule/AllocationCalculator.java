@@ -25,13 +25,13 @@ public final class AllocationCalculator {
             remaining-=target;total+=target;
             Map<String,Object> old=current.get(id);
             long before=number(old,locking?"allocatedStock":"availableStock");
-            long reserved=number(old,"reservedStock"),frozen=number(old,"frozenStock");
-            long after=locking ? Math.addExact(before,target) : Math.max(0,target-reserved-frozen);
+            long reserved=number(old,"quotaReservedStock"),frozen=number(old,"frozenStock"),pending=number(old,"pendingStock");
+            long after=locking ? Math.addExact(before,target) : Math.max(0,Math.max(0,target-reserved)+number(old,"allocatedStock")-pending-frozen);
             if(after>Integer.MAX_VALUE) throw new IllegalArgumentException("渠道库存超出有效范围");
             Map<String,Object> row=new LinkedHashMap<>();
             row.put("channelId",id);row.put("channelName",channel.get("channelName"));row.put("target",target);
             row.put("before",before);row.put("after",after);row.put("change",after-before);
-            row.put("unchanged",old!=null && before==after);
+            row.put("unchanged",old!=null && before==after && (locking || number(old,"quotaStock")==target));
             row.put("reservedStock",reserved);row.put("frozenStock",frozen);
             row.put("warning",!locking && target<reserved+frozen?"配额小于订单预占与冻结数量，可售量归零":"");
             result.add(row);

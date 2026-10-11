@@ -9,7 +9,7 @@
       </el-form>
     </filter-panel>
     <div class="inventory-toolbar"><span>共 <strong>{{ total }}</strong> 条渠道商品库存</span><div><el-button size="small" icon="el-icon-refresh" :loading="loading" @click="loadList">刷新</el-button><el-button size="small" icon="el-icon-download" :disabled="loading || !rows.length" @click="exportPage">导出当前页</el-button></div></div>
-    <el-alert title="普通可售配额不预留仓库库存；锁库量是实际预留的余额，两者分别展示。预占、冻结字段按原记录展示，锁库订单占用请查看详情。" type="info" :closable="false" show-icon />
+    <el-alert title="渠道可售已扣除待占需求和订单预占；未占用锁库额度与订单逻辑预占分别展示。转单逻辑预占不代表已经分仓。" type="info" :closable="false" show-icon />
     <el-alert v-if="listError" title="渠道库存加载失败，请刷新重试" type="error" :closable="false" show-icon />
     <el-table v-loading="loading" :data="rows" row-key="id" :empty-text="listError ? '加载失败' : '暂无符合条件的渠道库存'">
       <el-table-column label="渠道" min-width="170" :fixed="mobile ? false : 'left'"><template slot-scope="s"><strong>{{ channelName(s.row.channelId) }}</strong><div class="muted">渠道 ID {{ s.row.channelId }}</div></template></el-table-column>
@@ -28,7 +28,7 @@
         <template v-else-if="detail && detail.reservationSummary">
           <div class="quantity-cards"><div v-for="c in quantities" :key="c.key"><span class="muted">{{ c.label }}</span><strong>{{ detail[c.key] }}</strong></div></div>
           <el-alert :title="detail.checkMessage" :type="detail.checkStatus === 'CONSISTENT' ? 'success' : 'warning'" :closable="false" show-icon />
-          <p class="muted">可追溯剩余锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}，未占用余额 {{ detail.reservationSummary.releasableQuantity }}。渠道锁库 − 可追溯余额：{{ detail.reservationSummary.difference }}<span v-if="Number(detail.reservationSummary.unknownSources)">；{{ detail.reservationSummary.unknownSources }} 条来源数据异常</span>。订单占用已包含在剩余锁库中。</p>
+          <p class="muted">可追溯未占用锁库 {{ detail.reservationSummary.trackedLocked }}，订单占用 {{ detail.reservationSummary.occupiedQuantity }}，未占用余额 {{ detail.reservationSummary.releasableQuantity }}。渠道锁库 − 可追溯余额：{{ detail.reservationSummary.difference }}<span v-if="Number(detail.reservationSummary.unknownSources)">；{{ detail.reservationSummary.unknownSources }} 条来源数据异常</span>。订单占用单独计入订单预占，不包含在未占用锁库中。</p>
           <el-tabs v-model="tab" @tab-click="changeTab"><el-tab-pane label="锁库来源 / 释放" name="sources" /><el-tab-pane label="分货执行记录" name="executions" /><el-tab-pane label="订单批次明细" name="orders" /><el-tab-pane label="订单操作记录" name="events" /></el-tabs>
           <el-checkbox v-if="tab === 'orders'" v-model="onlyOccupied" @change="filterOrders">仅看仍占用</el-checkbox>
           <p class="muted">{{ tabNotes[tab] }}</p>
@@ -75,7 +75,7 @@ export default {
     return {
       query: defaults(), rows: [], total: 0, loading: false, listError: false, channelOptions: [], goodsOptions: [], channelMap: {}, goodsMap: {}, channelsSearching: false, goodsSearching: false,
       drawer: false, detail: null, detailLoading: false, detailError: false, tab: 'sources', tabRows: [], tabTotal: 0, tabLoading: false, tabError: false, tabQuery: { pageNum: 1, pageSize: 20 }, onlyOccupied: false,
-      quantities: [{ key: 'availableStock', label: '普通可售配额' }, { key: 'allocatedStock', label: '剩余锁库量' }, { key: 'reservedStock', label: '预占（原字段）' }, { key: 'frozenStock', label: '冻结（原字段）' }],
+      quantities: [{ key: 'availableStock', label: '渠道可售' }, { key: 'quotaStock', label: '普通额度' }, { key: 'allocatedStock', label: '未占用锁库' }, { key: 'pendingStock', label: '待占需求' }, { key: 'reservedStock', label: '订单预占' }, { key: 'frozenStock', label: '冻结' }],
       sourceQuantities: [{ key: 'originalQuantity', label: '原锁库' }, { key: 'remainingQuantity', label: '剩余锁库' }, { key: 'occupiedQuantity', label: '其中订单占用' }, { key: 'releasableQuantity', label: '未占用余额' }, { key: 'consumedQuantity', label: '已出库' }, { key: 'releasedQuantity', label: '已释放' }],
       orderQuantities: [{ key: 'originalQuantity', label: '累计占用' }, { key: 'occupiedQuantity', label: '仍占用' }, { key: 'consumedQuantity', label: '已出库' }, { key: 'cancelledQuantity', label: '已取消' }],
       releaseNames: { NONE: '未释放', PENDING: '释放中', PARTIAL: '部分释放', RELEASED: '释放完成', FAILED: '释放失败' }, actionNames: { OCCUPY: '订单占用', CANCEL: '取消占用', CONSUME: '订单出库' },

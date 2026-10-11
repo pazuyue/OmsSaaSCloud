@@ -55,9 +55,10 @@ public class AllocationReservationService {
     /** Before source counters change, verify aggregate covers all tracked rules on each affected channel. */
     private void settleChannels(String company,String sku,Map<Long,Long> amounts) {
         for(Map.Entry<Long,Long> entry:new TreeMap<>(amounts).entrySet()) {
-            long owed=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-consumed_quantity-released_quantity),0) FROM rule_stock_reservation WHERE company_code=? AND sku_sn=? AND channel_id=?",Long.class,company,sku,entry.getKey());
+            long owed=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-occupied_quantity-consumed_quantity-released_quantity),0) FROM rule_stock_reservation WHERE company_code=? AND sku_sn=? AND channel_id=?",Long.class,company,sku,entry.getKey());
             int changed=jdbc.update("UPDATE oms_channel_inventory SET allocated_stock=allocated_stock-?,version=version+1 WHERE company_code=? AND sku_sn=? AND channel_id=? AND allocated_stock>=?",entry.getValue(),company,sku,entry.getKey(),Math.max(owed,entry.getValue()));
             require(changed==1,"渠道锁库与来源余额不一致，本 SKU 已回滚，请核对");
+            com.oms.inventory.service.impl.OrderStockService.refresh(jdbc,company,sku,entry.getKey());
         }
     }
 
@@ -74,6 +75,7 @@ public class AllocationReservationService {
             jdbc.update("UPDATE rule_stock_reservation SET released_quantity=original_quantity-consumed_quantity-occupied_quantity WHERE company_code=? AND rule_id=? AND sku_sn=?",company,rule,sku);
         }
         jdbc.update("UPDATE rule_stock_result SET released_quantity=released_quantity+?,release_status=?,release_error='',release_operator=? WHERE id=?",total,number(result,"occupiedQuantity")>0?"PARTIAL":"RELEASED",actor,result.get("id"));
+        com.oms.inventory.service.impl.OrderStockService.replanPending(jdbc,company,sku);
     }
 
     @Transactional(rollbackFor=Exception.class,timeout=15,isolation=org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
@@ -117,7 +119,13 @@ public class AllocationReservationService {
         if(action.equals("CONSUME")) {
             // Use a globally unique physical journal request; public callback idempotency lives in the event table.
             inventory.settleReservation(company,sku,batches,journalRequest,"RULE-"+rule,true);
-            settleChannels(company,sku,Collections.singletonMap(channel,quantity));
+            require(jdbc.update("UPDATE oms_channel_inventory SET reserved_stock=reserved_stock-?,version=version+1 WHERE company_code=? AND sku_sn=? AND channel_id=? AND reserved_stock>=?",quantity,company,sku,channel,quantity)==1,"订单库存余额不足");
+        }
+        if(action.equals("OCCUPY")||action.equals("CANCEL")) {
+            long delta=action.equals("OCCUPY")?quantity:-quantity;
+            String guard=action.equals("OCCUPY")?"allocated_stock":"reserved_stock";
+            require(jdbc.update("UPDATE oms_inventory SET allocated_stock=allocated_stock-?,reserved_stock=reserved_stock+?,version=version+1 WHERE company_code=? AND sku_sn=? AND "+guard+">=?",delta,delta,company,sku,quantity)==1,"订单库存余额不足");
+            require(jdbc.update("UPDATE oms_channel_inventory SET allocated_stock=allocated_stock-?,reserved_stock=reserved_stock+?,version=version+1 WHERE company_code=? AND sku_sn=? AND channel_id=? AND "+guard+">=?",delta,delta,company,sku,channel,quantity)==1,"订单库存余额不足");
         }
         for(Map.Entry<Long,Long> take:takes.entrySet()) {
             long source=take.getKey(),amount=take.getValue();
@@ -132,6 +140,7 @@ public class AllocationReservationService {
         }
         jdbc.update("UPDATE rule_stock_result SET occupied_quantity=occupied_quantity+?,consumed_quantity=consumed_quantity+? WHERE id=?",action.equals("OCCUPY")?quantity:-quantity,action.equals("CONSUME")?quantity:0,result.get("id"));
         jdbc.update("INSERT INTO rule_stock_reservation_event(company_code,rule_id,sku_sn,request_id,action,order_line,channel_id,quantity,operator_name,journal_request) VALUES (?,?,?,?,?,?,?,?,?,?)",company,rule,sku,request,action,line,channel,quantity,actor,journalRequest);
+        com.oms.inventory.service.impl.OrderStockService.refresh(jdbc,company,sku,channel);
         if("PARTIAL".equals(result.get("releaseStatus"))) {
             jdbc.update("UPDATE rule_stock_result SET release_status='RELEASED' WHERE id=? AND occupied_quantity=0 AND allocated_quantity=consumed_quantity+released_quantity",result.get("id"));
             if(number(heads.get(0),"status")==11 && jdbc.queryForObject("SELECT COUNT(*) FROM rule_stock_result WHERE rule_id=? AND status='SUCCESS' AND release_status<>'RELEASED'",Long.class,rule)==0)

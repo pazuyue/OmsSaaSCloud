@@ -226,6 +226,8 @@ public class AllocationWorkspaceService {
         String stockWhere=" WHERE company_code=? AND sku_sn IN ("+marks(skus.size())+") AND store_code IN ("+marks(warehouses.size())+")";
         Map<String,Long> availableBySku=new HashMap<>();
         for(Map<String,Object> row:jdbc.query("SELECT sku_sn,SUM(zp_available_number) AS available FROM wms_inventory"+stockWhere+" GROUP BY sku_sn",ROW,stockArgs.toArray()))availableBySku.put((String)row.get("skuSn"),number(row,"available"));
+        List<Object> demandArgs=new ArrayList<>();demandArgs.add(company);demandArgs.addAll(skus);
+        if(number(rule,"allocationType")==2)for(Map<String,Object> claim:jdbc.query("SELECT i.sku_sn,i.pending_public_stock+(SELECT COALESCE(SUM(d.reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=i.company_code AND d.sku_sn=i.sku_sn)-(SELECT COALESCE(SUM(s.quantity),0) FROM oms_order_stock_source s WHERE s.company_code=i.company_code AND s.sku_sn=i.sku_sn AND s.source_type='LOCK' AND s.reserved=1) AS quantity FROM oms_inventory i WHERE i.company_code=? AND i.sku_sn IN ("+marks(skus.size())+")",ROW,demandArgs.toArray()))availableBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->Math.max(0,value-number(claim,"quantity")));
         List<Object> skuArgs=new ArrayList<>();skuArgs.add(company);skuArgs.addAll(skus);
         Set<String> omsSkus=new HashSet<>(jdbc.queryForList("SELECT sku_sn FROM oms_inventory WHERE company_code=? AND sku_sn IN ("+marks(skus.size())+")",String.class,skuArgs.toArray()));
         List<Object> channelArgs=new ArrayList<>(skuArgs);channels.forEach(c->channelArgs.add(c.get("channelId")));
@@ -333,7 +335,7 @@ public class AllocationWorkspaceService {
     Map<String,Object> applyTargets(String company,Map<String,Object> rule,String sku,List<String> stores,List<Map<String,Object>> channels) {
         long id=number(rule,"id");
         require(number(rule,"ruleType")!=1 || number(rule,"allocationType")==1,"日常分货不能锁库");
-        long available=inventory.allocationAvailable(company,sku,stores);
+        long available=number(rule,"allocationType")==2?inventory.allocationAvailable(company,sku,stores):inventory.allocationBasis(company,sku,stores);
         Map<String,Object> result=calculation(rule,sku,available,channels,current(company,sku,channels,true));
         boolean locking=number(rule,"allocationType")==2;
         long quantity=number(result,"total");
@@ -349,10 +351,11 @@ public class AllocationWorkspaceService {
             if(number(rule,"ruleType")==1 && Boolean.TRUE.equals(target.get("unchanged")))continue;
             long channel=number(target,"channelId");
             jdbc.update("INSERT INTO oms_channel_inventory(channel_id,company_code,sku_sn) VALUES (?,?,?) ON DUPLICATE KEY UPDATE id=id",channel,company,sku);
-            int changed=jdbc.update("UPDATE oms_channel_inventory SET "+(locking?"allocated_stock":"available_stock")+"=?,version=version+1 WHERE company_code=? AND channel_id=? AND sku_sn=?",number(target,"after"),company,channel,sku);
+            int changed=jdbc.update("UPDATE oms_channel_inventory SET "+(locking?"allocated_stock":"quota_stock")+"=?,stock_scope_json=?,version=version+1 WHERE company_code=? AND channel_id=? AND sku_sn=?",number(target,locking?"after":"target"),encode(stores),company,channel,sku);
             require(changed==1,"渠道库存所属公司不一致，请先核对渠道资料");
+            com.oms.inventory.service.impl.OrderStockService.refreshChannel(jdbc,company,sku,channel);
         }
-        if(locking)reservations.record(company,id,sku,targets,quantity);
+        if(locking){reservations.record(company,id,sku,targets,quantity);com.oms.inventory.service.impl.OrderStockService.refresh(jdbc,company,sku,0);}
         return result;
     }
     private List<String> existingStores(String company,String sku,List<String> stores) {

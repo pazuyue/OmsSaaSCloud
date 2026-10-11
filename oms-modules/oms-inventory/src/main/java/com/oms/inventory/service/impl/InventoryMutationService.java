@@ -70,7 +70,16 @@ public class InventoryMutationService {
                 total=Math.addExact(total,number(rows.get(0),"zpAvailableNumber"));
             }
         }
-        return total;
+        return Math.max(0,total-OrderStockService.publicClaims(jdbc,company,sku,stores));
+    }
+
+    /** Ordinary quotas use the pre-logical-reservation public base; their own reserved and
+     * pending demand is deducted once when publishing channel availability. */
+    @Transactional(propagation=org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public long allocationBasis(String company,String sku,List<String> stores) {
+        lockOms(company,sku,false);if(stores.isEmpty())return 0;
+        List<Object> args=new ArrayList<>(Arrays.asList(company,sku));args.addAll(stores);
+        return jdbc.queryForObject("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=? AND store_code IN ("+String.join(",",Collections.nCopies(stores.size(),"?"))+")",Long.class,args.toArray());
     }
 
     private void journal(String company, Map<String,Object> before, String operation,String request,String relation,String type,int quantity,String reason) {
@@ -111,12 +120,18 @@ public class InventoryMutationService {
         Map<String,Object> batch=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE company_code=? AND id=? FOR UPDATE",ROW,company,batchId);
         require(number(batch,"version")==version,"库存已变化，请刷新批次后重新调整");
         String prefix="ZP".equals(type)?"zp":"cp";
+        if(quantity<0&&"ZP".equals(type)){
+            long reserved=OrderStockService.publicReserved(jdbc,company,sku);
+            long good=jdbc.queryForObject("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=? FOR UPDATE",Long.class,company,sku);
+            require(good+quantity>=reserved,"调整后公司正品库存不足以覆盖订单逻辑预占");
+        }
         require(number(batch,prefix+"AvailableNumber")+quantity>=0,"调整后可用库存不能为负数，预占库存不能直接扣减");
         require(number(oms,"availableStock")+quantity>=0 && number(oms,"totalStock")+quantity>=0,"调整后商品汇总库存不足");
         jdbc.update("UPDATE wms_inventory_batch SET "+prefix+"_actual_number="+prefix+"_actual_number+?,"+prefix+"_available_number="+prefix+"_available_number+?,version=version+1 WHERE id=?",quantity,quantity,batchId);
         jdbc.update("UPDATE wms_inventory SET "+prefix+"_actual_number="+prefix+"_actual_number+?,"+prefix+"_available_number="+prefix+"_available_number+?,version=version+1 WHERE id=?",quantity,quantity,inventory.get("id"));
         jdbc.update("UPDATE oms_inventory SET total_stock=total_stock+?,available_stock=available_stock+?,version=version+1 WHERE id=?",quantity,quantity,oms.get("id"));
         journal(company,batch,"ADJUST",request,"ADJ-"+request,type,quantity,reason.trim());
+        OrderStockService.replanPending(jdbc,company,sku);
     }
 
     @Transactional(rollbackFor=Exception.class, timeout=15)
@@ -136,6 +151,7 @@ public class InventoryMutationService {
             return true;
         }
         require(number(oms,release?"allocatedStock":"availableStock")>=quantity,"商品汇总库存不足");
+        if(!release)require(allocationAvailable(company,sku,stores)>=quantity,"扣除订单逻辑预占和待占需求后，可分库存不足");
         List<Map<String,Object>> warehouses=new ArrayList<>();
         for(String store:new TreeSet<>(stores)) warehouses.add(lockWarehouse(company,sku,store));
         for(Map<String,Object> inventory:warehouses) checkConsistent(inventory,company);
@@ -147,18 +163,19 @@ public class InventoryMutationService {
         int remaining=quantity;
         for(Map<String,Object> inventory:warehouses) {
             long cursor=0;int warehouseQuantity=0;
-            while(remaining>0) {
+            long warehouseBudget=release?remaining:Math.max(0,number(inventory,"zpAvailableNumber")-OrderStockService.publicClaims(jdbc,company,sku,Collections.singletonList((String)inventory.get("storeCode"))));
+            while(remaining>0 && warehouseBudget>0) {
                 List<Map<String,Object>> batches=jdbc.query("SELECT * FROM wms_inventory_batch WHERE company_code=? AND sku_sn=? AND store_code=? AND id>? AND "+(release?"zp_lock_number":"zp_available_number")+">0 ORDER BY id LIMIT 100 FOR UPDATE",ROW,company,sku,inventory.get("storeCode"),cursor);
                 if(batches.isEmpty())break;
                 for(Map<String,Object> batch:batches) {
                     cursor=number(batch,"id");
-                    int take=(int)Math.min(remaining,release?reserved.getOrDefault(cursor,0L):number(batch,"zpAvailableNumber"));
+                    int take=(int)Math.min(Math.min(remaining,warehouseBudget),release?reserved.getOrDefault(cursor,0L):number(batch,"zpAvailableNumber"));
                     if(take==0)continue;
                     require(!release || number(batch,"zpLockNumber")>=take,"原批次预占库存不足");
                     int delta=release?-take:take;
                     jdbc.update("UPDATE wms_inventory_batch SET zp_available_number=zp_available_number-?,zp_lock_number=zp_lock_number+?,version=version+1 WHERE id=?",delta,delta,batch.get("id"));
                     journal(company,batch,operation,relation,relation,"ZP",delta,release?"按原单据释放预占":"分货预占");
-                    warehouseQuantity+=delta;remaining-=take;if(remaining==0)break;
+                    warehouseQuantity+=delta;remaining-=take;warehouseBudget-=take;if(remaining==0)break;
                 }
             }
             if(warehouseQuantity!=0)jdbc.update("UPDATE wms_inventory SET zp_available_number=zp_available_number-?,zp_lock_number=zp_lock_number+?,version=version+1 WHERE id=?",warehouseQuantity,warehouseQuantity,inventory.get("id"));
@@ -176,7 +193,7 @@ public class InventoryMutationService {
         Map<String,Object> oms=lockOms(company,sku,false);
         long total=quantities.values().stream().mapToLong(Long::longValue).sum();
         require(total>0 && total<=Integer.MAX_VALUE && quantities.values().stream().allMatch(q->q>0),"来源结算数量无效");
-        require(number(oms,"allocatedStock")>=total && (!consume || number(oms,"totalStock")>=total),"商品汇总锁库不足，请核对来源记录");
+        require(number(oms,consume?"reservedStock":"allocatedStock")>=total && (!consume || number(oms,"totalStock")>=total),"商品汇总锁库不足，请核对来源记录");
         String marks=String.join(",",Collections.nCopies(quantities.size(),"?"));
         List<Object> args=new ArrayList<>(Arrays.asList(company,sku));args.addAll(quantities.keySet());
         List<Map<String,Object>> hints=jdbc.query("SELECT id,store_code FROM wms_inventory_batch WHERE company_code=? AND sku_sn=? AND id IN ("+marks+") ORDER BY store_code,id",ROW,args.toArray());
@@ -201,7 +218,7 @@ public class InventoryMutationService {
             jdbc.update("UPDATE wms_inventory SET "+field+",zp_lock_number=zp_lock_number-?,version=version+1 WHERE id=?",entry.getValue(),entry.getValue(),warehouses.get(entry.getKey()).get("id"));
         }
         String field=consume?"total_stock=total_stock-?":"available_stock=available_stock+?";
-        jdbc.update("UPDATE oms_inventory SET "+field+",allocated_stock=allocated_stock-?,version=version+1 WHERE id=?",total,total,oms.get("id"));
+        jdbc.update("UPDATE oms_inventory SET "+field+","+(consume?"reserved_stock=reserved_stock":"allocated_stock=allocated_stock")+"-?,version=version+1 WHERE id=?",total,total,oms.get("id"));
     }
 
     @Transactional(rollbackFor=Exception.class, timeout=15)
@@ -224,6 +241,7 @@ public class InventoryMutationService {
         jdbc.update("UPDATE wms_inventory SET zp_actual_number=zp_actual_number+?,zp_available_number=zp_available_number+?,cp_actual_number=cp_actual_number+?,cp_available_number=cp_available_number+?,version=version+1 WHERE id=?",zp,zp,cp,cp,inventory.get("id"));
         jdbc.update("UPDATE oms_inventory SET total_stock=total_stock+?,available_stock=available_stock+?,version=version+1 WHERE id=?",Math.addExact(zp,cp),Math.addExact(zp,cp),oms.get("id"));
         journal(company,batch,"RECEIVE",relation,relation,"",Math.addExact(zp,cp),"入库回传");
+        OrderStockService.replanPending(jdbc,company,sku);
         return true;
     }
 }
