@@ -11,7 +11,7 @@ from local_db import HERE, execute, docker_db
 DATABASES = ['qm_oms_saas_order', 'qm_oms_saas_inventory', 'qm_oms_saas_commodity']
 
 
-def snapshot():
+def snapshot(baseline=None):
     result = {}
     for database in DATABASES:
         tables = execute('SHOW TABLES', database).splitlines()
@@ -19,10 +19,12 @@ def snapshot():
             include = (table.startswith(('oms_order', 'oms_platform')) if database.endswith('_order') else
                        table.startswith(('oms_', 'wms_inventory', 'rule_stock')) if database.endswith('_inventory') else
                        table in ['wms_simulation_store_info', 'wms_real_store_info', 'owner_info', 'owner_warehouse', 'wms_connection', 'wms_inbound_task'])
-            if not include or table == 'oms_order_shipment_dispatch':
+            if not include or table in ['oms_order_shipment_dispatch', 'oms_order_shipment_virtual_outbound', 'oms_order_virtual_outbound']:
                 continue
-            rows = execute('SELECT * FROM `' + table + '`', database).splitlines()
-            result[database + '.' + table] = {'count': len(rows), 'sha256': hashlib.sha256('\n'.join(sorted(rows)).encode()).hexdigest()}
+            key=database + '.' + table
+            columns=baseline[key]['columns'] if baseline and key in baseline and 'columns' in baseline[key] else [line.split('\t')[0] for line in execute('SHOW COLUMNS FROM `' + table + '`', database).splitlines()]
+            rows = execute('SELECT '+','.join('`'+column+'`' for column in columns)+' FROM `' + table + '`', database).splitlines()
+            result[key] = {'columns': columns, 'count': len(rows), 'sha256': hashlib.sha256('\n'.join(sorted(rows)).encode()).hexdigest()}
     return result
 
 
@@ -30,7 +32,7 @@ def main():
     if sys.argv[1:2] == ['compare']:
         folder = Path(sys.argv[2])
         previous = json.loads((folder / 'business-snapshot.json').read_text())
-        current = snapshot()
+        current = snapshot(previous)
         changed = [key for key in set(previous) | set(current) if previous.get(key) != current.get(key)]
         (folder / 'business-after.json').write_text(json.dumps(current, indent=2))
         print(json.dumps({'business_tables_checked': len(previous), 'changed_tables': sorted(changed)}))

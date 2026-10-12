@@ -6,7 +6,7 @@
 
 ## 业务状态展示与筛选
 
-业务订单接口返回 `business_status` 作为列表、详情和业务阶段筛选的统一口径：未审核订单为 `WAIT_REVIEW`（待审核），审核通过后为 `WAIT_ALLOCATION`（待分仓）；作废处理中和已作废优先保留 `VOIDING`、`VOIDED`。分仓回执为部分时返回 `PART_ALLOCATED`；全部完成但发货单尚未齐备或有未匹配快递时返回 `WAIT_CARRIER`，全部匹配后返回 `WAIT_DISPATCH`（待下发仓库）。`documentStatus` 支持上述十种值，其中待分仓仅查询已审核且未分仓订单。
+业务订单接口返回 `business_status` 作为列表、详情和业务阶段筛选的统一口径：未审核订单为 `WAIT_REVIEW`（待审核），审核通过后为 `WAIT_ALLOCATION`（待分仓）；作废处理中和已作废优先保留 `VOIDING`、`VOIDED`。分仓回执为部分时返回 `PART_ALLOCATED`；全部完成但发货单尚未齐备或有未匹配快递时返回 `WAIT_CARRIER`，全部匹配后返回 `WAIT_DISPATCH`（待下发仓库）。`documentStatus` 还支持部分发货、已发货，共十二种值，其中待分仓仅查询已审核且未分仓订单。
 
 `status` 保留现有履约生命周期语义，审核、逻辑库存预占和人工挂起分别由独立字段维护。库存充足不自动改变人工审核结果，库存不足也不撤销已通过的审核。`release_eligible` 和 `release_blocks` 描述分仓前置条件，已审核但缺货的订单仍为待分仓，并显示库存阻塞原因；前置条件满足不代表已经分仓或已下发仓库。
 
@@ -75,3 +75,16 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 业务订单全部分仓后依次派生待匹配快递、待下发、下发处理中、部分下发或仓库处理中；部分分仓仍显示部分分仓并展示各发货单状态。下发意图建立后快递快照冻结。提交中、待确认及已受理单据不能本地直接整单作废；只有明确失败且无外部单号的任务可以随本地作废停止。真实仓库取消、出库确认和库存扣减属于后续独立流程。
 
 安装 `docker/local/configure_order_dispatch.py` 后重建 order、supplychain、inventory 与前端。只新增结构和权限，保留所有连接、虚仓执行方式、快递规则及业务数据，不提交现有发货单。权限 `order:shipment:dispatch` 控制预览/下发，`order:shipment:queryWarehouse` 控制查询；交互日志复用 `warehouse:wms:log/payload`。接口 `POST /orders/shipments/dispatch-preview`、`POST /orders/shipments/dispatch` 接收 `items:[{id,control_version}]`（每批最多20张），`POST /orders/shipments/{id}/query-warehouse` 查询已有任务。业务订单详情的“全部下发”按20张顺序分批提交，仅提交预览通过项，网络不确定时停止后续批次。
+
+
+## 虚拟出库
+
+仓库 `outbound_mode=2` 时，无需 WMS 连接、外部仓库或货主编码。发货单列表、发货单详情及业务订单详情提供虚拟出库入口，支持单张输入各来源行的本次数量和批量全部剩余数量出库。全部来源虚仓必须启用、货主及实体仓一致，并统一使用虚拟模式；混合模式先核对仓库配置。快递匹配、审核、挂起、平台阻断及版本校验仍生效。只在原分仓规则快照允许部分发货时接受部分数量；不会因安装或读取而自动出库。
+
+订单服务先持久化固定出库指令并冻结单据，任务定时核对库存回执后处理。库存服务以公司及请求号去重，在同一事务扣减对应批次和仓库正品实物、占用数量，以及公司总库存、公司和渠道预占余额。可用库存不因出库增加。渠道锁库来源从占用转已消耗；公共库存同步核销已使用的普通额度，不将已售额度返还可售。原需求、预占和分仓数量作为累计历史保留，`outbound_quantity` 记录核销数量，所有可售保护计算只使用剩余占用。库存流水、出库回执和全部库存变更同事务提交；任一来源或余额异常整体回滚。
+
+订单仅在库存回执身份、数量和逐行来源全部核对通过后更新 `shipped_quantity`，显示部分出库/已出库，业务订单显示部分发货/已发货，仓库库存显示部分出库/已出库及剩余占用，逻辑预占显示部分核销/已核销。核对失败会回滚整次本地进度更新。响应丢失只核对原请求：已经记账的回执可以在挂起后同步；尚未记账时仍受挂起、平台和仓库配置门禁保护。明确失败可按原快照重试，不重新选择数量；已有虚拟任务禁止调整快递、切换为 WMS 下发或直接整单作废。
+
+权限 `order:shipment:virtualOutbound`。接口：`POST /orders/shipments/virtual-outbound-preview`、`POST /orders/shipments/virtual-outbound`，均接受 `items:[{id,control_version,lines?:[{id,quantity}]}]`（每批最多20张；省略 lines 时处理全部剩余量）；`POST /orders/shipments/{id}/retry-virtual-outbound` 按当前版本重试原失败任务；`POST /orders/shipments/{id}/query-virtual-outbound` 只核对回执。出库请求按公司、发货单及提交前版本固定，重复提交相同参数返回原任务，变更参数被拒绝。
+
+执行 `docker/local/configure_order_virtual_outbound.py` 只新增结构和权限，随后构建 order、inventory、supplychain 及前端；不修改仓库模式，不出库既有订单。虚拟出库不生成 WMS 受理记录，也不伪造运单号；平台发货回传和真实 WMS 出库回传另行接入。
