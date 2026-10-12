@@ -32,8 +32,8 @@ public class OrderBusinessService {
         if(channel!=null){where+=" AND o.channel_id=?";args.add(channel);}
         if(number!=null&&!number.trim().isEmpty()){where+=" AND (o.order_sn=? OR o.platform_tid=?)";args.add(number.trim());args.add(number.trim());}
         if(status!=null&&!status.isEmpty()){
-            require(Arrays.asList("WAIT_RESERVE","PART_RESERVED","RESERVED","RELEASED","SOURCE_CHANGED").contains(status),"逻辑预占状态无效");
-            if("SOURCE_CHANGED".equals(status))where+=" AND p.change_pending=1";else{where+=" AND o.inventory_status=?";args.add(status);}
+            require(Arrays.asList("WAIT_RESERVE","PART_RESERVED","RESERVED","RELEASED","PART_CONSUMED","CONSUMED","SOURCE_CHANGED").contains(status),"逻辑预占状态无效");
+            if("SOURCE_CHANGED".equals(status))where+=" AND p.change_pending=1";else{where+=" AND ("+OrderInventoryStatus.logicalStatusSql()+")=?";args.add(status);}
         }
         if(sku!=null&&!sku.trim().isEmpty()){where+=" AND EXISTS (SELECT 1 FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id AND l.sku_sn=?)";args.add(sku.trim());}
         if(!from.isEmpty()){where+=" AND o.create_time>=?";args.add(time(from).format(TIME));}
@@ -126,6 +126,6 @@ public class OrderBusinessService {
         String message=held?(number(row,"manual_hold")==1?"人工挂起："+text(row,"hold_reason"):text(row,"system_hold_reason")):changed?"平台关键交易信息已变化，后续预占暂停，待订单更新处理":!text(row,"stock_error").isEmpty()?text(row,"stock_error"):done?"全部商品已完成逻辑预占":!text(row,"inventory_reason").isEmpty()?text(row,"inventory_reason"):"未完成的SKU等待足量逻辑预占";
         row.put("stock_message",voided?"订单已作废，销售需求已取消，逻辑预占已释放":voiding?(text(row,"void_error").isEmpty()?"作废处理中，已停止履约，等待逻辑预占释放确认":text(row,"void_error")):message);
         if(voided||voiding||held||changed||done)row.put("next_retry_at",null);
-        OrderInventoryStatus.decorate(row);
+        OrderInventoryStatus.decorate(row);if(number(row,"shipped_quantity")>0&&!voided&&!voiding)row.put("stock_message","已出库核销 "+number(row,"logical_outbound_quantity")+" 件，仍逻辑预占 "+number(row,"logical_active_quantity")+" 件");
     }
 }

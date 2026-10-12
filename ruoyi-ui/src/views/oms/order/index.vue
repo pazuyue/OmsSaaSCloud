@@ -120,7 +120,7 @@ export default {
     advancedFilterCount() { return [this.query.category, this.query.sku, this.query.status, this.query.reviewStatus, this.query.processingStatus, this.query.waitingMinutes, (this.exceptionRange || []).length].filter(Boolean).length },
     detailAttention() { if (!this.detail) return ''; return (this.detailView === 'business' ? this.businessBlocks(this.detail) : [this.detail.fulfillment_block_reason].filter(Boolean)).join('；') },
     view() { const view = this.viewOverride || this.$route.query.view; return ['platform', 'business', 'exceptions', 'tasks'].includes(view) ? view : 'platform' },
-    statusOptions() { const values = this.view === 'business' ? ['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'SOURCE_CHANGED'] : this.view === 'tasks' ? ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED'] : ['PENDING', 'PROCESSING', 'WAITING', 'EXCEPTION', 'SUCCESS']; return values.map(x => [x, this.label(x)]) }
+    statusOptions() { const values = this.view === 'business' ? ['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'PART_CONSUMED', 'CONSUMED', 'SOURCE_CHANGED'] : this.view === 'tasks' ? ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED'] : ['PENDING', 'PROCESSING', 'WAITING', 'EXCEPTION', 'SUCCESS']; return values.map(x => [x, this.label(x)]) }
   },
   watch: { '$route.fullPath'() { this.reset(); this.openRequestedOrder() } },
   created() { this.loadCatalog(); this.load(); this.openRequestedOrder() },

@@ -6,6 +6,7 @@ import static com.oms.order.service.OrderValues.*;
 /** Separates logical protection from warehouse inventory receipts. */
 public final class OrderInventoryStatus {
     private OrderInventoryStatus(){}
+    public static String logicalStatusSql(){String shipped="(SELECT COALESCE(SUM(sl.shipped_quantity),0) FROM oms_order_shipment_line sl JOIN oms_order_shipment ss ON ss.company_code=sl.company_code AND ss.id=sl.shipment_id WHERE ss.company_code=o.company_code AND ss.order_id=o.id)";String demand="(SELECT COALESCE(SUM(ol.quantity),0) FROM oms_order_line ol WHERE ol.company_code=o.company_code AND ol.order_id=o.id)";return "CASE WHEN "+shipped+">0 THEN CASE WHEN "+shipped+">="+demand+" AND "+demand+">0 THEN 'CONSUMED' ELSE 'PART_CONSUMED' END ELSE o.inventory_status END";}
     public static void decorate(Map<String,Object> row){
         long outbound=number(row,"shipped_quantity"),required=number(row,"demand_quantity");
         row.put("logical_inventory_status",outbound>0?(outbound>=required&&required>0?"CONSUMED":"PART_CONSUMED"):row.get("inventory_status"));
