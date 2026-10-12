@@ -237,6 +237,22 @@ public class GoodsWorkspaceService {
     }
     @SuppressWarnings("unchecked") private List<Map<String,Object>> cast(Object value){return (List<Map<String,Object>>)value;}
     @Transactional(readOnly=true)
+    public List<Map<String,Object>> inventoryLookup(String company,List<String> skus,String keyword) {
+        // Match the master-data company rules even on binary-collated legacy tables.
+        List<Object> args=new ArrayList<>();args.add(company.trim().toUpperCase(Locale.ROOT));
+        String where=" WHERE UPPER(company_code)=?";
+        if(skus!=null && !skus.isEmpty()) {
+            if(skus.size()>100)throw new IllegalArgumentException("每次最多查询 100 个 SKU");
+            where+=" AND sku_sn IN ("+String.join(",",Collections.nCopies(skus.size(),"?"))+")";args.addAll(skus);
+        } else {
+            String term=text(keyword);if(term.isEmpty())return Collections.emptyList();
+            if(term.length()>128)throw new IllegalArgumentException("搜索内容过长");
+            where+=" AND (sku_sn=? OR barcode_sn=? OR goods_name LIKE ? ESCAPE '!')";
+            args.add(term);args.add(term);args.add(term.replace("!","!!").replace("%","!%").replace("_","!_")+"%");
+        }
+        return rows("SELECT sku_sn,goods_name,barcode_sn FROM "+GOODS+where+" ORDER BY sku_sn LIMIT 100",args.toArray());
+    }
+    @Transactional(readOnly=true)
     public TableDataInfo goodsPage(String company,Map<String,Object> filter,int pageNum,int pageSize) {
         List<Object> args=new ArrayList<>();String where=goodsWhere(company,filter,args);long total=jdbc.queryForObject("SELECT COUNT(*) FROM "+GOODS+" g"+where,Long.class,args.toArray());
         args.add(limit(pageSize));args.add(offset(pageNum,limit(pageSize)));List<Map<String,Object>> found=rows("SELECT g.* FROM "+GOODS+" g"+where+" ORDER BY g.id DESC LIMIT ? OFFSET ?",args.toArray());enrich(company,found);return page(found,total);

@@ -88,3 +88,18 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 权限 `order:shipment:virtualOutbound`。接口：`POST /orders/shipments/virtual-outbound-preview`、`POST /orders/shipments/virtual-outbound`，均接受 `items:[{id,control_version,lines?:[{id,quantity}]}]`（每批最多20张；省略 lines 时处理全部剩余量）；`POST /orders/shipments/{id}/retry-virtual-outbound` 按当前版本重试原失败任务；`POST /orders/shipments/{id}/query-virtual-outbound` 只核对回执。出库请求按公司、发货单及提交前版本固定，重复提交相同参数返回原任务，变更参数被拒绝。
 
 执行 `docker/local/configure_order_virtual_outbound.py` 只新增结构和权限，随后构建 order、inventory、supplychain 及前端；不修改仓库模式，不出库既有订单。虚拟出库不生成 WMS 受理记录，也不伪造运单号；平台发货回传和真实 WMS 出库回传另行接入。
+
+
+## 出库回传、出库记录和运单
+
+真实仓库出库沿用 `/wmsCallback/{company}/{callbackKey}` 及现有连接凭证、租户路由、MD5原文签名和交互日志。奇门支持标准 ERP 方法 `deliveryorder.confirm` 及完整方法名，虎符2.0使用JSON适配。实现依据：[奇门发货确认接口](https://developer.alibaba.com/docs/api.htm?apiId=26001)、[ERP回传规范](https://developer.alibaba.com/docs/doc.htm?articleId=118403&docType=1&treeId=813)。回传须包含唯一消息ID、仓库、发货单、商品数量和包裹；按原下发快照、行号/SKU/批次、货主及外部仓库单号核对。头部货主可以从一致的明细货主取得，已受理单据可沿用已绑定的外部单号。正品数量必须为整数（允许 `1.0` 形式）；不自动处理未知库存类型、无法唯一映射的来源或未实际下发单据。
+
+仓库对接侧在本地事务保存回传事件及包裹明细，不直接改订单库存。相同消息ID只能重复相同内容；相同包裹即使用新消息ID重传，也不重复出库。累计包裹报文会剔除已确认包裹，只有新增包裹形成库存记账增量；包裹运单或数量变化、行与包裹数量不符、累计超出原单都会拒绝。最终确认不会将未出库余量伪报为已发货，也不会自动释放余量。
+
+订单服务以回传事件固定库存请求，先核对原回执再使用与虚拟出库相同的原批次、来源核销事务；两种出库方式有独立标记，不能混用。订单发货进度、包裹、运单和出库记录在同一本地事务确认；库存响应丢失只核对原请求，本地核对失败会整体回滚进度与包裹，仓库记账结果确认丢失只补确认。前次记账未完成时不为后续回传建立过期的数量快照。已发生的、验签通过的真实出库允许在订单挂起后记账，挂起不能抹除实物出库事实。
+
+虚拟出库确认后可人工登记一个或多个包裹；只能选择已出库且尚未登记运单的行数量，不再次消耗库存，不生成虚假运单。运单在公司与快递范围内唯一，重复请求/重复包裹按原内容核对；WMS运单以仓库回传为准，不能人工替代。详情展示每次出库数量、来源、时间、记账结果，以及包裹快递、运单、平台子单和商品数量。查询仓库受理状态不会把部分出库或已出库退回仓库处理中。
+
+权限 `order:shipment:package`、`order:shipment:receipt`。`POST /orders/shipments/{id}/packages` 登记虚拟出库运单（版本、稳定请求号、运单号、可选包裹编码/时间、逐行数量）；`POST /orders/shipments/{id}/reconcile-receipts` 核对并重试本发货单原回传。详情只读返回 `outbound_records`、`packages`、`packaged_quantity`、`unpacked_quantity`。平台发货通知仍为下一阶段，不在本次仓库回传或人工登记中发送。
+
+执行 `docker/local/configure_order_receipts.py` 安装结构、权限及已有虚拟出库的历史展示镜像，不修改实物库存、不自动下发。`docker/local/seed_outbound_acceptance.py` 是用户明确要求保留的单据验收入口：创建独立测试店铺及SKU，暂停拉单和自动转单，模拟销售需求，经实际库存、分仓、虚拟出库、运单登记接口形成8件订单、两次出库共6件、两个测试运单，保留2件余量；不连接推送源，不向平台或真实仓库发货。结果保存 `outputs/outbound-acceptance/retained-test.json`，脚本不会删除验收数据。

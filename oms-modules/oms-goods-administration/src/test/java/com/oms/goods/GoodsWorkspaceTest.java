@@ -44,6 +44,23 @@ public class GoodsWorkspaceTest {
     Map<String,Object> product(String sku){return data("skuSn",sku,"goodsSn","STYLE-1","goodsName","测试衬衫","categoryCode",category,"colorCode",color,"sizeCode",size,"marketPrice",BigDecimal.ZERO,"validity","30");}
     GoodsVO imported(String sku){GoodsVO vo=new GoodsVO();vo.setSkuSn(sku);vo.setGoodsSn("STYLE-1");vo.setGoodsName("导入衬衫");vo.setCategoryName("服装/上装/衬衫");vo.setColorName("白色");vo.setSizeName("M");vo.setMarketPrice(BigDecimal.ZERO);vo.setValidity(30);return vo;}
     long count(){return db.queryForObject("SELECT COUNT(*) FROM goods_sku_sn_info",Long.class);}
+    @Test void inventoryLookupMatchesMixedCompanyCaseWithoutCrossingCompanies(){
+        goods.saveGoods("QM",product("UPPER-SKU"),"tester");goods.saveGoods("QM",product("LOWER-SKU"),"tester");
+        db.update("UPDATE goods_sku_sn_info SET company_code='qm' WHERE sku_sn='LOWER-SKU'");
+        goods.saveGoods("QM",product("OTHER-SKU"),"tester");
+        db.update("UPDATE goods_sku_sn_info SET company_code='OTHER',sku_sn='UPPER-SKU',goods_name='其他公司商品' WHERE sku_sn='OTHER-SKU'");
+        List<Map<String,Object>> found=goods.inventoryLookup("qm",Arrays.asList("UPPER-SKU","LOWER-SKU"),null);
+        assertEquals(2,found.size());assertTrue(found.stream().allMatch(r->"测试衬衫".equals(r.get("goodsName"))));
+        assertEquals(1,goods.inventoryLookup("QM",null,"UPPER-SKU").size());
+        assertEquals(2,goods.inventoryLookup("qm",null,"测试").size());
+        assertTrue(goods.inventoryLookup("QM",null,"其他").isEmpty());
+    }
+    @Test void inventoryLookupKeepsLiteralSearchAndRequestBounds(){
+        goods.saveGoods("QM",product("SKU-1"),"tester");
+        assertTrue(goods.inventoryLookup("QM",null,"%").isEmpty());assertTrue(goods.inventoryLookup("QM",null," ").isEmpty());
+        assertThrows(IllegalArgumentException.class,()->goods.inventoryLookup("QM",Collections.nCopies(101,"SKU-1"),null));
+        assertThrows(IllegalArgumentException.class,()->goods.inventoryLookup("QM",null,String.join("",Collections.nCopies(129,"a"))));
+    }
     @Test void createEditRenameAndFilterKeepCorrectAssociations(){
         long id=goods.saveGoods("QM",product("SKU-1"),"tester");goods.saveMaster("QM","color",data("id",color,"colorName","米白","outColorCode","WHITE"));
         Map<String,Object> result=goods.goodsDetail("QM",id);assertEquals("米白",result.get("colorName"));assertEquals("服装 / 上装 / 衬衫",result.get("categoryPath"));

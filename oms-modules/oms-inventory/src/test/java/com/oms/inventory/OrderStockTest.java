@@ -44,7 +44,7 @@ public class OrderStockTest {
     static AnnotationConfigApplicationContext context;
     static JdbcTemplate db; static OrderStockService stock; static InventoryMutationService inventory;
     @Configuration @EnableTransactionManagement static class Config {
-        @Bean DataSource dataSource(){String url=System.getenv("ORDER_STOCK_TEST_URL");if(url==null||!url.contains("/order_inventory_test?"))throw new IllegalStateException("Disposable schema required");return new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD"));}
+        @Bean DataSource dataSource(){String url=System.getenv("ORDER_STOCK_TEST_URL");if(url==null||!url.contains("/order_inventory_test?"))throw new IllegalStateException("Disposable schema required");com.alibaba.druid.pool.DruidDataSource pool=new com.alibaba.druid.pool.DruidDataSource();pool.setUrl(url);pool.setUsername("root");pool.setPassword(System.getenv("INVENTORY_TEST_PASSWORD"));pool.setInitialSize(1);pool.setMinIdle(1);pool.setMaxActive(8);pool.setMaxWait(10000);return pool;}
         @Bean JdbcTemplate jdbcTemplate(DataSource ds){return new JdbcTemplate(ds);}
         @Bean PlatformTransactionManager transactionManager(DataSource ds){return new DataSourceTransactionManager(ds);}
         @Bean com.oms.inventory.service.impl.rule.AllocationReservationService reservations(){return new com.oms.inventory.service.impl.rule.AllocationReservationService();}

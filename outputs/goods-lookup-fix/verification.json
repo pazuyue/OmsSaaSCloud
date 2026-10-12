@@ -1,0 +1,11 @@
+{
+  "sku": "ACCEPT_OUT_20261012164334",
+  "goodsName": "[验收测试] 出库包裹商品",
+  "lookup_count": 1,
+  "pages": [
+    "productInventory",
+    "wmsInventory",
+    "channelInventory"
+  ],
+  "order_and_shipments_unchanged": true
+}

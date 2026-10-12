@@ -31,7 +31,7 @@ def main():
     outbound = ET.parse(cache/'source/oms-modules/oms-supplychain/target/surefire-reports/TEST-com.oms.supplychain.WmsOutboundServiceTest.xml').getroot().attrib
     assert int(outbound['tests']) >= 10 and int(outbound.get('skipped',0)) == 0 and int(outbound['failures']) == int(outbound['errors']) == 0, outbound
     receipts=ET.parse(cache/'source/oms-modules/oms-supplychain/target/surefire-reports/TEST-com.oms.supplychain.WmsOutboundReceiptServiceTest.xml').getroot().attrib
-    assert int(receipts['tests'])>=7 and int(receipts['skipped'])==int(receipts['failures'])==int(receipts['errors'])==0,receipts
+    assert int(receipts['tests'])>=9 and int(receipts['skipped'])==int(receipts['failures'])==int(receipts['errors'])==0,receipts
     execute('DROP DATABASE '+DB)
     print('PASS purchase and outbound MySQL integration tests:', int(report['tests'])+int(outbound['tests'])+int(receipts['tests']))
 

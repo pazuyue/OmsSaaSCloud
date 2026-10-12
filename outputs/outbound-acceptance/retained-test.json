@@ -1,0 +1,23 @@
+{
+  "case_id": "20261012164334",
+  "company": "QM",
+  "stage": "RETAINED",
+  "channel_name": "[验收测试] 出库与运单 20261012164334",
+  "sku": "ACCEPT_OUT_20261012164334",
+  "platform_tid": "99020261012164334",
+  "order_sn": "SO3eb2dfd41ae349b8949574ae84d1f9a1",
+  "channel_id": 27,
+  "store_code": "VC0001",
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "carrier_code": "SF",
+  "order_id": 27,
+  "shipment_id": 2,
+  "shipment_sn": "FHdae692fce15941f694c3b92624e3b7d8",
+  "quantity": 8,
+  "shipped_quantity": 6,
+  "remaining_quantity": 2,
+  "package_count": 2,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=27",
+  "shipment_url": "http://127.0.0.1:8088/oms-order/shipments?number=FHdae692fce15941f694c3b92624e3b7d8"
+}

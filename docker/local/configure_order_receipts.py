@@ -4,7 +4,7 @@ from local_db import HERE, execute
 
 def install_order(database):
     execute((HERE/'migrations/20261012_order_outbound_receipts.sql').read_text(encoding='utf-8'),database)
-    execute("INSERT INTO oms_order_shipment_outbound(company_code,shipment_id,shipment_sn,request_id,source_mode,quantity,payload_json,payload_hash,state,created_by,outbound_time,completed_at,create_time) SELECT company_code,shipment_id,shipment_sn,request_id,'VIRTUAL',quantity,payload_json,payload_hash,'COMPLETED',created_by,completed_at,completed_at,create_time FROM oms_order_shipment_virtual_outbound WHERE state='COMPLETED' ON DUPLICATE KEY UPDATE id=id",database)
+    execute("INSERT INTO oms_order_shipment_outbound(company_code,shipment_id,shipment_sn,request_id,source_mode,quantity,payload_json,payload_hash,state,created_by,outbound_time,completed_at,create_time) SELECT company_code,shipment_id,shipment_sn,request_id,'VIRTUAL',quantity,payload_json,payload_hash,'COMPLETED',created_by,completed_at,completed_at,create_time FROM oms_order_shipment_virtual_outbound WHERE state='COMPLETED' ON DUPLICATE KEY UPDATE id=oms_order_shipment_outbound.id",database)
 
 
 def install_supplychain(database):

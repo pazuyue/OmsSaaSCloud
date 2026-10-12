@@ -19,28 +19,12 @@ import java.util.stream.Collectors;
 @RestController @RequestMapping("/info")
 public class GoodsSkuSnInfoController extends BaseController {
     @Resource private GoodsWorkspaceService workspace;
-    @Resource private com.oms.goods.service.goods.GoodsSkuSnInfoService goodsSkuSnInfoService;
     /** Bounded inventory lookup: one request for a page of SKUs, or a small search result. */
     @RequiresPermissions(value={"wmsInventory:inventory:list","channelInventory:inventory:list"},logical=com.ruoyi.common.security.annotation.Logical.OR)
     @GetMapping("/inventoryLookup")
     public AjaxResult inventoryLookup(@RequestParam(required=false) List<String> skus,
                                       @RequestParam(required=false) String keyword) {
-        com.ruoyi.system.api.model.LoginUser user = com.ruoyi.common.security.utils.SecurityUtils.getLoginUser();
-        String company = user.getCompanyCode();
-        if (company == null || company.isEmpty()) company = user.getSysUser().getLoginCompanyCode();
-        if (company == null || company.isEmpty()) return error("请先选择登录公司");
-        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<com.oms.goods.model.entity.goods.GoodsSkuSnInfo> query = new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
-        query.select("sku_sn", "goods_name", "barcode_sn").eq("company_code",company);
-        if (skus != null && !skus.isEmpty()) {
-            if (skus.size()>100) return error("每次最多查询 100 个 SKU");
-            query.in("sku_sn",skus);
-        } else {
-            if (keyword == null || keyword.trim().isEmpty()) return success(java.util.Collections.emptyList());
-            String term=keyword.trim();
-            if (term.length()>128) return error("搜索内容过长");
-            query.and(q->q.eq("sku_sn",term).or().eq("barcode_sn",term).or().likeRight("goods_name",term));
-        }
-        return success(goodsSkuSnInfoService.list(query.orderByAsc("sku_sn").last("LIMIT 100")));
+        return success(workspace.inventoryLookup(GoodsCompany.current(), skus, keyword));
     }
 
 

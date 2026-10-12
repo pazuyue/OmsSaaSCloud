@@ -44,7 +44,7 @@ public class WmsIntegrationController {
         require(routing.getDataSources().containsKey(datasource)&&routing.getDataSource(datasource)==routing.getDataSources().get(datasource),"回调租户数据源不存在或不唯一");
         Map<String,String> params=new TreeMap<>();request.getParameterMap().forEach((k,v)->{require(v.length==1,"回传参数不能重复");params.put(k,v[0]);});
         DynamicDataSourceContextHolder.push(datasource);
-        try {String method=params.get("method");String result=Arrays.asList("taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);}
+        try {String method=params.get("method");String result=Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);}
         finally{DynamicDataSourceContextHolder.clear();}
     }
     @ExceptionHandler(IllegalArgumentException.class) public AjaxResult invalid(IllegalArgumentException error){return AjaxResult.error(error.getMessage());}
