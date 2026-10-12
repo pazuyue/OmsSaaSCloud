@@ -18,6 +18,12 @@ public class JdHufuProtocol implements WmsProtocol {
     private static final DateTimeFormatter TIME=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public String provider(){return "JD_HUFU";}
     public String contentType(){return "application/json;charset=UTF-8";}
+    public boolean outboundSupported(Map<String,Object> c){return "2.0".equals(text(c.get("api_version")));}
+    public Wire outboundRequest(Map<String,Object> c,String secret,String action,Map<String,Object> task,Map<String,Object> payload){
+        require(outboundSupported(c),"虎符发货单需要2.0协议配置");String body=encode(WmsOutboundPayload.request(action,task,payload));Map<String,String> p=new TreeMap<>();p.put("app_key",text(c.get("app_key")));p.put("customerId",text(c.get("customer_id")));p.put("method","jingdong.hufu.deliveryorder."+("CREATE".equals(action)?"create":"query"));p.put("format","json");p.put("sign_method","md5");p.put("v","2.0");p.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(TIME));p.put("sign",QimenProtocol.sign(p,body,secret));
+        return new Wire(text(c.get("endpoint")).replaceAll("/+$","")+"/"+("CREATE".equals(action)?"deliveryOrderCreate":"deliveryOrderQuery")+"?"+p.entrySet().stream().map(e->QimenProtocol.enc(e.getKey())+"="+QimenProtocol.enc(e.getValue())).collect(Collectors.joining("&")),body,contentType());
+    }
+    public Reply outboundReply(String action,String body){JsonNode root=parse(body);require(root!=null&&Arrays.asList("success","failure").contains(root.path("flag").asText().toLowerCase(Locale.ROOT)),"虎符响应缺少明确业务结果");JsonNode group=root.path("deliveryOrders");if(group.isArray())require(group.size()<=1,"仓库返回多个拆单结果，请核对仓库");Reply r=new Reply();r.success="success".equalsIgnoreCase(root.path("flag").asText());r.code=root.path("code").asText();r.message=root.path("message").asText();JsonNode head=root.path("deliveryOrder");if(!head.isObject())head=root;r.externalOrder=head.path("deliveryOrderId").asText();r.documentSn=head.path("deliveryOrderCode").asText();r.status=head.path("status").asText();r.owner=head.path("ownerCode").asText();r.warehouse=head.path("warehouseCode").asText();return r;}
     public Wire request(Map<String,Object> c,String secret,String action,Map<String,Object> task,Map<String,Object> ticket,List<Map<String,Object>> lines){
         Map<String,Object> head=map("entryOrderCode",task.get("ticket_sn"),"ownerCode",task.get("external_owner"),"warehouseCode",task.get("external_warehouse"));
         Map<String,Object> payload;String method,path;

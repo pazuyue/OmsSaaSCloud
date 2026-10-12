@@ -20,6 +20,17 @@ public class QimenProtocol implements WmsProtocol {
     private static final DateTimeFormatter TIME=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public String provider(){return "QIMEN";}
     public String contentType(){return "application/xml;charset=UTF-8";}
+    public boolean outboundSupported(Map<String,Object> c){return "2.0".equals(text(c.get("api_version")));}
+    public Wire outboundRequest(Map<String,Object> c,String secret,String action,Map<String,Object> task,Map<String,Object> payload){
+        require(outboundSupported(c),"奇门发货单需要2.0协议");String body=WmsOutboundPayload.xml(WmsOutboundPayload.request(action,task,payload));
+        Map<String,String> p=new TreeMap<>();p.put("app_key",text(c.get("app_key")));p.put("customerId",text(c.get("customer_id")));p.put("method","taobao.qimen.deliveryorder."+("CREATE".equals(action)?"create":"query"));p.put("format","xml");p.put("sign_method","md5");p.put("v","2.0");p.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(TIME));p.put("sign",sign(p,body,secret));
+        return new Wire(text(c.get("endpoint"))+"?"+p.entrySet().stream().map(e->enc(e.getKey())+"="+enc(e.getValue())).collect(Collectors.joining("&")),body,contentType());
+    }
+    public Reply outboundReply(String action,String body){
+        Element root=parse(body);require("response".equals(root.getTagName()),"仓库响应不是标准response报文");require(Arrays.asList("success","failure").contains(value(root,"flag").toLowerCase(Locale.ROOT)),"仓库响应缺少明确业务结果");Reply r=new Reply();r.code=value(root,"code");r.success="success".equalsIgnoreCase(value(root,"flag"));r.message=value(root,"message");
+        Element group=child(root,"deliveryOrders");if(group!=null)require(children(group,"deliveryOrder").size()<=1,"仓库返回多个拆单结果，请核对仓库");
+        Element head=child(root,"deliveryOrder");if(head==null)head=root;r.externalOrder=value(head,"deliveryOrderId");r.documentSn=value(head,"deliveryOrderCode");r.status=value(head,"status");r.owner=value(head,"ownerCode");r.warehouse=value(head,"warehouseCode");return r;
+    }
     public Wire request(Map<String,Object> c,String secret,String action,Map<String,Object> task,Map<String,Object> ticket,List<Map<String,Object>> lines){
         String body=body(action,task,ticket,lines),method="taobao.qimen."+(action.equals("CANCEL")?"order.cancel":"entryorder."+(action.equals("CREATE")?"create":"query"));
         Map<String,String> p=new TreeMap<>();p.put("app_key",text(c.get("app_key")));p.put("customerId",text(c.get("customer_id")));p.put("method",method);p.put("format","xml");p.put("sign_method","md5");p.put("v","2.0");p.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(TIME));p.put("sign",sign(p,body,secret));

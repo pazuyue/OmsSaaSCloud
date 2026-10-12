@@ -25,9 +25,9 @@ public class OrderStockService {
     public List<Map<String,Object>> demands(String company,long channel,String tid){
         require(company!=null&&company.matches("[A-Za-z0-9_-]{1,50}")&&channel>0&&tid!=null&&tid.matches("[0-9]{1,64}"),"订单标识无效");
         String scope=company.toUpperCase(Locale.ROOT);
-        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,status,reason,reason_code FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
+        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,outbound_quantity,status,reason,reason_code FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
         Map<Long,List<Map<String,Object>>> sources=new HashMap<>();
-        for(Map<String,Object> source:jdbc.queryForList("SELECT s.demand_id,s.source_type,s.store_code,s.quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE d.company_code=? AND d.channel_id=? AND d.platform_tid=? AND s.reserved=1 ORDER BY s.id",scope,channel,tid))sources.computeIfAbsent(n(source,"demand_id"),k->new ArrayList<>()).add(source);
+        for(Map<String,Object> source:jdbc.queryForList("SELECT s.demand_id,s.source_type,s.store_code,s.quantity,s.outbound_quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE d.company_code=? AND d.channel_id=? AND d.platform_tid=? AND s.reserved=1 ORDER BY s.id",scope,channel,tid))sources.computeIfAbsent(n(source,"demand_id"),k->new ArrayList<>()).add(source);
         for(Map<String,Object> row:rows)row.put("sources",sources.getOrDefault(n(row,"id"),Collections.emptyList()));return rows;
     }
 
@@ -82,6 +82,8 @@ public class OrderStockService {
 
     /** Terminal cancellation, serialized with reserve by the same company/SKU mutex. */
     private void cancel(List<Map<String,Object>> demands){
+        require(demands.stream().allMatch(d->n(d,"outbound_quantity")==0),"订单已有出库，不能取消销售需求或释放已消耗库存");
+        OrderWarehouseAllocationService.release(jdbc,demands);
         Map<String,Map<String,Object>> releasing=new LinkedHashMap<>();
         for(Map<String,Object> demand:demands){
             if("CANCELLED".equals(s(demand,"status")))continue;
@@ -152,9 +154,10 @@ public class OrderStockService {
     private void waitForStock(List<Map<String,Object>> demands,String code,String reason){for(Map<String,Object> demand:demands)jdbc.update("UPDATE oms_order_stock_demand SET reason=?,reason_code=?,status='WAIT_RESERVE' WHERE id=?",reason,code,demand.get("id"));}
     /** Locked reservations are backed by WMS locks; only the remainder uses public goods. */
     public static long publicReserved(JdbcTemplate jdbc,String company,String sku){
-        long total=jdbc.queryForObject("SELECT COALESCE(SUM(reserved_quantity),0) FROM oms_order_stock_demand WHERE company_code=? AND sku_sn=? FOR UPDATE",Long.class,company,sku);
-        long locked=jdbc.queryForObject("SELECT COALESCE(SUM(quantity),0) FROM oms_order_stock_source WHERE company_code=? AND sku_sn=? AND source_type='LOCK' AND reserved=1 FOR UPDATE",Long.class,company,sku);
-        require(total>=locked,"订单预占与锁库来源记录不一致");return total-locked;
+        long total=jdbc.queryForObject("SELECT COALESCE(SUM(reserved_quantity-outbound_quantity),0) FROM oms_order_stock_demand WHERE company_code=? AND sku_sn=? FOR UPDATE",Long.class,company,sku);
+        long locked=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_stock_source WHERE company_code=? AND sku_sn=? AND source_type='LOCK' AND reserved=1 FOR UPDATE",Long.class,company,sku);
+        long warehousePublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND sku_sn=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,sku);
+        require(total>=locked+warehousePublic,"订单预占与仓库来源记录不一致");return total-locked-warehousePublic;
     }
     /** Receipt refreshes pending summaries; the order retry queue attempts reservations. */
     public static void replanPending(JdbcTemplate jdbc,String company,String sku){refresh(jdbc,company,sku,0);}
@@ -163,13 +166,18 @@ public class OrderStockService {
     }
     public static void refreshChannel(JdbcTemplate jdbc,String company,String sku,long channel){refresh(jdbc,company,sku,channel,false);}
     private static void refresh(JdbcTemplate jdbc,String company,String sku,long channel,boolean allChannels){
+        company=company.toUpperCase(Locale.ROOT);
         List<Object> pendingArgs=new ArrayList<>(Arrays.asList(company,sku));if(!allChannels)pendingArgs.add(channel);
-        jdbc.update("UPDATE oms_channel_inventory c SET pending_stock=(SELECT COALESCE(SUM(demand_quantity-reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=c.company_code AND d.sku_sn=c.sku_sn AND d.channel_id=c.channel_id AND d.status<>'CANCELLED'),version=version+1 WHERE c.company_code=? AND c.sku_sn=?"+(allChannels?"":" AND c.channel_id=?"),pendingArgs.toArray());
+        jdbc.update("UPDATE oms_channel_inventory c SET pending_stock=(SELECT COALESCE(SUM(demand_quantity-reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=UPPER(c.company_code) AND d.sku_sn=c.sku_sn AND d.channel_id=c.channel_id AND d.status<>'CANCELLED'),version=version+1 WHERE c.company_code=? AND c.sku_sn=?"+(allChannels?"":" AND c.channel_id=?"),pendingArgs.toArray());
         jdbc.update("UPDATE oms_inventory SET pending_public_stock=(SELECT COALESCE(SUM(GREATEST(0,pending_stock-allocated_stock)),0) FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?) WHERE company_code=? AND sku_sn=?",company,sku,company,sku);
+        // Public reservations consume the channel's quota even if made before allocation.
+        // Rebuild the projection so retries, cancellation and reallocation cannot double count.
+        Map<Long,Long> lockedByChannel=new HashMap<>();
+        for(Map<String,Object> locked:jdbc.queryForList("SELECT d.channel_id,SUM(s.quantity-s.outbound_quantity) quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE s.company_code=? AND s.sku_sn=? AND s.source_type='LOCK' AND s.reserved=1 GROUP BY d.channel_id",company,sku))lockedByChannel.put(n(locked,"channel_id"),n(locked,"quantity"));
         // Every channel projection for this SKU is capped by its eligible remaining stock.
         Map<String,Long> freeByScope=new HashMap<>();
         List<Object> channelArgs=new ArrayList<>(Arrays.asList(company,sku));if(!allChannels)channelArgs.add(channel);
-        for(Map<String,Object> row:jdbc.queryForList("SELECT channel_id,stock_scope_json,allocated_stock,pending_stock,quota_stock,quota_reserved_stock,frozen_stock FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?"+(allChannels?"":" AND channel_id=?"),channelArgs.toArray())){
+        for(Map<String,Object> row:jdbc.queryForList("SELECT channel_id,stock_scope_json,allocated_stock,pending_stock,quota_stock,reserved_stock,frozen_stock FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?"+(allChannels?"":" AND channel_id=?"),channelArgs.toArray())){
             List<String> scope;
             try{scope=row.get("stock_scope_json")==null?Collections.emptyList():JSON.readValue(String.valueOf(row.get("stock_scope_json")),new TypeReference<List<String>>(){});if(scope==null)scope=Collections.emptyList();}catch(Exception e){scope=Collections.emptyList();}
             long publicFree=0;
@@ -178,9 +186,10 @@ public class OrderStockService {
             else if(!scope.isEmpty()){List<Object> args=new ArrayList<>(Arrays.asList(company,sku));args.addAll(scope);publicFree=jdbc.queryForObject("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=? AND store_code IN ("+marks(scope.size())+")",Long.class,args.toArray())-publicClaims(jdbc,company,sku,scope);freeByScope.put(scopeKey,publicFree);}
             else publicFree=0;
             long pendingLocked=Math.min(n(row,"pending_stock"),n(row,"allocated_stock"));
-            long quota=Math.max(0,Math.max(0,n(row,"quota_stock")-n(row,"quota_reserved_stock"))+n(row,"allocated_stock")-n(row,"pending_stock")-n(row,"frozen_stock"));
+            long quotaReserved=Math.max(0,n(row,"reserved_stock")-lockedByChannel.getOrDefault(n(row,"channel_id"),0L));
+            long quota=Math.max(0,Math.max(0,n(row,"quota_stock")-quotaReserved)+n(row,"allocated_stock")-n(row,"pending_stock")-n(row,"frozen_stock"));
             long cap=Math.max(0,publicFree)+Math.max(0,n(row,"allocated_stock")-pendingLocked);
-            jdbc.update("UPDATE oms_channel_inventory SET available_stock=? WHERE company_code=? AND sku_sn=? AND channel_id=?",Math.min(quota,cap),company,sku,row.get("channel_id"));
+            jdbc.update("UPDATE oms_channel_inventory SET quota_reserved_stock=?,available_stock=? WHERE company_code=? AND sku_sn=? AND channel_id=?",quotaReserved,Math.min(quota,cap),company,sku,row.get("channel_id"));
         }
     }
     public static long publicClaims(JdbcTemplate jdbc,String company,String sku,List<String> stores){

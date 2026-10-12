@@ -10,6 +10,9 @@
 </template>
 <script>
 const descriptions = {
+  '/oms-order/shipments': ['按实体仓查看订单发货单，跟进分批履约与实际出库数量。', 'el-icon-truck'],
+  '/oms-order/management': ['维护订单接入、推送库连接与拉单任务。', 'el-icon-download'],
+  '/oms-order/settings': ['维护店铺的转单、审单、逻辑预占与分仓策略。', 'el-icon-setting'],
   '/oms-order/business': ['查看转单后的业务订单，跟进库存预占进度与处理结果。', 'el-icon-document'],
   '/oms-goods': ['集中管理商品资料，让每一个 SKU 清晰有序。', 'el-icon-box'],
   '/oms-supplychain': ['连接采购、仓库与合作伙伴，协同处理日常业务。', 'el-icon-connection'],

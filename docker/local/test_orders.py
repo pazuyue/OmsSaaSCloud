@@ -19,6 +19,8 @@ def main():
     install_trade_types('order_workspace_test')
     from configure_order_exceptions import install as install_exceptions
     install_exceptions('order_workspace_test')
+    from configure_business_orders import install_order as install_business_order
+    install_business_order('order_workspace_test')
     cache=Path.home()/'.cache/oms-local'
     for module in ['oms-order','oms-inventory']:
         source=ROOT/'oms-modules'/module/'src'
@@ -26,10 +28,10 @@ def main():
     env=dict(os.environ,ORDER_STOCK_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{database}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai',ORDER_TEST_URL='jdbc:mysql://127.0.0.1:13306/order_workspace_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai',INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     for key in ['OMS_ORDER_PUSH_113_URL','OMS_ORDER_PUSH_113_USERNAME','OMS_ORDER_PUSH_113_PASSWORD','OMS_ORDER_PUSH_100_URL','OMS_ORDER_PUSH_100_USERNAME','OMS_ORDER_PUSH_100_PASSWORD']:
         if key in ENV: env[key]=ENV[key].strip("'")
-    command=[str(ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-inventory','-Dtest=TmallOrderParserTest,OrderRepositoryTest,OrderProcessorTest,OrderProductMatchServiceTest,TmallPushReaderTest,OrderStockTest,PushSourceServiceTest,ConfiguredPushReaderTest,OrderWorkspaceServiceTest','-Dsurefire.failIfNoSpecifiedTests=false','test']
+    command=[str(ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-inventory','-Dtest=TmallOrderParserTest,OrderRepositoryTest,OrderProcessorTest,OrderProductMatchServiceTest,TmallPushReaderTest,OrderStockTest,OrderVirtualOutboundTest,PushSourceServiceTest,ConfiguredPushReaderTest,OrderWorkspaceServiceTest,OrderAllocationPolicyTest,OrderAllocationServiceTest,OrderShipmentServiceTest,OrderShipmentDispatchServiceTest,OrderVirtualOutboundServiceTest,OrderCarrierServiceTest,OrderCarrierPolicyTest,OrderReviewPolicyTest,OrderInventoryStatusTest,WarehouseAllocationPlannerTest','-Dsurefire.failIfNoSpecifiedTests=false','test']
     if order_only:
         command[command.index('-pl')+1]='oms-modules/oms-order'
-        command=[arg.replace(',OrderStockTest,',',') if arg.startswith('-Dtest=') else arg for arg in command]
+        command=[arg.replace(',OrderStockTest,OrderVirtualOutboundTest,',',') if arg.startswith('-Dtest=') else arg for arg in command]
     with (HERE/'logs/order-tests.log').open('w') as log:result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
     print('Order tests exit:',result.returncode)
     sys.exit(result.returncode)

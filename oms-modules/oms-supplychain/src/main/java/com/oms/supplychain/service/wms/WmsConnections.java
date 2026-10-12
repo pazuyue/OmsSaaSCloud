@@ -30,7 +30,7 @@ public class WmsConnections {
         require("https".equalsIgnoreCase(uri.getScheme())||("TEST".equals(environment)&&"http".equalsIgnoreCase(uri.getScheme())),"正式环境必须使用 HTTPS");
         int enabled=Boolean.TRUE.equals(body.get("enabled"))||"1".equals(text(body.get("enabled")))?1:0;
         // Provider identities are immutable once a document uses this connection. Rotate secrets in place.
-        if(old!=null&&db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_inbound_task WHERE connection_id=? AND company_code=?",Long.class,key,company)>0)
+        if(old!=null&&(db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_inbound_task WHERE connection_id=? AND company_code=?",Long.class,key,company)>0||db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_outbound_task WHERE connection_id=? AND company_code=?",Long.class,key,company)>0))
             for(String field:Arrays.asList("provider","api_version","environment","endpoint","app_key","customer_id"))require(text(body.get(field)).equals(text(old.get(field))),"已被执行单使用的对接目标不能变更，请新增配置；密钥仍可更新");
         String secret=text(body.get("secret"));require(old!=null||!secret.isEmpty(),"请填写应用密钥");require(secret.length()<=2000,"应用密钥过长");
         String cipher=secret.isEmpty()?text(old.get("secret_cipher")):encrypt(secret);

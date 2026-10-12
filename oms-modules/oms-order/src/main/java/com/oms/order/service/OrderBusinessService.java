@@ -17,8 +17,8 @@ public class OrderBusinessService {
     @Resource private OrderRepository repository;
     @Resource private OrderStockClient inventory;
     @Resource private OrderCatalog catalog;
-    private static final String JOIN=" FROM oms_order o JOIN oms_platform_order p ON p.company_code=o.company_code AND p.id=o.platform_order_id LEFT JOIN oms_order_pull_config c ON c.company_code=o.company_code AND c.channel_id=o.channel_id";
-    private static final String PROGRESS=",p.change_pending,p.platform_status,p.fulfillment_block_reason,p.next_retry_at,c.channel_name,c.allow_public_stock,c.last_error shop_error";
+    private static final String JOIN=" FROM oms_order o JOIN oms_platform_order p ON p.company_code=o.company_code AND p.id=o.platform_order_id LEFT JOIN oms_order_pull_config c ON c.company_code=o.company_code AND c.channel_id=o.channel_id LEFT JOIN oms_order_allocation_config ac ON ac.company_code=o.company_code AND ac.channel_id=o.channel_id";
+    private static final String PROGRESS=",p.change_pending,p.platform_status,p.fulfillment_block_reason,p.next_retry_at,c.channel_name,c.allow_public_stock,c.last_error shop_error,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.enabled'),0) allocation_enabled,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.allow_partial'),0) allocation_allow_partial";
     private String marks(int n){return String.join(",",Collections.nCopies(n,"?"));}
     private List<Long> ids(List<Long> values){require(values!=null&&!values.isEmpty()&&values.size()<=100,"每次请选择1至100张订单");for(Long id:values)require(id!=null&&id>0,"订单ID无效");return new ArrayList<>(new LinkedHashSet<>(values));}
 
@@ -26,13 +26,13 @@ public class OrderBusinessService {
     public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize,String review,String processing){return list(company,channel,number,status,sku,from,to,waiting,page,pageSize,review,processing,"");}
     public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize,String review,String processing,String documentStatus){
         String where=" WHERE o.company_code=?";List<Object> args=new ArrayList<>();args.add(company);
-        if(!documentStatus.isEmpty()){require(Arrays.asList("WAIT_ALLOCATION","VOIDING","VOIDED").contains(documentStatus),"业务状态无效");where+=" AND o.status=?";args.add(documentStatus);}
+        if(!documentStatus.isEmpty()){require(Arrays.asList("WAIT_REVIEW","WAIT_ALLOCATION","PART_ALLOCATED","WAIT_CARRIER","WAIT_DISPATCH","DISPATCHING","PART_DISPATCHED","WAREHOUSE_PROCESSING","PART_SHIPPED","SHIPPED","VOIDING","VOIDED").contains(documentStatus),"业务状态无效");where+=" AND ("+OrderReviewPolicy.businessStatusSql()+")=?";args.add(documentStatus);}
         if(!review.isEmpty()){require(Arrays.asList("PENDING","APPROVED").contains(review),"审单状态无效");where+=" AND o.review_status=?";args.add(review);}
         if(!processing.isEmpty()){require(Arrays.asList("NORMAL","HELD").contains(processing),"处理状态无效");String blocked="(o.manual_hold=1 OR p.change_pending=1 OR p.fulfillment_block_reason<>'' OR p.platform_status<>'WAIT_SELLER_SEND_GOODS')";where+=" AND o.status='WAIT_ALLOCATION' AND "+("HELD".equals(processing)?blocked:"NOT "+blocked);}
         if(channel!=null){where+=" AND o.channel_id=?";args.add(channel);}
         if(number!=null&&!number.trim().isEmpty()){where+=" AND (o.order_sn=? OR o.platform_tid=?)";args.add(number.trim());args.add(number.trim());}
         if(status!=null&&!status.isEmpty()){
-            require(Arrays.asList("WAIT_RESERVE","PART_RESERVED","RESERVED","RELEASED","SOURCE_CHANGED").contains(status),"库存状态无效");
+            require(Arrays.asList("WAIT_RESERVE","PART_RESERVED","RESERVED","RELEASED","SOURCE_CHANGED").contains(status),"逻辑预占状态无效");
             if("SOURCE_CHANGED".equals(status))where+=" AND p.change_pending=1";else{where+=" AND o.inventory_status=?";args.add(status);}
         }
         if(sku!=null&&!sku.trim().isEmpty()){where+=" AND EXISTS (SELECT 1 FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id AND l.sku_sn=?)";args.add(sku.trim());}
@@ -43,7 +43,7 @@ public class OrderBusinessService {
         if(waiting>0){where+=" AND o.status='WAIT_ALLOCATION' AND o.inventory_status<>'RESERVED' AND o.create_time<=DATE_SUB(NOW(),INTERVAL ? MINUTE)";args.add(waiting);}
         long total=repository.db().queryForObject("SELECT COUNT(*)"+JOIN+where,Long.class,args.toArray());
         int count=size(pageSize);args.add(count);args.add(offset(page,count));
-        List<Map<String,Object>> rows=repository.db().query("SELECT o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.channel_id,o.inventory_status,o.payment,o.create_time,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+where+" ORDER BY o.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
+        List<Map<String,Object>> rows=repository.db().query("SELECT o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.channel_id,o.inventory_status,o.payment,o.create_time,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+where+" ORDER BY o.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
         summarize(company,rows);
         return page(rows,total);
     }
@@ -52,6 +52,7 @@ public class OrderBusinessService {
             List<Object> lineArgs=new ArrayList<>();lineArgs.add(company);for(Map<String,Object> row:rows)lineArgs.add(row.get("id"));
             Map<Long,Map<String,Object>> summaries=new HashMap<>();
             for(Map<String,Object> sum:repository.db().query("SELECT order_id,COUNT(DISTINCT sku_sn) sku_count,SUM(quantity) demand_quantity,SUM(reserved_quantity) reserved_quantity,SUM(quantity-reserved_quantity) pending_quantity,GROUP_CONCAT(DISTINCT NULLIF(inventory_reason,'') SEPARATOR '；') inventory_reason FROM oms_order_line WHERE company_code=? AND order_id IN ("+marks(rows.size())+") GROUP BY order_id",ROW,lineArgs.toArray()))summaries.put(number(sum,"order_id"),sum);
+            for(Map<String,Object> sum:repository.db().query("SELECT s.order_id,COUNT(*) shipment_count,SUM(IF(s.status='WAIT_CARRIER',1,0)) pending_carrier_count,SUM(IF(s.status='DISPATCHING',1,0)) dispatching_count,SUM(IF(s.status IN ('WAREHOUSE_PROCESSING','PART_SHIPPED','SHIPPED'),s.quantity,0)) warehouse_accepted_quantity,SUM(IF(s.status='VOIDED',0,s.quantity)) shipment_quantity,SUM((SELECT COALESCE(SUM(sl.shipped_quantity),0) FROM oms_order_shipment_line sl WHERE sl.company_code=s.company_code AND sl.shipment_id=s.id)) shipped_quantity,SUM(IF(s.status NOT IN ('WAIT_CARRIER','WAIT_DISPATCH','VOIDING','VOIDED') OR (SELECT COALESCE(SUM(sl.shipped_quantity),0) FROM oms_order_shipment_line sl WHERE sl.company_code=s.company_code AND sl.shipment_id=s.id)>0 OR EXISTS(SELECT 1 FROM oms_order_shipment_dispatch ds WHERE ds.company_code=s.company_code AND ds.shipment_id=s.id AND ds.state<>'CANCELED' AND (ds.state<>'FAILED' OR ds.external_order<>'')) OR EXISTS(SELECT 1 FROM oms_order_shipment_virtual_outbound vo WHERE vo.company_code=s.company_code AND vo.shipment_id=s.id),1,0)) shipment_blocks_void FROM oms_order_shipment s WHERE s.company_code=? AND s.order_id IN ("+marks(rows.size())+") GROUP BY s.order_id",ROW,lineArgs.toArray()))summaries.computeIfAbsent(number(sum,"order_id"),key->new HashMap<>()).putAll(sum);
             for(Map<String,Object> row:rows){row.putAll(summaries.getOrDefault(number(row,"id"),Collections.emptyMap()));decorate(row);}
         }
     }
@@ -69,7 +70,12 @@ public class OrderBusinessService {
             for(Map<String,Object> line:lines)line.put("stock_sources",demandByOid.getOrDefault(text(line,"platform_oid"),Collections.emptyMap()).getOrDefault("sources",Collections.emptyList()));
         }catch(RuntimeException e){order.put("stock_sources_error","库存来源暂时加载失败，请刷新详情");}
         try{Map<String,List<Map<String,Object>>> goods=catalog.goods(company,new ArrayList<>(skus));for(Map<String,Object> line:lines){List<Map<String,Object>> matches=goods.getOrDefault(text(line,"sku_sn"),Collections.emptyList());if(matches.size()==1)line.put("oms_goods_name",matches.get(0).get("goods_name"));}}catch(RuntimeException e){order.put("goods_error","当前OMS商品资料暂时加载失败，已保留转单SKU");}
-        order.put("lines",lines);decorate(order);
+        order.put("lines",lines);
+        List<Map<String,Object>> shipments=new OrderShipmentService(repository,catalog).forOrder(company,id);order.put("shipments",shipments);order.put("dispatching_count",shipments.stream().filter(s->"DISPATCHING".equals(text(s,"status"))).count());order.put("warehouse_accepted_quantity",shipments.stream().filter(s->Arrays.asList("WAREHOUSE_PROCESSING","PART_SHIPPED","SHIPPED").contains(text(s,"status"))).mapToLong(s->number(s,"quantity")).sum());order.put("pending_carrier_count",shipments.stream().filter(s->"WAIT_CARRIER".equals(text(s,"status"))).count());order.put("shipment_count",shipments.size());order.put("shipment_quantity",shipments.stream().filter(s->!"VOIDED".equals(text(s,"status"))).mapToLong(s->number(s,"quantity")).sum());order.put("shipped_quantity",shipments.stream().mapToLong(s->number(s,"shipped_quantity")).sum());order.put("shipment_blocks_void",shipments.stream().filter(s->!Arrays.asList("WAIT_CARRIER","WAIT_DISPATCH","VOIDING","VOIDED").contains(text(s,"status"))||!"NONE".equals(text(s,"virtual_outbound_state"))||number(s,"shipped_quantity")>0||(!Arrays.asList("NONE","CANCELED").contains(text(s,"wms_dispatch_state"))&&(!"FAILED".equals(text(s,"wms_dispatch_state"))||!text(s,"wms_external_order").isEmpty()))).count());
+        Map<Long,Long> shippedByLine=new HashMap<>();for(Map<String,Object> sum:repository.db().query("SELECT sl.order_line_id,SUM(sl.shipped_quantity) shipped_quantity FROM oms_order_shipment_line sl JOIN oms_order_shipment ss ON ss.company_code=sl.company_code AND ss.id=sl.shipment_id WHERE ss.company_code=? AND ss.order_id=? GROUP BY sl.order_line_id",ROW,company,id))shippedByLine.put(number(sum,"order_line_id"),number(sum,"shipped_quantity"));for(Map<String,Object> line:lines){long shipped=shippedByLine.getOrDefault(number(line,"id"),0L);line.put("shipped_quantity",shipped);line.put("logical_active_quantity",Math.max(0,number(line,"reserved_quantity")-shipped));}
+        if(order.get("allocation_receipts")!=null)try{order.put("warehouse_allocations",JSON.readValue(text(order,"allocation_receipts"),List.class));}catch(Exception e){order.put("warehouse_allocations",Collections.emptyList());}
+        if(order.get("allocation_policy")!=null)try{order.put("allocation_rule",JSON.readValue(text(order,"allocation_policy"),Map.class));}catch(Exception e){order.put("allocation_rule",Collections.emptyMap());}
+        order.remove("allocation_receipts");order.remove("allocation_policy");decorate(order);
         order.put("logs",repository.db().query("SELECT action,result,message,operator_name,create_time FROM oms_order_process_log WHERE company_code=? AND platform_order_id=? ORDER BY id DESC LIMIT 100",ROW,company,order.get("platform_order_id")));return order;
     }
 
@@ -93,7 +99,7 @@ public class OrderBusinessService {
                 repository.db().update("UPDATE oms_platform_order SET next_retry_at=NOW() WHERE company_code=? AND id=?",company,order.get("platform_order_id"));
                 repository.log(company,number(order,"platform_order_id"),"STOCK_RETRY_REQUEST","PENDING","已提交重新预占，未完成的SKU使用最新转单设置",actor);
                 item.put("order_sn",order.get("order_sn"));item.put("platform_tid",order.get("platform_tid"));return null;
-            });item.put("submitted",true);item.put("message","已提交，等待预占结果");item.put("stock_attempt_status","QUEUED");}
+            });item.put("submitted",true);item.put("message","已提交，等待逻辑预占结果");item.put("stock_attempt_status","QUEUED");}
             catch(IllegalArgumentException e){item.put("submitted",false);item.put("message",e.getMessage());}
             catch(RuntimeException e){item.put("submitted",false);item.put("message","提交失败，请稍后重试");}
             result.add(item);
@@ -102,19 +108,24 @@ public class OrderBusinessService {
     }
 
     public List<Map<String,Object>> results(String company,List<Long> requested){List<Long> keys=ids(requested);List<Object> args=new ArrayList<>();args.add(company);args.addAll(keys);
-        List<Map<String,Object>> rows=repository.db().query("SELECT o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.inventory_status,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+" WHERE o.company_code=? AND o.id IN ("+marks(keys.size())+")",ROW,args.toArray());summarize(company,rows);return rows;
+        List<Map<String,Object>> rows=repository.db().query("SELECT o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.inventory_status,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+" WHERE o.company_code=? AND o.id IN ("+marks(keys.size())+")",ROW,args.toArray());summarize(company,rows);return rows;
     }
     private void decorate(Map<String,Object> row){
         OrderReviewPolicy.decorate(row);
         boolean voided="VOIDED".equals(text(row,"status")),voiding="VOIDING".equals(text(row,"status"));
-        row.put("can_void","WAIT_ALLOCATION".equals(text(row,"status"))||(voiding&&!text(row,"void_error").isEmpty()));
+        row.put("can_void",number(row,"shipment_blocks_void")==0&&("WAIT_ALLOCATION".equals(text(row,"status"))||(voiding&&!text(row,"void_error").isEmpty())));
+        for(String field:Arrays.asList("shipment_count","shipment_quantity","shipped_quantity"))if(row.get(field)==null)row.put(field,0);
+        row.put("pending_allocation_quantity",voided||voiding?0:Math.max(0,number(row,"demand_quantity")-number(row,"allocation_quantity")));
+        row.put("unshipped_quantity",voided||voiding?0:Math.max(0,number(row,"demand_quantity")-number(row,"shipped_quantity")));
         if(voided){row.put("pending_quantity",0);Object lines=row.get("lines");if(lines instanceof List)for(Object line:(List<?>)lines)((Map<String,Object>)line).put("pending_quantity",0);}
 
         boolean held="HELD".equals(text(row,"processing_status"));
+        row.put("can_generate_shipments","WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&"APPROVED".equals(text(row,"review_status"))&&Arrays.asList("PART","FULL").contains(text(row,"allocation_status"))&&number(row,"shipment_quantity")<number(row,"allocation_quantity"));
         boolean changed=number(row,"change_pending")!=0,done="RESERVED".equals(text(row,"inventory_status"));String attempt=text(row,"stock_attempt_status");
         row.put("can_reserve","WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&!changed&&!done&&!Arrays.asList("QUEUED","PROCESSING").contains(attempt));
-        String message=held?(number(row,"manual_hold")==1?"人工挂起："+text(row,"hold_reason"):text(row,"system_hold_reason")):changed?"平台关键交易信息已变化，后续预占暂停，待订单更新处理":!text(row,"stock_error").isEmpty()?text(row,"stock_error"):done?"全部商品已完成逻辑预占":!text(row,"inventory_reason").isEmpty()?text(row,"inventory_reason"):"未完成的SKU等待足量预占";
-        row.put("stock_message",voided?"订单已作废，销售需求已取消，预占已释放":voiding?(text(row,"void_error").isEmpty()?"作废处理中，已停止履约，等待库存释放确认":text(row,"void_error")):message);
+        String message=held?(number(row,"manual_hold")==1?"人工挂起："+text(row,"hold_reason"):text(row,"system_hold_reason")):changed?"平台关键交易信息已变化，后续预占暂停，待订单更新处理":!text(row,"stock_error").isEmpty()?text(row,"stock_error"):done?"全部商品已完成逻辑预占":!text(row,"inventory_reason").isEmpty()?text(row,"inventory_reason"):"未完成的SKU等待足量逻辑预占";
+        row.put("stock_message",voided?"订单已作废，销售需求已取消，逻辑预占已释放":voiding?(text(row,"void_error").isEmpty()?"作废处理中，已停止履约，等待逻辑预占释放确认":text(row,"void_error")):message);
         if(voided||voiding||held||changed||done)row.put("next_retry_at",null);
+        OrderInventoryStatus.decorate(row);
     }
 }

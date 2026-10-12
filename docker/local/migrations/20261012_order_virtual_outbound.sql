@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS oms_order_shipment_virtual_outbound (
+ id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ company_code VARCHAR(50) COLLATE utf8mb4_bin NOT NULL,
+ shipment_id BIGINT NOT NULL,
+ shipment_sn VARCHAR(64) COLLATE utf8mb4_bin NOT NULL,
+ request_id VARCHAR(64) COLLATE utf8mb4_bin NOT NULL,
+ payload_json MEDIUMTEXT NOT NULL,
+ payload_hash VARCHAR(64) NOT NULL,
+ state VARCHAR(24) NOT NULL DEFAULT 'PENDING',
+ quantity BIGINT NOT NULL,
+ last_error VARCHAR(1000) NOT NULL DEFAULT '',
+ attempts INT NOT NULL DEFAULT 0,
+ next_attempt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ created_by VARCHAR(100) NOT NULL,
+ create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ completed_at DATETIME NULL,
+ update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ UNIQUE KEY virtual_request(company_code,request_id),
+ KEY virtual_due(state,next_attempt),
+ KEY virtual_shipment(company_code,shipment_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='虚拟出库固定指令；库存确认后才更新发货量';

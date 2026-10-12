@@ -10,8 +10,11 @@ public interface WmsProtocol {
     Receipt callback(Map<String,Object> connection,String secret,Map<String,String> parameters,String body);
     String acknowledgement(boolean success,String message);
     String contentType();
+    default boolean outboundSupported(Map<String,Object> connection){return false;}
+    default Wire outboundRequest(Map<String,Object> connection,String secret,String action,Map<String,Object> task,Map<String,Object> payload){throw new IllegalArgumentException("该协议尚未支持发货单下发");}
+    default Reply outboundReply(String action,String body){throw new IllegalArgumentException("该协议尚未支持发货单查询");}
     class Wire { public String url,body,contentType; public Wire(String u,String b,String c){url=u;body=b;contentType=c;} }
-    class Reply { public boolean success;public String externalOrder="",status="",message="",code=""; }
+    class Reply { public boolean success;public String externalOrder="",status="",message="",code="",documentSn="",warehouse="",owner=""; }
     class Receipt {
         public String ticketSn,externalOrder,messageId,warehouse,owner,status;
         public boolean complete;

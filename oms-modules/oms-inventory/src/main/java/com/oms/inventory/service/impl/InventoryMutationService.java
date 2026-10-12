@@ -207,7 +207,8 @@ public class InventoryMutationService {
             Map<String,Object> before=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE id=? FOR UPDATE",ROW,id);
             // Protect every tracked source in this batch, including other allocation rules.
             long owed=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-consumed_quantity-released_quantity),0) FROM rule_stock_reservation WHERE company_code=? AND sku_sn=? AND batch_id=?",Long.class,company,sku,id);
-            require(number(before,"zpLockNumber")>=Math.max(take,owed),"批次锁库与来源余额不一致，操作已回滚");
+            long orderPublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND batch_id=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,id);
+            require(number(before,"zpLockNumber")>=Math.max(take,owed)+orderPublic,"批次锁库与来源余额不一致，操作已回滚");
             String field=consume?"zp_actual_number=zp_actual_number-?":"zp_available_number=zp_available_number+?";
             jdbc.update("UPDATE wms_inventory_batch SET "+field+",zp_lock_number=zp_lock_number-?,version=version+1 WHERE id=?",take,take,id);
             journal(company,before,consume?"CONSUME":"UNLOCK",request,relation,"ZP",-(int)take,consume?"订单按锁库来源出库":"释放本单未占用余额");

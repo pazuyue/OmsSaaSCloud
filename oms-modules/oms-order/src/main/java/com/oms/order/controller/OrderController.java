@@ -12,6 +12,31 @@ import static com.oms.order.service.OrderValues.*;
 
 @RestController @RequestMapping("/orders")
 public class OrderController {
+    @Resource private OrderVirtualOutboundService virtualOutbound;
+    @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/virtual-outbound-preview") public AjaxResult virtualPreview(@RequestBody Map<String,Object> body){return AjaxResult.success(virtualOutbound.preview(company(),body));}
+    @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/virtual-outbound") public AjaxResult virtualSubmit(@RequestBody Map<String,Object> body){return AjaxResult.success(virtualOutbound.submit(company(),body,SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/{id}/retry-virtual-outbound") public AjaxResult virtualRetry(@PathVariable long id,@RequestBody Map<String,Object> body){require(body.containsKey("control_version"),"缺少发货单版本");return AjaxResult.success(virtualOutbound.retry(company(),id,number(body,"control_version"),SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/{id}/query-virtual-outbound") public AjaxResult virtualQuery(@PathVariable long id){return AjaxResult.success(virtualOutbound.reconcile(company(),id,SecurityUtils.getUsername()));}
+    @Resource private OrderShipmentDispatchService shipmentDispatch;
+    @RequiresPermissions("order:shipment:dispatch") @PostMapping("/shipments/dispatch-preview") public AjaxResult dispatchPreview(@RequestBody Map<String,Object> body){return AjaxResult.success(shipmentDispatch.preview(company(),body));}
+    @RequiresPermissions("order:shipment:dispatch") @PostMapping("/shipments/dispatch") public AjaxResult dispatchShipments(@RequestBody Map<String,Object> body){return AjaxResult.success(shipmentDispatch.submit(company(),body,SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:shipment:queryWarehouse") @PostMapping("/shipments/{id}/query-warehouse") public AjaxResult queryShipmentWarehouse(@PathVariable long id){return AjaxResult.success(shipmentDispatch.query(company(),id,SecurityUtils.getUsername()));}
+    @Resource private OrderCarrierService carriers;
+    @RequiresPermissions("order:pull:config") @GetMapping("/carrier-catalog") public AjaxResult carrierCatalog(){return AjaxResult.success(carriers.catalog(company()));}
+    @RequiresPermissions("order:pull:config") @PostMapping("/carriers") public AjaxResult saveCarrier(@RequestBody Map<String,Object> body){carriers.saveCarrier(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
+    @RequiresPermissions("order:pull:config") @GetMapping("/carrier-configs") public AjaxResult carrierConfigs(){return AjaxResult.success(carriers.configurations(company()));}
+    @RequiresPermissions("order:pull:config") @PostMapping("/carrier-configs") public AjaxResult saveCarrierConfig(@RequestBody Map<String,Object> body){carriers.saveConfiguration(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
+    @RequiresPermissions("order:order:query") @GetMapping("/shipments/{id}/carrier-options") public AjaxResult carrierOptions(@PathVariable long id){return AjaxResult.success(carriers.options(company(),id));}
+    @RequiresPermissions("order:shipment:carrier") @PostMapping("/shipments/match-carrier") public AjaxResult matchCarriers(@RequestBody Map<String,Object> body){return AjaxResult.success(carriers.match(company(),body,SecurityUtils.getUsername()));}
+    @Resource private OrderAllocationService allocations;
+    @Resource private OrderShipmentService shipments;
+    @RequiresPermissions("order:order:list") @GetMapping("/shipments/list") public TableDataInfo shipments(@RequestParam(defaultValue="") String number,@RequestParam(required=false) Long channelId,@RequestParam(defaultValue="") String status,@RequestParam(defaultValue="") String store,@RequestParam(defaultValue="") String sku,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize){return shipments.list(company(),number,channelId,status,store,sku,pageNum,pageSize);}
+    @RequiresPermissions("order:order:query") @GetMapping("/shipments/{id}") public AjaxResult shipment(@PathVariable long id){return AjaxResult.success(shipments.detail(company(),id));}
+    @RequiresPermissions("order:order:allocate") @PostMapping("/business/{id}/shipments") public AjaxResult generateShipments(@PathVariable long id,@RequestBody Map<String,Object> body){require(body.containsKey("control_version"),"请刷新订单后重试");return AjaxResult.success(shipments.generate(company(),id,number(body,"control_version"),SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:pull:config") @GetMapping("/allocation-configs") public AjaxResult allocationConfigs(){return AjaxResult.success(allocations.configurations(company()));}
+    @RequiresPermissions("order:pull:config") @GetMapping("/allocation-config/{channel}") public AjaxResult allocationConfig(@PathVariable long channel){return AjaxResult.success(allocations.configuration(company(),channel));}
+    @RequiresPermissions("order:pull:config") @PostMapping("/allocation-config") public AjaxResult saveAllocationConfig(@RequestBody Map<String,Object> body){allocations.save(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
+    @RequiresPermissions("order:order:allocate") @PostMapping("/business/allocate-batch") public AjaxResult allocateBatch(@RequestBody Map<String,Object> body){return AjaxResult.success(allocations.allocate(company(),body,SecurityUtils.getUsername()));}
     @Resource private OrderVoidService voids;
     @RequiresPermissions("order:order:void") @PostMapping("/business/void-batch") public AjaxResult voidBatch(@RequestBody Map<String,Object> body){List<Map<String,Object>> result=voids.request(company(),body,SecurityUtils.getUsername());coordinator.poll();return AjaxResult.success(result);}
     @RequiresPermissions("order:order:list") @PostMapping("/business/void-results") public AjaxResult voidResults(@RequestBody List<Long> ids){return AjaxResult.success(businessOrders.results(company(),ids));}
@@ -22,6 +47,8 @@ public class OrderController {
     @RequiresPermissions("order:order:hold") @PostMapping("/business/resume-batch") public AjaxResult resume(@RequestBody Map<String,Object> body){List<Map<String,Object>> result=reviews.apply(company(),"resume",body,SecurityUtils.getUsername());coordinator.poll();return AjaxResult.success(result);}
 
     @Resource private OrderWorkspaceService workspace;
+    @RequiresPermissions("order:pull:config") @GetMapping("/conversion-configs") public AjaxResult conversionConfigs(){return AjaxResult.success(workspace.conversionConfigs(company()));}
+    @RequiresPermissions("order:pull:config") @PostMapping("/conversion-configs") public AjaxResult saveConversionConfig(@RequestBody Map<String,Object> body){workspace.saveConversion(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
     @Resource private OrderCoordinator coordinator;
     @Resource private OrderRepository repository;
     @Resource private OrderProductMatchService productMatch;

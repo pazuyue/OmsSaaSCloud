@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS oms_order_allocation_config (
+ id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ company_code VARCHAR(50) NOT NULL,
+ channel_id BIGINT NOT NULL,
+ policy_json TEXT NOT NULL,
+ revision BIGINT NOT NULL DEFAULT 1,
+ updated_by VARCHAR(64) NOT NULL,
+ update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ UNIQUE KEY shop_scope(company_code,channel_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ALTER TABLE oms_order
+ ADD COLUMN allocation_status VARCHAR(24) NOT NULL DEFAULT 'NONE',
+ ADD COLUMN allocation_quantity BIGINT NOT NULL DEFAULT 0,
+ ADD COLUMN allocation_policy TEXT NULL,
+ ADD COLUMN allocation_receipts MEDIUMTEXT NULL,
+ ADD COLUMN allocation_error VARCHAR(500) NOT NULL DEFAULT '',
+ ADD COLUMN allocation_at DATETIME NULL;

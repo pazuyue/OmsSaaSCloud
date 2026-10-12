@@ -20,15 +20,17 @@ def main():
     wms_schema(DB, backup=False)
     cache = Path.home() / '.cache/oms-local'
     test = Path('oms-modules/oms-supplychain/src/test/java/com/oms/supplychain/PurchaseWorkspaceTest.java')
-    shutil.copy2(ROOT / test, cache / 'source' / test)
+    shutil.copytree(ROOT/'oms-modules/oms-supplychain/src',cache/'source/oms-modules/oms-supplychain/src',dirs_exist_ok=True)
     env = dict(os.environ, PURCHASE_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{DB}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai', INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'], JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
-    command = [str(ROOT / 'docker/local/tools/apache-maven-3.9.9/bin/mvn'), '-B', '-f', str(cache / 'source/pom.xml'), '-Plocal-docker', '-Dmaven.repo.local='+str(cache/'m2'), '-pl', 'oms-modules/oms-supplychain', '-Dtest=PurchaseWorkspaceTest', 'test']
+    command = [str(ROOT / 'docker/local/tools/apache-maven-3.9.9/bin/mvn'), '-B', '-f', str(cache / 'source/pom.xml'), '-Plocal-docker', '-Dmaven.repo.local='+str(cache/'m2'), '-pl', 'oms-modules/oms-supplychain', '-Dtest=PurchaseWorkspaceTest,WmsOutboundServiceTest', 'test']
     with (ROOT/'docker/local/logs/purchase-workspace-tests.log').open('w') as log:
         result = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
     if result.returncode: raise SystemExit(result.returncode)
     report = ET.parse(cache/'source/oms-modules/oms-supplychain/target/surefire-reports/TEST-com.oms.supplychain.PurchaseWorkspaceTest.xml').getroot().attrib
     assert int(report['tests']) >= 20 and int(report.get('skipped',0)) == 0 and int(report['failures']) == int(report['errors']) == 0, report
+    outbound = ET.parse(cache/'source/oms-modules/oms-supplychain/target/surefire-reports/TEST-com.oms.supplychain.WmsOutboundServiceTest.xml').getroot().attrib
+    assert int(outbound['tests']) >= 10 and int(outbound.get('skipped',0)) == 0 and int(outbound['failures']) == int(outbound['errors']) == 0, outbound
     execute('DROP DATABASE '+DB)
-    print('PASS purchase workflow MySQL integration tests:', report['tests'])
+    print('PASS purchase and outbound MySQL integration tests:', int(report['tests'])+int(outbound['tests']))
 
 if __name__ == '__main__': main()

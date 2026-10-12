@@ -19,10 +19,14 @@ def column(database, table, name, definition):
     return False
 
 def install_inventory(database):
+    from configure_order_warehouse import install_inventory as install_warehouse_inventory
+    install_warehouse_inventory(database)
     execute((HERE / 'migrations/20261010_order_stock.sql').read_text(encoding='utf-8'), database)
     execute((HERE / 'migrations/20261011_order_logical_stock.sql').read_text(encoding='utf-8'), database)
     from configure_business_orders import install_inventory as install_business_inventory
     install_business_inventory(database)
+    from configure_order_virtual_outbound import install_inventory as install_virtual_outbound
+    install_virtual_outbound(database)
     column(database, 'oms_inventory', 'pending_public_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '已销售但尚未逻辑预占的公共库存需求，不属于实物库存'")
     added = column(database, 'oms_channel_inventory', 'quota_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '普通分货额度基数，与最终可售分开维护'")
     column(database, 'oms_channel_inventory', 'quota_reserved_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '已逻辑预占中使用普通额度的数量'")
@@ -53,6 +57,8 @@ def main():
     assert list((HERE/'backups').glob('oms-saas-complete-*.sql')), 'Create a local database backup before changing schemas'
     execute(f'CREATE DATABASE IF NOT EXISTS {ORDER_DB} CHARACTER SET utf8mb4 COLLATE utf8mb4_bin')
     execute((HERE/'migrations/20261010_order.sql').read_text(encoding='utf-8'),ORDER_DB)
+    from configure_order_shipments import install_order as install_shipments_order
+    install_shipments_order(ORDER_DB)
     from configure_order_trade_types import install as install_trade_types
     install_trade_types(ORDER_DB)
     from configure_order_exceptions import install as install_exceptions
@@ -67,6 +73,8 @@ def main():
     for index,(title,permission) in enumerate([('查看订单详情','order:order:query'),('查看原始报文','order:order:raw'),('重试转单','order:order:retry'),('配置店铺拉单','order:pull:config'),('补拉与重试任务','order:pull:execute'),('管理推送库','order:source:config')]):
         menus.append(ensure_menu(title,menus[1],'',kind='F',permission=permission,order=20+index))
     for menu in menus:execute(f'INSERT INTO sys_role_menu(role_id,menu_id) SELECT 1,{menu} WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu WHERE role_id=1 AND menu_id={menu})')
+    from configure_order_settings import install as install_order_settings
+    install_order_settings()
     if execute("SELECT COUNT(*) FROM sys_job WHERE invoke_target='orderPullTask.scanAll()'").strip()=='0':
         execute("INSERT INTO sys_job(job_name,job_group,invoke_target,cron_expression,misfire_policy,concurrent,status,create_by,create_time,remark) VALUES ('天猫订单公司店铺扫描','DEFAULT','orderPullTask.scanAll()','0/10 * * * * ?','3','1','0','admin',NOW(),'统一触发oms-order；按公司店铺分页执行，手工补拉不修改自动游标')")
     content=nacos_get('oms-channel-dev.yml').replace('com.oms.channel','com.oms.order').replace('qm_oms_saas_channel',ORDER_DB)
@@ -100,6 +108,8 @@ feign.client.config.default.readTimeout: 30000
     compose_path.write_text(json.dumps(compose,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     from configure_business_orders import install_permissions
     install_permissions()
+    from configure_order_shipments import install_permissions as install_shipments_permissions
+    install_shipments_permissions()
     print('Independent oms-order schema, service, /order gateway route, menus and Quartz trigger installed')
 
 if __name__=='__main__':main()

@@ -25,3 +25,29 @@ export const reviewOrders = (action, data) => request({ url: `${base}/business/$
 
 export const voidOrders = data => request({ url: `${base}/business/void-batch`, method: 'post', data })
 export const voidResults = ids => request({ url: `${base}/business/void-results`, method: 'post', data: ids })
+
+export const allocationConfig = channel => request({ url: `${base}/allocation-config/${channel}` })
+export const saveAllocationConfig = data => request({ url: `${base}/allocation-config`, method: 'post', data })
+export const allocateOrders = data => request({ url: `${base}/business/allocate-batch`, method: 'post', data, timeout: 600000 })
+
+export const conversionConfigs = () => request({ url: `${base}/conversion-configs` })
+export const saveConversionConfig = data => request({ url: `${base}/conversion-configs`, method: 'post', data })
+export const allocationConfigs = () => request({ url: `${base}/allocation-configs` })
+
+export const shipmentList = params => request({ url: `${base}/shipments/list`, params })
+export const shipmentDetail = id => request({ url: `${base}/shipments/${id}` })
+export const generateShipments = (id, data) => request({ url: `${base}/business/${id}/shipments`, method: 'post', data })
+export const carrierCatalog = () => request({ url: `${base}/carrier-catalog` })
+export const saveCarrier = data => request({ url: `${base}/carriers`, method: 'post', data })
+export const carrierConfigs = () => request({ url: `${base}/carrier-configs` })
+export const saveCarrierConfig = data => request({ url: `${base}/carrier-configs`, method: 'post', data })
+export const shipmentCarrierOptions = id => request({ url: `${base}/shipments/${id}/carrier-options` })
+export const matchShipmentCarriers = data => request({ url: `${base}/shipments/match-carrier`, method: 'post', data, timeout: 90000 })
+export const previewShipmentDispatch = data => request({ url: `${base}/shipments/dispatch-preview`, method: 'post', data, timeout: 120000 })
+export const dispatchShipments = data => request({ url: `${base}/shipments/dispatch`, method: 'post', data, timeout: 120000 })
+export const queryShipmentWarehouse = id => request({ url: `${base}/shipments/${id}/query-warehouse`, method: 'post', timeout: 120000 })
+
+export const previewVirtualOutbound = data => request({ url: '/order/orders/shipments/virtual-outbound-preview', method: 'post', data, timeout: 120000 })
+export const submitVirtualOutbound = data => request({ url: '/order/orders/shipments/virtual-outbound', method: 'post', data, timeout: 120000 })
+export const retryVirtualOutbound = (id, data) => request({ url: `/order/orders/shipments/${id}/retry-virtual-outbound`, method: 'post', data, timeout: 120000 })
+export const queryVirtualOutbound = id => request({ url: `/order/orders/shipments/${id}/query-virtual-outbound`, method: 'post', timeout: 120000 })

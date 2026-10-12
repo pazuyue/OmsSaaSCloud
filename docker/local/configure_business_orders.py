@@ -3,6 +3,8 @@ from configure_order import column
 from local_db import execute
 
 def install_order(database):
+    from configure_order_warehouse import install_order as install_warehouse_order
+    install_warehouse_order(database)
     for name, definition in {
         'review_mode': "VARCHAR(12) NOT NULL DEFAULT 'AUTO' COMMENT '新业务订单审单方式 AUTO/MANUAL'",
         'manual_match_review': "TINYINT NOT NULL DEFAULT 1 COMMENT '人工匹配商品的新订单需要人工审单'",

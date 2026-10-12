@@ -36,6 +36,7 @@ public class OrderVoidService {
                 if("VOIDED".equals(text(order,"status"))){result.put("status","VOIDED");result.put("message","订单已作废，无需重复处理");return null;}
                 require(number(order,"control_version")==number(request,"control_version"),"订单已变化，请刷新后重试");
                 require(Arrays.asList("WAIT_ALLOCATION","VOIDING").contains(text(order,"status")),"仅支持未进入出库流程的订单整单作废");
+                new OrderShipmentService(repository).markVoiding(company,id);
                 boolean retry="VOIDING".equals(text(order,"status"));
                 if(retry){repository.db().update("UPDATE oms_order SET void_error='',control_version=control_version+1 WHERE company_code=? AND id=?",company,id);}
                 else repository.db().update("UPDATE oms_order SET status='VOIDING',void_reason=?,void_by=?,void_requested_at=NOW(),void_error='',control_version=control_version+1 WHERE company_code=? AND id=?",reason,actor,company,id);
@@ -62,7 +63,7 @@ public class OrderVoidService {
             for(Map<String,Object> line:lines){Map<String,Object> row=byOid.get(text(line,"platform_oid"));require(row!=null&&"CANCELLED".equals(text(row,"status"))&&number(row,"reserved_quantity")==0&&text(row,"sku_sn").equals(text(line,"sku_sn"))&&number(row,"demand_quantity")==number(line,"quantity"),"库存释放结果未确认");}
             tx().execute(transaction->{repository.fence(company,channel,lease);
                 int changed=repository.db().update("UPDATE oms_order SET status='VOIDED',inventory_status='RELEASED',void_at=NOW(),void_error='',stock_attempt_status='DONE',stock_error='',control_version=control_version+1 WHERE company_code=? AND id=? AND status='VOIDING'",company,id);
-                if(changed==1){repository.db().update("UPDATE oms_order_line SET reserved_quantity=0,inventory_reason='订单已作废，需求已取消',inventory_reason_code='ORDER_VOIDED' WHERE company_code=? AND order_id=?",company,id);repository.log(company,number(order,"platform_order_id"),"VOID_COMPLETE","SUCCESS","作废完成，库存需求已取消，预占已按原来源释放；平台交易保持原状态",text(order,"void_by"));}return null;});
+                if(changed==1){new OrderShipmentService(repository).markVoided(company,id);repository.db().update("UPDATE oms_order_line SET reserved_quantity=0,inventory_reason='订单已作废，需求已取消',inventory_reason_code='ORDER_VOIDED' WHERE company_code=? AND order_id=?",company,id);repository.log(company,number(order,"platform_order_id"),"VOID_COMPLETE","SUCCESS","作废完成，库存需求已取消，预占已按原来源释放；平台交易保持原状态",text(order,"void_by"));}return null;});
         }catch(RuntimeException e){
             org.slf4j.LoggerFactory.getLogger(getClass()).warn("Order void release pending company={} order={}",company,id,e);
             String message=e instanceof IllegalArgumentException?e.getMessage():"库存释放未确认，请重试作废；如持续失败请核对库存服务日志";

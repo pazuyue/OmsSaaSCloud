@@ -10,7 +10,7 @@
       <el-table-column label="操作" width="140"><template slot-scope="s"><el-button type="text" :disabled="saving" @click="openPicker(s.row)">{{ s.row.target ? '重新选择' : '选择商品' }}</el-button><el-button v-if="s.row.target" type="text" :disabled="saving" @click="s.row.target=null">清除</el-button></template></el-table-column>
     </el-table>
     <el-form label-width="85px" style="margin-top:20px"><el-form-item label="匹配原因" required><el-input v-model.trim="reason" :disabled="saving" type="textarea" :rows="2" maxlength="200" show-word-limit placeholder="说明为何将平台商品匹配到所选 OMS SKU" /></el-form-item></el-form>
-    <p class="muted">未选择的明细继续保留异常。提交后仍会校验金额、收货信息和交易类型；库存不足时转单成功并等待预占。</p>
+    <p class="muted">未选择的明细继续保留异常。提交后仍会校验金额、收货信息和交易类型；库存不足时转单成功并等待逻辑预占。</p>
     <span slot="footer"><el-button :disabled="saving" @click="close">取消</el-button><el-button type="primary" :disabled="!selected.length || !reason" :loading="saving" @click="submit">确认匹配并重试</el-button></span>
 
     <el-dialog title="选择 OMS 现有商品" :visible.sync="pickerVisible" width="min(1050px, 94vw)" append-to-body :close-on-click-modal="false">

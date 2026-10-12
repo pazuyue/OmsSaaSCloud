@@ -15,7 +15,7 @@ export default {
   data() { return { visible: false, saving: false, completed: false, action: '', orders: [], reason: '', results: [] } },
   computed: {
     title() { return ({ approve: '审核通过', hold: '挂起订单', resume: '解除挂起' })[this.action] || '' },
-    explanation() { return ({ approve: '审核不解除挂起。待预占订单可先审核，库存足量后才满足分仓条件。', hold: '挂起后停止后续预占，保留需求和已预占库存；审核结果保持不变。', resume: '仅解除人工挂起，保留审核结果。平台阻断未解除的订单不能恢复。' })[this.action] || '' }
+    explanation() { return ({ approve: '审核不解除挂起。待逻辑预占订单可先审核，分仓按店铺整单或部分发货策略校验库存。', hold: '挂起后停止后续逻辑预占和分仓，保留需求、已逻辑预占及仓库占用；审核结果保持不变。', resume: '仅解除人工挂起，保留审核结果。平台阻断未解除的订单不能恢复。' })[this.action] || '' }
   },
   methods: {
     open(action, rows) { if (!rows.length || rows.length > 100) return this.$message.warning('请选择1至100张订单'); this.action = action; this.orders = rows.map(r => ({ id: r.id, control_version: r.control_version })); this.reason = ''; this.results = []; this.completed = false; this.visible = true },
