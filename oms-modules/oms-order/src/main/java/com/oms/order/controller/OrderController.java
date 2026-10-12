@@ -12,6 +12,10 @@ import static com.oms.order.service.OrderValues.*;
 
 @RestController @RequestMapping("/orders")
 public class OrderController {
+    @Resource private OrderShipmentPackageService packages;
+    @Resource private OrderShipmentReceiptService receipts;
+    @RequiresPermissions("order:shipment:package") @PostMapping("/shipments/{id}/packages") public AjaxResult packageRegister(@PathVariable long id,@RequestBody Map<String,Object> body){return AjaxResult.success(packages.register(company(),id,body,SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:shipment:receipt") @PostMapping("/shipments/{id}/reconcile-receipts") public AjaxResult receiptReconcile(@PathVariable long id){return AjaxResult.success(receipts.reconcile(company(),id,SecurityUtils.getUsername()));}
     @Resource private OrderVirtualOutboundService virtualOutbound;
     @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/virtual-outbound-preview") public AjaxResult virtualPreview(@RequestBody Map<String,Object> body){return AjaxResult.success(virtualOutbound.preview(company(),body));}
     @RequiresPermissions("order:shipment:virtualOutbound") @PostMapping("/shipments/virtual-outbound") public AjaxResult virtualSubmit(@RequestBody Map<String,Object> body){return AjaxResult.success(virtualOutbound.submit(company(),body,SecurityUtils.getUsername()));}

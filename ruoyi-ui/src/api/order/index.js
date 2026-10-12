@@ -51,3 +51,6 @@ export const previewVirtualOutbound = data => request({ url: '/order/orders/ship
 export const submitVirtualOutbound = data => request({ url: '/order/orders/shipments/virtual-outbound', method: 'post', data, timeout: 120000 })
 export const retryVirtualOutbound = (id, data) => request({ url: `/order/orders/shipments/${id}/retry-virtual-outbound`, method: 'post', data, timeout: 120000 })
 export const queryVirtualOutbound = id => request({ url: `/order/orders/shipments/${id}/query-virtual-outbound`, method: 'post', timeout: 120000 })
+
+export const registerShipmentPackage = (id, data) => request({ url: `/order/orders/shipments/${id}/packages`, method: 'post', data, timeout: 120000 })
+export const reconcileShipmentReceipts = id => request({ url: `/order/orders/shipments/${id}/reconcile-receipts`, method: 'post', timeout: 120000 })

@@ -11,6 +11,8 @@ def install_order(database):
     install_dispatch(database)
     from configure_order_virtual_outbound import install_order as install_virtual
     install_virtual(database)
+    from configure_order_receipts import install_order as install_receipts
+    install_receipts(database)
 
 
 def install_permissions():
@@ -30,6 +32,8 @@ def install_permissions():
     install_dispatch_permissions()
     from configure_order_virtual_outbound import install_permissions as install_virtual_permissions
     install_virtual_permissions()
+    from configure_order_receipts import install_permissions as install_receipt_permissions
+    install_receipt_permissions()
 
 
 if __name__=='__main__':

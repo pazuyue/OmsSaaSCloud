@@ -10,6 +10,10 @@ import java.util.*;
 public class OrderStockController {
     @Resource private OrderStockService service;
     @Resource private com.oms.inventory.service.impl.OrderVirtualOutboundService virtualOutbound;
+    @InnerAuth @GetMapping("/warehouse-outbound/{request}")
+    public R<Map<String,Object>> warehouseReceipt(@RequestParam("company_code") String company,@PathVariable String request){return R.ok(virtualOutbound.warehouseReceipt(company,request));}
+    @InnerAuth @PostMapping("/warehouse-outbound")
+    public R<Map<String,Object>> warehouseOutbound(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command){return R.ok(virtualOutbound.warehouseOutbound(company,command));}
     @InnerAuth @GetMapping("/virtual-outbound/{request}")
     public R<Map<String,Object>> virtualReceipt(@RequestParam("company_code") String company,@PathVariable String request){return R.ok(virtualOutbound.receipt(company,request));}
     @InnerAuth @PostMapping("/virtual-outbound")

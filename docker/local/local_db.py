@@ -20,3 +20,21 @@ def quote(value):
     if value is None:
         return 'NULL'
     return "'" + str(value).replace('\\', '\\\\').replace("'", "\\'") + "'"
+
+
+def test_jdbc_url(database):
+    """Use the local container network for disposable tests, avoiding WSL port relay churn."""
+    import ipaddress
+    import socket
+    if '_test' not in database or not all(c.isalnum() or c == '_' for c in database):
+        raise ValueError('Disposable test schema required')
+    host, port = '127.0.0.1', 13306
+    result = subprocess.run(['docker', 'inspect', '--format', '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', 'oms-local-mysql'], capture_output=True, text=True)
+    candidate = result.stdout.strip()
+    try:
+        ipaddress.IPv4Address(candidate)
+        with socket.create_connection((candidate, 3306), timeout=2):
+            host, port = candidate, 3306
+    except (ValueError, OSError):
+        pass
+    return f'jdbc:mysql://{host}:{port}/{database}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&connectTimeout=5000&socketTimeout=30000'

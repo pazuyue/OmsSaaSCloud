@@ -18,6 +18,7 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 @Component
 public class QimenProtocol implements WmsProtocol {
     private static final DateTimeFormatter TIME=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public OutboundReceipt outboundCallback(Map<String,Object> c,String secret,Map<String,String> params,String body){return WmsOutboundCallbackParser.qimen(c,secret,params,body);}
     public String provider(){return "QIMEN";}
     public String contentType(){return "application/xml;charset=UTF-8";}
     public boolean outboundSupported(Map<String,Object> c){return "2.0".equals(text(c.get("api_version")));}
@@ -74,8 +75,8 @@ public class QimenProtocol implements WmsProtocol {
     public static String enc(String v){try{return URLEncoder.encode(v,"UTF-8");}catch(java.io.UnsupportedEncodingException e){throw new IllegalStateException(e);}}
     public static String tag(String key,Object value){return "<"+key+">"+escape(text(value))+"</"+key+">";}
     private static String escape(String v){return v.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("'","&apos;");}
-    private static Element parse(String body){try{require(body.length()<=1024*1024,"仓库报文超过1MB");DocumentBuilderFactory f=DocumentBuilderFactory.newInstance();f.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);f.setFeature("http://xml.org/sax/features/external-general-entities",false);f.setFeature("http://xml.org/sax/features/external-parameter-entities",false);f.setXIncludeAware(false);f.setExpandEntityReferences(false);return f.newDocumentBuilder().parse(new InputSource(new StringReader(body))).getDocumentElement();}catch(IllegalArgumentException e){throw e;}catch(Exception e){throw new IllegalArgumentException("仓库XML报文格式错误");}}
-    private static Element child(Element e,String name){for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&name.equals(n.getNodeName()))return (Element)n;return null;}
-    private static List<Element> children(Element e,String name){List<Element> out=new ArrayList<>();for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&name.equals(n.getNodeName()))out.add((Element)n);return out;}
+    static Element parse(String body){try{require(body.length()<=1024*1024,"仓库报文超过1MB");DocumentBuilderFactory f=DocumentBuilderFactory.newInstance();f.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);f.setFeature("http://xml.org/sax/features/external-general-entities",false);f.setFeature("http://xml.org/sax/features/external-parameter-entities",false);f.setXIncludeAware(false);f.setExpandEntityReferences(false);return f.newDocumentBuilder().parse(new InputSource(new StringReader(body))).getDocumentElement();}catch(IllegalArgumentException e){throw e;}catch(Exception e){throw new IllegalArgumentException("仓库XML报文格式错误");}}
+    static Element child(Element e,String name){for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&name.equals(n.getNodeName()))return (Element)n;return null;}
+    static List<Element> children(Element e,String name){List<Element> out=new ArrayList<>();for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&name.equals(n.getNodeName()))out.add((Element)n);return out;}
     private static String value(Element e,String name){NodeList n=e.getElementsByTagName(name);return n.getLength()==0?"":n.item(0).getTextContent().trim();}
 }

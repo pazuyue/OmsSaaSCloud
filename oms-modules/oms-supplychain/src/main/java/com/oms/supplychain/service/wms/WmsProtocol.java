@@ -13,6 +13,18 @@ public interface WmsProtocol {
     default boolean outboundSupported(Map<String,Object> connection){return false;}
     default Wire outboundRequest(Map<String,Object> connection,String secret,String action,Map<String,Object> task,Map<String,Object> payload){throw new IllegalArgumentException("该协议尚未支持发货单下发");}
     default Reply outboundReply(String action,String body){throw new IllegalArgumentException("该协议尚未支持发货单查询");}
+    default OutboundReceipt outboundCallback(Map<String,Object> connection,String secret,Map<String,String> parameters,String body){throw new IllegalArgumentException("该协议尚未支持发货单出库回传");}
+    class OutboundReceipt {
+        public String shipmentSn="",externalOrder="",messageId="",warehouse="",owner="",status="",outboundTime="";
+        public boolean complete;
+        public Integer totalLines;
+        public int sourceLineCount;
+        public List<OutboundLine> lines=new ArrayList<>();
+        public List<OutboundPackage> packages=new ArrayList<>();
+    }
+    class OutboundLine { public String lineNo="",sku="",owner="",batch="";public long quantity; }
+    class OutboundPackage { public String packageCode="",expressCode="",logisticsCode="",logisticsName="";public List<PackageItem> items=new ArrayList<>(); }
+    class PackageItem { public String sku="";public long quantity; }
     class Wire { public String url,body,contentType; public Wire(String u,String b,String c){url=u;body=b;contentType=c;} }
     class Reply { public boolean success;public String externalOrder="",status="",message="",code="",documentSn="",warehouse="",owner=""; }
     class Receipt {

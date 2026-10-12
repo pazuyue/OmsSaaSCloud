@@ -8,6 +8,8 @@ def install_order(database):
 
 def install_supplychain(database):
     execute((HERE/'migrations/20261012_wms_outbound.sql').read_text(encoding='utf-8'), database)
+    from configure_order_receipts import install_supplychain as install_receipts
+    install_receipts(database)
 
 
 def install_permissions():

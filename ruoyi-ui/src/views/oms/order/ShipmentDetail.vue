@@ -33,6 +33,7 @@
           <el-table-column label="已发货" prop="shipped_quantity" width="90" />
           <el-table-column label="占用来源" min-width="155"><template slot-scope="s">{{ s.row.source_type === 'LOCK' ? '继承渠道锁库' : '公共库存转占用' }}<div class="hint">分仓回执 {{ s.row.allocation_id }}</div></template></el-table-column>
         </el-table>
+        <shipment-outbound-history :detail="detail" @changed="changed" />
         <el-table v-if="detail.logs && detail.logs.length" :data="detail.logs" class="summary"><el-table-column label="操作时间" prop="create_time" width="170" /><el-table-column label="操作人" prop="operator_name" width="130" /><el-table-column label="结果" width="90"><template slot-scope="s">{{ s.row.result === 'SUCCESS' ? '成功' : s.row.result === 'FAILED' ? '失败' : '待处理' }}</template></el-table-column><el-table-column label="处理记录" prop="message" min-width="280" /></el-table>
         <div class="footer"><el-button v-if="detail.can_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" type="primary" @click="$refs.virtualOutbound.open([detail])">虚拟出库</el-button><el-button v-if="detail.can_retry_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'RETRY')">重试虚拟出库</el-button><el-button v-if="detail.can_query_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'QUERY')">核对出库</el-button><el-button v-if="detail.can_dispatch" v-hasPermi="['order:shipment:dispatch']" type="primary" @click="$refs.dispatch.open([detail])">{{ detail.wms_dispatch_state === 'FAILED' ? '重试下发' : '下发仓库' }}</el-button><el-button v-if="detail.can_query_warehouse" v-hasPermi="['order:shipment:queryWarehouse']" @click="$refs.dispatch.open([detail], 'QUERY')">查询仓库</el-button><el-button v-if="detail.wms_dispatch_state && detail.wms_dispatch_state !== 'NONE'" v-hasPermi="['warehouse:wms:log']" @click="$refs.wmsLogs.open(detail.shipment_sn)">仓库交互日志</el-button><template v-if="detail.can_match_carrier"><el-button v-if="detail.status === 'WAIT_CARRIER'" v-hasPermi="['order:shipment:carrier']" type="primary" @click="$refs.carrier.open([detail])">匹配快递</el-button><el-button v-hasPermi="['order:shipment:carrier']" @click="$refs.carrier.open([detail], 'MANUAL')">{{ detail.carrier_code ? '调整快递' : '手工选择' }}</el-button></template><el-button @click="openOrder">查看来源订单</el-button><el-button @click="open(detail.id)">刷新详情</el-button><el-button @click="visible=false">关闭</el-button></div>
       </template>
@@ -49,13 +50,14 @@ import ShipmentDispatchDialog from './ShipmentDispatchDialog'
 import ShipmentDispatchStatus from './ShipmentDispatchStatus'
 import ShipmentVirtualOutboundDialog from './ShipmentVirtualOutboundDialog'
 import WmsLogs from '@/views/oms/warehouse/WmsLogs'
+import ShipmentOutboundHistory from './ShipmentOutboundHistory'
 export default {
-  components: { ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs },
+  components: { ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory },
   data() { return { visible: false, loading: false, detail: null, requestId: 0 } },
   methods: {
     label: shipmentLabel, tone: shipmentTone,
     changed() { this.$emit('changed'); this.open(this.detail.id) },
-    async open(id) { const request = ++this.requestId; this.visible = true; this.loading = true; this.detail = null; try { const r = await shipmentDetail(id); if (request === this.requestId) this.detail = r.data } finally { if (request === this.requestId) this.loading = false } },
+    async open(id) { const request = ++this.requestId; this.visible = true; this.loading = true; if (!this.detail || this.detail.id !== id) this.detail = null; try { const r = await shipmentDetail(id); if (request === this.requestId) this.detail = r.data } finally { if (request === this.requestId) this.loading = false } },
     openOrder() { const id = this.detail.order_id; this.visible = false; this.$emit('open-order', id) }
   }
 }

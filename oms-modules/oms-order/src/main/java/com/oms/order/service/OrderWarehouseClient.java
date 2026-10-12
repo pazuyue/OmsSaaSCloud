@@ -8,6 +8,8 @@ import java.util.*;
 
 @FeignClient(contextId="orderWarehouseAllocationClient",name="oms-inventory",configuration=OrderShipmentWmsFeignConfig.class)
 public interface OrderWarehouseClient {
+    @GetMapping("/orderStock/internal/warehouse-outbound/{request}") R<Map<String,Object>> warehouseReceipt(@RequestParam("company_code") String company,@PathVariable("request") String request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderStock/internal/warehouse-outbound") R<Map<String,Object>> warehouseOutbound(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/orderStock/internal/virtual-outbound/{request}")
     R<Map<String,Object>> virtualReceipt(@RequestParam("company_code") String company,@PathVariable("request") String request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/virtual-outbound")

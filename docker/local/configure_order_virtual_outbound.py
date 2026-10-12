@@ -13,6 +13,9 @@ def install_inventory(database):
         column(database, table, 'outbound_quantity', 'BIGINT NOT NULL DEFAULT 0')
     column(database, 'oms_order_warehouse_allocation', 'outbound_shipment_sn', "VARCHAR(64) COLLATE utf8mb4_bin NOT NULL DEFAULT ''")
 
+    from configure_order_receipts import install_inventory as install_receipts
+    install_receipts(database)
+
 
 def install_permissions():
     from seed_business import ensure_menu

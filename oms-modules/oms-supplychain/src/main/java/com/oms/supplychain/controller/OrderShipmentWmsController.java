@@ -14,6 +14,9 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 @RestController @RequestMapping("/shipmentWms/internal")
 public class OrderShipmentWmsController {
     @Resource private WmsOutboundService outbound;
+    @Resource private WmsOutboundReceiptService receipts;
+    @InnerAuth @GetMapping("/receipts") public R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam(value="shipment_sn",defaultValue="") String sn,@RequestParam(value="include_failed",defaultValue="false") boolean failed){require(sn.isEmpty()||sn.matches("[A-Za-z0-9_-]{1,64}"),"发货单号无效");return scoped(company,()->receipts.pending(company.toUpperCase(Locale.ROOT),sn,failed));}
+    @InnerAuth @PostMapping("/receipts/{event}/result") public R<Boolean> result(@RequestParam("company_code") String company,@PathVariable long event,@RequestBody Map<String,Object> body){require(body.get("success") instanceof Boolean,"回传结果参数无效");return scoped(company,()->{receipts.posted(company.toUpperCase(Locale.ROOT),event,Boolean.TRUE.equals(body.get("success")),text(body.get("message")));return true;});}
     @Resource private WmsTenantRoutes routes;
     @Resource private DataSource dataSource;
     private <T> R<T> scoped(String company,Supplier<T> work){require(company.matches("[A-Za-z0-9_-]{1,50}"),"公司编码无效");require(dataSource instanceof DynamicRoutingDataSource,"租户数据源未配置");DynamicRoutingDataSource routing=(DynamicRoutingDataSource)dataSource;String datasource=routes.datasource(company);require(routing.getDataSources().containsKey(datasource)&&routing.getDataSource(datasource)==routing.getDataSources().get(datasource),"仓库租户数据源不存在或不唯一");DynamicDataSourceContextHolder.push(datasource);try{return R.ok(work.get());}finally{DynamicDataSourceContextHolder.poll();}}

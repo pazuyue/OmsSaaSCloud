@@ -4,7 +4,7 @@ import subprocess
 import shutil
 import sys
 from pathlib import Path
-from local_db import execute, ENV, ROOT
+from local_db import execute, ENV, ROOT, test_jdbc_url
 
 def main():
     database='inventory_workspace_test'
@@ -39,7 +39,7 @@ def main():
     shutil.copy2(ROOT/daily,cache/'source'/daily)
     coordinator='oms-modules/oms-inventory/src/test/java/com/oms/inventory/DailyCoordinatorTest.java'
     shutil.copy2(ROOT/coordinator,cache/'source'/coordinator)
-    env=dict(os.environ,INVENTORY_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{database}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai',INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
+    env=dict(os.environ,INVENTORY_TEST_URL=test_jdbc_url(database),INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     mvn=ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'
     command=[str(mvn),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-inventory','-Dtest=InventoryTransactionsTest,AllocationWorkspaceTest,ProductInventoryQueryTest,DailyAllocationTest,DailyCoordinatorTest','-DfailIfNoTests=false','test']
     with (ROOT/'docker/local/logs/inventory-tests.log').open('w') as log:

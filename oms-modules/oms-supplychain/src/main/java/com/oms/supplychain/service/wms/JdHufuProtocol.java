@@ -16,6 +16,7 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 public class JdHufuProtocol implements WmsProtocol {
     private final ObjectMapper json=new ObjectMapper();
     private static final DateTimeFormatter TIME=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public OutboundReceipt outboundCallback(Map<String,Object> c,String secret,Map<String,String> params,String body){return WmsOutboundCallbackParser.hufu(c,secret,params,body);}
     public String provider(){return "JD_HUFU";}
     public String contentType(){return "application/json;charset=UTF-8";}
     public boolean outboundSupported(Map<String,Object> c){return "2.0".equals(text(c.get("api_version")));}
