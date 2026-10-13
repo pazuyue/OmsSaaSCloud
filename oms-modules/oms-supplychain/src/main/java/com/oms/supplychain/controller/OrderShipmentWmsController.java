@@ -15,6 +15,8 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 public class OrderShipmentWmsController {
     @Resource private WmsOutboundService outbound;
     @Resource private WmsOutboundReceiptService receipts;
+    @Resource private SalesOutboundDocumentService salesDocuments;
+    @InnerAuth @PostMapping("/sales-document") public R<Boolean> salesDocument(@RequestParam("company_code") String company,@RequestBody Map<String,Object> body){return scoped(company,()->salesDocuments.sync(company,body));}
     @InnerAuth @GetMapping("/receipts") public R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam(value="shipment_sn",defaultValue="") String sn,@RequestParam(value="include_failed",defaultValue="false") boolean failed){require(sn.isEmpty()||sn.matches("[A-Za-z0-9_-]{1,64}"),"发货单号无效");return scoped(company,()->receipts.pending(company.toUpperCase(Locale.ROOT),sn,failed));}
     @InnerAuth @PostMapping("/receipts/{event}/result") public R<Boolean> result(@RequestParam("company_code") String company,@PathVariable long event,@RequestBody Map<String,Object> body){require(body.get("success") instanceof Boolean,"回传结果参数无效");return scoped(company,()->{receipts.posted(company.toUpperCase(Locale.ROOT),event,Boolean.TRUE.equals(body.get("success")),text(body.get("message")));return true;});}
     @Resource private WmsTenantRoutes routes;

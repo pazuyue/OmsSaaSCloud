@@ -1,0 +1,16 @@
+{
+  "fixture_only": true,
+  "no_live_dispatch": true,
+  "single_partial_quantity": 6,
+  "separate_source_batches": 2,
+  "mixed_selection_submitted_only_eligible": true,
+  "auto_progress_read_only": true,
+  "unknown_requires_query": true,
+  "definitive_failure_retry_snapshot": true,
+  "dispatch_state_filter": true,
+  "timeout_no_resubmit": true,
+  "close_stops_polling": true,
+  "posted_receipts_override_stale_query": true,
+  "partial_and_completed_quantities_refresh": true,
+  "browser_errors": []
+}

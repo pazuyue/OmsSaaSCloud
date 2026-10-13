@@ -1,0 +1,42 @@
+{
+  "shipment_id": 3,
+  "shipment_sn": "XS870a08cfdade45b5be4ad60d3cc802ab",
+  "order_id": 28,
+  "external_order": "SIMOUT_a041cedd4f3143ef806f",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 6,
+  "message_id": "SIM_COMPLETE_XS870a08cfdade45b5be4ad60d3cc802ab",
+  "package_code": "SIMPKG_XS870a08cfdade45b5be4ad60d3cc802ab",
+  "express_code": "TEST-SF-XS870a08cfdade45b5be4ad60d3cc802ab",
+  "outbound_time": "2026-10-13 14:47:04",
+  "plans": [
+    {
+      "id": 3,
+      "sku_sn": "ACCEPT_OUT_20261012164334",
+      "quantity": 2,
+      "platform_oid": "9006371393940767110",
+      "store_code": "VC0001",
+      "batch_code": "TEST-BATCH-20261012164334"
+    },
+    {
+      "id": 4,
+      "sku_sn": "test01",
+      "quantity": 4,
+      "platform_oid": "9007664503219726110",
+      "store_code": "VC0001",
+      "batch_code": "0001"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS870a08cfdade45b5be4ad60d3cc802ab</deliveryOrderCode><deliveryOrderId>SIMOUT_a041cedd4f3143ef806f</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS870a08cfdade45b5be4ad60d3cc802ab</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-13 14:47:04</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>3</orderLineNo><itemCode>ACCEPT_OUT_20261012164334</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-BATCH-20261012164334</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>4</orderLineNo><itemCode>test01</itemCode><ownerCode>VC00001</ownerCode><batchCode>0001</batchCode><inventoryType>ZP</inventoryType><actualQty>4</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS870a08cfdade45b5be4ad60d3cc802ab</packageCode><expressCode>TEST-SF-XS870a08cfdade45b5be4ad60d3cc802ab</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_OUT_20261012164334</itemCode><quantity>2</quantity></item><item><itemCode>test01</itemCode><quantity>4</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS870a08cfdade45b5be4ad60d3cc802ab",
+    "quantity": 6,
+    "status": "SHIPPED",
+    "shipped_quantity": 6,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS870a08cfdade45b5be4ad60d3cc802ab",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

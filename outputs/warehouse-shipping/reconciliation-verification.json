@@ -1,0 +1,36 @@
+{
+  "shipment": "XS870a08cfdade45b5be4ad60d3cc802ab",
+  "result": {
+    "id": 3,
+    "shipment_sn": "XS870a08cfdade45b5be4ad60d3cc802ab",
+    "status": "SHIPPED",
+    "quantity": 6,
+    "shipped_quantity": 6,
+    "packaged_quantity": 6,
+    "package_count": 1,
+    "unpacked_quantity": 0,
+    "lines": [
+      {
+        "id": 3,
+        "sku_sn": "ACCEPT_OUT_20261012164334",
+        "quantity": 2,
+        "shipped_quantity": 2,
+        "packaged_quantity": 2
+      },
+      {
+        "id": 4,
+        "sku_sn": "test01",
+        "quantity": 4,
+        "shipped_quantity": 4,
+        "packaged_quantity": 4
+      }
+    ]
+  },
+  "warehouse_status": "DELIVERED",
+  "fulfillment_state": "SHIPPED",
+  "progress_message": "仓库状态：DELIVERED；全部出库，实际出库 6 / 6 件，剩余 0 件；已记录 1 个包裹，包裹覆盖 6 件；库存扣账完成",
+  "browser_queries": 1,
+  "no_dispatch_or_inventory_requests": true,
+  "query_did_not_change_fulfillment": true,
+  "browser_errors": []
+}

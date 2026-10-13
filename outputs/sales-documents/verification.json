@@ -1,0 +1,8 @@
+{
+  "live_historical_backfill": 0,
+  "ui_fixture_only": true,
+  "new_xs_type_filter": true,
+  "sales_lines_and_movements": true,
+  "no_purchase_actions_on_sales": true,
+  "browser_errors": []
+}

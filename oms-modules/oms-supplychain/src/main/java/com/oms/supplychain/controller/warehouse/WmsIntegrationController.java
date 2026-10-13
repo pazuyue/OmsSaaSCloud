@@ -34,7 +34,8 @@ public class WmsIntegrationController {
             default:throw new IllegalArgumentException("未知仓库操作");
         }
     }
-    @GetMapping("/wmsIntegration/logs") public AjaxResult logs(@RequestParam(defaultValue="") String sn,@RequestParam(defaultValue="1") int page){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.list(company(),sn,page));}
+    @GetMapping("/wmsIntegration/logs") public AjaxResult logs(@RequestParam(defaultValue="") String sn,@RequestParam(defaultValue="1") int page,@RequestParam(defaultValue="") String action,@RequestParam(defaultValue="") String result){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.list(company(),sn.trim(),page,action,result));}
+    @GetMapping("/wmsIntegration/log-summary") public AjaxResult logSummary(@RequestParam(defaultValue="") String sn){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.summary(company(),sn.trim()));}
     @GetMapping("/wmsIntegration/logs/{id}") public AjaxResult log(@PathVariable long id){AuthUtil.checkPermi("warehouse:wms:payload");return AjaxResult.success(logs.detail(company(),id));}
     /** Only this exact public route bypasses user login. Provider signatures authenticate the body. */
     @PostMapping("/wmsCallback/{route}/{key}") public ResponseEntity<String> callback(@PathVariable String route,@PathVariable String key,@RequestBody String body,HttpServletRequest request){

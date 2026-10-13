@@ -20,12 +20,12 @@
       <el-table-column v-if="view === 'exceptions' || view === 'business'" type="selection" width="48" fixed="left" :selectable="selectable" />
       <el-table-column v-if="view === 'tasks'" prop="channel_name" label="店铺" min-width="170" />
       <template v-if="view === 'tasks'">
-        <el-table-column label="任务" min-width="110"><template slot-scope="s">{{ s.row.task_type === 'AUTO' ? '自动拉单' : '手工补拉' }}<div class="muted">任务 {{ s.row.id }}</div></template></el-table-column>
-        <el-table-column label="推送更新时间范围" min-width="280"><template slot-scope="s">{{ s.row.start_time }}<div class="muted">至 {{ s.row.end_time }}（不含）</div></template></el-table-column>
+        <el-table-column label="任务" min-width="145"><template slot-scope="s">{{ s.row.task_type === 'AUTO' ? '自动拉单' : s.row.pull_mode === 'TID' ? '按单号补拉' : '按时间补拉' }}<div class="muted">任务 {{ s.row.id }}</div></template></el-table-column>
+        <el-table-column label="补拉范围 / 进度" min-width="280"><template slot-scope="s"><template v-if="s.row.pull_mode === 'TID'">指定平台单号<div class="muted">{{ tidCount(s.row) }} 个单号 · 查看逐单结果</div></template><template v-else>{{ s.row.start_time }}<div class="muted">至 {{ s.row.end_time }}（不含）</div><div v-if="s.row.task_type !== 'AUTO'" class="muted">已读取至 {{ s.row.page_time }}</div></template></template></el-table-column>
         <el-table-column label="结果" min-width="145"><template slot-scope="s"><el-tag size="small" :type="tone(s.row.status)">{{ label(s.row.status) }}</el-tag><div class="muted">拉取 {{ s.row.pulled_count }} / 新增 {{ s.row.inserted_count }} / 重复 {{ s.row.duplicate_count }}</div></template></el-table-column>
         <el-table-column label="说明" prop="error_message" min-width="200" show-overflow-tooltip />
         <el-table-column label="更新时间" prop="update_time" width="165" />
-        <el-table-column label="操作" width="90" fixed="right"><template slot-scope="s"><el-button v-if="s.row.status === 'FAILED'" v-hasPermi="['order:pull:execute']" type="text" @click="retryTask(s.row)">重试</el-button></template></el-table-column>
+        <el-table-column label="操作" width="170" fixed="right"><template slot-scope="s"><el-button v-if="s.row.task_type !== 'AUTO'" type="text" @click="$refs.backfillTask.open([s.row.id])">逐单结果</el-button><el-button v-if="s.row.status === 'FAILED' && s.row.pull_mode !== 'TID'" v-hasPermi="['order:pull:execute']" type="text" @click="retryTask(s.row)">重试</el-button></template></el-table-column>
       </template>
       <template v-else>
         <el-table-column label="订单信息" min-width="310" fixed="left"><template slot-scope="s"><order-identity :order="s.row" link @open="openDetail(s.row)" /></template></el-table-column>
@@ -52,14 +52,8 @@
     </el-table>
     <pagination v-show="total" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="load" />
 
-    <el-dialog title="补拉天猫订单" :visible.sync="backfillVisible" width="620px" append-to-body :close-on-click-modal="false">
-      <el-form ref="backfillForm" :model="backfill" label-width="120px" :rules="backfillRules">
-        <el-form-item label="店铺" prop="channel_ids"><el-select v-model="backfill.channel_ids" multiple filterable style="width:100%" placeholder="选择已配置拉单的店铺"><el-option v-for="shop in catalog.channels.filter(s => s.pull_configured)" :key="shop.channel_id" :value="shop.channel_id" :label="shop.channel_name" /></el-select></el-form-item>
-        <el-form-item label="推送更新时间" prop="range"><el-date-picker v-model="backfill.range" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间（不含）" style="width:100%" /></el-form-item>
-        <p class="muted">按推送库更新时间补拉，最多90天。任务在后台分页执行，不修改自动拉单进度；重复订单不会重复建单或预占。</p>
-      </el-form>
-      <span slot="footer"><el-button @click="backfillVisible=false">取消</el-button><el-button type="primary" :loading="saving" @click="submitBackfill">提交补拉</el-button></span>
-    </el-dialog>
+    <order-backfill-dialog ref="backfillDialog" :channels="catalog.channels" @submitted="backfillSubmitted" />
+    <order-backfill-task ref="backfillTask" @open-order="fetchDetail('platform', $event)" />
 
     <el-drawer :title="detailView === 'business' ? '业务订单详情' : '平台订单详情'" :visible.sync="detailVisible" size="min(1300px, 96vw)" append-to-body>
       <div v-loading="detailLoading" class="order-panel" v-if="detail">
@@ -97,7 +91,7 @@
 </template>
 
 <script>
-import { orderCatalog, orderList, orderDetail, backfillOrders, retryOrders, retryResults, retryPullTask, orderPayload } from '@/api/order'
+import { orderCatalog, orderList, orderDetail, retryOrders, retryResults, retryPullTask, orderPayload } from '@/api/order'
 import ProductMatchDialog from './ProductMatchDialog'
 import OrderIdentity from './OrderIdentity'
 import OrderStockProgress from './OrderStockProgress'
@@ -110,17 +104,18 @@ import OrderVoidDialog from './OrderVoidDialog'
 import OrderAllocationDialog from './OrderAllocationDialog'
 import OrderAllocationDetail from './OrderAllocationDetail'
 import OrderShipments from './OrderShipments'
-const required = message => ({ required: true, message, trigger: 'change' })
+import OrderBackfillDialog from './OrderBackfillDialog'
+import OrderBackfillTask from './OrderBackfillTask'
 export default {
   name: 'OmsOrderWorkspace',
-  components: { OrderShipments, OrderAllocationDialog, OrderAllocationDetail, OrderWarehouseStockStatus, OrderIdentity, OrderStockProgress, OrderVoidDialog, OrderReviewDialog, ProductMatchDialog, BusinessStockDetail, StockRetryDialog },
+  components: { OrderBackfillDialog, OrderBackfillTask, OrderShipments, OrderAllocationDialog, OrderAllocationDetail, OrderWarehouseStockStatus, OrderIdentity, OrderStockProgress, OrderVoidDialog, OrderReviewDialog, ProductMatchDialog, BusinessStockDetail, StockRetryDialog },
   props: { viewOverride: { type: String, default: '' }, embedded: { type: Boolean, default: false } },
-  data() { return { advancedFilters: false, tableSize: 'medium', matchVisible: false, query: { channelId: undefined, tid: '', status: '', reviewStatus: '', documentStatus: '', processingStatus: '', category: '', sku: '', waitingMinutes: 0, pageNum: 1, pageSize: 20 }, exceptionRange: [], categories: { PRODUCT: '商品异常', DATA: '订单数据异常', CONFIG: '转单配置异常', SYSTEM: '系统故障' }, selected: [], retrying: false, retryItems: [], retryVisible: false, resultLoading: false, resultTimer: null, catalog: { channels: [], sources: [] }, rows: [], total: 0, loading: false, error: '', saving: false, backfillVisible: false, backfill: { channel_ids: [], range: [] }, detailVisible: false, detailLoading: false, detail: null, detailView: 'platform', detailTab: 'lines', payloadVisible: false, payload: '', requestId: 0, detailRequestId: 0, titles: { platform: '平台订单', business: '业务订单', exceptions: '转单异常', tasks: '拉单任务' }, descriptions: { platform: '查看天猫原始订单及转单进度。', business: '查看已转单订单及逻辑预占结果。', exceptions: '修正商品匹配或订单数据问题后，重试原订单。', tasks: '查看各店铺自动拉单、手工补拉的进度和结果。' }, backfillRules: { channel_ids: [required('请选择店铺')], range: [required('请选择推送更新时间范围')] } } },
+  data() { return { advancedFilters: false, tableSize: 'medium', matchVisible: false, query: { channelId: undefined, tid: '', status: '', reviewStatus: '', documentStatus: '', processingStatus: '', category: '', sku: '', waitingMinutes: 0, pageNum: 1, pageSize: 20 }, exceptionRange: [], categories: { PRODUCT: '商品异常', DATA: '订单数据异常', CONFIG: '转单配置异常', SYSTEM: '系统故障' }, selected: [], retrying: false, retryItems: [], retryVisible: false, resultLoading: false, resultTimer: null, catalog: { channels: [], sources: [] }, rows: [], total: 0, loading: false, error: '', saving: false, detailVisible: false, detailLoading: false, detail: null, detailView: 'platform', detailTab: 'lines', payloadVisible: false, payload: '', requestId: 0, detailRequestId: 0, titles: { platform: '平台订单', business: '业务订单', exceptions: '转单异常', tasks: '拉单任务' }, descriptions: { platform: '查看天猫原始订单及转单进度。', business: '查看已转单订单及逻辑预占结果。', exceptions: '修正商品匹配或订单数据问题后，重试原订单。', tasks: '查看各店铺自动拉单、手工补拉的进度和结果。' } } },
   computed: {
     advancedFilterCount() { return [this.query.category, this.query.sku, this.query.status, this.query.reviewStatus, this.query.processingStatus, this.query.waitingMinutes, (this.exceptionRange || []).length].filter(Boolean).length },
     detailAttention() { if (!this.detail) return ''; return (this.detailView === 'business' ? this.businessBlocks(this.detail) : [this.detail.fulfillment_block_reason].filter(Boolean)).join('；') },
     view() { const view = this.viewOverride || this.$route.query.view; return ['platform', 'business', 'exceptions', 'tasks'].includes(view) ? view : 'platform' },
-    statusOptions() { const values = this.view === 'business' ? ['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'PART_CONSUMED', 'CONSUMED', 'SOURCE_CHANGED'] : this.view === 'tasks' ? ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED'] : ['PENDING', 'PROCESSING', 'WAITING', 'EXCEPTION', 'SUCCESS']; return values.map(x => [x, this.label(x)]) }
+    statusOptions() { const values = this.view === 'business' ? ['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'PART_CONSUMED', 'CONSUMED', 'SOURCE_CHANGED'] : this.view === 'tasks' ? ['PENDING', 'RUNNING', 'SUCCESS', 'PARTIAL', 'FAILED'] : ['PENDING', 'PROCESSING', 'WAITING', 'EXCEPTION', 'SUCCESS']; return values.map(x => [x, this.label(x)]) }
   },
   watch: { '$route.fullPath'() { this.reset(); this.openRequestedOrder() } },
   created() { this.loadCatalog(); this.load(); this.openRequestedOrder() },
@@ -145,7 +140,7 @@ export default {
     selectable(row) { return this.view === 'business' ? true : this.canRetry(row) },
     actionLabel(value) { return ({ WMS_OUTBOUND_RESULT: '仓库出库确认', PACKAGE_REGISTER: '登记运单', VIRTUAL_OUTBOUND_SUBMIT: '提交虚拟出库', VIRTUAL_OUTBOUND_RETRY: '重试虚拟出库', VIRTUAL_OUTBOUND_RESULT: '虚拟出库结果', WMS_SUBMIT: '提交仓库下发', WMS_DISPATCH: '仓库下发结果', WMS_QUERY: '查询仓库结果', CARRIER_MATCH: '匹配快递', CARRIER_ADJUST: '调整快递', SHIPMENT_CREATE: '生成发货单', WAREHOUSE_ALLOCATE: '订单分仓', VOID_REQUEST: '申请作废', VOID_RETRY: '重试作废', VOID_COMPLETE: '作废完成', VOID_FAILED: '作废处理失败', REVIEW_AUTO: '自动审核', REVIEW_PENDING: '进入待审核', REVIEW_APPROVE: '人工审核', ORDER_HOLD: '人工挂起', ORDER_RESUME: '解除挂起', CONVERT: '转单', DEMAND_REGISTER: '登记库存需求', RETRY: '重试转单', MANUAL_MATCH: '人工匹配商品', STOCK_RETRY_REQUEST: '重新逻辑预占', STOCK_RETRY: '逻辑预占处理失败', STOCK_PROGRESS: '逻辑预占进度更新', SOURCE_CHANGED: '平台信息变化', STOCK_RECOVERED: '逻辑预占处理恢复' })[value] || value },
     async stockChanged() { await this.load(); if (this.detailVisible && this.detailView === 'business' && this.detail) { const id = this.detail.id; const fresh = (await orderDetail('business', id)).data; if (this.detail && this.detail.id === id && this.detailView === 'business') this.detail = fresh } },
-    label(value) { if (['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'RELEASED', 'PART_CONSUMED', 'CONSUMED'].includes(value)) return logicalStockLabel(value); return ({ PART_ALLOCATED: '部分分仓', WAIT_CARRIER: '待匹配快递', WAIT_DISPATCH: '待下发仓库', DISPATCHING: '下发处理中', PART_DISPATCHED: '部分下发', WAREHOUSE_PROCESSING: '仓库处理中', PART_SHIPPED: '部分发货', SHIPPED: '已发货', WAIT_REVIEW: '待审核', VOIDING: '作废处理中', VOIDED: '已作废', PENDING: '待处理', PROCESSING: '处理中', WAITING: '等待转单条件', EXCEPTION: '转单异常', SUCCESS: '已完成', RUNNING: '执行中', FAILED: '执行失败', SOURCE_CHANGED: '待订单更新', WAIT_ALLOCATION: '待分仓', WAIT_BUYER_PAY: '待付款', WAIT_SELLER_SEND_GOODS: '已付款待发货', WAIT_BUYER_CONFIRM_GOODS: '已发货', TRADE_FINISHED: '交易完成', TRADE_CLOSED: '交易关闭', TRADE_CLOSED_BY_TAOBAO: '交易关闭' })[value] || value || '—' },
+    label(value) { if (['WAIT_RESERVE', 'PART_RESERVED', 'RESERVED', 'RELEASED', 'PART_CONSUMED', 'CONSUMED'].includes(value)) return logicalStockLabel(value); return ({ PART_ALLOCATED: '部分分仓', WAIT_CARRIER: '待匹配快递', WAIT_DISPATCH: '待下发仓库', DISPATCHING: '下发处理中', PART_DISPATCHED: '部分下发', WAREHOUSE_PROCESSING: '仓库处理中', PART_SHIPPED: '部分发货', SHIPPED: '已发货', WAIT_REVIEW: '待审核', VOIDING: '作废处理中', VOIDED: '已作废', PENDING: '待处理', PROCESSING: '处理中', WAITING: '等待转单条件', EXCEPTION: '转单异常', SUCCESS: '已完成', RUNNING: '执行中', PARTIAL: '部分失败', FAILED: '执行失败', SOURCE_CHANGED: '待订单更新', WAIT_ALLOCATION: '待分仓', WAIT_BUYER_PAY: '待付款', WAIT_SELLER_SEND_GOODS: '已付款待发货', WAIT_BUYER_CONFIRM_GOODS: '已发货', TRADE_FINISHED: '交易完成', TRADE_CLOSED: '交易关闭', TRADE_CLOSED_BY_TAOBAO: '交易关闭' })[value] || value || '—' },
     tone(value) { return ['SUCCESS', 'RESERVED'].includes(value) ? 'success' : ['FAILED', 'EXCEPTION'].includes(value) ? 'danger' : 'warning' },
     canRetry(row) { return !row.business_order_id && !row.change_pending && row.platform_status === 'WAIT_SELLER_SEND_GOODS' && ['EXCEPTION', 'WAITING'].includes(row.conversion_status) },
     async productMatched(result) { this.detailVisible = false; this.retryItems = [result]; this.retryVisible = true; this.$message.success('人工匹配已保存，正在重试转单'); await this.load(); await this.refreshResults() },
@@ -162,8 +157,9 @@ export default {
     async load() { const id = ++this.requestId; this.loading = true; this.error = ''; try { const result = await orderList(this.view, { ...this.query, from: (this.exceptionRange || [])[0] || '', to: (this.exceptionRange || [])[1] || '' }); if (id !== this.requestId) return; this.rows = result.rows; this.total = result.total; this.selected = [] } catch (_) { if (id === this.requestId) { this.error = '订单服务加载失败，请刷新重试'; this.rows = []; this.total = 0 } } finally { if (id === this.requestId) this.loading = false } },
     search() { this.query.pageNum = 1; this.load() },
     reset() { this.query = { channelId: undefined, tid: '', status: '', reviewStatus: '', documentStatus: '', processingStatus: '', category: '', sku: '', waitingMinutes: 0, pageNum: 1, pageSize: 20 }; this.exceptionRange = []; this.load() },
-    openBackfill() { this.backfill = { channel_ids: this.query.channelId ? [this.query.channelId] : [], range: [] }; this.backfillVisible = true },
-    submitBackfill() { this.$refs.backfillForm.validate(async valid => { if (!valid || this.saving) return; this.saving = true; try { await backfillOrders({ channel_ids: this.backfill.channel_ids, start_time: this.backfill.range[0], end_time: this.backfill.range[1] }); this.backfillVisible = false; this.$message.success('补拉任务已提交，可在拉单任务查看进度'); this.load() } finally { this.saving = false } }) },
+    openBackfill() { this.$refs.backfillDialog.open(this.query.channelId) },
+    backfillSubmitted(result) { this.$refs.backfillTask.open(result.task_ids); this.load() },
+    tidCount(row) { try { return JSON.parse(row.requested_tids || '[]').length } catch (_) { return 0 } },
     async retry(row) { await this.submitRetry([row]) },
     async retryTask(row) { await retryPullTask(row.id); this.$message.success('已提交任务重试'); this.load() },
     openRequestedOrder() { const id = this.$route.query.orderId; if (this.view === 'business' && /^[1-9][0-9]*$/.test(String(id || ''))) this.fetchDetail('business', id) },

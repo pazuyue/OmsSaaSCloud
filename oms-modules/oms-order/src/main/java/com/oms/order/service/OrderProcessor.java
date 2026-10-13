@@ -22,9 +22,9 @@ public class OrderProcessor {
             Map<String,Object> config=repository.config(company,channel);
             for(Map<String,Object> order:voids.due(company,channel)){if(!repository.renew(company,channel,lease))return;voids.process(company,number(order,"id"),channel,lease);}
             // Remote master-data validation before source reads and before any inventory transaction.
-            catalog.validateShop(company,channel);
             Map<String,Object> task=repository.nextTask(company,channel,lease);
-            if(task!=null)try{List<Map<String,Object>> rows=push.read(company,text(config,"source_key"),text(config,"seller_nick"),task,50);repository.page(company,channel,lease,task,rows,50);}catch(RuntimeException e){repository.taskFailed(company,channel,lease,number(task,"id"),safe(e));}
+            try{catalog.validateShop(company,channel);}catch(RuntimeException e){if(task!=null)repository.taskFailed(company,channel,lease,number(task,"id"),safe(e));throw e;}
+            if(task!=null)try{if(!text(task,"pull_source_key").isEmpty())require(text(task,"pull_source_key").equals(text(config,"source_key"))&&text(task,"pull_seller_nick").equals(text(config,"seller_nick")),"店铺拉单来源已改变，请核对后重新提交补拉");List<Map<String,Object>> rows="TID".equals(text(task,"pull_mode"))&&task.get("selected_tids") instanceof List&&((List<?>)task.get("selected_tids")).isEmpty()?Collections.emptyList():push.read(company,text(config,"source_key"),text(config,"seller_nick"),task,50);repository.page(company,channel,lease,task,rows,50);}catch(RuntimeException e){repository.taskFailed(company,channel,lease,number(task,"id"),safe(e));}
             boolean convert=number(config,"auto_convert")==1;
             List<Map<String,Object>> orders=repository.dueOrders(company,channel,convert);
             for(Map<String,Object> order:orders){if(!repository.renew(company,channel,lease))break;process(company,number(order,"id"),lease,config,convert);}
@@ -51,10 +51,10 @@ public class OrderProcessor {
                 return;
             }
             Map<String,String> manual=repository.manualMatches(company,id);
-            List<String> skus=new ArrayList<>();for(TmallOrderParser.Line line:trade.lines){String sku=manual.getOrDefault(line.oid,line.outerSku);if(!sku.isEmpty()&&!skus.contains(sku))skus.add(sku);}
+            List<String> skus=new ArrayList<>();for(TmallOrderParser.Line line:trade.lines){String sku=matchingSku(line,manual);if(!sku.isEmpty()&&!skus.contains(sku))skus.add(sku);}
             Map<String,List<Map<String,Object>>> goods=catalog.goods(company,skus);Map<String,String> matched=new HashMap<>(),errors=new LinkedHashMap<>();
             OrderStockCommand command=new OrderStockCommand();command.setChannelId(number(config,"channel_id"));command.setPlatformTid(trade.tid);command.setAllowPublicStock(number(config,"allow_public_stock")==1);
-            for(TmallOrderParser.Line line:trade.lines){String sku=manual.getOrDefault(line.oid,line.outerSku);List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());String error=sku.isEmpty()?"缺少outer_sku_id":found.isEmpty()?"内部SKU不存在："+sku:found.size()!=1?"内部SKU匹配不唯一："+sku:"";
+            for(TmallOrderParser.Line line:trade.lines){String sku=matchingSku(line,manual);List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());String error=sku.isEmpty()?"缺少outer_sku_id":found.isEmpty()?"内部SKU不存在："+sku:found.size()!=1?"内部SKU匹配不唯一："+sku:"";
                 if(error.isEmpty()&&(number(found.get(0),"is_fd")==1||number(found.get(0),"is_package")==1))error="一期不处理套装或福袋："+line.outerSku;
                 if(!error.isEmpty()){errors.put(line.oid,error);continue;}
                 matched.put(line.oid,sku);OrderStockCommand.Line stock=new OrderStockCommand.Line();stock.setPlatformOid(line.oid);stock.setSkuSn(sku);stock.setQuantity(line.quantity);command.getLines().add(stock);
@@ -65,7 +65,7 @@ public class OrderProcessor {
                 List<Map<String,Object>> details=new ArrayList<>();
                 for(TmallOrderParser.Line line:trade.lines)if(errors.containsKey(line.oid)){
                     Map<String,Object> detail=new LinkedHashMap<>();detail.put("platform_oid",line.oid);detail.put("outer_sku_id",line.outerSku);
-                    String sku=manual.getOrDefault(line.oid,line.outerSku);detail.put("manual_sku_sn",manual.get(line.oid));List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());
+                    String sku=matchingSku(line,manual);detail.put("manual_sku_sn",manual.get(line.oid));List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());
                     detail.put("code",sku.isEmpty()?"OUTER_SKU_MISSING":found.isEmpty()?"SKU_NOT_FOUND":found.size()!=1?"SKU_AMBIGUOUS":"PRODUCT_UNSUPPORTED");
                     detail.put("message",errors.get(line.oid));details.add(detail);
                 }
@@ -79,6 +79,13 @@ public class OrderProcessor {
             repository.complete(company,id,lease,config,result);
         }catch(IllegalArgumentException e){repository.failure(company,id,lease,e instanceof ConversionException?((ConversionException)e).code:"ORDER_DATA_INVALID",safe(e),Collections.emptyList(),false);}
         catch(RuntimeException e){repository.failure(company,id,lease,"SYSTEM_FAILURE","服务调用或数据处理失败，请查看重试进度",Collections.emptyList(),true);}
+    }
+    private static String matchingSku(TmallOrderParser.Line line,Map<String,String> manual){
+        // Keep the source snapshot intact; only trim boundary whitespace for lookup and stock commands.
+        String sku=manual.getOrDefault(line.oid,line.outerSku);int start=0,end=sku.length();
+        while(start<end&&(Character.isWhitespace(sku.charAt(start))||Character.isSpaceChar(sku.charAt(start))))start++;
+        while(end>start&&(Character.isWhitespace(sku.charAt(end-1))||Character.isSpaceChar(sku.charAt(end-1))))end--;
+        return sku.substring(start,end);
     }
     private String safe(Exception e){String text=e instanceof IllegalArgumentException?e.getMessage():"服务调用或数据处理失败，任务已保留，将自动重试";if(text==null)text="订单处理失败";return text.substring(0,Math.min(480,text.length()));}
 }

@@ -814,11 +814,49 @@
           "max-file": "3"
         }
       }
+    },
+    "wms-simulator": {
+      "image": "python:3.10-slim-bookworm",
+      "container_name": "oms-local-wms-simulator",
+      "restart": "unless-stopped",
+      "command": [
+        "python",
+        "-u",
+        "/app/simulator.py",
+        "--config",
+        "/config/credentials.json",
+        "--db",
+        "/data/documents.sqlite"
+      ],
+      "volumes": [
+        "./wms_qimen_simulator.py:/app/simulator.py:ro",
+        "./wms-simulator-credentials.json:/config/credentials.json:ro",
+        "wms-simulator-data:/data"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8080/health',timeout=2)"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 5
+      },
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "5m",
+          "max-file": "2"
+        }
+      }
     }
   },
   "volumes": {
     "mysql-data": {},
     "redis-data": {},
-    "uploads": {}
+    "uploads": {},
+    "wms-simulator-data": {}
   }
 }

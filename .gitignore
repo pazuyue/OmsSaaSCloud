@@ -151,3 +151,5 @@ Thumbs.db
 *.zip
 *.rar
 *.7z
+# Local WMS simulation credentials
+docker/local/wms-simulator-credentials.json

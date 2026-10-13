@@ -7,6 +7,13 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 class ConfiguredPushReaderTest {
+    @Test void exactTidsAreScopedBySellerWithoutTimeRestrictionAndKeepLongPrecision(){
+        String url=System.getenv("ORDER_TEST_URL");Assumptions.assumeTrue(url!=null&&url.contains("/order_workspace_test?"));JdbcTemplate db=new JdbcTemplate(new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD")));
+        db.execute("CREATE TABLE IF NOT EXISTS jdp_tb_trade(tid BIGINT PRIMARY KEY,status VARCHAR(64),type VARCHAR(64),seller_nick VARCHAR(200),created DATETIME,modified DATETIME,jdp_modified DATETIME,jdp_response MEDIUMTEXT,KEY idx_seller_time(seller_nick,jdp_modified))");
+        TmallPushReader.Source source=new TmallPushReader.Source();source.setJdbcUrl(url);source.setUsername("root");source.setPassword(System.getenv("INVENTORY_TEST_PASSWORD"));source.setRevision(1);PushSourceService sources=mock(PushSourceService.class);when(sources.resolve("VERIFY","source")).thenReturn(source);ConfiguredPushReader reader=new ConfiguredPushReader();ReflectionTestUtils.setField(reader,"sources",sources);
+        try{db.update("INSERT INTO jdp_tb_trade(tid,seller_nick,jdp_modified,jdp_response) VALUES (9007199254740992,'__TID_TEST__','2001-01-01 00:00:00','neighbor')");db.update("INSERT INTO jdp_tb_trade(tid,seller_nick,jdp_modified,jdp_response) VALUES (9007199254740993,'__TID_TEST__','2001-01-01 00:00:00','payload')");db.update("INSERT INTO jdp_tb_trade(tid,seller_nick,jdp_modified,jdp_response) VALUES (9007199254740994,'__OTHER_TID_TEST__','2026-10-01 00:00:00','payload')");Map<String,Object> task=new HashMap<>();task.put("pull_mode","TID");task.put("selected_tids",Arrays.asList("9007199254740993","9007199254740994"));List<Map<String,Object>> found=reader.read("VERIFY","source","__TID_TEST__",task,50);assertEquals(1,found.size());assertEquals("9007199254740993",found.get(0).get("tid"));assertEquals("2001-01-01 00:00:00",found.get(0).get("jdp_modified"));assertEquals(3,db.queryForObject("SELECT COUNT(*) FROM jdp_tb_trade WHERE seller_nick IN ('__TID_TEST__','__OTHER_TID_TEST__')",Integer.class));}
+        finally{reader.close();db.update("DELETE FROM jdp_tb_trade WHERE seller_nick IN ('__TID_TEST__','__OTHER_TID_TEST__')");}
+    }
     @Test void previewIsBoundedAndDoesNotReadOrderPayload(){
         String url=System.getenv("ORDER_TEST_URL");Assumptions.assumeTrue(url!=null&&url.contains("/order_workspace_test?"));
         JdbcTemplate db=new JdbcTemplate(new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD")));
