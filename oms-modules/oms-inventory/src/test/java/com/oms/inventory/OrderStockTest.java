@@ -49,6 +49,7 @@ public class OrderStockTest {
         @Bean PlatformTransactionManager transactionManager(DataSource ds){return new DataSourceTransactionManager(ds);}
         @Bean com.oms.inventory.service.impl.rule.AllocationReservationService reservations(){return new com.oms.inventory.service.impl.rule.AllocationReservationService();}
         @Bean com.oms.inventory.service.impl.OrderVirtualOutboundService virtualOutbound(){return new com.oms.inventory.service.impl.OrderVirtualOutboundService();}
+        @Bean com.oms.inventory.service.impl.OrderStockDiagnosticsService diagnostics(){return new com.oms.inventory.service.impl.OrderStockDiagnosticsService();}
         @Bean OrderStockService stock(){return new OrderStockService();}
         @Bean com.oms.inventory.service.impl.OrderWarehouseAllocationService warehouses(){return new com.oms.inventory.service.impl.OrderWarehouseAllocationService();}
         @Bean InventoryMutationService inventory(){return new InventoryMutationService();}
@@ -273,5 +274,25 @@ public class OrderStockTest {
         seed(100,20);OrderStockCommand c=command("3009",10,true);execute("register",c);execute("reserve",c);ExecutorService pool=Executors.newFixedThreadPool(2);
         try{List<Future<?>> jobs=new ArrayList<>();for(int i=0;i<2;i++)jobs.add(pool.submit(()->allocate("3009",false,false,false,"W1")));for(Future<?> job:jobs)job.get(30,TimeUnit.SECONDS);}finally{pool.shutdownNow();}
         assertEquals(10,n("SELECT SUM(quantity) FROM oms_order_warehouse_allocation"));assertEquals(90,n("SELECT zp_available_number FROM wms_inventory"));
+    }
+
+    Map<String,Object> diagnostic(String tid){Map<String,Object> key=new HashMap<>();key.put("channel_id",1);key.put("platform_tid",tid);return context.getBean(com.oms.inventory.service.impl.OrderStockDiagnosticsService.class).facts("VERIFY",Arrays.asList(key)).get(0);}
+    List<Map<String,Object>> diagnosticIssues(String tid){return (List<Map<String,Object>>)((List<Map<String,Object>>)diagnostic(tid).get("sku_facts")).get(0).get("issues");}
+    @Test void zeroChannelQuotaWithEnoughPublicStockIsAWarningNotACompanyShortage() throws Exception {
+        seed(2,0);OrderStockCommand command=command("99001",2,true);execute("register",command);execute("reserve",command);
+        String snapshot=db.queryForObject("SELECT decision_snapshot FROM oms_order_stock_demand",String.class);com.fasterxml.jackson.databind.JsonNode json=new com.fasterxml.jackson.databind.ObjectMapper().readTree(snapshot);assertEquals(2,json.path("company_available").asInt());assertEquals(0,json.path("channel_quota").asInt());assertEquals(2,json.path("public_needed").asInt());
+        List<Map<String,Object>> issues=diagnosticIssues("99001");assertEquals(1,issues.size());assertEquals("QUOTA",issues.get(0).get("category"));assertEquals(0,((Number)issues.get(0).get("blocking")).intValue());assertEquals(2,n("SELECT reserved_stock FROM oms_inventory"));assertEquals(2,n("SELECT zp_available_number FROM wms_inventory"));execute("reserve",command);assertEquals(snapshot,db.queryForObject("SELECT decision_snapshot FROM oms_order_stock_demand",String.class));
+    }
+    @Test void NormalReservationDoesNotBecomeShortageBecauseItsOwnReservationMakesAvailabilityZero(){
+        seed(2,2);OrderStockCommand command=command("99002",2,true);execute("register",command);assertEquals(0,n("SELECT available_stock FROM oms_channel_inventory"));execute("reserve",command);assertEquals(0,n("SELECT available_stock FROM oms_inventory"));assertTrue(diagnosticIssues("99002").isEmpty());db.update("UPDATE oms_channel_inventory SET quota_stock=0");assertEquals("QUOTA",diagnosticIssues("99002").get(0).get("category"));db.update("UPDATE oms_channel_inventory SET quota_stock=2");assertTrue(diagnosticIssues("99002").isEmpty());
+    }
+    @Test void diagnosticsDistinguishRealShortageFromPublicStockRestrictionAndNeverWriteBalances(){
+        seed(1,10);OrderStockCommand command=command("99003",2,true);execute("register",command);execute("reserve",command);long events=n("SELECT COUNT(*) FROM oms_order_stock_event");List<Map<String,Object>> issues=diagnosticIssues("99003");assertEquals("SHORTAGE",issues.get(0).get("category"));assertEquals(1,((Number)((Map<?,?>)issues.get(0).get("evidence")).get("shortage_quantity")).intValue());assertEquals(1,n("SELECT available_stock FROM oms_inventory"));assertEquals(events,n("SELECT COUNT(*) FROM oms_order_stock_event"));command.setAllowPublicStock(false);execute("reserve",command);assertEquals("RESTRICTED",diagnosticIssues("99003").get(0).get("category"));
+    }
+    @Test void diagnosticsGroupSameSkuAndDetectMissingSourceWithoutLeakingOtherCompanies(){
+        seed(4,2);OrderStockCommand command=command("99004",2,true);OrderStockCommand.Line line=new OrderStockCommand.Line();line.setPlatformOid("990041");line.setSkuSn("A");line.setQuantity(2);command.getLines().add(line);execute("register",command);execute("reserve",command);assertEquals(1,diagnosticIssues("99004").size());assertEquals(2,((Number)((Map<?,?>)diagnosticIssues("99004").get(0).get("evidence")).get("excess_quantity")).intValue());db.update("DELETE FROM oms_order_stock_source LIMIT 1");assertTrue(diagnosticIssues("99004").stream().anyMatch(issue->"LEDGER".equals(issue.get("category"))));Map<String,Object> key=new HashMap<>();key.put("channel_id",1);key.put("platform_tid","99004");assertTrue(((List<?>)context.getBean(com.oms.inventory.service.impl.OrderStockDiagnosticsService.class).facts("OTHER",Arrays.asList(key)).get(0).get("lines")).isEmpty());
+    }
+    @Test void queuedDemandIsNotRestrictedWhenItsChannelLocksOrOtherUsableStockAreEnough(){
+        locked30();execute("register",command("99005",20,false));assertTrue(diagnosticIssues("99005").isEmpty());clear();seed(100,100);execute("register",command("99006",5,true));db.update("UPDATE oms_inventory SET frozen_stock=10,available_stock=90");assertTrue(diagnosticIssues("99006").isEmpty());
     }
 }

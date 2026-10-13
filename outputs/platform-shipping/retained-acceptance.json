@@ -1,0 +1,13 @@
+{
+  "shipment_sn": "XS870a08cfdade45b5be4ad60d3cc802ab",
+  "request_id": "PS8f532c68dfad303121e423a57429c79fd3eb89a9",
+  "simulated_platform_receipt": "SIMSHIP_66243eff3cdc6647abc9359e",
+  "actual_quantity": 6,
+  "goods": {
+    "9006371393940767110": 2,
+    "9007664503219726110": 4
+  },
+  "attempts": 1,
+  "warehouse_data_unchanged": true,
+  "real_platform_notification_sent": false
+}

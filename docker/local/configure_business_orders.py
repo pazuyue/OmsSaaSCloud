@@ -3,6 +3,10 @@ from configure_order import column
 from local_db import execute
 
 def install_order(database):
+    from configure_platform_shipping import install as install_shipping
+    install_shipping(database)
+    from configure_order_issues import install_order as install_issues
+    install_issues(database)
     from configure_order_warehouse import install_order as install_warehouse_order
     install_warehouse_order(database)
     for name, definition in {
@@ -37,6 +41,8 @@ def install_order(database):
             execute(f'ALTER TABLE {table} ADD INDEX {name}({fields})', database)
 
 def install_inventory(database):
+    from configure_order_issues import install_inventory as install_issues
+    install_issues(database)
     execute("ALTER TABLE oms_order_stock_source MODIFY reserved TINYINT NOT NULL DEFAULT 0 COMMENT '1当前已预占，0已释放；保留来源记录'", database)
     execute("ALTER TABLE oms_order_stock_demand MODIFY status VARCHAR(24) NOT NULL DEFAULT 'WAIT_RESERVE' COMMENT 'WAIT_RESERVE待预占/RESERVED已预占/CANCELLED已取消需求'", database)
     column(database, 'oms_order_stock_demand', 'reason_code', "VARCHAR(40) NOT NULL DEFAULT '' COMMENT '预占等待原因 PUBLIC_DISABLED/SHORTAGE/BALANCE_MISMATCH'")

@@ -23,13 +23,13 @@ def main():
     from configure_business_orders import install_order as install_business_order
     install_business_order('order_workspace_test')
     cache=Path.home()/'.cache/oms-local'
-    for module in ['oms-order','oms-inventory']:
+    for module in ['oms-common-core','oms-order','oms-inventory']:
         source=ROOT/'oms-modules'/module/'src'
         if source.exists():shutil.copytree(source,cache/'source/oms-modules'/module/'src',dirs_exist_ok=True)
     env=dict(os.environ,ORDER_STOCK_TEST_URL=test_jdbc_url(database),ORDER_TEST_URL=test_jdbc_url('order_workspace_test'),INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     for key in ['OMS_ORDER_PUSH_113_URL','OMS_ORDER_PUSH_113_USERNAME','OMS_ORDER_PUSH_113_PASSWORD','OMS_ORDER_PUSH_100_URL','OMS_ORDER_PUSH_100_USERNAME','OMS_ORDER_PUSH_100_PASSWORD']:
         if key in ENV: env[key]=ENV[key].strip("'")
-    command=[str(ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-inventory','-Dtest=TmallOrderParserTest,OrderRepositoryTest,OrderProcessorTest,OrderProductMatchServiceTest,TmallPushReaderTest,OrderStockTest,OrderVirtualOutboundTest,PushSourceServiceTest,ConfiguredPushReaderTest,OrderWorkspaceServiceTest,OrderBackfillServiceTest,OrderAllocationPolicyTest,OrderAllocationServiceTest,OrderShipmentServiceTest,OrderShipmentDispatchServiceTest,OrderShipmentReceiptServiceTest,OrderShipmentPackageServiceTest,OrderSalesDocumentServiceTest,OrderVirtualOutboundServiceTest,OrderCarrierServiceTest,OrderCarrierPolicyTest,OrderReviewPolicyTest,OrderInventoryStatusTest,WarehouseAllocationPlannerTest','-Dsurefire.failIfNoSpecifiedTests=false','test']
+    command=[str(ROOT/'docker/local/tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-inventory','-am','-Dtest=TmallOrderParserTest,OrderRepositoryTest,OrderProcessorTest,OrderProductMatchServiceTest,TmallPushReaderTest,OrderStockTest,OrderVirtualOutboundTest,PushSourceServiceTest,ConfiguredPushReaderTest,OrderWorkspaceServiceTest,OrderBackfillServiceTest,OrderAllocationPolicyTest,OrderAllocationServiceTest,OrderShipmentServiceTest,OrderShipmentDispatchServiceTest,OrderShipmentReceiptServiceTest,OrderShipmentPackageServiceTest,OrderSalesDocumentServiceTest,OrderVirtualOutboundServiceTest,OrderCarrierServiceTest,OrderCarrierPolicyTest,OrderReviewPolicyTest,OrderInventoryStatusTest,OrderIssueServiceTest,OrderPlatformShippingServiceTest,WarehouseAllocationPlannerTest','-Dsurefire.failIfNoSpecifiedTests=false','test']
     if order_only:
         command[command.index('-pl')+1]='oms-modules/oms-order'
         command=[arg.replace(',OrderStockTest,OrderVirtualOutboundTest,',',') if arg.startswith('-Dtest=') else arg for arg in command]

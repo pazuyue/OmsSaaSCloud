@@ -8,6 +8,9 @@ import javax.annotation.Resource;
 import java.util.*;
 @RestController @RequestMapping("/orderStock/internal")
 public class OrderStockController {
+    @Resource private com.oms.inventory.service.impl.OrderStockDiagnosticsService diagnostics;
+    @InnerAuth @PostMapping("/diagnostics")
+    public R<List<Map<String,Object>>> diagnostics(@RequestParam("company_code") String company,@RequestBody List<Map<String,Object>> keys){return R.ok(diagnostics.facts(company,keys));}
     @Resource private OrderStockService service;
     @Resource private com.oms.inventory.service.impl.OrderVirtualOutboundService virtualOutbound;
     @InnerAuth @GetMapping("/warehouse-outbound/{request}")

@@ -1,0 +1,18 @@
+{
+  "retained_shipment": "XS870a08cfdade45b5be4ad60d3cc802ab",
+  "live_parcel_count": 1,
+  "live_quantity": 6,
+  "entries": [
+    "allocation",
+    "business",
+    "shipment",
+    "warehouse_query"
+  ],
+  "copy_and_mobile": true,
+  "multiple_warehouses_and_parcels": true,
+  "same_sku_source_lines_preserved": true,
+  "empty_and_failed_reads_distinct": true,
+  "read_only_browser": true,
+  "retained_document_unchanged": true,
+  "parent_summary_refreshes_with_parcels": true
+}

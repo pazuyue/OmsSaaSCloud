@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS oms_order_issue (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ company_code VARCHAR(50) COLLATE utf8mb4_bin NOT NULL,
+ order_id BIGINT NOT NULL,
+ domain VARCHAR(32) NOT NULL,
+ issue_key VARCHAR(64) NOT NULL,
+ category VARCHAR(32) NOT NULL,
+ reason_code VARCHAR(64) NOT NULL,
+ scope VARCHAR(24) NOT NULL,
+ stage VARCHAR(24) NOT NULL,
+ sku_sn VARCHAR(128) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+ severity VARCHAR(12) NOT NULL,
+ blocking TINYINT NOT NULL DEFAULT 0,
+ state VARCHAR(16) NOT NULL DEFAULT 'OPEN',
+ message VARCHAR(1000) NOT NULL,
+ evidence_json MEDIUMTEXT NOT NULL,
+ evidence_hash VARCHAR(64) NOT NULL,
+ first_seen DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ last_seen DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ resolved_at DATETIME NULL,
+ acknowledged_by VARCHAR(64) NOT NULL DEFAULT '',
+ acknowledged_at DATETIME NULL,
+ acknowledgement VARCHAR(500) NOT NULL DEFAULT '',
+ UNIQUE KEY uk_issue(company_code,order_id,domain,issue_key),
+ KEY idx_issue_filter(company_code,domain,category,state,order_id),
+ KEY idx_issue_order(company_code,order_id,state,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='统一业务问题，按原因及范围保存状态和依据';
+
+CREATE TABLE IF NOT EXISTS oms_order_issue_event (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ company_code VARCHAR(50) COLLATE utf8mb4_bin NOT NULL,
+ order_id BIGINT NOT NULL,
+ issue_id BIGINT NOT NULL,
+ action VARCHAR(24) NOT NULL,
+ actor VARCHAR(64) NOT NULL,
+ message VARCHAR(1000) NOT NULL,
+ evidence_json MEDIUMTEXT NOT NULL,
+ create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ KEY idx_issue_history(company_code,order_id,issue_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='问题发生、确认、变化、解除记录';

@@ -58,3 +58,13 @@ export const queryVirtualOutbound = id => request({ url: `/order/orders/shipment
 
 export const registerShipmentPackage = (id, data) => request({ url: `/order/orders/shipments/${id}/packages`, method: 'post', data, timeout: 120000 })
 export const reconcileShipmentReceipts = id => request({ url: `/order/orders/shipments/${id}/reconcile-receipts`, method: 'post', timeout: 120000 })
+
+export const orderIssues = id => request({ url: `${base}/business/${id}/issues` })
+export const recheckOrderIssues = id => request({ url: `${base}/business/${id}/issues/recheck`, method: 'post', timeout: 60000 })
+export const acknowledgeOrderIssue = (id, issue, data) => request({ url: `${base}/business/${id}/issues/${issue}/acknowledge`, method: 'post', data })
+
+export const platformShippingReport = id => request({ url: `/order/orders/shipments/${id}/platform-shipping`, method: 'get' })
+export const platformShippingSubmit = id => request({ url: `/order/orders/shipments/${id}/platform-shipping`, method: 'post' })
+export const platformShippingAction = (id, task, action) => request({ url: `/order/orders/shipments/${id}/platform-shipping/${task}/${action}`, method: 'post' })
+export const platformShippingConfig = channel => request({ url: `/order/orders/platform-shipping-config/${channel}`, method: 'get' })
+export const savePlatformShippingConfig = (channel, data) => request({ url: `/order/orders/platform-shipping-config/${channel}`, method: 'post', data })

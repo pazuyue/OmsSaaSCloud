@@ -1,0 +1,15 @@
+{
+  "order": "SOb3c545e6286742cf8d176b320414f9be",
+  "sku": "ACCEPT_OUT_20261012164334",
+  "category": "QUOTA",
+  "public_reserved": 2,
+  "excess_quantity": 2,
+  "pending_quantity": 0,
+  "reminder_only": true,
+  "no_fake_historical_snapshot": true,
+  "four_filters": true,
+  "source_breakdown": true,
+  "acknowledgement_fixture_only": true,
+  "blocking_preserved_after_ack": true,
+  "stock_and_workflow_unchanged": true
+}

@@ -100,7 +100,7 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 
 虚拟出库确认后可人工登记一个或多个包裹；只能选择已出库且尚未登记运单的行数量，不再次消耗库存，不生成虚假运单。运单在公司与快递范围内唯一，重复请求/重复包裹按原内容核对；WMS运单以仓库回传为准，不能人工替代。详情展示每次出库数量、来源、时间、记账结果，以及包裹快递、运单、平台子单和商品数量。查询仓库受理状态不会把部分出库或已出库退回仓库处理中。
 
-权限 `order:shipment:package`、`order:shipment:receipt`。`POST /orders/shipments/{id}/packages` 登记虚拟出库运单（版本、稳定请求号、运单号、可选包裹编码/时间、逐行数量）；`POST /orders/shipments/{id}/reconcile-receipts` 核对并重试本发货单原回传。详情只读返回 `outbound_records`、`packages`、`packaged_quantity`、`unpacked_quantity`。平台发货通知仍为下一阶段，不在本次仓库回传或人工登记中发送。
+权限 `order:shipment:package`、`order:shipment:receipt`。`POST /orders/shipments/{id}/packages` 登记虚拟出库运单（版本、稳定请求号、运单号、可选包裹编码/时间、逐行数量）；`POST /orders/shipments/{id}/reconcile-receipts` 核对并重试本发货单原回传。详情只读返回 `outbound_records`、`packages`、`packaged_quantity`、`unpacked_quantity`。仓库回传与人工登记只记录实际出库和包裹。平台通知由独立回传任务处理，当前仅开放本地模拟，未调用真实平台接口。
 
 执行 `docker/local/configure_order_receipts.py` 安装结构、权限及已有虚拟出库的历史展示镜像，不修改实物库存、不自动下发。`docker/local/seed_outbound_acceptance.py` 是用户明确要求保留的单据验收入口：创建独立测试店铺及SKU，暂停拉单和自动转单，模拟销售需求，经实际库存、分仓、虚拟出库、运单登记接口形成8件订单、两次出库共6件、两个测试运单，保留2件余量；不连接推送源，不向平台或真实仓库发货。结果保存 `outputs/outbound-acceptance/retained-test.json`，脚本不会删除验收数据。
 
@@ -131,3 +131,25 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 `TID` 补拉每次一个店铺、1至100个文本单号，按卖家和 TID 精准读取配置的只读推送库，不附加时间范围，也不会自动查询其他店铺或平台接口。任务固定创建时的来源绑定，绑定变化后拒绝继续读取。`oms_order_pull_item` 保存逐单查询和平台同步结果，转单状态按平台订单实时展示。单条保存失败通过保存点回滚，不影响同批其他订单；失败项重试创建新的 TID 任务，不重拉成功项或未找到项。提交请求标识保护网络重试的幂等性。部署先运行 `docker/local/configure_order_backfill.py`，再更新订单服务。
 
 仓库核对结果同时显示受理与实际出库进度。`wms_fulfillment_state` 和 `wms_progress_message` 按已处理回传的出库数量、包裹及待核对记录实时生成；刷新或再次查询不能用旧的等待回传提示覆盖已出库进度。仅仓库查询返回 `DELIVERED` 而没有实际出库回传时仍显示等待回传，不据此扣库存。商品保留原下发快照，并按来源行 ID 叠加当前实际出库及剩余数量。
+
+包裹展示按业务订单 → 实体仓/货主 → 发货单 → 实际包裹组织。分仓明细提供每仓出库、余量、实际包裹计数及只读查看入口；包裹刷新发现数量变化时同步刷新父级汇总。包裹卡片展示运单、来源、出库时间和按 SKU 汇总的实际商品数量，来源行保留平台子单、虚仓及批次。未出库、已出库未关联包裹与读取失败分别展示，不推算包裹数量或展示尚未接入的揽收/签收状态。仅显式本地模拟工具生成的 `SIMPKG_` 包裹配合 `TEST-` 运单标记为模拟运单。
+
+
+统一问题标签首批接入库存域：`SHORTAGE` 库存不足、`QUOTA` 额度不足、`RESTRICTED` 库存受限、`LEDGER` 台账异常。原因码、层级（公司/渠道/仓库/批次）、阶段、提醒/阻断、SKU和证据分别记录，可扩展其他业务域。`oms_order_issue` 保存当前及已解除问题，`oms_order_issue_event` 保存发生、变化、确认、解除与再次发生的依据；确认只表示知悉，不解除阻断，不修改任何库存数量。
+
+库存服务提供只读批量核对接口，按公司、渠道、平台单号校验需求和来源；订单服务每30秒分批同步活跃订单，并允许单单刷新核对。列表按问题类型、层级、影响与状态筛选；商品明细显示渠道锁库/公共补占来源。已解除问题移入记录；核对失败或返回身份/明细不完整时保留原问题，不能按空结果清除。公共补占属于来源说明，不是缺货标签。正常预占使公司可用变为0时，只要需求已满足就不会标记公司库存不足。
+
+新预占尝试在 `oms_order_stock_demand.decision_snapshot` 记录当时余额、渠道额度与补占需求。既有记录不补造历史快照；当前订单按实时余额和自身来源核对，排除自身已预占数量对渠道额度的重复扣减。问题详情明确区分当前核对与预占尝试快照。结构安装：`docker/local/configure_order_issues.py`，没有库存回填或预占策略变更。
+
+
+## 平台发货回传（模拟验收阶段）
+
+从发货单列表、业务订单发货单和发货单详情进入“平台发货回传”。店铺配置在发货单页面，默认关闭，只允许 OFF / SIMULATION；真实接口尚未启用，当前模块没有 TOP 发货调用。模拟模式仅接受 TEST- 运单，开启后自动扫描新增测试包裹，既有测试单据须显式生成任务，不补录历史订单。
+
+`oms_order_platform_shipping_config` 保存店铺开关及 OMS→平台快递编码映射。`oms_order_platform_shipping_task` 按公司、包裹唯一，冻结 TID 文本、OID→本包裹数量、来源明细、快递、运单与商品校验摘要。多个仓库及同一子单分数量发货均按包裹增量处理；单个包裹成功不能把剩余未出库商品标为已发货。生成前核对出库入账、累计数量及子单来源，回传绝不改变仓库状态、包裹数量或库存。
+
+任务状态 PENDING / PROCESSING / SUCCESS / FAILED / UNKNOWN 与仓库状态独立，页面明确标记模拟成功。确定的临时失败最多自动重试3次，人工重试继续使用同一请求和快照，累计提交次数保留。发送结果不确定或处理租约超时后只查询原回执，即使关闭店铺也允许核对，不按“查询不到”直接重新发送。并发领取通过带租约的条件更新防重，回复丢失通过独立持久模拟回执恢复。
+
+`oms_order_platform_shipping_log` 保留生成、发送、核对和人工重试记录。模拟平台回执在 `oms_order_platform_shipping_sim_receipt`，显式 SIMSHIP_ 前缀，不能视为天猫真实发货成功。失败或待确认接入通用 PLATFORM / PLATFORM_SHIP 问题域，重试中保留问题，确认成功后解除，不能被库存核对任务清除。
+
+部署先运行 `docker/local/configure_platform_shipping.py`，再更新订单服务和前端。验收脚本 `verify_platform_shipping_flow.py --enroll-retained` 仅将保留的 XS870a08cfdade45b5be4ad60d3cc802ab 测试单据加入模拟回传，`verify_platform_shipping_ui.py` 只读真实数据并拦截失败/待确认按钮场景。正式回传需后续接入店铺接口授权、真实快递映射及平台按数量部分发货能力核验。

@@ -20,6 +20,7 @@
           <div v-if="row.route" class="connection-info"><span>仓库连接：{{ row.route.connection_name }}</span><el-popover placement="bottom" width="310" trigger="click"><div class="connection-detail">协议：{{ row.route.provider === 'QIMEN' ? '奇门' : '京东虎符' }}<br>外部仓库：{{ row.route.external_warehouse }}<br>外部货主：{{ row.route.external_owner }}<br>仓库快递编码：{{ row.warehouse_carrier_code || '—' }}</div><el-button slot="reference" type="text" size="small">连接详情</el-button></el-popover></div>
           <p :class="['row-message', rowTone(row) === 'danger' ? 'failure' : '']">{{ row.message || '—' }}</p><p v-if="row.wms_external_order" class="warehouse-number">仓库单号：{{ row.wms_external_order }}</p>
           <p v-if="hasSubmitted || querying" class="fulfillment-summary">实际出库 {{ row.shipped_quantity || 0 }} / {{ row.quantity || 0 }} 件 · 剩余 {{ Math.max(0, Number(row.quantity || 0) - Number(row.shipped_quantity || 0)) }} 件 · 已记录 {{ row.package_count || 0 }} 个包裹</p>
+          <shipment-package-cards v-if="hasSubmitted || querying" :detail="row" compact />
           <shipment-dispatch-lines :lines="row.lines || []" :frozen="row.snapshot_scope === 'FROZEN'" :show-actual="hasSubmitted || querying" />
           <div class="row-actions">
             <el-button v-if="canMatch(row) && (!hasSubmitted || row.state === 'BLOCKED')" v-hasPermi="['order:shipment:carrier']" size="mini" @click="$refs.carrier.open([original(row.id)])">匹配 / 调整快递</el-button>
@@ -40,12 +41,13 @@
 import { previewShipmentDispatch, dispatchShipments, queryShipmentWarehouse, shipmentDetail } from '@/api/order'
 import { dispatchLabel, warehouseProgress } from './shipmentLabels'
 import ShipmentDispatchLines from './ShipmentDispatchLines'
+import ShipmentPackageCards from './ShipmentPackageCards'
 import ShipmentCarrierDialog from './ShipmentCarrierDialog'
 import WmsConnections from '@/views/oms/warehouse/WmsConnections'
 import WmsLogs from '@/views/oms/warehouse/WmsLogs'
 const pendingStates = ['SUBMITTED', 'PENDING', 'PROCESSING', 'UNKNOWN']
 export default {
-  components: { ShipmentDispatchLines, ShipmentCarrierDialog, WmsConnections, WmsLogs },
+  components: { ShipmentPackageCards, ShipmentDispatchLines, ShipmentCarrierDialog, WmsConnections, WmsLogs },
   data() { return { visible: false, loading: false, saving: false, querying: false, hasSubmitted: false, items: [], preview: [], results: [], current: {}, requestId: 0, activeGroup: 'eligible', expanded: [], timer: null, polling: false, refreshing: false, refreshedAt: '', pollError: false, pollCount: 0, busyId: null } },
   computed: {
     eligible() { return this.preview.filter(row => row.success) }, blocked() { return this.preview.filter(row => !row.success) },
@@ -106,7 +108,7 @@ export default {
         for (const row of this.results.filter(value => value.attempted)) {
           try { const detail = (await shipmentDetail(row.id)).data; if (id !== this.requestId) return; this.$set(this.current, row.id, detail); const state = detail.wms_dispatch_state
             if (state && state !== 'NONE') { row.state = state; row.message = warehouseProgress(detail).message } else if (row.state === 'UNKNOWN') row.message = '本地下发任务暂未确认，请刷新进度核对'
-            for (const field of ['status', 'shipped_quantity', 'packaged_quantity', 'package_count', 'wms_warehouse_status', 'wms_progress_message', 'wms_fulfillment_state']) this.$set(row, field, detail[field]); this.$set(row, 'wms_external_order', detail.wms_external_order); row.route = detail.warehouse_target || row.route
+            for (const field of ['status', 'shipped_quantity', 'packaged_quantity', 'package_count', 'wms_warehouse_status', 'wms_progress_message', 'wms_fulfillment_state', 'packages', 'unpacked_quantity']) this.$set(row, field, detail[field]); this.$set(row, 'wms_external_order', detail.wms_external_order); row.route = detail.warehouse_target || row.route
             if (detail.dispatch_lines) { row.lines = this.progressLines(detail); row.quantity = detail.dispatch_quantity; row.snapshot_scope = 'FROZEN' }
           } catch (_) { if (id === this.requestId) this.pollError = true }
         }

@@ -25,10 +25,10 @@ public class OrderStockService {
     public List<Map<String,Object>> demands(String company,long channel,String tid){
         require(company!=null&&company.matches("[A-Za-z0-9_-]{1,50}")&&channel>0&&tid!=null&&tid.matches("[0-9]{1,64}"),"订单标识无效");
         String scope=company.toUpperCase(Locale.ROOT);
-        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,outbound_quantity,status,reason,reason_code FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
+        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,outbound_quantity,status,reason,reason_code,decision_snapshot FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
         Map<Long,List<Map<String,Object>>> sources=new HashMap<>();
         for(Map<String,Object> source:jdbc.queryForList("SELECT s.demand_id,s.source_type,s.store_code,s.quantity,s.outbound_quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE d.company_code=? AND d.channel_id=? AND d.platform_tid=? AND s.reserved=1 ORDER BY s.id",scope,channel,tid))sources.computeIfAbsent(n(source,"demand_id"),k->new ArrayList<>()).add(source);
-        for(Map<String,Object> row:rows)row.put("sources",sources.getOrDefault(n(row,"id"),Collections.emptyList()));return rows;
+        for(Map<String,Object> row:rows){row.put("sources",sources.getOrDefault(n(row,"id"),Collections.emptyList()));try{row.put("decision_snapshot",row.get("decision_snapshot")==null?Collections.emptyMap():JSON.readValue(s(row,"decision_snapshot"),Map.class));}catch(Exception e){row.put("snapshot_error","预占快照无法解析");row.put("decision_snapshot",Collections.emptyMap());}}return rows;
     }
 
     @Transactional(rollbackFor=Exception.class,timeout=20,isolation=Isolation.READ_COMMITTED)
@@ -127,9 +127,13 @@ public class OrderStockService {
         Map<Map<String,Object>,Long> takes=new LinkedHashMap<>();long remaining=quantity;
         for(Map<String,Object> lock:locks){long take=Math.min(remaining,n(lock,"original_quantity")-n(lock,"occupied_quantity")-n(lock,"consumed_quantity")-n(lock,"released_quantity"));if(take>0)takes.put(lock,take);remaining-=take;if(remaining==0)break;}
         long publicQuantity=remaining,lockedQuantity=quantity-remaining;
+        List<Map<String,Object>> companyRows=jdbc.queryForList("SELECT total_stock,available_stock,reserved_stock FROM oms_inventory WHERE company_code=? AND sku_sn=?",company,sku);Map<String,Object> companyBalance=companyRows.isEmpty()?Collections.emptyMap():companyRows.get(0);
+        List<Map<String,Object>> channelRows=jdbc.queryForList("SELECT quota_stock,quota_reserved_stock,allocated_stock,available_stock,frozen_stock FROM oms_channel_inventory WHERE company_code=? AND channel_id=? AND sku_sn=?",company,demand.get("channel_id"),sku);Map<String,Object> channelBalance=channelRows.isEmpty()?Collections.emptyMap():channelRows.get(0);
+        long good=scalar("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=?",company,sku),publicFree=good-publicReserved(jdbc,company,sku);
+        Map<String,Object> snapshot=new LinkedHashMap<>();snapshot.put("basis","RESERVATION_ATTEMPT");snapshot.put("observed_at",java.time.LocalDateTime.now().toString());snapshot.put("sku_demand_quantity",quantity);snapshot.put("company_available",n(companyBalance,"available_stock"));snapshot.put("warehouse_public_free",publicFree);snapshot.put("channel_available",n(channelBalance,"available_stock"));snapshot.put("channel_quota",n(channelBalance,"quota_stock"));snapshot.put("channel_quota_reserved",n(channelBalance,"quota_reserved_stock"));snapshot.put("channel_locked_taken",lockedQuantity);snapshot.put("public_needed",publicQuantity);snapshot.put("allow_public_stock",allowPublic);snapshot.put("public_quota_capacity",Math.max(0,n(channelBalance,"quota_stock")-n(channelBalance,"quota_reserved_stock")-n(channelBalance,"frozen_stock")));
+        try{String json=JSON.writeValueAsString(snapshot);for(Map<String,Object> line:demands)jdbc.update("UPDATE oms_order_stock_demand SET decision_snapshot=? WHERE company_code=? AND id=?",json,company,line.get("id"));}catch(com.fasterxml.jackson.core.JsonProcessingException e){throw new IllegalArgumentException("预占依据无法记录");}
         if(publicQuantity>0&&!allowPublic){waitForStock(demands,"PUBLIC_DISABLED","渠道锁库余额不足，未允许公共库存补占");return;}
-        long good=scalar("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=?",company,sku);
-        if(good-publicReserved(jdbc,company,sku)<publicQuantity){waitForStock(demands,"SHORTAGE","同订单同SKU库存不足，保留完整需求等待预占");return;}
+        if(publicFree<publicQuantity){waitForStock(demands,"SHORTAGE","同订单同SKU库存不足，保留完整需求等待预占");return;}
         int changed=jdbc.update("UPDATE oms_inventory SET available_stock=available_stock-?,allocated_stock=allocated_stock-?,reserved_stock=reserved_stock+?,version=version+1 WHERE company_code=? AND sku_sn=? AND available_stock>=? AND allocated_stock>=?",publicQuantity,lockedQuantity,quantity,company,sku,publicQuantity,lockedQuantity);
         if(changed==0){waitForStock(demands,"BALANCE_MISMATCH","公司库存余额不足，请核对库存来源");return;}
         require(jdbc.update("UPDATE oms_channel_inventory SET allocated_stock=allocated_stock-?,reserved_stock=reserved_stock+?,version=version+1 WHERE company_code=? AND channel_id=? AND sku_sn=? AND allocated_stock>=?",lockedQuantity,quantity,company,demand.get("channel_id"),sku,lockedQuantity)==1,"渠道锁库余额不一致，请核对后重试");

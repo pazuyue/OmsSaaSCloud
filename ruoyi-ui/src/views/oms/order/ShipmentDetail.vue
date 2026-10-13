@@ -5,7 +5,11 @@
         <div class="identity"><strong>{{ detail.shipment_sn }}</strong><el-tag :type="tone(detail.status)">{{ label(detail.status, detail.outbound_mode) }}</el-tag></div>
         <el-alert v-if="nextAction" :title="nextAction" type="info" :closable="false" show-icon />
         <el-button v-if="detail.shipment_sn.startsWith('XS')" v-hasPermi="['warehouse:tickets:list']" type="text" @click="$router.push({ path: '/oms-supplychain/wmsTickets', query: { documentType: 'SALE_OUT', noSn: detail.shipment_sn }}); visible = false">查看销售出库单及明细</el-button>
-        <el-alert v-if="detail.fulfillment_block && !['VOIDING', 'VOIDED'].includes(detail.status)" :title="detail.fulfillment_block" type="warning" :closable="false" show-icon />
+        <el-alert v-if="detail.fulfillment_block && !['VOIDING', 'VOIDED', 'SHIPPED'].includes(detail.status)" :title="detail.fulfillment_block" type="warning" :closable="false" show-icon />
+        <div class="platform-summary"><strong>平台发货回传</strong><platform-shipping-status :row="detail" @open="$refs.platformShipping.open($event)" /></div>
+        <div class="parcel-context">{{ detail.real_store_name || detail.real_store_code }} · OMS {{ detail.order_sn }} · 平台 {{ detail.platform_tid }}</div>
+        <shipment-package-cards :detail="detail"><el-button v-if="detail.can_register_package" slot="actions" v-hasPermi="['order:shipment:package']" type="primary" size="small" @click="$refs.packageRegister.open(detail.id)">登记运单</el-button></shipment-package-cards>
+        <el-collapse class="detail-information"><el-collapse-item title="订单、仓库与收货信息" name="info">
         <el-descriptions border :column="2" class="summary"><el-descriptions-item label="仓库下发 / 出库任务" :span="2"><shipment-dispatch-status :row="detail" /></el-descriptions-item><template v-if="detail.warehouse_target"><el-descriptions-item label="仓库连接">{{ detail.warehouse_target.connection_name }}</el-descriptions-item><el-descriptions-item label="协议 / 环境">{{ detail.warehouse_target.provider === 'QIMEN' ? '奇门' : '京东虎符' }} · {{ detail.warehouse_target.environment === 'PRODUCTION' ? '正式' : '测试' }}</el-descriptions-item><el-descriptions-item label="外部仓库 / 货主" :span="2">{{ detail.warehouse_target.external_warehouse }} / {{ detail.warehouse_target.external_owner }}</el-descriptions-item></template>
           <el-descriptions-item label="快递">{{ detail.carrier_name ? detail.carrier_name + '（' + detail.carrier_code + '）' : '尚未匹配' }}</el-descriptions-item>
           <el-descriptions-item label="仓库快递编码">{{ detail.warehouse_carrier_code || '—' }}</el-descriptions-item>
@@ -26,6 +30,7 @@
           <el-descriptions-item label="联系方式">{{ detail.receiver_phone || '—' }}</el-descriptions-item>
           <el-descriptions-item label="收货地址" :span="2">{{ detail.receiver_address || '—' }}</el-descriptions-item>
         </el-descriptions>
+        </el-collapse-item></el-collapse>
         <p class="hint">发货单数量来自已确认的分仓占用；实际发货数量以出库结果为准。不同虚拟仓或批次的同一商品分行保留来源。</p>
         <el-table :data="detail.lines">
           <el-table-column label="商品 / SKU" min-width="190"><template slot-scope="s">{{ s.row.goods_name }}<div class="hint">{{ s.row.sku_sn }}</div></template></el-table-column>
@@ -41,7 +46,7 @@
       </template>
       <el-empty v-else-if="!loading" description="详情加载失败，请重试" />
     </div>
-    <shipment-carrier-dialog ref="carrier" @changed="changed" /><shipment-dispatch-dialog ref="dispatch" @changed="changed" @open-detail="open($event)" /><shipment-virtual-outbound-dialog ref="virtualOutbound" @changed="changed" /><wms-logs ref="wmsLogs" />
+    <platform-shipping-dialog ref="platformShipping" @changed="changed" /><shipment-package-dialog ref="packageRegister" @changed="changed" /><shipment-carrier-dialog ref="carrier" @changed="changed" /><shipment-dispatch-dialog ref="dispatch" @changed="changed" @open-detail="open($event)" /><shipment-virtual-outbound-dialog ref="virtualOutbound" @changed="changed" /><wms-logs ref="wmsLogs" />
   </el-drawer>
 </template>
 <script>
@@ -53,12 +58,17 @@ import ShipmentDispatchStatus from './ShipmentDispatchStatus'
 import ShipmentVirtualOutboundDialog from './ShipmentVirtualOutboundDialog'
 import WmsLogs from '@/views/oms/warehouse/WmsLogs'
 import ShipmentOutboundHistory from './ShipmentOutboundHistory'
+import ShipmentPackageCards from './ShipmentPackageCards'
+import ShipmentPackageDialog from './ShipmentPackageDialog'
+import PlatformShippingStatus from './PlatformShippingStatus'
+import PlatformShippingDialog from './PlatformShippingDialog'
 export default {
-  components: { ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory },
+  components: { PlatformShippingStatus, PlatformShippingDialog, ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory, ShipmentPackageCards, ShipmentPackageDialog },
   data() { return { visible: false, loading: false, detail: null, requestId: 0 } },
   computed: {
     nextAction() {
       const row = this.detail; if (!row) return ''
+      if (row.status === 'SHIPPED') return ''
       if (row.fulfillment_block) return '请先处理来源订单的履约阻断原因。'
       if (['VOIDING', 'VOIDED'].includes(row.status)) return ''
       if (row.can_retry_virtual_outbound) return '虚拟出库明确失败，请核对原因后重试。'
@@ -83,5 +93,5 @@ export default {
 }
 </script>
 <style scoped>
-.shipment-detail{padding:0 24px 115px}.identity{display:flex;align-items:center;gap:16px;margin-bottom:20px}.identity strong{font-size:18px;overflow-wrap:anywhere}.summary{margin:16px 0}.hint{font-size:13px;color:#8490a2;margin:6px 0}.footer{position:absolute;bottom:0;left:0;right:0;z-index:3;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;padding:14px 24px;background:#fff;border-top:1px solid #e5eaf1;box-shadow:0 -4px 12px rgba(35,55,80,.04)}.footer .el-button+.el-button{margin-left:0}
+.platform-summary{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:12px 16px;margin:10px 0;background:#f5f8fc;border-radius:8px}.shipment-detail{padding:0 24px 115px}.identity{display:flex;align-items:center;gap:16px;margin-bottom:20px}.identity strong{font-size:18px;overflow-wrap:anywhere}.parcel-context{font-size:13px;color:#68778d;line-height:1.7;overflow-wrap:anywhere}.detail-information{margin:18px 0}.summary{margin:16px 0}.hint{font-size:13px;color:#8490a2;margin:6px 0}.footer{position:absolute;bottom:0;left:0;right:0;z-index:3;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;padding:14px 24px;background:#fff;border-top:1px solid #e5eaf1;box-shadow:0 -4px 12px rgba(35,55,80,.04)}.footer .el-button+.el-button{margin-left:0}
 </style>

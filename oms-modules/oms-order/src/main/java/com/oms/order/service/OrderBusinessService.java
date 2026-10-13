@@ -25,7 +25,18 @@ public class OrderBusinessService {
     public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize){return list(company,channel,number,status,sku,from,to,waiting,page,pageSize,"","");}
     public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize,String review,String processing){return list(company,channel,number,status,sku,from,to,waiting,page,pageSize,review,processing,"");}
     public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize,String review,String processing,String documentStatus){
+        return list(company,channel,number,status,sku,from,to,waiting,page,pageSize,review,processing,documentStatus,"","","","");
+    }
+    public TableDataInfo list(String company,Long channel,String number,String status,String sku,String from,String to,int waiting,int page,int pageSize,String review,String processing,String documentStatus,String issueCategory,String issueScope,String issueBlocking,String issueState){
         String where=" WHERE o.company_code=?";List<Object> args=new ArrayList<>();args.add(company);
+        if(!issueCategory.isEmpty()||!issueScope.isEmpty()||!issueBlocking.isEmpty()||!issueState.isEmpty()){
+            String filter=" AND EXISTS(SELECT 1 FROM oms_order_issue oi WHERE oi.company_code=o.company_code AND oi.order_id=o.id";
+            if(!issueCategory.isEmpty()){require(Arrays.asList("SHORTAGE","QUOTA","RESTRICTED","LEDGER","PLATFORM").contains(issueCategory),"问题类型无效");filter+=" AND oi.category=?";args.add(issueCategory);}
+            if(!issueScope.isEmpty()){require(Arrays.asList("COMPANY","CHANNEL","WAREHOUSE","BATCH","ORDER").contains(issueScope),"问题层级无效");filter+=" AND oi.scope=?";args.add(issueScope);}
+            if(!issueBlocking.isEmpty()){require(Arrays.asList("0","1").contains(issueBlocking),"问题影响无效");filter+=" AND oi.blocking=?";args.add(Integer.parseInt(issueBlocking));}
+            if(!issueState.isEmpty()){require(Arrays.asList("OPEN","ACKNOWLEDGED","RESOLVED").contains(issueState),"问题状态无效");filter+=" AND oi.state=?";args.add(issueState);}else filter+=" AND oi.state<>'RESOLVED'";
+            where+=filter+")";
+        }
         if(!documentStatus.isEmpty()){require(Arrays.asList("WAIT_REVIEW","WAIT_ALLOCATION","PART_ALLOCATED","WAIT_CARRIER","WAIT_DISPATCH","DISPATCHING","PART_DISPATCHED","WAREHOUSE_PROCESSING","PART_SHIPPED","SHIPPED","VOIDING","VOIDED").contains(documentStatus),"业务状态无效");where+=" AND ("+OrderReviewPolicy.businessStatusSql()+")=?";args.add(documentStatus);}
         if(!review.isEmpty()){require(Arrays.asList("PENDING","APPROVED").contains(review),"审单状态无效");where+=" AND o.review_status=?";args.add(review);}
         if(!processing.isEmpty()){require(Arrays.asList("NORMAL","HELD").contains(processing),"处理状态无效");String blocked="(o.manual_hold=1 OR p.change_pending=1 OR p.fulfillment_block_reason<>'' OR p.platform_status<>'WAIT_SELLER_SEND_GOODS')";where+=" AND o.status='WAIT_ALLOCATION' AND "+("HELD".equals(processing)?blocked:"NOT "+blocked);}
@@ -43,8 +54,9 @@ public class OrderBusinessService {
         if(waiting>0){where+=" AND o.status='WAIT_ALLOCATION' AND o.inventory_status<>'RESERVED' AND o.create_time<=DATE_SUB(NOW(),INTERVAL ? MINUTE)";args.add(waiting);}
         long total=repository.db().queryForObject("SELECT COUNT(*)"+JOIN+where,Long.class,args.toArray());
         int count=size(pageSize);args.add(count);args.add(offset(page,count));
-        List<Map<String,Object>> rows=repository.db().query("SELECT o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.channel_id,o.inventory_status,o.payment,o.create_time,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+where+" ORDER BY o.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
+        List<Map<String,Object>> rows=repository.db().query("SELECT o.issue_synced_at,o.issue_sync_error,o.locked_reserved_quantity,o.public_reserved_quantity,o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.channel_id,o.inventory_status,o.payment,o.create_time,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+where+" ORDER BY o.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
         summarize(company,rows);
+        new OrderIssueService(repository).attach(company,rows);
         return page(rows,total);
     }
     private void summarize(String company,List<Map<String,Object>> rows){
@@ -67,7 +79,7 @@ public class OrderBusinessService {
         // Read-only, batched lookups. Failure to load auxiliary details cannot hide the order.
         try{
             Map<String,Map<String,Object>> demandByOid=new HashMap<>();for(Map<String,Object> demand:data(inventory.demands(company,number(order,"channel_id"),text(order,"platform_tid"),SecurityConstants.INNER)))demandByOid.put(text(demand,"platform_oid"),demand);
-            for(Map<String,Object> line:lines)line.put("stock_sources",demandByOid.getOrDefault(text(line,"platform_oid"),Collections.emptyMap()).getOrDefault("sources",Collections.emptyList()));
+            for(Map<String,Object> line:lines){Map<String,Object> demand=demandByOid.getOrDefault(text(line,"platform_oid"),Collections.emptyMap());line.put("stock_sources",demand.getOrDefault("sources",Collections.emptyList()));line.put("stock_snapshot",demand.getOrDefault("decision_snapshot",Collections.emptyMap()));}
         }catch(RuntimeException e){order.put("stock_sources_error","库存来源暂时加载失败，请刷新详情");}
         try{Map<String,List<Map<String,Object>>> goods=catalog.goods(company,new ArrayList<>(skus));for(Map<String,Object> line:lines){List<Map<String,Object>> matches=goods.getOrDefault(text(line,"sku_sn"),Collections.emptyList());if(matches.size()==1)line.put("oms_goods_name",matches.get(0).get("goods_name"));}}catch(RuntimeException e){order.put("goods_error","当前OMS商品资料暂时加载失败，已保留转单SKU");}
         order.put("lines",lines);
@@ -76,6 +88,8 @@ public class OrderBusinessService {
         if(order.get("allocation_receipts")!=null)try{List<Map<String,Object>> warehouseAllocations=JSON.readValue(text(order,"allocation_receipts"),List.class);for(Map<String,Object> receipt:warehouseAllocations)receipt.put("outbound_quantity",shippedByAllocation.getOrDefault(number(receipt,"id"),0L));order.put("warehouse_allocations",warehouseAllocations);}catch(Exception e){order.put("warehouse_allocations",Collections.emptyList());}
         if(order.get("allocation_policy")!=null)try{order.put("allocation_rule",JSON.readValue(text(order,"allocation_policy"),Map.class));}catch(Exception e){order.put("allocation_rule",Collections.emptyMap());}
         order.remove("allocation_receipts");order.remove("allocation_policy");decorate(order);
+        OrderIssueService issueReader=new OrderIssueService(repository);issueReader.attach(company,Collections.singletonList(order));Map<String,Object> report=issueReader.report(company,id);order.put("issue_history",report.get("issues"));order.put("issue_events",report.get("events"));
+        for(Map<String,Object> line:lines){line.put("issues",((List<Map<String,Object>>)order.get("issues")).stream().filter(issue->text(issue,"sku_sn").equals(text(line,"sku_sn"))).collect(java.util.stream.Collectors.toList()));long lock=0,pub=0;for(Map<String,Object> source:(List<Map<String,Object>>)line.getOrDefault("stock_sources",Collections.emptyList())){if("LOCK".equals(text(source,"source_type")))lock+=number(source,"quantity");else if("PUBLIC_EXTRA".equals(text(source,"source_type")))pub+=number(source,"quantity");}line.put("locked_reserved_quantity",lock);line.put("public_reserved_quantity",pub);line.put("issue_evidence",((List<Map<String,Object>>)report.get("issues")).stream().filter(issue->!"RESOLVED".equals(text(issue,"state"))&&text(issue,"sku_sn").equals(text(line,"sku_sn"))).map(issue->issue.get("evidence")).findFirst().orElse(null));}
         order.put("logs",repository.db().query("SELECT action,result,message,operator_name,create_time FROM oms_order_process_log WHERE company_code=? AND platform_order_id=? ORDER BY id DESC LIMIT 100",ROW,company,order.get("platform_order_id")));return order;
     }
 
@@ -108,7 +122,7 @@ public class OrderBusinessService {
     }
 
     public List<Map<String,Object>> results(String company,List<Long> requested){List<Long> keys=ids(requested);List<Object> args=new ArrayList<>();args.add(company);args.addAll(keys);
-        List<Map<String,Object>> rows=repository.db().query("SELECT o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.inventory_status,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+" WHERE o.company_code=? AND o.id IN ("+marks(keys.size())+")",ROW,args.toArray());summarize(company,rows);return rows;
+        List<Map<String,Object>> rows=repository.db().query("SELECT o.issue_synced_at,o.issue_sync_error,o.locked_reserved_quantity,o.public_reserved_quantity,o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.inventory_status,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+" WHERE o.company_code=? AND o.id IN ("+marks(keys.size())+")",ROW,args.toArray());summarize(company,rows);return rows;
     }
     private void decorate(Map<String,Object> row){
         OrderReviewPolicy.decorate(row);

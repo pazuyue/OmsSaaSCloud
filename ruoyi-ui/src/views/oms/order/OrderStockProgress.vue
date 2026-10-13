@@ -7,6 +7,7 @@
     </template>
     <template v-else>
       <div class="stock-progress-main" :title="'已逻辑预占 ' + (order.reserved_quantity || 0) + ' 件 / 需求 ' + (order.demand_quantity || 0) + ' 件'">逻辑预占 <b>{{ order.reserved_quantity || 0 }}</b> / {{ order.demand_quantity || 0 }} 件</div>
+      <div v-if="order.issue_synced_at" class="stock-progress-meta">来源：渠道锁库 {{ order.locked_reserved_quantity || 0 }} · 公共补占 {{ order.public_reserved_quantity || 0 }} 件</div>
       <div class="stock-progress-meta">共 {{ order.sku_count || 0 }} 个 SKU</div><div v-if="order.logical_outbound_quantity" class="stock-progress-complete">已出库核销 {{ order.logical_outbound_quantity }} 件 · 仍预占 {{ order.logical_active_quantity }} 件</div>
       <div v-if="order.status === 'VOIDING'" class="stock-progress-meta">作废处理中，等待逻辑预占释放</div>
       <div v-else-if="order.pending_quantity > 0" class="stock-progress-pending">待逻辑预占 {{ order.pending_quantity }} 件</div>
