@@ -11,6 +11,12 @@ def install_supplychain(database):
 
 def install_order(database):
     execute((HERE/'migrations/20261012_order_sales_document_sync.sql').read_text(encoding='utf-8'),database)
+    column(database,'oms_order_sales_document_sync','dirty_version','BIGINT NOT NULL DEFAULT 0')
+    column(database,'oms_order_sales_document_sync','synced_dirty_version','BIGINT NOT NULL DEFAULT 0')
+    if execute("SELECT IS_NULLABLE FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='oms_order_sales_document_sync' AND column_name='next_attempt'",database).strip()=='NO':
+        execute('ALTER TABLE oms_order_sales_document_sync MODIFY next_attempt DATETIME NULL DEFAULT CURRENT_TIMESTAMP',database)
+    execute("UPDATE oms_order_sales_document_sync SET next_attempt=NULL WHERE dirty_version=synced_dirty_version AND revision=synced_revision AND payload_hash<>'' AND last_error=''",database)
+
 
 if __name__=='__main__':
     install_supplychain('qm_oms_saas_commodity')

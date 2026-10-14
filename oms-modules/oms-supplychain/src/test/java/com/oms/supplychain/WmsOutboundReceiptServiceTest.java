@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static com.oms.supplychain.service.wms.WmsStore.*;
 
 class WmsOutboundReceiptServiceTest {
@@ -42,6 +43,16 @@ class WmsOutboundReceiptServiceTest {
         service.review("QM",1,id(review.get("id")),decision("CONFIRM_SHARED"));assertTrue(callback(b).contains("success"));assertEquals(2,count("wms_outbound_receipt_event"));
         Map<String,Object> event=service.pending("QM","FH_TEST",false).get(1);assertEquals(id(review.get("id")),id(((Map<?,?>)((List<?>)((Map<?,?>)event.get("payload")).get("packages")).get(0)).get("shared_review_id")));
         assertEquals("reviewer",service.reviews("QM",1).get(0).get("operator_name"));
+    }
+    @Test void committedCallbackWakesOrderExecutorButNotificationFailureKeepsReceiptAccepted(){
+        warehouse("QIMEN");OrderReceiptWakeupClient client=mock(OrderReceiptWakeupClient.class);WmsOutboundReceiptNotifier notifier=new WmsOutboundReceiptNotifier();ReflectionTestUtils.setField(notifier,"orders",client);ReflectionTestUtils.setField(service,"notifier",notifier);
+        when(client.ready(anyString(),anyLong(),anyString())).thenAnswer(i->{assertEquals(1,count("wms_outbound_receipt_event"));return com.ruoyi.common.core.domain.R.fail("unavailable");});
+        assertTrue(callback(body("WAKE",1,false,"P1",1)).contains("success"));verify(client).ready(eq("QM"),anyLong(),anyString());assertEquals(1,service.pending("QM","FH_TEST",false).size());
+        conflict();verify(client,times(1)).ready(anyString(),anyLong(),anyString());assertEquals("WAIT_REVIEW",service.reviews("QM",1).get(0).get("state"));
+    }
+    @Test void rolledBackAcceptanceDoesNotNotifyOrder(){
+        OrderReceiptWakeupClient client=mock(OrderReceiptWakeupClient.class);WmsOutboundReceiptNotifier notifier=new WmsOutboundReceiptNotifier();ReflectionTestUtils.setField(notifier,"orders",client);
+        fixture.db.tx().execute(s->{notifier.accepted("QM",7);verifyNoInteractions(client);s.setRollbackOnly();return null;});verifyNoInteractions(client);
     }
     @Test void scheduledReceiptBatchKeepsRejectedCallbacksOutOfPostingEvents(){
         warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();Map<String,Object> batch=service.scanPending("QM");
