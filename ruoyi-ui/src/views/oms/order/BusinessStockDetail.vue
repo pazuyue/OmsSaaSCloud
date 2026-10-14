@@ -1,7 +1,7 @@
 <template>
   <div class="business-stock-detail">
     <div class="inventory-status-summary"><span>逻辑预占状态 <el-tag size="small">{{ logicalStockLabel(order.logical_inventory_status || order.inventory_status) }}</el-tag></span><span>仓库库存状态 <order-warehouse-stock-status :order="order" /></span></div>
-    <div class="inventory-issues-summary"><order-issue-badges :issues="order.issues || []" :pending="!order.issue_synced_at" @open="$emit('issues')" /><el-button v-hasPermi="['order:order:query']" type="text" @click="$emit('issues')">查看问题与处理记录</el-button><span v-if="order.issue_sync_error" class="muted">核对暂未更新，原问题保留</span></div>
+    <div class="inventory-issues-summary"><order-receipt-review-notice :order="order" compact @open="$emit('open-review', $event)" /><order-issue-badges v-if="(order.issues || []).length || (!Number(order.receipt_review_pending_count) && !order.receipt_review_lookup_failed)" :issues="order.issues || []" :pending="!order.issue_synced_at" @open="$emit('issues')" /><el-button v-hasPermi="['order:order:query']" type="text" @click="$emit('issues')">查看问题与处理记录</el-button><span v-if="order.issue_sync_error" class="muted">核对暂未更新，原问题保留</span></div>
     <div class="stock-summary"><order-stock-progress :order="order" /></div>
     <p v-if="order.status === 'VOIDED'" class="muted">原商品数量保留用于追溯，销售需求已取消，不再参与待逻辑预占计算。</p><p v-else class="muted">同订单同 SKU 汇总后足量逻辑预占；待逻辑预占数量是尚未逻辑预占的需求，不等同于库存缺口。</p>
     <el-descriptions :column="2" border size="small">
@@ -14,7 +14,7 @@
     <el-alert v-if="order.goods_error" :title="order.goods_error" type="warning" :closable="false" />
     <el-table :data="order.lines" style="margin-top:16px">
       <el-table-column label="OMS 商品（当前） / SKU" min-width="230"><template slot-scope="s"><b>{{ s.row.sku_sn }}</b><div>{{ s.row.oms_goods_name || '当前商品资料不可用' }}</div><div class="muted">平台商品：{{ s.row.goods_name || '—' }}</div><div class="muted">平台规格：{{ s.row.platform_spec || '—' }}</div><div v-if="s.row.manual_sku_sn" class="matched">人工匹配 · {{ s.row.manual_match_by }} · {{ s.row.manual_match_at }}<br>原商家编码：{{ s.row.outer_sku_id || '缺失' }}<br>{{ s.row.manual_match_reason }}</div></template></el-table-column>
-      <el-table-column label="预占来源 / 问题" min-width="230"><template slot-scope="s"><div class="source-breakdown">渠道锁库 {{ s.row.locked_reserved_quantity || 0 }} 件 + 公共补占 {{ s.row.public_reserved_quantity || 0 }} 件</div><order-issue-badges :issues="s.row.issues || []" :pending="!order.issue_synced_at" @open="$emit('issues')" /><p v-if="s.row.issue_evidence && s.row.issue_evidence.excess_quantity" class="muted">当前渠道额度 {{ s.row.issue_evidence.channel_quota }} 件 · 超额度预占 {{ s.row.issue_evidence.excess_quantity }} 件</p><p v-if="s.row.stock_snapshot && s.row.stock_snapshot.observed_at" class="muted">预占时公司可用 {{ s.row.stock_snapshot.company_available }} 件 · 渠道额度 {{ s.row.stock_snapshot.channel_quota }} 件</p></template></el-table-column>
+      <el-table-column label="预占来源 / 问题" min-width="230"><template slot-scope="s"><div class="source-breakdown">渠道锁库 {{ s.row.locked_reserved_quantity || 0 }} 件 + 公共补占 {{ s.row.public_reserved_quantity || 0 }} 件</div><order-issue-badges :issues="s.row.issues || []" empty-text="暂无库存问题" :pending="!order.issue_synced_at" @open="$emit('issues')" /><p v-if="s.row.issue_evidence && s.row.issue_evidence.excess_quantity" class="muted">当前渠道额度 {{ s.row.issue_evidence.channel_quota }} 件 · 超额度预占 {{ s.row.issue_evidence.excess_quantity }} 件</p><p v-if="s.row.stock_snapshot && s.row.stock_snapshot.observed_at" class="muted">预占时公司可用 {{ s.row.stock_snapshot.company_available }} 件 · 渠道额度 {{ s.row.stock_snapshot.channel_quota }} 件</p></template></el-table-column>
       <el-table-column label="平台子订单" prop="platform_oid" min-width="190" />
       <el-table-column :label="order.status === 'VOIDED' ? '原需求（件）' : '需求（件）'" prop="quantity" width="110" align="right" />
       <el-table-column label="累计逻辑预占（件）" prop="reserved_quantity" width="125" align="right" /><el-table-column label="已出库 / 仍预占" min-width="150"><template slot-scope="s">{{ s.row.shipped_quantity || 0 }} / {{ s.row.logical_active_quantity === undefined ? s.row.reserved_quantity : s.row.logical_active_quantity }} 件</template></el-table-column>
@@ -32,10 +32,11 @@
 import OrderStockProgress from './OrderStockProgress'
 import OrderWarehouseStockStatus from './OrderWarehouseStockStatus'
 import OrderIssueBadges from './OrderIssueBadges'
+import OrderReceiptReviewNotice from './OrderReceiptReviewNotice'
 import { logicalStockLabel } from './stockLabels'
 
 export default {
-  components: { OrderIssueBadges, OrderStockProgress, OrderWarehouseStockStatus },
+  components: { OrderReceiptReviewNotice, OrderIssueBadges, OrderStockProgress, OrderWarehouseStockStatus },
   props: { order: { type: Object, required: true } },
   methods: { logicalStockLabel },
   computed: { sources() { return (this.order.lines || []).flatMap(line => (line.stock_sources || []).map(source => ({ ...source, sku_sn: line.sku_sn, platform_oid: line.platform_oid }))) } }

@@ -1,5 +1,5 @@
 <template>
-  <div class="outbound-history">
+  <div class="outbound-history"><shipment-receipt-reviews v-if="detail.can_reconcile_receipts" ref="reviews" :shipment-id="Number(detail.id)" @changed="$emit('changed')" />
     <div class="heading"><h3>出库记录</h3><el-button v-if="detail.can_reconcile_receipts" v-hasPermi="['order:shipment:receipt']" size="small" :loading="querying" @click="reconcile">核对出库回传</el-button></div>
     <el-alert v-if="results.length" :title="results.map(r => r.message).join('；')" :type="results.every(r => r.success) ? 'success' : 'warning'" show-icon :closable="false" />
     <el-table :data="detail.outbound_records || []" empty-text="尚无已接收的出库记录"><el-table-column type="expand"><template slot-scope="s"><el-table :data="s.row.lines || []"><el-table-column label="SKU" prop="sku_sn" /><el-table-column label="平台子单号" prop="platform_oid" min-width="180" /><el-table-column label="虚拟仓 / 批次" min-width="170"><template slot-scope="l">{{ l.row.store_code || '—' }} / {{ l.row.batch_id || '—' }}</template></el-table-column><el-table-column label="本次出库" prop="quantity" width="110" /></el-table></template></el-table-column><el-table-column label="来源 / 出库时间" min-width="190"><template slot-scope="s">{{ s.row.source_mode === 'WMS' ? '仓库回传' : '虚拟出库' }}<div class="hint">{{ s.row.outbound_time || s.row.completed_at || s.row.create_time }}</div></template></el-table-column><el-table-column label="本次数量" width="100"><template slot-scope="s">{{ s.row.quantity }} 件</template></el-table-column><el-table-column label="记账结果" min-width="250"><template slot-scope="s"><el-tag size="small" :type="s.row.state === 'COMPLETED' ? 'success' : s.row.state === 'FAILED' ? 'danger' : 'warning'">{{ ({ COMPLETED: '已记账', FAILED: '记账失败', PENDING: '等待记账', UNKNOWN: '结果待确认' })[s.row.state] || s.row.state }}</el-tag><div v-if="s.row.final_confirmation" class="hint">仓库最终确认；实际出库量以明细为准</div><div v-if="s.row.last_error || s.row.snapshot_error" class="failure">{{ s.row.last_error || s.row.snapshot_error }}</div></template></el-table-column><el-table-column label="消息 / 操作人" min-width="180"><template slot-scope="s">{{ s.row.message_id || '—' }}<div class="hint">{{ s.row.created_by }}</div></template></el-table-column></el-table>
@@ -7,9 +7,12 @@
   </div>
 </template>
 <script>
+import ShipmentReceiptReviews from './ShipmentReceiptReviews'
 import { reconcileShipmentReceipts } from '@/api/order'
-export default { props: { detail: { type: Object, required: true } }, data() { return { querying: false, results: [] } }, methods: {
-  async reconcile() { if (this.querying) return; this.querying = true; this.results = []; try { this.results = (await reconcileShipmentReceipts(this.detail.id)).data; this.$emit('changed') } finally { this.querying = false } }
+export default { components: { ShipmentReceiptReviews }, props: { detail: { type: Object, required: true } }, data() { return { querying: false, results: [] } }, watch: { detail(value, old) { if (old && value.id === old.id) this.refreshReviews() }, 'detail.id'() { this.results = [] } }, methods: {
+  refreshReviews() { this.$nextTick(() => { if (this.$refs.reviews) this.$refs.reviews.load() }) },
+  showReviews() { const target = this.$refs.reviews && this.$refs.reviews.$el; if (!target) return; const body = target.closest('.el-drawer__body'); if (body) body.scrollTop += target.getBoundingClientRect().top - body.getBoundingClientRect().top - 12 },
+  async reconcile() { if (this.querying) return; this.querying = true; this.results = []; try { this.results = (await reconcileShipmentReceipts(this.detail.id)).data; this.$emit('changed') } finally { this.querying = false; this.refreshReviews() } }
 } }
 </script>
 <style scoped>.outbound-history{margin-top:24px}.heading{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px}.heading h3{font-size:15px;margin:0}.hint{font-size:13px;color:#8490a2;line-height:1.6;margin:6px 0}.failure{font-size:13px;color:#c27b12;line-height:1.6;margin:6px 0;overflow-wrap:anywhere}.waybill{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}</style>

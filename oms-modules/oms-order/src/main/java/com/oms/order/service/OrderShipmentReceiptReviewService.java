@@ -16,6 +16,34 @@ public class OrderShipmentReceiptReviewService {
     @Resource private OrderWarehouseClient inventory;
     @Resource private OrderShipmentDispatchService locks;
     @Resource private OrderShipmentReceiptService receipts;
+    /** Batch projection only: a rejected callback never changes fulfillment or stock here. */
+    public void attach(String company,List<Map<String,Object>> shipments){
+        List<Map<String,Object>> applicable=new ArrayList<>();
+        for(Map<String,Object> row:shipments){row.put("receipt_review_pending_count",0L);row.put("receipt_review_lookup_failed",false);if(Boolean.TRUE.equals(row.get("can_reconcile_receipts")))applicable.add(row);}
+        for(int start=0;start<applicable.size();start+=100){
+            List<Map<String,Object>> batch=applicable.subList(start,Math.min(start+100,applicable.size()));
+            List<Long> ids=new ArrayList<>();for(Map<String,Object> row:batch)ids.add(number(row,"id"));
+            try{List<Map<String,Object>> summaries=data(warehouse.reviewSummaries(company,ids,SecurityConstants.INNER));Map<Long,Long> counts=new HashMap<>();for(Map<String,Object> summary:summaries)counts.put(number(summary,"shipment_id"),number(summary,"pending_count"));for(Map<String,Object> row:batch)row.put("receipt_review_pending_count",counts.getOrDefault(number(row,"id"),0L));}
+            catch(RuntimeException e){for(Map<String,Object> row:batch)row.put("receipt_review_lookup_failed",true);}
+        }
+    }
+    public void attachOrders(String company,List<Map<String,Object>> orders){
+        if(orders.isEmpty())return;
+        List<Object> args=new ArrayList<>();args.add(company);for(Map<String,Object> row:orders)args.add(row.get("id"));
+        List<Map<String,Object>> shipments=repository.db().query("SELECT s.id,s.order_id,s.shipment_sn FROM oms_order_shipment s JOIN oms_order_shipment_dispatch d ON d.company_code=s.company_code AND d.shipment_id=s.id WHERE s.company_code=? AND s.order_id IN ("+String.join(",",Collections.nCopies(orders.size(),"?"))+") AND d.state NOT IN ('NONE','CANCELED')",ROW,args.toArray());
+        for(Map<String,Object> shipment:shipments)shipment.put("can_reconcile_receipts",true);
+        attach(company,shipments);summarizeOrders(orders,shipments);
+    }
+    public void summarizeOrders(List<Map<String,Object>> orders,List<Map<String,Object>> shipments){
+        for(Map<String,Object> order:orders){
+            long count=0;boolean failed=false;List<Map<String,Object>> pending=new ArrayList<>();
+            for(Map<String,Object> shipment:shipments)if(number(shipment,"order_id")==number(order,"id")){
+                failed|=Boolean.TRUE.equals(shipment.get("receipt_review_lookup_failed"));
+                if(number(shipment,"receipt_review_pending_count")>0){count+=number(shipment,"receipt_review_pending_count");Map<String,Object> item=new LinkedHashMap<>();for(String key:Arrays.asList("id","shipment_sn","receipt_review_pending_count"))item.put(key,shipment.get(key));pending.add(item);}
+            }
+            order.put("receipt_review_pending_count",count);order.put("receipt_review_lookup_failed",failed);order.put("receipt_review_shipments",pending);
+        }
+    }
     private Map<String,Object> owned(String company,long shipment){List<Map<String,Object>> rows=repository.db().query("SELECT id,order_id,shipment_sn FROM oms_order_shipment WHERE company_code=? AND id=?",ROW,company,shipment);require(rows.size()==1,"发货单不存在或无权访问");return rows.get(0);}
     public Map<String,Object> report(String company,long shipment){
         Map<String,Object> head=owned(company,shipment);

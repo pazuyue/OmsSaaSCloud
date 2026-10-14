@@ -1,0 +1,17 @@
+{
+  "business_main_list": true,
+  "business_overview": true,
+  "product_summary": true,
+  "issue_dialog": true,
+  "business_entry": true,
+  "shipment_list_entry": true,
+  "direct_scroll": true,
+  "reconcile_reports_wait_review": true,
+  "browser_errors": [],
+  "unexpected_writes": [],
+  "review_state": "WAIT_REVIEW",
+  "stock_state": "NOT_POSTED",
+  "pending_quantity": 4,
+  "stock_unchanged": true,
+  "decision_submitted": false
+}

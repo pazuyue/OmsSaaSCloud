@@ -9,7 +9,7 @@
     </div>
     <p v-if="!packages.length" class="package-empty">{{ emptyMessage }}</p>
     <article v-for="(pack, index) in packages" :key="pack.id || pack.package_code" class="package-card">
-      <div class="package-title"><strong>包裹 {{ index + 1 }}</strong><span>{{ pack.carrier_name || pack.carrier_code || '快递未提供' }}</span><el-tag size="mini" type="info" effect="plain">{{ isSimulated(pack) ? '模拟运单' : '运单已记录' }}</el-tag><span class="package-size">{{ skuGroups(pack).length }} 种 SKU / {{ pack.quantity }} 件</span></div>
+      <div class="package-title"><strong>包裹 {{ index + 1 }}</strong><span>{{ pack.carrier_name || pack.carrier_code || '快递未提供' }}</span><el-tag size="mini" type="info" effect="plain">{{ isSimulated(pack) ? '模拟运单' : '运单已记录' }}</el-tag><el-tag v-if="pack.shared_review_id" size="mini" type="warning" effect="plain">已核对共用运单</el-tag><span class="package-size">{{ skuGroups(pack).length }} 种 SKU / {{ pack.quantity }} 件</span></div>
       <div class="package-waybill"><span class="field-label">运单号</span><span class="waybill-number">{{ pack.express_code || '尚未提供' }}</span><el-button v-if="pack.express_code" v-clipboard:copy="pack.express_code" v-clipboard:success="copied" v-clipboard:error="copyFailed" type="text" size="mini" icon="el-icon-document-copy" :aria-label="'复制运单号 ' + pack.express_code">复制</el-button></div>
       <ul class="package-products"><li v-for="product in skuGroups(pack)" :key="product.sku"><div class="product-identity"><span class="product-name">{{ product.name || '商品名称未提供' }}</span><span class="product-sku">{{ product.sku || 'SKU 未提供' }}</span></div><strong class="product-quantity">× {{ product.quantity }} 件</strong></li></ul>
       <p v-if="!(pack.lines || []).length" class="warning">包裹商品明细尚未同步，请刷新核对。</p>

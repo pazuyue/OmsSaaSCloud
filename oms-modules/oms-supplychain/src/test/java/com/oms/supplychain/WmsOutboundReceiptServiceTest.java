@@ -30,4 +30,41 @@ class WmsOutboundReceiptServiceTest {
     @Test void decimalEncodedWholeQuantityIsAcceptedButFractionsAreRejected(){warehouse("QIMEN");String whole=body("DECIMAL",1,false,"P1",1).replace("<actualQty>1</actualQty>","<actualQty>1.0</actualQty>").replace("<quantity>1</quantity>","<quantity>1.0</quantity>");assertTrue(callback(whole).contains("success"));assertTrue(callback(body("FRACTION",1,false,"P2",1).replace("<actualQty>1</actualQty>","<actualQty>0.5</actualQty>")).contains("failure"));assertEquals(1,count("wms_outbound_receipt_event"));}
     @Test void erpShortMethodAndOptionalHeadOwnerUseBoundIdentity(){warehouse("QIMEN");String body=body("SHORT",1,false,"P1",1).replace("<deliveryOrderId>EXT-1</deliveryOrderId>","");int owner=body.indexOf("<ownerCode>EXT-O</ownerCode>");body=body.substring(0,owner)+body.substring(owner+"<ownerCode>EXT-O</ownerCode>".length());Map<String,String> p=params(body);p.put("method","deliveryorder.confirm");p.put("sign",QimenProtocol.sign(p,body,"fixture-secret"));assertTrue(service.callback("QM",key,p,body).contains("success"));assertEquals(1,count("wms_outbound_receipt_event"));}
     @Test void parallelRepeatClaimsOneCallbackEvent() throws Exception {warehouse("QIMEN");String body=body("PARALLEL",1,false,"P1",1);ExecutorService pool=Executors.newFixedThreadPool(2);CountDownLatch start=new CountDownLatch(1);try{List<Future<String>> jobs=new ArrayList<>();for(int i=0;i<2;i++)jobs.add(pool.submit(()->{start.await();return callback(body);}));start.countDown();for(Future<String> job:jobs)assertTrue(job.get(15,TimeUnit.SECONDS).contains("success"));}finally{pool.shutdownNow();}assertEquals(1,count("wms_outbound_receipt_event"));assertEquals(1,count("wms_outbound_receipt_package"));}
+    String conflict(){String b=body("CONFLICT",2,true,"P2",2).replace("TEST-P2","TEST-P1");assertTrue(callback(b).contains("failure"));return b;}
+    Map<String,Object> decision(String code){return map("decision",code,"reason","已核对实际出库事实与共用运单","actor","reviewer","control_version",0,"related_shipment_ids",Arrays.asList(1));}
+    @Test void rejectedWaybillIsDurableAndConfirmationReusesOriginalReceiptWithoutWarehouseResend(){
+        warehouse("QIMEN");assertTrue(callback(body("FIRST",1,false,"P1",1)).contains("success"));String b=conflict();assertTrue(callback(b).contains("failure"));
+        assertEquals(1,count("wms_outbound_receipt_review"));assertEquals(1,count("wms_outbound_receipt_event"));
+        Map<String,Object> review=service.reviews("QM",1).get(0);assertEquals("WAIT_REVIEW",review.get("state"));assertEquals(true,review.get("can_confirm_shared"));
+        assertEquals(1,((List<?>)review.get("existing_packages")).size());assertThrows(IllegalArgumentException.class,()->service.review("OTHER",1,id(review.get("id")),decision("CONFIRM_SHARED")));
+        Map<String,Object> result=service.review("QM",1,id(review.get("id")),decision("CONFIRM_SHARED"));assertEquals("CONFIRMED",result.get("state"));
+        assertEquals(2,count("wms_outbound_receipt_event"));assertEquals(2,count("wms_outbound_receipt_package"));assertEquals(3,fixture.jdbc.queryForObject("SELECT SUM(quantity) FROM wms_outbound_receipt_event",Long.class));
+        service.review("QM",1,id(review.get("id")),decision("CONFIRM_SHARED"));assertTrue(callback(b).contains("success"));assertEquals(2,count("wms_outbound_receipt_event"));
+        Map<String,Object> event=service.pending("QM","FH_TEST",false).get(1);assertEquals(id(review.get("id")),id(((Map<?,?>)((List<?>)((Map<?,?>)event.get("payload")).get("packages")).get(0)).get("shared_review_id")));
+        assertEquals("reviewer",service.reviews("QM",1).get(0).get("operator_name"));
+    }
+    @Test void pendingSummaryIsTenantScopedAndExcludesDecidedReviews(){
+        warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();
+        List<Map<String,Object>> summaries=service.reviewSummaries("QM",Arrays.asList(1L,999L));assertEquals(1,summaries.size());assertEquals(1,id(summaries.get(0).get("pending_count")));
+        assertTrue(service.reviewSummaries("OTHER",Arrays.asList(1L)).isEmpty());assertTrue(service.reviewSummaries("QM",Arrays.asList(999L)).isEmpty());assertTrue(service.reviewSummaries("QM",Collections.emptyList()).isEmpty());
+        assertThrows(IllegalArgumentException.class,()->service.reviewSummaries("QM",Arrays.asList(0L)));assertThrows(IllegalArgumentException.class,()->service.reviewSummaries("QM",Collections.nCopies(101,1L)));
+        service.review("QM",1,id(service.reviews("QM",1).get(0).get("id")),decision("REJECT"));assertTrue(service.reviewSummaries("QM",Arrays.asList(1L)).isEmpty());
+    }
+    @Test void humanRejectionDoesNotPublishStockEventAndCannotLaterBeChangedToAcceptance(){
+        warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();long review=id(service.reviews("QM",1).get(0).get("id"));
+        assertEquals("REJECTED",service.review("QM",1,review,decision("REJECT")).get("state"));
+        assertEquals(1,count("wms_outbound_receipt_event"));assertThrows(IllegalArgumentException.class,()->service.review("QM",1,review,decision("CONFIRM_SHARED")));
+    }
+    @Test void changedAcceptedPackageCannotBeConfirmedAsSharedWaybill(){
+        warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));assertTrue(callback(body("CHANGED",2,true,"P1",2)).contains("failure"));
+        Map<String,Object> review=service.reviews("QM",1).get(0);assertEquals("PACKAGE_CHANGED",review.get("conflict_code"));assertEquals(false,review.get("can_confirm_shared"));
+        assertThrows(IllegalArgumentException.class,()->service.review("QM",1,id(review.get("id")),decision("CONFIRM_SHARED")));assertEquals(1,count("wms_outbound_receipt_event"));
+    }
+    @Test void sharingStillChecksOrderMembershipSnapshotAndReason(){
+        warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();long review=id(service.reviews("QM",1).get(0).get("id"));
+        Map<String,Object> bad=decision("CONFIRM_SHARED");bad.put("related_shipment_ids",Arrays.asList(999));final Map<String,Object> other=bad;assertThrows(IllegalArgumentException.class,()->service.review("QM",1,review,other));
+        bad=decision("CONFIRM_SHARED");bad.put("reason","");final Map<String,Object> empty=bad;assertThrows(IllegalArgumentException.class,()->service.review("QM",1,review,empty));
+        fixture.jdbc.update("UPDATE wms_outbound_receipt_review SET receipt_hash='corrupted' WHERE id=?",review);assertThrows(IllegalArgumentException.class,()->service.review("QM",1,review,decision("CONFIRM_SHARED")));assertEquals(1,count("wms_outbound_receipt_event"));
+    }
+
 }

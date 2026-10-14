@@ -16,6 +16,7 @@ public class OrderShipmentWmsController {
     @Resource private WmsOutboundService outbound;
     @Resource private WmsOutboundReceiptService receipts;
     @Resource private SalesOutboundDocumentService salesDocuments;
+    @InnerAuth @PostMapping("/review-summaries") public R<List<Map<String,Object>>> reviewSummaries(@RequestParam("company_code") String company,@RequestBody List<Long> shipments){return scoped(company,()->receipts.reviewSummaries(company.toUpperCase(Locale.ROOT),shipments));}
     @InnerAuth @GetMapping("/reviews") public R<List<Map<String,Object>>> reviews(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment){return scoped(company,()->receipts.reviews(company.toUpperCase(Locale.ROOT),shipment));}
     @InnerAuth @PostMapping("/reviews/{review}") public R<Map<String,Object>> review(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment,@PathVariable long review,@RequestBody Map<String,Object> body){return scoped(company,()->receipts.review(company.toUpperCase(Locale.ROOT),shipment,review,body));}
     @InnerAuth @PostMapping("/sales-document") public R<Boolean> salesDocument(@RequestParam("company_code") String company,@RequestBody Map<String,Object> body){return scoped(company,()->salesDocuments.sync(company,body));}

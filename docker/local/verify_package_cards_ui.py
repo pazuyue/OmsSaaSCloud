@@ -120,7 +120,9 @@ def main():
 
             def fixtures(route):
                 path = urlparse(route.request.url).path
-                if path.endswith('/business/9900800'):
+                if path.endswith('/shipments/9900801/receipt-reviews') or path.endswith('/shipments/9900802/receipt-reviews'):
+                    data = {'reviews': []}
+                elif path.endswith('/business/9900800'):
                     data = fixture_order
                 elif path.endswith('/shipments/9900801'):
                     data = first

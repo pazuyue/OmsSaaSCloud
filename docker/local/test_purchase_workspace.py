@@ -20,6 +20,8 @@ def main():
     wms_schema(DB, backup=False)
     from configure_sales_outbound_documents import install_supplychain
     install_supplychain(DB)
+    from configure_receipt_review import install_supplychain as review_schema
+    review_schema(DB)
     cache = Path.home() / '.cache/oms-local'
     test = Path('oms-modules/oms-supplychain/src/test/java/com/oms/supplychain/PurchaseWorkspaceTest.java')
     shutil.copytree(ROOT/'oms-modules/oms-supplychain/src',cache/'source/oms-modules/oms-supplychain/src',dirs_exist_ok=True)

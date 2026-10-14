@@ -12,6 +12,30 @@ class OrderShipmentReceiptServiceTest {
     OrderShipmentDispatchServiceTest f=new OrderShipmentDispatchServiceTest();OrderShipmentReceiptService service;long line;
     @BeforeAll static void start(){OrderShipmentDispatchServiceTest.setup();}
     @BeforeEach void seed(){f.seed();f.create(10);f.submit(1);f.dispatch.process("VERIFY",f.shipment);line=f.fixture.db.queryForObject("SELECT id FROM oms_order_shipment_line",Long.class);service=new OrderShipmentReceiptService();ReflectionTestUtils.setField(service,"repository",f.fixture.repository);ReflectionTestUtils.setField(service,"locks",f.dispatch);ReflectionTestUtils.setField(service,"wms",f.wms);ReflectionTestUtils.setField(service,"inventory",f.inventory);when(f.inventory.warehouseReceipt(anyString(),anyString(),anyString())).thenReturn(R.ok(row("state","MISSING")));when(f.inventory.warehouseOutbound(anyString(),anyMap(),anyString())).thenAnswer(i->R.ok(((Map<?,?>)i.getArgument(1)).containsKey("lines")?reply(i.getArgument(1)):row()));when(f.wms.receiptResult(anyString(),anyLong(),anyMap(),anyString())).thenReturn(R.ok(true));}
+    @Test void pendingHumanReviewIsReportedWithoutCreatingOutboundOrTouchingStock(){
+        when(f.wms.receipts(anyString(),anyString(),anyBoolean(),anyString())).thenReturn(R.ok(Collections.emptyList()));
+        when(f.wms.reviews(anyString(),anyLong(),anyString())).thenReturn(R.ok(Arrays.asList(row("state","WAIT_REVIEW"),row("state","REJECTED"))));
+        clearInvocations(f.inventory);
+        List<Map<String,Object>> results=service.reconcile("VERIFY",f.shipment,"test");
+        assertEquals(1,results.size());assertEquals("WAIT_REVIEW",results.get(0).get("state"));assertTrue(text(results.get(0),"message").contains("1 条"));assertTrue(text(results.get(0),"message").contains("尚未扣账"));
+        assertEquals(0,f.fixture.db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_outbound",Integer.class));assertEquals(0,number(detail(),"shipped_quantity"));verifyNoInteractions(f.inventory);
+    }
+    @Test void reviewProjectionBatchesRowsAndMakesUnavailableStateExplicit(){
+        OrderShipmentReceiptReviewService reviews=new OrderShipmentReceiptReviewService();ReflectionTestUtils.setField(reviews,"warehouse",f.wms);
+        when(f.wms.reviewSummaries(eq("VERIFY"),anyList(),anyString())).thenReturn(R.ok(Arrays.asList(row("shipment_id",10,"pending_count",2))));
+        List<Map<String,Object>> rows=Arrays.asList(row("id",10,"can_reconcile_receipts",true),row("id",11,"can_reconcile_receipts",true),row("id",12,"can_reconcile_receipts",false));
+        reviews.attach("VERIFY",rows);assertEquals(2,number(rows.get(0),"receipt_review_pending_count"));assertEquals(0,number(rows.get(1),"receipt_review_pending_count"));verify(f.wms).reviewSummaries(eq("VERIFY"),eq(Arrays.asList(10L,11L)),anyString());
+        when(f.wms.reviewSummaries(eq("VERIFY"),anyList(),anyString())).thenReturn(R.fail("unavailable"));reviews.attach("VERIFY",rows);assertEquals(true,rows.get(0).get("receipt_review_lookup_failed"));assertEquals(false,rows.get(2).get("receipt_review_lookup_failed"));
+    }
+    @Test void businessSummaryContainsOnlyOwnedPendingShipmentsAndClearsAfterDecision(){
+        OrderShipmentReceiptReviewService reviews=new OrderShipmentReceiptReviewService();ReflectionTestUtils.setField(reviews,"warehouse",f.wms);ReflectionTestUtils.setField(reviews,"repository",f.fixture.repository);
+        when(f.wms.reviewSummaries(eq("VERIFY"),anyList(),anyString())).thenReturn(R.ok(Arrays.asList(row("shipment_id",f.shipment,"pending_count",1))));
+        long order=f.fixture.db.queryForObject("SELECT order_id FROM oms_order_shipment WHERE id=?",Long.class,f.shipment);
+        List<Map<String,Object>> orders=Arrays.asList(row("id",order),row("id",99999));reviews.attachOrders("VERIFY",orders);
+        assertEquals(1,number(orders.get(0),"receipt_review_pending_count"));assertEquals(1,((List<?>)orders.get(0).get("receipt_review_shipments")).size());assertEquals(0,number(orders.get(1),"receipt_review_pending_count"));
+        reviews.attachOrders("OTHER",orders);assertEquals(0,number(orders.get(0),"receipt_review_pending_count"));verify(f.wms,never()).reviewSummaries(eq("OTHER"),anyList(),anyString());
+        when(f.wms.reviewSummaries(eq("VERIFY"),anyList(),anyString())).thenReturn(R.ok(Collections.emptyList()));reviews.attachOrders("VERIFY",orders);assertTrue(((List<?>)orders.get(0).get("receipt_review_shipments")).isEmpty());verify(f.inventory,never()).warehouseOutbound(anyString(),anyMap(),anyString());
+    }
     Map<String,Object> row(Object...pairs){return f.row(pairs);}
     Map<String,Object> event(long id,long quantity,boolean complete){Map<String,Object> receipt=row("shipment_id",f.shipment,"shipment_sn",f.document().get("shipment_sn"),"task_id",77,"original_payload_hash",f.intent().get("payload_hash"),"external_order","WMS-77","external_warehouse","EXT-W","external_owner","EXT-O","message_id","MESSAGE"+id,"final_confirmation",complete?1:0,"outbound_time","2026-10-12 12:00:00","warehouse_status",complete?"DELIVERED":"PARTDELIVERED","quantity",quantity,"lines",quantity==0?Collections.emptyList():Arrays.asList(row("id",line,"sku_sn","A","batch_code","B001","quantity",quantity)),"packages",quantity==0?Collections.emptyList():Arrays.asList(row("package_code","PACKAGE"+id,"express_code","TEST-WMS-"+id,"warehouse_carrier_code","SF","lines",Arrays.asList(row("id",line,"sku_sn","A","quantity",quantity)))));return row("id",id,"payload",receipt);}
     @SuppressWarnings("unchecked") Map<String,Object> reply(Map<String,Object> command){List<Map<String,Object>> lines=new ArrayList<>();for(Map<String,Object> old:(List<Map<String,Object>>)command.get("lines")){Map<String,Object> line=new LinkedHashMap<>(old);line.put("outbound_quantity",number(old,"outbound_before")+number(old,"quantity"));lines.add(line);}return row("state","COMPLETED","source_mode","WMS","request_id",command.get("request_id"),"shipment_sn",command.get("shipment_sn"),"quantity",command.get("quantity"),"lines",lines);}
@@ -25,4 +49,29 @@ class OrderShipmentReceiptServiceTest {
     @Test void heldOrderStillRecordsVerifiedPhysicalFactAndWarehouseQueryCannotRegressShipping(){f.fixture.db.update("UPDATE oms_order SET manual_hold=1");assertEquals(true,service.process("VERIFY",event(1050,10,true),false,"test").get("success"));f.dispatch.query("VERIFY",f.shipment,"test");assertEquals("SHIPPED",detail().get("status"));assertEquals(10,number(detail(),"shipped_quantity"));assertEquals(false,f.fixture.summary().get("can_void"));}
     @Test void finalNoticeWithRemainderNeverFakesFullDelivery(){service.process("VERIFY",event(1060,4,false),false,"test");assertEquals(true,service.process("VERIFY",event(1061,0,true),false,"test").get("success"));assertEquals("PART_SHIPPED",detail().get("status"));assertEquals(4,number(detail(),"shipped_quantity"));assertEquals(6,number(f.fixture.summary(),"warehouse_occupied_quantity"));verify(f.inventory,times(1)).warehouseOutbound(anyString(),anyMap(),anyString());}
     @Test void warehouseAckLostAfterCommitOnlyRetriesAck(){doThrow(new IllegalStateException("lost ack")).when(f.wms).receiptResult(anyString(),anyLong(),anyMap(),anyString());Map<String,Object> first=event(1070,4,false);assertEquals(true,service.process("VERIFY",first,false,"test").get("ack_pending"));assertEquals(true,service.process("VERIFY",first,false,"test").get("success"));verify(f.inventory,times(1)).warehouseOutbound(anyString(),anyMap(),anyString());assertEquals(4,number(detail(),"packaged_quantity"));}
+    @Test void sharedWaybillRequiresReviewBeforeStockPostingAndKeepsTwoPackageIdentities(){
+        service.process("VERIFY",event(1100,4,false),false,"test");Map<String,Object> next=event(1101,6,true);
+        Map<String,Object> pack=(Map<String,Object>)((List<?>)((Map<?,?>)next.get("payload")).get("packages")).get(0);pack.put("express_code","TEST-WMS-1100");
+        assertThrows(IllegalArgumentException.class,()->service.process("VERIFY",next,false,"test"));verify(f.inventory,times(1)).warehouseOutbound(anyString(),anyMap(),anyString());
+        pack.put("shared_review_id",55);assertEquals(true,service.process("VERIFY",next,true,"reviewer").get("success"));
+        assertEquals(10,number(detail(),"shipped_quantity"));assertEquals(2,number(detail(),"package_count"));assertEquals(10,number(detail(),"packaged_quantity"));
+        assertEquals(true,service.process("VERIFY",next,true,"reviewer").get("success"));verify(f.inventory,times(2)).warehouseOutbound(anyString(),anyMap(),anyString());
+        Map<String,Object> foreign=row("id",99999,"order_id",99999);Map<String,Object> item=row("package_code","FOREIGN","express_code","TEST-WMS-1100","carrier_code","SF","shared_review_id",55);
+        assertThrows(IllegalArgumentException.class,()->new OrderShipmentOutboundRecords(f.fixture.repository).checkWaybill("VERIFY",foreign,item,"WMS"));
+    }
+    @Test void reviewConfirmationCallsOriginalReceiptSettlementWhileRejectionDoesNotConsume(){
+        OrderShipmentReceiptReviewService reviews=new OrderShipmentReceiptReviewService();ReflectionTestUtils.setField(reviews,"repository",f.fixture.repository);ReflectionTestUtils.setField(reviews,"warehouse",f.wms);ReflectionTestUtils.setField(reviews,"inventory",f.inventory);ReflectionTestUtils.setField(reviews,"locks",f.dispatch);ReflectionTestUtils.setField(reviews,"receipts",service);
+        Map<String,Object> rejected=row("id",88,"state","WAIT_REVIEW","event_id",null);when(f.wms.reviews(anyString(),anyLong(),anyString())).thenReturn(R.ok(Arrays.asList(rejected)));
+        assertEquals("NOT_POSTED",((Map<?,?>)((List<?>)reviews.report("VERIFY",f.shipment).get("reviews")).get(0)).get("stock_state"));verify(f.inventory,never()).warehouseOutbound(anyString(),anyMap(),anyString());
+        when(f.wms.review(anyString(),anyLong(),anyLong(),anyMap(),anyString())).thenReturn(R.ok(row("state","REJECTED")));
+        reviews.decide("VERIFY",f.shipment,88,row("decision","REJECT","reason","回传事实不成立","control_version",0),"reviewer");verify(f.inventory,never()).warehouseOutbound(anyString(),anyMap(),anyString());
+        Map<String,Object> original=event(1200,10,true);when(f.wms.receipts(anyString(),anyString(),anyBoolean(),anyString())).thenReturn(R.ok(Arrays.asList(original)));
+        when(f.wms.review(anyString(),anyLong(),anyLong(),anyMap(),anyString())).thenReturn(R.ok(row("state","CONFIRMED","event_id",1200)));
+        rejected.put("state","CONFIRMED");rejected.put("event_id",1200);
+        when(f.inventory.warehouseReceipt(anyString(),anyString(),anyString())).thenAnswer(i->R.ok(row("state",f.fixture.db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_outbound WHERE state='COMPLETED'",Long.class)>0?"COMPLETED":"MISSING")));
+        Map<String,Object> report=reviews.decide("VERIFY",f.shipment,88,row("decision","CONFIRM_SHARED","reason","核实共用运单实际出库","control_version",0),"reviewer");
+        assertEquals("POSTED",((Map<?,?>)((List<?>)report.get("reviews")).get(0)).get("stock_state"));assertEquals(10,number(detail(),"shipped_quantity"));verify(f.inventory,times(1)).warehouseOutbound(anyString(),anyMap(),anyString());
+        assertThrows(IllegalArgumentException.class,()->reviews.report("OTHER",f.shipment));
+    }
+
 }

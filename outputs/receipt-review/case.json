@@ -1,0 +1,416 @@
+{
+  "case_id": "20261014105448",
+  "created": "2026-10-14 10:54:48",
+  "sku": "ACCEPT_MULTI_20261014105448",
+  "channel_name": "[验收测试] 拒绝回传人工核对 20261014105448",
+  "seller": "ACCEPT_REVIEW_20261014105448",
+  "platform_tid": "99220261014105448",
+  "platform_oid": "9922026101410544801",
+  "warehouses": [
+    {
+      "code": "REVIEW_V1_20261014105448",
+      "quantity": 6,
+      "package_count": 2,
+      "id": 45,
+      "shipment_id": 7,
+      "shipment_sn": "XS012c9e4220d94472b29c483d33810d6c",
+      "external_order": "SIMOUT_27e59767f83c464e84ac",
+      "external_owner": "VC00001",
+      "external_warehouse": "VC00001",
+      "plans": [
+        {
+          "id": 9,
+          "sku_sn": "ACCEPT_MULTI_20261014105448",
+          "quantity": 6,
+          "platform_oid": "9922026101410544801",
+          "store_code": "REVIEW_V1_20261014105448",
+          "batch_code": "TEST-MULTI-BATCH-20261014105448-V1",
+          "batch_id": 67
+        }
+      ],
+      "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS012c9e4220d94472b29c483d33810d6c</deliveryOrderCode><deliveryOrderId>SIMOUT_27e59767f83c464e84ac</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_MULTI_XS012c9e4220d94472b29c483d33810d6c</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-14 10:55:53</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>9</orderLineNo><itemCode>ACCEPT_MULTI_20261014105448</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-20261014105448-V1</batchCode><inventoryType>ZP</inventoryType><actualQty>6</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS012c9e4220d94472b29c483d33810d6c_P1</packageCode><expressCode>TEST-SF-XS012c9e4220d94472b29c483d33810d6c-P1</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_MULTI_20261014105448</itemCode><quantity>3</quantity></item></items></package><package><packageCode>SIMPKG_XS012c9e4220d94472b29c483d33810d6c_P2</packageCode><expressCode>TEST-SF-XS012c9e4220d94472b29c483d33810d6c-P2</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_MULTI_20261014105448</itemCode><quantity>3</quantity></item></items></package></packages></request>"
+    },
+    {
+      "code": "REVIEW_V2_20261014105448",
+      "quantity": 4,
+      "package_count": 1,
+      "id": 46,
+      "shipment_id": 8,
+      "shipment_sn": "XS91fbd4db68ef48128edaa4f65b901d02",
+      "external_order": "SIMOUT_006291cba6cd4d94ba1a",
+      "external_owner": "VC00001",
+      "external_warehouse": "VC00001",
+      "plans": [
+        {
+          "id": 10,
+          "sku_sn": "ACCEPT_MULTI_20261014105448",
+          "quantity": 4,
+          "platform_oid": "9922026101410544801",
+          "store_code": "REVIEW_V2_20261014105448",
+          "batch_code": "TEST-MULTI-BATCH-20261014105448-V2",
+          "batch_id": 68
+        }
+      ],
+      "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS91fbd4db68ef48128edaa4f65b901d02</deliveryOrderCode><deliveryOrderId>SIMOUT_006291cba6cd4d94ba1a</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_MULTI_XS91fbd4db68ef48128edaa4f65b901d02</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-14 10:55:59</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>10</orderLineNo><itemCode>ACCEPT_MULTI_20261014105448</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-20261014105448-V2</batchCode><inventoryType>ZP</inventoryType><actualQty>4</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS91fbd4db68ef48128edaa4f65b901d02_P1</packageCode><expressCode>TEST-SF-XS012c9e4220d94472b29c483d33810d6c-P1</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_MULTI_20261014105448</itemCode><quantity>4</quantity></item></items></package></packages></request>"
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 29,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 67,
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 68,
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 116,
+  "order_id": 32,
+  "order_sn": "SO83d21b6806fb4859b7dac241ecc9f1c7",
+  "allocated_stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "total": 10,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 4
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 5
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "batch": [
+      {
+        "id": 67,
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "id": 68,
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "demand": [
+      {
+        "id": 50,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 29,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 9,
+        "store": "REVIEW_V1_20261014105448",
+        "quantity": 6,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      },
+      {
+        "id": 10,
+        "store": "REVIEW_V2_20261014105448",
+        "quantity": 4,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  },
+  "first_posted": true,
+  "before_rejection": {
+    "company": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "total": 4,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 4,
+        "version": 5
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 4,
+        "quota": 4,
+        "quota_reserved": 4,
+        "version": 7
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "batch": [
+      {
+        "id": 67,
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "id": 68,
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "demand": [
+      {
+        "id": 50,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 6
+      }
+    ],
+    "source": [
+      {
+        "id": 29,
+        "quantity": 10,
+        "outbound": 6,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 9,
+        "store": "REVIEW_V1_20261014105448",
+        "quantity": 6,
+        "outbound": 6,
+        "status": "OCCUPIED",
+        "method": "WMS"
+      },
+      {
+        "id": 10,
+        "store": "REVIEW_V2_20261014105448",
+        "quantity": 4,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  },
+  "shared_waybill": "TEST-SF-XS012c9e4220d94472b29c483d33810d6c-P1",
+  "review_id": 1,
+  "pending_result": {
+    "stock_total": 4,
+    "order_shipped": 6,
+    "second_shipped": 0,
+    "stock_unchanged_after_refusal": true,
+    "no_outbound_record": true
+  },
+  "ui_result": {
+    "browser_errors": [],
+    "confirmation_requests": 1,
+    "required_reason_and_checkbox": true
+  },
+  "replayed": true,
+  "completed": true,
+  "after_confirmation": {
+    "company": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "total": 0,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 6
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_MULTI_20261014105448",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 0,
+        "quota_reserved": 0,
+        "version": 9
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      }
+    ],
+    "batch": [
+      {
+        "id": 67,
+        "store": "REVIEW_V1_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "id": 68,
+        "store": "REVIEW_V2_20261014105448",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      }
+    ],
+    "demand": [
+      {
+        "id": 50,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 10
+      }
+    ],
+    "source": [
+      {
+        "id": 29,
+        "quantity": 10,
+        "outbound": 10,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 9,
+        "store": "REVIEW_V1_20261014105448",
+        "quantity": 6,
+        "outbound": 6,
+        "status": "OCCUPIED",
+        "method": "WMS"
+      },
+      {
+        "id": 10,
+        "store": "REVIEW_V2_20261014105448",
+        "quantity": 4,
+        "outbound": 4,
+        "status": "OCCUPIED",
+        "method": "WMS"
+      }
+    ]
+  }
+}

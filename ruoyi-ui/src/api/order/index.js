@@ -68,3 +68,6 @@ export const platformShippingSubmit = id => request({ url: `/order/orders/shipme
 export const platformShippingAction = (id, task, action) => request({ url: `/order/orders/shipments/${id}/platform-shipping/${task}/${action}`, method: 'post' })
 export const platformShippingConfig = channel => request({ url: `/order/orders/platform-shipping-config/${channel}`, method: 'get' })
 export const savePlatformShippingConfig = (channel, data) => request({ url: `/order/orders/platform-shipping-config/${channel}`, method: 'post', data })
+
+export const receiptReviews = id => request({ url: `/order/orders/shipments/${id}/receipt-reviews`, method: 'get' })
+export const decideReceiptReview = (id, review, data) => request({ url: `/order/orders/shipments/${id}/receipt-reviews/${review}`, method: 'post', data })

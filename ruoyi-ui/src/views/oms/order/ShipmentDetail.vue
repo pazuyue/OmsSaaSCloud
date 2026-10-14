@@ -1,8 +1,10 @@
 <template>
-  <el-drawer title="发货单详情" :visible.sync="visible" size="min(1180px, 94vw)" append-to-body>
+  <el-drawer title="发货单详情" :visible.sync="visible" size="min(1180px, 94vw)" append-to-body @opened="drawerReady = true; focusReviewIfReady()" @closed="drawerReady = false">
     <div v-loading="loading" class="shipment-detail">
       <template v-if="detail">
         <div class="identity"><strong>{{ detail.shipment_sn }}</strong><el-tag :type="tone(detail.status)">{{ label(detail.status, detail.outbound_mode) }}</el-tag></div>
+        <el-alert v-if="Number(detail.receipt_review_pending_count) > 0" title="仓库回传被拒绝，待人工核对；本次回传尚未扣账，包裹尚未接纳。" type="warning" :closable="false" show-icon><el-button type="text" @click="showReviews">处理回传异常</el-button></el-alert>
+        <el-alert v-else-if="detail.receipt_review_lookup_failed" title="回传核对状态读取失败，请查看下方仓库回传核对区域并重试。" type="warning" :closable="false" show-icon />
         <el-alert v-if="nextAction" :title="nextAction" type="info" :closable="false" show-icon />
         <el-button v-if="detail.shipment_sn.startsWith('XS')" v-hasPermi="['warehouse:tickets:list']" type="text" @click="$router.push({ path: '/oms-supplychain/wmsTickets', query: { documentType: 'SALE_OUT', noSn: detail.shipment_sn }}); visible = false">查看销售出库单及明细</el-button>
         <el-alert v-if="detail.fulfillment_block && !['VOIDING', 'VOIDED', 'SHIPPED'].includes(detail.status)" :title="detail.fulfillment_block" type="warning" :closable="false" show-icon />
@@ -40,7 +42,7 @@
           <el-table-column label="已发货" prop="shipped_quantity" width="90" />
           <el-table-column label="占用来源" min-width="155"><template slot-scope="s">{{ s.row.source_type === 'LOCK' ? '继承渠道锁库' : '公共库存转占用' }}<div class="hint">分仓回执 {{ s.row.allocation_id }}</div></template></el-table-column>
         </el-table>
-        <shipment-outbound-history :detail="detail" @changed="changed" />
+        <shipment-outbound-history ref="outboundHistory" :detail="detail" @changed="changed" />
         <el-table v-if="detail.logs && detail.logs.length" :data="detail.logs" class="summary"><el-table-column label="操作时间" prop="create_time" width="170" /><el-table-column label="操作人" prop="operator_name" width="130" /><el-table-column label="结果" width="90"><template slot-scope="s">{{ s.row.result === 'SUCCESS' ? '成功' : s.row.result === 'FAILED' ? '失败' : '待处理' }}</template></el-table-column><el-table-column label="处理记录" prop="message" min-width="280" /></el-table>
         <div class="footer"><el-button v-if="detail.can_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" type="primary" @click="$refs.virtualOutbound.open([detail])">虚拟出库</el-button><el-button v-if="detail.can_retry_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'RETRY')">重试虚拟出库</el-button><el-button v-if="detail.can_query_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'QUERY')">核对出库</el-button><el-button v-if="detail.can_dispatch" v-hasPermi="['order:shipment:dispatch']" type="primary" @click="$refs.dispatch.open([detail])">{{ detail.wms_dispatch_state === 'FAILED' ? '重试下发' : '下发仓库' }}</el-button><el-button v-if="detail.can_query_warehouse" v-hasPermi="['order:shipment:queryWarehouse']" @click="$refs.dispatch.open([detail], 'QUERY')">核对仓库结果</el-button><el-button v-if="detail.wms_dispatch_state && detail.wms_dispatch_state !== 'NONE'" v-hasPermi="['warehouse:wms:log']" @click="$refs.wmsLogs.open(detail.shipment_sn)">仓库交互日志</el-button><template v-if="detail.can_match_carrier"><el-button v-if="detail.status === 'WAIT_CARRIER'" v-hasPermi="['order:shipment:carrier']" type="primary" @click="$refs.carrier.open([detail])">匹配快递</el-button><el-button v-hasPermi="['order:shipment:carrier']" @click="$refs.carrier.open([detail], 'MANUAL')">{{ detail.carrier_code ? '调整快递' : '手工选择' }}</el-button></template><el-button @click="openOrder">查看来源订单</el-button><el-button @click="open(detail.id)">刷新详情</el-button><el-button @click="visible=false">关闭</el-button></div>
       </template>
@@ -64,10 +66,11 @@ import PlatformShippingStatus from './PlatformShippingStatus'
 import PlatformShippingDialog from './PlatformShippingDialog'
 export default {
   components: { PlatformShippingStatus, PlatformShippingDialog, ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory, ShipmentPackageCards, ShipmentPackageDialog },
-  data() { return { visible: false, loading: false, detail: null, requestId: 0 } },
+  data() { return { visible: false, loading: false, detail: null, requestId: 0, drawerReady: false, focusReviews: false } },
   computed: {
     nextAction() {
       const row = this.detail; if (!row) return ''
+      if (Number(row.receipt_review_pending_count) > 0 || row.receipt_review_lookup_failed) return ''
       if (row.status === 'SHIPPED') return ''
       if (row.fulfillment_block) return '请先处理来源订单的履约阻断原因。'
       if (['VOIDING', 'VOIDED'].includes(row.status)) return ''
@@ -87,7 +90,9 @@ export default {
   methods: {
     label: shipmentLabel, tone: shipmentTone,
     changed() { this.$emit('changed'); this.open(this.detail.id) },
-    async open(id) { const request = ++this.requestId; this.visible = true; this.loading = true; if (!this.detail || this.detail.id !== id) this.detail = null; try { const r = await shipmentDetail(id); if (request === this.requestId) this.detail = r.data } finally { if (request === this.requestId) this.loading = false } },
+    showReviews() { this.$nextTick(() => { if (this.$refs.outboundHistory) this.$refs.outboundHistory.showReviews() }) },
+    focusReviewIfReady() { if (this.drawerReady && this.focusReviews && this.detail && !this.loading) { this.focusReviews = false; this.showReviews() } },
+    async open(id, review = false) { const request = ++this.requestId; this.focusReviews = review; if (!this.visible) this.drawerReady = false; this.visible = true; this.loading = true; if (!this.detail || this.detail.id !== id) this.detail = null; try { const r = await shipmentDetail(id); if (request === this.requestId) { this.detail = r.data } } finally { if (request === this.requestId) { this.loading = false; this.focusReviewIfReady() } } },
     openOrder() { const id = this.detail.order_id; this.visible = false; this.$emit('open-order', id) }
   }
 }

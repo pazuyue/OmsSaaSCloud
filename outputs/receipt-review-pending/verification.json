@@ -1,0 +1,25 @@
+{
+  "order_id": 33,
+  "order_sn": "SOd9118886958347c895247b99db752f84",
+  "platform_tid": "99320261014110948",
+  "sku": "ACCEPT_MULTI_20261014110948",
+  "review_id": 2,
+  "state": "WAIT_REVIEW",
+  "stock_state": "NOT_POSTED",
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=33",
+  "shipment_url": "http://127.0.0.1:8088/oms-order/shipments?number=XS2364cdb8cbfb4f5aa2310d311194adfd",
+  "ui_result": {
+    "browser_errors": [],
+    "browser_writes": [],
+    "reason_empty": true,
+    "confirmation_unchecked": true
+  },
+  "pending_shipment_sn": "XS2364cdb8cbfb4f5aa2310d311194adfd",
+  "order_shipped": 6,
+  "order_quantity": 10,
+  "pending_quantity": 4,
+  "remaining_inventory": 4,
+  "reserved_inventory": 4,
+  "review_decision_submitted": false,
+  "real_platform_notification_sent": false
+}

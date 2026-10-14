@@ -1,0 +1,69 @@
+{
+  "order_id": 32,
+  "order_sn": "SO83d21b6806fb4859b7dac241ecc9f1c7",
+  "sku": "ACCEPT_MULTI_20261014105448",
+  "review_id": 1,
+  "reviewed_shipment": "XS91fbd4db68ef48128edaa4f65b901d02",
+  "shared_waybill": "TEST-SF-XS012c9e4220d94472b29c483d33810d6c-P1",
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=32",
+  "pending_result": {
+    "stock_total": 4,
+    "order_shipped": 6,
+    "second_shipped": 0,
+    "stock_unchanged_after_refusal": true,
+    "no_outbound_record": true
+  },
+  "confirmation_stock_total": 0,
+  "final_shipped": 10,
+  "final_packages": 3,
+  "platform_simulation_tasks": 3,
+  "warehouse_correction_or_resend_needed": false,
+  "duplicate_stock_deduction": false,
+  "review_actor": "admin",
+  "original_receipt_saved": true,
+  "real_platform_notification_sent": false,
+  "ui_result": {
+    "browser_errors": [],
+    "confirmation_requests": 1,
+    "required_reason_and_checkbox": true
+  },
+  "backend_tests": {
+    "supplychain": 100,
+    "order": 195,
+    "failures": 0
+  },
+  "frontend_build": "passed",
+  "original_stock_quantities_unchanged": true,
+  "original_order_fulfillment_unchanged": true,
+  "background_metadata_changes": {
+    "qm_oms_saas_inventory.oms_channel_inventory": {
+      "modify_time": 4,
+      "version": 4
+    },
+    "qm_oms_saas_inventory.oms_order_stock_demand": {
+      "update_time": 1,
+      "decision_snapshot": 1
+    },
+    "qm_oms_saas_order.oms_order": {
+      "update_time": 1,
+      "stock_attempt_at": 1,
+      "issue_synced_at": 1
+    }
+  },
+  "sales_documents": [
+    {
+      "shipment_id": "7",
+      "store_code": "REVIEW_V1_20261014105448",
+      "document_sn": "XScdd331ee5ec4c9df8f1b5212bc9ca94f",
+      "planned": "6",
+      "actual": "6"
+    },
+    {
+      "shipment_id": "8",
+      "store_code": "REVIEW_V2_20261014105448",
+      "document_sn": "XS75481930ba06b3b88e9eae7555892272",
+      "planned": "4",
+      "actual": "4"
+    }
+  ]
+}
