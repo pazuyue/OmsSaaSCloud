@@ -122,13 +122,15 @@ public class OrderPlatformShippingService {
         new OrderIssueService(repository).reconcileDomain(company,order,"PLATFORM_SHIPPING",desired);
     }
     private final Map<String,Long> cursors=new HashMap<>();
-    public void pollCompany(String company){
+    public Map<String,Object> pollCompany(String company){
+        com.oms.common.task.ScanReport report=new com.oms.common.task.ScanReport();
         for(Map<String,Object> config:repository.db().query("SELECT channel_id,enabled_at FROM oms_order_platform_shipping_config WHERE company_code=? AND mode='SIMULATION'",ROW,company)){
             String key=String.valueOf(com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder.peek())+"/"+company+"/"+config.get("channel_id");long cursor=cursors.getOrDefault(key,0L);
             List<Long> ids=repository.db().queryForList("SELECT DISTINCT s.id FROM oms_order_shipment s JOIN oms_order_shipment_package p ON p.company_code=s.company_code AND p.shipment_id=s.id WHERE s.company_code=? AND s.channel_id=? AND p.create_time>=? AND s.id>? AND p.express_code LIKE 'TEST-%' AND NOT EXISTS(SELECT 1 FROM oms_order_platform_shipping_task t WHERE t.company_code=p.company_code AND t.package_id=p.id) ORDER BY s.id LIMIT 30",Long.class,company,config.get("channel_id"),config.get("enabled_at"),cursor);
-            cursors.put(key,ids.isEmpty()?0L:ids.get(ids.size()-1));for(long id:ids)try{enqueue(company,id,"平台模拟回传任务",text(config,"enabled_at"));}catch(IllegalArgumentException e){/* Not ready: report exposes specific prerequisite; next pass can reassess. */}
+            cursors.put(key,ids.isEmpty()?0L:ids.get(ids.size()-1));for(long id:ids)try{enqueue(company,id,"平台模拟回传任务",text(config,"enabled_at"));}catch(IllegalArgumentException e){report.record(company,id,"","SKIPPED","包裹尚未满足平台回传前置条件，请查看原发货单");}
         }
-        for(long id:repository.db().queryForList("SELECT id FROM oms_order_platform_shipping_task WHERE company_code=? AND ((state IN ('PENDING','UNKNOWN') AND next_attempt<=NOW()) OR (state='PROCESSING' AND lease_until<NOW())) ORDER BY id LIMIT 50",Long.class,company))process(company,id);
+        for(long id:repository.db().queryForList("SELECT id FROM oms_order_platform_shipping_task WHERE company_code=? AND ((state IN ('PENDING','UNKNOWN') AND next_attempt<=NOW()) OR (state='PROCESSING' AND lease_until<NOW())) ORDER BY id LIMIT 50",Long.class,company)){try{process(company,id);Map<String,Object> task=repository.db().queryForMap("SELECT t.shipment_id,s.shipment_sn,t.state FROM oms_order_platform_shipping_task t JOIN oms_order_shipment s ON s.company_code=t.company_code AND s.id=t.shipment_id WHERE t.company_code=? AND t.id=?",company,id);String state=text(task,"state");report.record(company,number(task,"shipment_id"),text(task,"shipment_sn"),state,"SUCCESS".equals(state)?"平台模拟回传成功":"请查看原包裹的平台回传任务");}catch(RuntimeException e){report.record(company,0,"","FAILED","平台任务处理异常，请查看服务日志");}}
+        return report;
     }
     public void attach(String company,List<Map<String,Object>> shipments){
         if(shipments.isEmpty())return;List<Object> args=new ArrayList<>();args.add(company);for(Map<String,Object> row:shipments)args.add(row.get("id"));Map<Long,List<Map<String,Object>>> byShipment=new HashMap<>();

@@ -112,6 +112,7 @@
       </el-table-column>
       <el-table-column label="调用目标字符串" align="center" prop="invokeTarget" :show-overflow-tooltip="true" />
       <el-table-column label="日志信息" align="center" prop="jobMessage" :show-overflow-tooltip="true" />
+      <el-table-column label="业务处理结果" min-width="240"><template slot-scope="scope"><template v-if="scanData(scope.row)"><div>扫描 {{ scanData(scope.row).scanned }} · 成功 {{ scanData(scope.row).succeeded }} · 失败 {{ scanData(scope.row).failed }}</div><div class="scan-warning">待确认 {{ scanData(scope.row).unconfirmed }} · 待人工核对 {{ scanData(scope.row).review_pending }}</div></template><span v-else>—</span></template></el-table-column>
       <el-table-column label="执行状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
@@ -144,7 +145,7 @@
     />
 
     <!-- 调度日志详细 -->
-    <el-dialog title="调度日志详细" :visible.sync="open" width="700px" append-to-body>
+    <el-dialog title="调度日志详细" :visible.sync="open" width="min(1100px, 96vw)" append-to-body>
       <el-form ref="form" :model="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -172,6 +173,16 @@
           </el-col>
         </el-row>
       </el-form>
+      <section v-if="scanData(form)" class="scan-detail">
+        <p>本次执行：扫描 {{ scanData(form).scanned }} 项，成功 {{ scanData(form).succeeded }}，失败 {{ scanData(form).failed }}，结果待确认 {{ scanData(form).unconfirmed }}，仍待处理 {{ scanData(form).pending }}，跳过 {{ scanData(form).skipped }}。</p>
+        <p class="scan-warning">待人工核对存量 {{ scanData(form).review_pending }} 条，扫描范围异常 {{ scanData(form).scope_failures }} 处。人工核对存量不计入本次自动处理数量。</p>
+        <el-table :data="scanData(form).items || []" size="small" max-height="360" empty-text="本轮没有需要处理的单据">
+          <el-table-column label="公司" prop="company_code" width="100" />
+          <el-table-column label="关联单据" min-width="230"><template slot-scope="s">{{ s.row.reference_sn || (s.row.reference_id ? '业务订单 #' + s.row.reference_id : '扫描范围') }}<div><el-button v-if="s.row.reference_id" v-hasPermi="scanData(form).kind === 'inbound' ? ['warehouse:tickets:list'] : ['order:order:query']" type="text" size="mini" @click="openReference(s.row, scanData(form).kind)">查看原单</el-button></div></template></el-table-column>
+          <el-table-column label="本轮结果" width="130"><template slot-scope="s"><el-tag size="small" :type="s.row.state === 'SUCCESS' ? 'success' : s.row.state === 'FAILED' ? 'danger' : 'warning'">{{ scanState(s.row.state) }}</el-tag></template></el-table-column>
+          <el-table-column label="处理说明" prop="message" min-width="240" />
+        </el-table><p v-if="scanData(form).omitted">本次另有 {{ scanData(form).omitted }} 条明细未展开，请在对应业务列表按单据追查。</p>
+      </section>
       <div slot="footer" class="dialog-footer">
         <el-button @click="open = false">关 闭</el-button>
       </div>
@@ -229,6 +240,9 @@ export default {
     }
   },
   methods: {
+    scanData(row) { if (!row.executionData) return null; try { const data = JSON.parse(row.executionData); return data && data.kind && Array.isArray(data.items) ? data : null } catch (_) { return null } },
+    scanState(state) { return ({ SUCCESS: '已完成', FAILED: '本轮失败', UNKNOWN: '结果待确认', PENDING: '仍待处理', PROCESSING: '处理中', SKIPPED: '暂未处理', WAIT_REVIEW: '待人工核对' })[state] || state },
+    openReference(row, kind) { if (kind === 'issues') this.$router.push({ path: '/oms-order/business', query: { view: 'business', orderId: row.reference_id }}); else if (kind === 'inbound') this.$router.push({ path: '/oms-supplychain/wmsTickets', query: { noSn: row.reference_sn }}); else this.$router.push({ path: '/oms-order/shipments', query: { number: row.reference_sn }}); this.open = false },
     /** 查询调度日志列表 */
     getList() {
       this.loading = true;
@@ -293,3 +307,4 @@ export default {
   }
 };
 </script>
+<style scoped>.scan-detail{font-size:13px;line-height:1.8;overflow-wrap:anywhere}.scan-warning{color:#b47719;font-size:12px}</style>

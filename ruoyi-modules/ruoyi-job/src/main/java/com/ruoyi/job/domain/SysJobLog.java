@@ -43,6 +43,10 @@ public class SysJobLog extends BaseEntity
     @Excel(name = "异常信息")
     private String exceptionInfo;
 
+    private String executionData;
+    public String getExecutionData(){return executionData;}
+    public void setExecutionData(String value){executionData=value;}
+
     /** 开始时间 */
     private Date startTime;
 

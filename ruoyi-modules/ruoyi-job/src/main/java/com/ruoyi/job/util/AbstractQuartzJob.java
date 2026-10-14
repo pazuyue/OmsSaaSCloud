@@ -1,6 +1,8 @@
 package com.ruoyi.job.util;
 
 import java.util.Date;
+import com.ruoyi.job.domain.JobScanResult;
+import com.alibaba.fastjson2.JSON;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -80,6 +82,12 @@ public abstract class AbstractQuartzJob implements Job
         sysJobLog.setStopTime(new Date());
         long runMs = sysJobLog.getStopTime().getTime() - sysJobLog.getStartTime().getTime();
         sysJobLog.setJobMessage(sysJobLog.getJobName() + " 总共耗时：" + runMs + "毫秒");
+        if(context.getResult() instanceof JobScanResult){
+            JobScanResult result=(JobScanResult)context.getResult();
+            sysJobLog.setExecutionData(JSON.toJSONString(result.getData()));
+            sysJobLog.setJobMessage(sysJob.getJobName()+" 耗时 "+runMs+"ms；"+result.summary());
+            if(e==null&&result.hasFailures())e=new IllegalStateException("本轮部分业务处理失败，已继续处理其他单据；请查看执行明细");
+        }
         if (e != null)
         {
             sysJobLog.setStatus("1");

@@ -179,3 +179,13 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 用户人工验收保留订单 `SOd9118886958347c895247b99db752f84`（ID 33），V2 发货单 `XS2364cdb8cbfb4f5aa2310d311194adfd` 的核对记录 ID 2 保持 WAIT_REVIEW、NOT_POSTED。`python docker/local/verify_pending_receipt_review_ui.py` 验证列表入口、定位、刷新与核对提示，只允许查询和核对进度，不提交人工确认或拒绝，并比对库存未变化；不能使用完整审批验收脚本代替此只读核验。
 
 业务订单主列表的问题标签、详情顶部、商品页订单问题汇总以及订单问题对话框均投影当前待核对回传，并提供直接处理入口；仅在无待核对回传且状态读取成功时显示无当前问题。SKU 行的空状态明确为“暂无库存问题”。待核对数量按公司及订单对应发货单批量读取，不把被拒绝回传计入已出库，不修改库存与人工核对结论。此投影依据仓库回传核对台账，人工处理记录仍在原发货单核对区域中追溯。
+
+## 中央定时调度
+
+仓库下发、出库回传记账、虚拟出库、销售出库单同步、平台发货回传、库存问题核对与采购入库仓库交互，统一由 ruoyi-job 的 `fulfillmentScanTask` 七个固定方法触发。order 和 supplychain 不再启用上述服务内部 `@Scheduled`。系统“定时任务”选择“订单与仓库扫描”可集中查看，沿用原有启停、cron 修改、立即执行和日志权限。停止只影响后续扫描，业务单据处理仍使用原租约、事务和幂等请求。
+
+全公司扫描仅允许精确白名单路径的内部认证 POST，请求进入后由扫描器遍历明确配置的数据源和公司；退出及异常时清理线程路由。其他路径、无内部认证的请求不能获得全公司扫描能力。收货扫描按 WMS 的公司路由执行，不使用数据源组随机选库。
+
+日志保存在 `sys_job_log.execution_data`，只包含本轮计数和最多50条脱敏单据引用，不保存原始报文、接收人信息或连接密钥。扫描范围异常、业务失败、结果待确认与待人工核对存量分别统计。待人工核对记录仅展示、不审批、不创建扣账事件；执行明细可进入原单继续人工核对。旧 void 类型定时任务日志保持兼容。
+
+部署时先执行 `backup_fulfillment_jobs.py` 备份配置和日志，再执行 `configure_fulfillment_jobs.py` 安装日志字段及七个暂停的新任务。该脚本重复执行不会覆盖已有开关或cron。更新 order、supplychain、job 和前端并确认内部自动触发已移除后，逐项立即执行验证，再启用新任务；避免新旧调度同时运行。本地验证为 `test_fulfillment_jobs.py`、`test_orders.py --order-only`、`test_purchase_workspace.py`。`activate_fulfillment_jobs.py` 使用真实 Quartz 验证暂停、立即执行、恢复和自动触发，并核对原验收单的核对结论与库存相对切换前快照未改变；`verify_fulfillment_jobs_ui.py` 为只读页面验收。证据在 `outputs/central-scheduler`。

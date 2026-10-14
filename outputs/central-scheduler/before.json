@@ -1,0 +1,206 @@
+{
+  "jobs": [
+    {
+      "jobId": 1,
+      "jobName": "系统默认（无参）",
+      "jobGroup": "DEFAULT",
+      "invokeTarget": "ryTask.ryNoParams",
+      "cronExpression": "0/10 * * * * ?",
+      "status": "1"
+    },
+    {
+      "jobId": 2,
+      "jobName": "系统默认（有参）",
+      "jobGroup": "DEFAULT",
+      "invokeTarget": "ryTask.ryParams('ry')",
+      "cronExpression": "0/15 * * * * ?",
+      "status": "1"
+    },
+    {
+      "jobId": 3,
+      "jobName": "系统默认（多参）",
+      "jobGroup": "DEFAULT",
+      "invokeTarget": "ryTask.ryMultipleParams('ry', true, 2000L, 316.50D, 100)",
+      "cronExpression": "0/20 * * * * ?",
+      "status": "1"
+    },
+    {
+      "jobId": 4,
+      "jobName": "日常分货规则扫描",
+      "jobGroup": "DEFAULT",
+      "invokeTarget": "dailyAllocationTask.scanAll()",
+      "cronExpression": "1 0/30 * * * ?",
+      "status": "1"
+    },
+    {
+      "jobId": 5,
+      "jobName": "天猫订单公司店铺扫描",
+      "jobGroup": "DEFAULT",
+      "invokeTarget": "orderPullTask.scanAll()",
+      "cronExpression": "0/10 * * * * ?",
+      "status": "1"
+    }
+  ],
+  "stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_MULTI_20261014110948",
+        "total": 0,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 6
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_MULTI_20261014110948",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 0,
+        "quota_reserved": 0,
+        "version": 9
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "PENDING_V1_20261014110948",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "store": "PENDING_V2_20261014110948",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      }
+    ],
+    "batch": [
+      {
+        "id": 69,
+        "store": "PENDING_V1_20261014110948",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      },
+      {
+        "id": 70,
+        "store": "PENDING_V2_20261014110948",
+        "actual": 0,
+        "available": 0,
+        "locked": 0,
+        "version": 4
+      }
+    ],
+    "demand": [
+      {
+        "id": 51,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 10
+      }
+    ],
+    "source": [
+      {
+        "id": 30,
+        "quantity": 10,
+        "outbound": 10,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 11,
+        "store": "PENDING_V1_20261014110948",
+        "quantity": 6,
+        "outbound": 6,
+        "status": "OCCUPIED",
+        "method": "WMS"
+      },
+      {
+        "id": 12,
+        "store": "PENDING_V2_20261014110948",
+        "quantity": 4,
+        "outbound": 4,
+        "status": "OCCUPIED",
+        "method": "WMS"
+      }
+    ]
+  },
+  "pending_shipment_id": 10,
+  "review": {
+    "shipment_id": 10,
+    "shipment_sn": "XS2364cdb8cbfb4f5aa2310d311194adfd",
+    "reviews": [
+      {
+        "id": 2,
+        "shipment_id": 10,
+        "shipment_sn": "XS2364cdb8cbfb4f5aa2310d311194adfd",
+        "message_id": "SIM_MULTI_XS2364cdb8cbfb4f5aa2310d311194adfd",
+        "conflict_code": "WAYBILL_CONFLICT",
+        "conflict_message": "不同包裹使用了相同快递及运单号",
+        "source_log_id": 321,
+        "state": "CONFIRMED",
+        "control_version": 1,
+        "event_id": 9,
+        "decision": "CONFIRM_SHARED",
+        "reason": "核对完成",
+        "operator_name": "admin",
+        "decided_at": "2026-10-14T11:57:55",
+        "create_time": "2026-10-14T11:10:05",
+        "post_state": "POSTED",
+        "post_error": "",
+        "incoming_packages": [
+          {
+            "package_code": "SIMPKG_XS2364cdb8cbfb4f5aa2310d311194adfd_P1",
+            "express_code": "TEST-SF-XSf60df1f75d774d5e963a87a6684d14ca-P1",
+            "logistics_code": "sf",
+            "items": [
+              {
+                "sku": "ACCEPT_MULTI_20261014110948",
+                "quantity": 4
+              }
+            ]
+          }
+        ],
+        "existing_packages": [
+          {
+            "shipment_id": 9,
+            "shipment_sn": "XSf60df1f75d774d5e963a87a6684d14ca",
+            "package_code": "SIMPKG_XSf60df1f75d774d5e963a87a6684d14ca_P1",
+            "express_code": "TEST-SF-XSf60df1f75d774d5e963a87a6684d14ca-P1",
+            "logistics_code": "sf",
+            "lines": [
+              {
+                "id": 11,
+                "sku_sn": "ACCEPT_MULTI_20261014110948",
+                "quantity": 3
+              }
+            ]
+          },
+          {
+            "shipment_id": 10,
+            "shipment_sn": "XS2364cdb8cbfb4f5aa2310d311194adfd",
+            "package_code": "SIMPKG_XS2364cdb8cbfb4f5aa2310d311194adfd_P1",
+            "express_code": "TEST-SF-XSf60df1f75d774d5e963a87a6684d14ca-P1",
+            "logistics_code": "sf",
+            "lines": [
+              {
+                "id": 12,
+                "sku_sn": "ACCEPT_MULTI_20261014110948",
+                "quantity": 4
+              }
+            ]
+          }
+        ],
+        "can_confirm_shared": false,
+        "stock_state": "POSTED"
+      }
+    ]
+  }
+}

@@ -43,6 +43,11 @@ class WmsOutboundReceiptServiceTest {
         Map<String,Object> event=service.pending("QM","FH_TEST",false).get(1);assertEquals(id(review.get("id")),id(((Map<?,?>)((List<?>)((Map<?,?>)event.get("payload")).get("packages")).get(0)).get("shared_review_id")));
         assertEquals("reviewer",service.reviews("QM",1).get(0).get("operator_name"));
     }
+    @Test void scheduledReceiptBatchKeepsRejectedCallbacksOutOfPostingEvents(){
+        warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();Map<String,Object> batch=service.scanPending("QM");
+        assertEquals(1,id(batch.get("review_pending")));assertEquals(1,((List<?>)batch.get("events")).size());assertEquals(1,((List<?>)batch.get("reviews")).size());
+        service.scanPending("QM");assertEquals("WAIT_REVIEW",service.reviews("QM",1).get(0).get("state"));assertEquals(1,count("wms_outbound_receipt_event"));assertEquals(0,id(service.scanPending("OTHER").get("review_pending")));
+    }
     @Test void pendingSummaryIsTenantScopedAndExcludesDecidedReviews(){
         warehouse("QIMEN");callback(body("FIRST",1,false,"P1",1));conflict();
         List<Map<String,Object>> summaries=service.reviewSummaries("QM",Arrays.asList(1L,999L));assertEquals(1,summaries.size());assertEquals(1,id(summaries.get(0).get("pending_count")));

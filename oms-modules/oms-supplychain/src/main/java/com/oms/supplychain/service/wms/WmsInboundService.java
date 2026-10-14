@@ -209,9 +209,15 @@ public class WmsInboundService {
         if(!lines.isEmpty())purchase.recordWmsEvent(company,text(ticket.get("sn")),success?"真实收货入账成功":"真实收货入账异常","收货明细 "+lines.size()+" 条");
         return success;
     });}
-    public void pollCompany(String company){
+    public Map<String,Object> pollCompany(String company){
+        com.oms.common.task.ScanReport report=new com.oms.common.task.ScanReport();
         db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='UNKNOWN',lease_until=NULL,last_error='下发进程中断，需查询仓库结果' WHERE company_code=? AND dispatch_state='SENDING' AND lease_until<NOW()",company);
-        for(Long id:db.jdbc.queryForList("SELECT id FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW() ORDER BY id LIMIT 10",Long.class,company))dispatch(company,id);
-        for(Long ticket:db.jdbc.queryForList("SELECT t.ticket_id FROM wms_inbound_task t JOIN wms_tickets w ON w.id=t.ticket_id AND UPPER(w.company_code)=t.company_code WHERE t.company_code=? AND (EXISTS(SELECT 1 FROM wms_receipt_line l WHERE l.task_id=t.id AND l.posted=0) OR (t.receipt_state='COMPLETE' AND w.inventory_status=0)) ORDER BY t.id LIMIT 20",Long.class,company))post(company,ticket);
+        for(Map<String,Object> task:db.jdbc.queryForList("SELECT id,ticket_id,ticket_sn FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW() ORDER BY id LIMIT 10",company))try{
+            dispatch(company,id(task.get("id")));String state=db.jdbc.queryForObject("SELECT dispatch_state FROM wms_inbound_task WHERE company_code=? AND id=?",String.class,company,task.get("id"));report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"ACCEPTED".equals(state)?"SUCCESS":Arrays.asList("FAILED","UNKNOWN").contains(state)?state:"PENDING","采购入库下发结果，请查看原入库单");
+        }catch(RuntimeException e){report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"FAILED","采购入库下发未确认，请核对原任务");}
+        for(Map<String,Object> task:db.jdbc.queryForList("SELECT t.ticket_id,t.ticket_sn FROM wms_inbound_task t JOIN wms_tickets w ON w.id=t.ticket_id AND UPPER(w.company_code)=t.company_code WHERE t.company_code=? AND (EXISTS(SELECT 1 FROM wms_receipt_line l WHERE l.task_id=t.id AND l.posted=0) OR (t.receipt_state='COMPLETE' AND w.inventory_status=0)) ORDER BY t.id LIMIT 20",company))try{
+            boolean success=post(company,id(task.get("ticket_id")));report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),success?"SUCCESS":"FAILED","采购入库回传记账结果，请查看原入库单");
+        }catch(RuntimeException e){report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"FAILED","采购入库记账未确认，请核对原回传");}
+        return report;
     }
 }

@@ -56,7 +56,11 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
         // The authenticated internal coordinator selects exact configured routes itself.
         // Public gateway requests cannot carry FROM_SOURCE; controller also requires @InnerAuth.
-        if (("/allocation/internal/daily-scan-all".equals(requestURI) || "/orders/internal/scan-all".equals(requestURI)) && "POST".equals(req.getMethod())
+        if (Arrays.asList("/allocation/internal/daily-scan-all", "/orders/internal/scan-all",
+                "/orders/internal/schedule/dispatch", "/orders/internal/schedule/receipts",
+                "/orders/internal/schedule/virtual", "/orders/internal/schedule/sales",
+                "/orders/internal/schedule/platform", "/orders/internal/schedule/issues",
+                "/shipmentWms/internal/schedule/inbound").contains(requestURI) && "POST".equals(req.getMethod())
                 && SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE))) {
             DynamicDataSourceContextHolder.clear();
             try { chain.doFilter(requestWrapper, resp); }

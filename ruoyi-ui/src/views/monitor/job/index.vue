@@ -37,6 +37,7 @@
     </el-form>
     </filter-panel>
 
+    <el-radio-group v-model="taskScope" size="small" class="mb8" @change="scopeChanged"><el-radio-button label="all">全部任务</el-radio-button><el-radio-button label="fulfillment">订单与仓库扫描</el-radio-button></el-radio-group>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -96,7 +97,7 @@
     <el-table v-loading="loading" :data="jobList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务编号" width="100" align="center" prop="jobId" />
-      <el-table-column label="任务名称" align="center" prop="jobName" :show-overflow-tooltip="true" />
+      <el-table-column label="任务名称 / 说明" min-width="250" prop="jobName"><template slot-scope="scope"><strong>{{ scope.row.jobName }}</strong><div class="job-purpose">{{ scope.row.remark }}</div></template></el-table-column>
       <el-table-column label="任务组名" align="center" prop="jobGroup">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_job_group" :value="scope.row.jobGroup"/>
@@ -304,6 +305,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      taskScope: 'all',
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -331,6 +333,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         jobName: undefined,
+        invokeTarget: undefined,
         jobGroup: undefined,
         status: undefined
       },
@@ -351,9 +354,11 @@ export default {
     };
   },
   created() {
+    if (this.$route.query.scope === 'fulfillment') { this.taskScope = 'fulfillment'; this.queryParams.invokeTarget = 'fulfillmentScanTask.' }
     this.getList();
   },
   methods: {
+    scopeChanged() { this.queryParams.invokeTarget = this.taskScope === 'fulfillment' ? 'fulfillmentScanTask.' : undefined; this.queryParams.pageNum = 1; this.getList() },
     /** 查询定时任务列表 */
     getList() {
       this.loading = true;
@@ -513,3 +518,5 @@ export default {
   }
 };
 </script>
+
+<style scoped>.job-purpose{font-size:12px;line-height:1.6;color:#8490a2;margin-top:5px;white-space:normal}</style>

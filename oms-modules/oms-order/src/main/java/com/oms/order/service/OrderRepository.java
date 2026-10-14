@@ -14,6 +14,12 @@ import static com.oms.order.service.OrderValues.*;
 @Service
 public class OrderRepository {
     @Resource private JdbcTemplate jdbc;
+    @Resource private org.springframework.context.ApplicationEventPublisher events;
+    public void shipmentChanged(String company,long shipment){
+        jdbc.update("INSERT INTO oms_order_sales_document_sync(company_code,shipment_id,dirty_version) VALUES (?,?,1) ON DUPLICATE KEY UPDATE dirty_version=dirty_version+1,next_attempt=NOW()",company,shipment);
+        if(events!=null){String route=com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder.peek();com.oms.common.task.CommittedWork.afterCommit(()->events.publishEvent(new OrderShipmentChanged(company,route,shipment)));}
+    }
+
     public JdbcTemplate db(){return jdbc;}
     public Map<String,String> manualMatches(String company,long id){Map<String,String> result=new HashMap<>();for(Map<String,Object> line:jdbc.query("SELECT platform_oid,manual_sku_sn FROM oms_platform_order_line WHERE company_code=? AND platform_order_id=? AND manual_sku_sn IS NOT NULL",ROW,company,id))result.put(text(line,"platform_oid"),text(line,"manual_sku_sn"));return result;}
     /** Least recently attempted first, so repeatedly short large orders cannot monopolize a batch. */

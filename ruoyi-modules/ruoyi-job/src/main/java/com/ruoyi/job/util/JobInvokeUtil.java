@@ -20,7 +20,7 @@ public class JobInvokeUtil
      *
      * @param sysJob 系统任务
      */
-    public static void invokeMethod(SysJob sysJob) throws Exception
+    public static Object invokeMethod(SysJob sysJob) throws Exception
     {
         String invokeTarget = sysJob.getInvokeTarget();
         String beanName = getBeanName(invokeTarget);
@@ -30,12 +30,12 @@ public class JobInvokeUtil
         if (!isValidClassName(beanName))
         {
             Object bean = SpringUtils.getBean(beanName);
-            invokeMethod(bean, methodName, methodParams);
+            return invokeMethod(bean, methodName, methodParams);
         }
         else
         {
             Object bean = Class.forName(beanName).getDeclaredConstructor().newInstance();
-            invokeMethod(bean, methodName, methodParams);
+            return invokeMethod(bean, methodName, methodParams);
         }
     }
 
@@ -46,19 +46,19 @@ public class JobInvokeUtil
      * @param methodName 方法名称
      * @param methodParams 方法参数
      */
-    private static void invokeMethod(Object bean, String methodName, List<Object[]> methodParams)
+    private static Object invokeMethod(Object bean, String methodName, List<Object[]> methodParams)
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException
     {
         if (StringUtils.isNotNull(methodParams) && methodParams.size() > 0)
         {
             Method method = bean.getClass().getMethod(methodName, getMethodParamsType(methodParams));
-            method.invoke(bean, getMethodParamsValue(methodParams));
+            return method.invoke(bean, getMethodParamsValue(methodParams));
         }
         else
         {
             Method method = bean.getClass().getMethod(methodName);
-            method.invoke(bean);
+            return method.invoke(bean);
         }
     }
 

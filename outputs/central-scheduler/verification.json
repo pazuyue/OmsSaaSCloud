@@ -1,0 +1,213 @@
+{
+  "jobs": [
+    {
+      "job_id": 6,
+      "job_name": "发货单仓库下发扫描",
+      "invoke_target": "fulfillmentScanTask.dispatch()",
+      "log_id": 14922,
+      "data": {
+        "kind": "dispatch",
+        "scanned": 0,
+        "succeeded": 0,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": []
+      }
+    },
+    {
+      "job_id": 7,
+      "job_name": "仓库出库回传记账扫描",
+      "invoke_target": "fulfillmentScanTask.receipts()",
+      "log_id": 14923,
+      "data": {
+        "kind": "receipts",
+        "scanned": 0,
+        "succeeded": 0,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": []
+      }
+    },
+    {
+      "job_id": 8,
+      "job_name": "发货单虚拟出库扫描",
+      "invoke_target": "fulfillmentScanTask.virtualOutbound()",
+      "log_id": 14924,
+      "data": {
+        "kind": "virtual",
+        "scanned": 0,
+        "succeeded": 0,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": []
+      }
+    },
+    {
+      "job_id": 9,
+      "job_name": "销售出库单同步扫描",
+      "invoke_target": "fulfillmentScanTask.salesDocuments()",
+      "log_id": 14925,
+      "data": {
+        "kind": "sales",
+        "scanned": 8,
+        "succeeded": 8,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": [
+          {
+            "company_code": "QM",
+            "reference_sn": "XS870a08cfdade45b5be4ad60d3cc802ab",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 3
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XSc602518a694b452aa3375762d38bac5a",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 4
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XS0676db3b77b24c0d8531a92a41508763",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 5
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XSb16b4909e44640f7bf0f8c5cd1e892c4",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 6
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XS012c9e4220d94472b29c483d33810d6c",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 7
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XS91fbd4db68ef48128edaa4f65b901d02",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 8
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XSf60df1f75d774d5e963a87a6684d14ca",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 9
+          },
+          {
+            "company_code": "QM",
+            "reference_sn": "XS2364cdb8cbfb4f5aa2310d311194adfd",
+            "state": "SUCCESS",
+            "message": "本次处理已完成",
+            "reference_id": 10
+          }
+        ]
+      }
+    },
+    {
+      "job_id": 10,
+      "job_name": "平台发货回传扫描",
+      "invoke_target": "fulfillmentScanTask.platformShipping()",
+      "log_id": 14926,
+      "data": {
+        "kind": "platform",
+        "scanned": 0,
+        "succeeded": 0,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": []
+      }
+    },
+    {
+      "job_id": 11,
+      "job_name": "订单库存问题核对扫描",
+      "invoke_target": "fulfillmentScanTask.orderIssues()",
+      "log_id": 14927,
+      "data": {
+        "kind": "issues",
+        "scanned": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": [
+          {
+            "company_code": "QM",
+            "reference_sn": "",
+            "state": "SUCCESS",
+            "message": "本次库存问题核对完成",
+            "reference_id": 30
+          }
+        ]
+      }
+    },
+    {
+      "job_id": 12,
+      "job_name": "采购入库仓库交互扫描",
+      "invoke_target": "fulfillmentScanTask.purchaseInbound()",
+      "log_id": 14928,
+      "data": {
+        "kind": "inbound",
+        "scanned": 0,
+        "succeeded": 0,
+        "failed": 0,
+        "unconfirmed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "review_pending": 0,
+        "scope_failures": 0,
+        "omitted": 0,
+        "items": []
+      }
+    }
+  ],
+  "all_seven_enabled": true,
+  "all_seven_automatic_scans_observed": true,
+  "old_job_switches_and_cron_preserved": true,
+  "pause_stops_automatic_scans": true,
+  "run_once_works_while_paused": true,
+  "resume_restarts_automatic_scans": true,
+  "acceptance_review_unchanged": true,
+  "acceptance_review_state": "CONFIRMED",
+  "acceptance_stock_state": "POSTED",
+  "acceptance_stock_unchanged": true,
+  "human_decision_submitted": false
+}
