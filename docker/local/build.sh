@@ -2,6 +2,7 @@
 set -euo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 cd "$ROOT"
+python3 docker/local/check_tenant_routing.py
 mkdir -p docker/local/logs docker/local/artifacts
 BUILD_HOME=${OMS_BUILD_HOME:-$HOME/.cache/oms-local}
 mkdir -p "$BUILD_HOME/source" "$BUILD_HOME/m2"

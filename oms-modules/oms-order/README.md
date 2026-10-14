@@ -209,3 +209,6 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 配置采用每个服务自己的 `oms.tenant.routes` 映射，例如 `QM: master`，其中 master 指该服务本地业务库连接。多个公司可以映射到同一连接，扫描SQL仍必须带公司条件；数据库中出现新公司记录不会自动注册该公司。同一事务中禁止跨公司或跨连接切换。请求和工作线程边界清理上下文，嵌套调用按顺序恢复外层上下文；任务排队后连接发生变化时拒绝旧任务执行。
 
 本地升级先备份业务数据和运行包，运行 `configure_tenant_routing.py` 预检，再以 `--apply` 备份并发布五个服务的映射及 strict=true，更新 order、inventory、supplychain、channel、goods。该脚本不修改业务记录、定时任务开关或cron，失败会回滚本次已发布配置。库存增加接口保留内部认证，后台Feign显式传内部身份。`test_tenant_routing_acceptance.py --baseline/--run` 使用受限内部入库辅助程序准备独立 TEST SKU，核对完整即时记账、两仓三包、台账投影及原验收单库存和任务设置未变；证据在 `outputs/tenant-routing`。
+
+
+统一路由收尾：`ScopedWorkExecutor` 仅接受公共组件生成的 `TenantRouting.Route`，不再提供裸连接字符串提交入口。销售台账即时唤醒仅传公司和发货单ID，不读取或传递请求线程的旧路由别名。`docker/local/check_tenant_routing.py` 在本地构建与订单测试前检查 OMS 生产源码，禁止公共组件外直接修改数据源上下文、使用 `@DS` 绕过公司映射或枚举连接池自行选库；测试夹具不在扫描范围。`verify_tenant_routing_cleanup.py --baseline/--verify` 只读比对三张已有验收单、库存、人工核对结论及定时任务设置，不创建新单或重放仓库回传。

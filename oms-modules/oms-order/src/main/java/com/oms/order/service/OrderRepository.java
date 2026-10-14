@@ -17,7 +17,7 @@ public class OrderRepository {
     @org.springframework.beans.factory.annotation.Autowired private org.springframework.beans.factory.ObjectProvider<OrderImmediateWork> immediate;
     public void shipmentChanged(String company,long shipment){
         jdbc.update("INSERT INTO oms_order_sales_document_sync(company_code,shipment_id,dirty_version) VALUES (?,?,1) ON DUPLICATE KEY UPDATE dirty_version=dirty_version+1,next_attempt=NOW()",company,shipment);
-        if(immediate!=null){String route=com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder.peek();com.oms.common.task.CommittedWork.afterCommit(()->immediate.getObject().salesChanged(company,route,shipment));}
+        if(immediate!=null){com.oms.common.task.CommittedWork.afterCommit(()->immediate.getObject().salesChanged(company,shipment));}
     }
 
     public JdbcTemplate db(){return jdbc;}

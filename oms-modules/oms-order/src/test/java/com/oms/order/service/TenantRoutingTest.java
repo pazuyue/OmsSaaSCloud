@@ -24,6 +24,13 @@ class TenantRoutingTest {
     }
     @AfterEach void clear(){TransactionSynchronizationManager.setActualTransactionActive(false);TenantRouting.clearContext();}
     @Test void unknownCompanyNeverUsesPrimary(){assertThrows(IllegalArgumentException.class,()->tenants.run("UNKNOWN",()->fail("must not execute")));verify(routing,never()).getDataSource("UNKNOWN");}
+    @Test void backgroundWorkCannotAcceptAnUnvalidatedStringRoute() throws Exception {
+        Class<?> executor=com.oms.common.task.ScopedWorkExecutor.class;
+        assertThrows(NoSuchMethodException.class,()->executor.getMethod("submit",String.class,Runnable.class));
+        assertNotNull(executor.getMethod("submit",TenantRouting.Route.class,Runnable.class));
+        assertThrows(NoSuchMethodException.class,()->OrderImmediateWork.class.getMethod("salesChanged",String.class,String.class,long.class));
+        assertNotNull(OrderImmediateWork.class.getMethod("salesChanged",String.class,long.class));
+    }
     @Test void configurationRejectsMissingPoolAndDuplicateCompany(){tenants.setRoutes(Collections.singletonMap("QM","absent"));assertThrows(IllegalArgumentException.class,tenants::validate);verify(routing,never()).getDataSource("absent");Map<String,String> duplicate=new HashMap<>();duplicate.put("QM","master");duplicate.put("qm","second");assertThrows(IllegalArgumentException.class,()->tenants.setRoutes(duplicate));}
     @Test void emptyConfigurationFailsStartup(){tenants.setRoutes(Collections.emptyMap());assertThrows(IllegalArgumentException.class,tenants::validate);}
     @Test void unifiedPropertyNamesBindToTheCompanyRegistry(){tenants.setRoutes(Collections.emptyMap());Map<String,Object> values=new HashMap<>();values.put("oms.tenant.routes.QM","master");values.put("oms.tenant.routes.BETA","second");new org.springframework.boot.context.properties.bind.Binder(new org.springframework.boot.context.properties.source.MapConfigurationPropertySource(values)).bind("oms.tenant",org.springframework.boot.context.properties.bind.Bindable.ofInstance(tenants));tenants.validate();assertEquals(new TreeSet<>(Arrays.asList("QM","BETA")),tenants.companies());assertEquals("master",tenants.capture("qm").datasource());}

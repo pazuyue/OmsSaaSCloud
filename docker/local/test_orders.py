@@ -5,6 +5,8 @@ from local_db import execute, ENV, ROOT, HERE, test_jdbc_url
 from configure_order import install_inventory
 
 def main():
+    from check_tenant_routing import main as check_tenant_routing
+    check_tenant_routing()
     if sys.argv[1:] not in ([],['--order-only'],['--inventory-only']):raise SystemExit('Usage: test_orders.py [--order-only|--inventory-only]')
     order_only=sys.argv[1:]==['--order-only']
     inventory_only=sys.argv[1:]==['--inventory-only']
