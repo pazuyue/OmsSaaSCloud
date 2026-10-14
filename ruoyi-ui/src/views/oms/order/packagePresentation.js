@@ -1,11 +1,11 @@
 const amount = value => Number(value || 0)
-export const warehouseKey = row => JSON.stringify([row.real_store_code || '', row.owner_code || ''])
+export const warehouseKey = row => JSON.stringify([row.store_code || '', row.real_store_code || '', row.owner_code || ''])
 
 export const warehouseFulfillmentGroups = order => {
   const groups = new Map()
   const groupFor = row => {
     const key = warehouseKey(row)
-    if (!groups.has(key)) groups.set(key, { key, name: row.real_store_name || row.real_store_code || '仓库未确认', code: row.real_store_code, owner: row.owner_code, allocated: 0, shipments: [], hasAllocations: false })
+    if (!groups.has(key)) groups.set(key, { key, name: row.store_code ? '虚拟仓 ' + row.store_code : '虚拟仓未确认', code: row.store_code, realName: row.real_store_name || row.real_store_code || '实体仓未确认', realCode: row.real_store_code, owner: row.owner_code, allocated: 0, shipments: [], hasAllocations: false })
     return groups.get(key)
   }
   ;(order.warehouse_allocations || []).forEach(row => { const group = groupFor(row); group.hasAllocations = true; group.allocated += amount(row.quantity) })

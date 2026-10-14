@@ -1,0 +1,16 @@
+{
+  "order_sn": "SOb3c545e6286742cf8d176b320414f9be",
+  "shipment_sn": "XSc602518a694b452aa3375762d38bac5a",
+  "status": "SHIPPED",
+  "shipped_quantity": 6,
+  "packages": 2,
+  "platform_simulation_tasks": 2,
+  "simulated_platform_quantity": 6,
+  "stock_consumed": {
+    "ACCEPT_OUT_20261012164334": 2,
+    "test01": 4
+  },
+  "partial_and_full_stages_passed": true,
+  "duplicate_stock_deduction": false,
+  "real_platform_notification_sent": false
+}

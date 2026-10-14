@@ -8,6 +8,8 @@ def install_order(database):
     from configure_sales_outbound_documents import install_order as sales_documents
     sales_documents(database)
     execute((HERE/'migrations/20261012_order_outbound_receipts.sql').read_text(encoding='utf-8'),database)
+    from configure_receipt_review import install_order as review_order
+    review_order(database)
     execute("INSERT INTO oms_order_shipment_outbound(company_code,shipment_id,shipment_sn,request_id,source_mode,quantity,payload_json,payload_hash,state,created_by,outbound_time,completed_at,create_time) SELECT company_code,shipment_id,shipment_sn,request_id,'VIRTUAL',quantity,payload_json,payload_hash,'COMPLETED',created_by,completed_at,completed_at,create_time FROM oms_order_shipment_virtual_outbound WHERE state='COMPLETED' ON DUPLICATE KEY UPDATE id=oms_order_shipment_outbound.id",database)
 
 
@@ -15,6 +17,8 @@ def install_supplychain(database):
     from configure_sales_outbound_documents import install_supplychain as sales_documents
     sales_documents(database)
     execute((HERE/'migrations/20261012_wms_outbound_receipts.sql').read_text(encoding='utf-8'),database)
+    from configure_receipt_review import install_supplychain as review_supplychain
+    review_supplychain(database)
 
 
 def install_inventory(database):

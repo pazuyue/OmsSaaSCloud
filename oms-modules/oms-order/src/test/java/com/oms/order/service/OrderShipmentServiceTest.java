@@ -27,11 +27,26 @@ class OrderShipmentServiceTest {
     List<Map<String,Object>> generate(long version){return service.generate("VERIFY",id,version,"tester");}
     long count(){return db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment",Long.class);}
     Map<String,Object> summary(){return (Map<String,Object>)business.list("VERIFY",null,"","","","","",0,1,20).getRows().get(0);}
-    @Test void virtualWarehousesSharingPhysicalWarehouseCreateOneDocumentWithTraceLines(){
-        mirror(Arrays.asList(receipt(1,4,"V1","R1"),receipt(2,2,"V2","R1")));List<Map<String,Object>> created=generate(0);assertEquals(1,created.size());assertEquals(6,number(created.get(0),"quantity"));assertEquals(1,count());assertEquals(2,db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_line",Integer.class));
-        Map<String,Object> detail=service.detail("VERIFY",number(created.get(0),"id"));assertEquals("WAIT_CARRIER",detail.get("status"));assertEquals(0,number(detail,"shipped_quantity"));assertEquals("address",detail.get("receiver_address"));assertEquals(6,number(summary(),"shipment_quantity"));assertEquals(4,number(summary(),"pending_allocation_quantity"));assertEquals(0,number(summary(),"shipped_quantity"));
-        assertTrue(generate(1).isEmpty());assertEquals(1,count());assertThrows(IllegalArgumentException.class,()->generate(0));
+    @Test void virtualWarehousesSharingPhysicalWarehouseCreateIndependentDocumentsWithoutPackages(){
+        Map<String,Object> a=receipt(1,6,"V1","R1"),b=receipt(2,4,"V2","R1");mirror(Arrays.asList(a,b));
+        List<Map<String,Object>> created=generate(0);assertEquals(2,created.size());assertEquals(2,count());
+        assertEquals(6,number(created.get(0),"quantity"));assertEquals(4,number(created.get(1),"quantity"));
+        assertEquals("V1",created.get(0).get("store_code"));assertEquals("V2",created.get(1).get("store_code"));
+        for(Map<String,Object> item:created){Map<String,Object> detail=service.detail("VERIFY",number(item,"id"));
+            assertEquals(item.get("store_code"),detail.get("store_code"));assertEquals("WAIT_CARRIER",detail.get("status"));
+            assertEquals(0,number(detail,"shipped_quantity"));assertEquals(0,number(detail,"package_count"));
+            assertEquals(1,((List<?>)detail.get("lines")).size());}
+        assertEquals(10,number(summary(),"shipment_quantity"));assertEquals(0,number(summary(),"pending_allocation_quantity"));
+        assertTrue(generate(1).isEmpty());assertEquals(2,count());assertThrows(IllegalArgumentException.class,()->generate(0));
     }
+    @Test void batchesOfSameVirtualWarehouseStayInOneDocumentAndSupplementCreatesNewWave(){
+        Map<String,Object> a=receipt(1,2,"V1","R1"),b=receipt(2,4,"V1","R1"),c=receipt(3,4,"V1","R1");mirror(Arrays.asList(a,b));
+        List<Map<String,Object>> first=generate(0);assertEquals(1,first.size());assertEquals(6,number(first.get(0),"quantity"));
+        assertEquals(2,((List<?>)service.detail("VERIFY",number(first.get(0),"id")).get("lines")).size());
+        mirror(Arrays.asList(a,b,c));List<Map<String,Object>> next=generate(1);assertEquals(1,next.size());assertEquals(4,number(next.get(0),"quantity"));
+        assertEquals(6,number(service.detail("VERIFY",number(first.get(0),"id")),"quantity"));assertEquals(2,count());assertTrue(generate(2).isEmpty());
+    }
+
     @Test void multiplePhysicalWarehousesAndSupplementCreateNewDocumentsWithoutChangingFirstWave(){
         Map<String,Object> a=receipt(1,3,"V1","R1"),b=receipt(2,3,"V2","R2"),c=receipt(3,4,"V1","R1");mirror(Arrays.asList(a,b));assertEquals(2,generate(0).size());List<Map<String,Object>> original=db.query("SELECT shipment_sn,quantity,generation_no FROM oms_order_shipment ORDER BY id",ROW);
         mirror(Arrays.asList(a,b,c));assertEquals(1,generate(1).size());assertEquals(3,count());assertEquals(original,db.query("SELECT shipment_sn,quantity,generation_no FROM oms_order_shipment WHERE generation_no=1 ORDER BY id",ROW));assertEquals(10,db.queryForObject("SELECT SUM(quantity) FROM oms_order_shipment_line",Integer.class));assertEquals(2,db.queryForObject("SELECT MAX(generation_no) FROM oms_order_shipment",Integer.class));assertTrue(generate(2).isEmpty());assertEquals(0,number(summary(),"pending_allocation_quantity"));
@@ -48,7 +63,7 @@ class OrderShipmentServiceTest {
         mirror(Arrays.asList(b));assertThrows(IllegalArgumentException.class,()->generate(1));assertEquals(1,count());assertEquals(6,db.queryForObject("SELECT quantity FROM oms_order_shipment",Integer.class));
     }
     @Test void anyGroupFailureRollsBackEveryNewDocumentAndLine(){
-        Map<String,Object> a=receipt(1,2,"V1","R1"),b=receipt(2,2,"V2","R2"),c=receipt(3,2,"V3","R2");c.put("real_store_name","different name");mirror(Arrays.asList(a,b,c));assertThrows(IllegalArgumentException.class,()->generate(0));assertEquals(0,count());assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_line",Integer.class));assertEquals(0,db.queryForObject("SELECT control_version FROM oms_order",Integer.class));
+        Map<String,Object> a=receipt(1,2,"V1","R1"),b=receipt(2,2,"V2","R2"),c=receipt(3,2,"V2","R2");c.put("real_store_name","different name");mirror(Arrays.asList(a,b,c));assertThrows(IllegalArgumentException.class,()->generate(0));assertEquals(0,count());assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_line",Integer.class));assertEquals(0,db.queryForObject("SELECT control_version FROM oms_order",Integer.class));
     }
     @Test void concurrentGenerationHasOneWinnerAndNoDuplicateQuantity() throws Exception {
         mirror(Arrays.asList(receipt(1,6,"V1","R1")));java.util.concurrent.ExecutorService pool=java.util.concurrent.Executors.newFixedThreadPool(2);java.util.concurrent.CountDownLatch start=new java.util.concurrent.CountDownLatch(1);

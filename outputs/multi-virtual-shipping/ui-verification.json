@@ -1,0 +1,63 @@
+{
+  "warehouse_interactions": {
+    "XS0676db3b77b24c0d8531a92a41508763": [
+      {
+        "id": 309,
+        "action": "OUTBOUND_RECEIPT",
+        "result": "SUCCESS",
+        "direction": "IN"
+      },
+      {
+        "id": 308,
+        "action": "OUTBOUND_QUERY",
+        "result": "SUCCESS",
+        "direction": "OUT"
+      },
+      {
+        "id": 307,
+        "action": "OUTBOUND_RECEIPT",
+        "result": "SUCCESS",
+        "direction": "IN"
+      },
+      {
+        "id": 305,
+        "action": "OUTBOUND_CREATE",
+        "result": "SUCCESS",
+        "direction": "OUT"
+      }
+    ],
+    "XSb16b4909e44640f7bf0f8c5cd1e892c4": [
+      {
+        "id": 312,
+        "action": "OUTBOUND_RECEIPT",
+        "result": "SUCCESS",
+        "direction": "IN"
+      },
+      {
+        "id": 311,
+        "action": "OUTBOUND_QUERY",
+        "result": "SUCCESS",
+        "direction": "OUT"
+      },
+      {
+        "id": 310,
+        "action": "OUTBOUND_RECEIPT",
+        "result": "SUCCESS",
+        "direction": "IN"
+      },
+      {
+        "id": 306,
+        "action": "OUTBOUND_CREATE",
+        "result": "SUCCESS",
+        "direction": "OUT"
+      }
+    ]
+  },
+  "separate_successful_create_requests": 2,
+  "signed_receipt_and_exact_replay_per_shipment": true,
+  "platform_tasks_visible": 3,
+  "sales_document_actual_records_visible": 2,
+  "browser_errors": [],
+  "browser_writes": [],
+  "live_ui_verified": true
+}

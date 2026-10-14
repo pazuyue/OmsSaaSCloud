@@ -10,6 +10,7 @@
   ],
   "copy_and_mobile": true,
   "multiple_warehouses_and_parcels": true,
+  "same_physical_different_virtual_separate_groups": true,
   "same_sku_source_lines_preserved": true,
   "empty_and_failed_reads_distinct": true,
   "read_only_browser": true,

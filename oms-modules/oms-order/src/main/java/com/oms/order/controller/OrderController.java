@@ -22,6 +22,9 @@ public class OrderController {
     @RequiresPermissions("order:order:query") @PostMapping("/business/{id}/issues/recheck") public AjaxResult recheckIssues(@PathVariable long id){return AjaxResult.success(issues.recheck(company(),id));}
     @RequiresPermissions("order:order:query") @GetMapping("/business/{id}/issues") public AjaxResult issues(@PathVariable long id){return AjaxResult.success(issues.report(company(),id));}
     @RequiresPermissions("order:order:review") @PostMapping("/business/{id}/issues/{issue}/acknowledge") public AjaxResult acknowledge(@PathVariable long id,@PathVariable long issue,@RequestBody Map<String,Object> body){issues.acknowledge(company(),id,issue,text(body,"note"),SecurityUtils.getUsername());return AjaxResult.success();}
+    @Resource private OrderShipmentReceiptReviewService receiptReviews;
+    @RequiresPermissions("order:order:query") @GetMapping("/shipments/{id}/receipt-reviews") public AjaxResult receiptReviews(@PathVariable long id){return AjaxResult.success(receiptReviews.report(company(),id));}
+    @RequiresPermissions("order:shipment:receiptReview") @PostMapping("/shipments/{id}/receipt-reviews/{review}") public AjaxResult decideReceiptReview(@PathVariable long id,@PathVariable long review,@RequestBody Map<String,Object> body){return AjaxResult.success(receiptReviews.decide(company(),id,review,body,SecurityUtils.getUsername()));}
     @Resource private OrderShipmentPackageService packages;
     @Resource private OrderShipmentReceiptService receipts;
     @RequiresPermissions("order:shipment:package") @PostMapping("/shipments/{id}/packages") public AjaxResult packageRegister(@PathVariable long id,@RequestBody Map<String,Object> body){return AjaxResult.success(packages.register(company(),id,body,SecurityUtils.getUsername()));}

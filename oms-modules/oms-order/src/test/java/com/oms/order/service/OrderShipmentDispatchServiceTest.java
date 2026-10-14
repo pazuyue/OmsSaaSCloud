@@ -34,10 +34,29 @@ class OrderShipmentDispatchServiceTest {
         List<Map<String,Object>> lines=(List<Map<String,Object>>)preview.get("lines");assertEquals(1,lines.size());assertEquals(6,number(lines.get(0),"quantity"));assertEquals("B001",lines.get(0).get("batch_code"));assertEquals("颜色:蓝;尺码:M",lines.get(0).get("spec"));
         assertEquals(10,fixture.db.queryForObject("SELECT quantity FROM oms_order_line",Integer.class));assertEquals(0,count());assertFalse(preview.containsKey("receiver"));verify(wms,never()).submit(anyString(),anyMap(),anyString());
     }
-    @Test void previewPreservesSeparateWarehouseBatchLinesForTheSameSku(){
-        Map<String,Object> a=fixture.receipt(1,2,"V1","R1"),b=fixture.receipt(2,4,"V2","R1");a.put("batch_code","B001");b.put("batch_code","B002");fixture.mirror(Arrays.asList(a,b));shipment=number(fixture.generate(0).get(0),"id");
+    @Test void previewPreservesSeparateBatchLinesWithinOneVirtualWarehouse(){
+        Map<String,Object> a=fixture.receipt(1,2,"V1","R1"),b=fixture.receipt(2,4,"V1","R1");a.put("batch_code","B001");b.put("batch_code","B002");fixture.mirror(Arrays.asList(a,b));shipment=number(fixture.generate(0).get(0),"id");
         fixture.db.update("UPDATE oms_order_shipment SET status='WAIT_DISPATCH',carrier_code='SF',carrier_name='express',warehouse_carrier_code='SF',carrier_match_status='MATCHED'");when(inventory.receipts(anyString(),anyLong(),anyString(),anyString())).thenReturn(R.ok(Arrays.asList(a,b)));
         Map<String,Object> preview=dispatch.preview("VERIFY",request(1)).get(0);assertEquals(true,preview.get("success"));List<Map<String,Object>> lines=(List<Map<String,Object>>)preview.get("lines");assertEquals(2,lines.size());assertEquals(6,lines.stream().mapToLong(l->number(l,"quantity")).sum());assertEquals("B001",lines.get(0).get("batch_code"));assertEquals("B002",lines.get(1).get("batch_code"));assertEquals(0,count());
+    }
+    @Test void samePhysicalWarehouseVirtualDocumentsDispatchSeparatelyWithIndependentResults(){
+        Map<String,Object> a=fixture.receipt(1,6,"V1","R1"),b=fixture.receipt(2,4,"V2","R1");a.put("batch_code","B001");b.put("batch_code","B002");
+        fixture.mirror(Arrays.asList(a,b));List<Map<String,Object>> documents=fixture.generate(0);assertEquals(2,documents.size());
+        fixture.db.update("UPDATE oms_order_shipment SET status='WAIT_DISPATCH',carrier_code='SF',carrier_name='express',warehouse_carrier_code='SF',carrier_match_status='MATCHED'");
+        when(inventory.receipts(anyString(),anyLong(),anyString(),anyString())).thenReturn(R.ok(Arrays.asList(a,b)));
+        for(int index=0;index<documents.size();index++){
+            shipment=number(documents.get(index),"id");Map<String,Object> preview=dispatch.preview("VERIFY",request(1)).get(0);
+            assertEquals(true,preview.get("success"));assertEquals(index==0?6:4,number(preview,"quantity"));
+            List<Map<String,Object>> lines=(List<Map<String,Object>>)preview.get("lines");assertEquals(1,lines.size());assertEquals(index==0?"V1":"V2",lines.get(0).get("store_code"));
+            assertEquals(true,submit(1).get("success"));final boolean accept=index==0;
+            when(wms.submit(anyString(),anyMap(),anyString())).thenAnswer(i->R.ok(reply(accept?"ACCEPTED":"FAILED")));
+            dispatch.process("VERIFY",shipment);assertEquals(accept?"ACCEPTED":"FAILED",intent().get("state"));
+        }
+        assertEquals(2,count());verify(wms,times(2)).submit(anyString(),anyMap(),anyString());
+        assertEquals(1,fixture.db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_dispatch WHERE state='ACCEPTED'",Integer.class));
+        assertEquals(1,fixture.db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_dispatch WHERE state='FAILED'",Integer.class));
+        assertEquals(0,fixture.db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_package",Integer.class));
+        assertEquals(0,number(fixture.summary(),"shipped_quantity"));assertEquals(10,fixture.db.queryForObject("SELECT reserved_quantity FROM oms_order_line",Integer.class));
     }
     @Test void blockedPreviewKeepsOwnedProductInformationAndNeverLeaksAnotherCompany(){
         create(6);fixture.db.update("UPDATE oms_order SET manual_hold=1");Map<String,Object> blocked=dispatch.preview("VERIFY",request(1)).get(0);assertEquals(false,blocked.get("success"));assertTrue(text(blocked,"message").contains("挂起"));assertEquals(1,((List<?>)blocked.get("lines")).size());

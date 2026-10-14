@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS oms_order_shipment (
  owner_code VARCHAR(64) NOT NULL,
  real_store_code VARCHAR(255) NOT NULL,
  real_store_name VARCHAR(255) NOT NULL,
+ store_code VARCHAR(255) NOT NULL DEFAULT '',
  quantity BIGINT NOT NULL,
  status VARCHAR(24) NOT NULL DEFAULT 'WAIT_CARRIER',
  receiver_name VARCHAR(200) NOT NULL DEFAULT '',
@@ -20,11 +21,11 @@ CREATE TABLE IF NOT EXISTS oms_order_shipment (
  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
  cancelled_at DATETIME NULL,
  UNIQUE KEY shipment_number(company_code,shipment_sn),
- UNIQUE KEY shipment_wave(company_code,order_id,generation_no,owner_code,real_store_code),
+ UNIQUE KEY shipment_wave(company_code,order_id,generation_no,owner_code,real_store_code,store_code),
  KEY shipment_order(company_code,order_id,id),
  KEY shipment_page(company_code,status,id),
  KEY shipment_platform(company_code,channel_id,platform_tid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='按分仓增量和实体仓生成的履约发货单';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='按分仓增量和虚拟仓生成的履约发货单';
 
 CREATE TABLE IF NOT EXISTS oms_order_shipment_line (
  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,

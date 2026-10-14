@@ -8,15 +8,15 @@
         <el-form-item label="允许仓 / 默认顺序">
           <el-select v-model="policy.warehouse_order" multiple filterable placeholder="选择该店铺允许的虚拟仓" @change="cleanPriorities"><el-option v-for="store in available" :key="store.wms_simulation_code" :value="store.wms_simulation_code" :label="storeLabel(store)" /></el-select>
           <div v-for="(code, index) in policy.warehouse_order" :key="code" class="rank-row"><span>{{ index + 1 }}. {{ label(code) }}</span><div><el-button type="text" :disabled="index === 0" aria-label="仓库上移" @click="move(policy.warehouse_order, index, -1)">上移</el-button><el-button type="text" :disabled="index === policy.warehouse_order.length - 1" aria-label="仓库下移" @click="move(policy.warehouse_order, index, 1)">下移</el-button></div></div>
-          <p class="hint">虚拟仓确定货主与实体仓；同一实体仓的多个虚拟仓按一个发货仓判断。</p>
+          <p class="hint">以虚拟仓为分仓单位；不同虚拟仓分别生成发货单并下发，即使属于同一实体仓也不合并。</p>
         </el-form-item>
         <el-form-item label="省份优先仓">
           <div v-for="(row, index) in priorities" :key="index" class="province-row"><el-select v-model="row.province" filterable placeholder="收货省份"><el-option v-for="province in provinces" :key="province" :label="province" :value="province" /></el-select><el-select v-model="row.stores" multiple filterable placeholder="按选择顺序设置优先仓"><el-option v-for="code in policy.warehouse_order" :key="code" :value="code" :label="label(code)" /></el-select><el-button type="text" @click="priorities.splice(index, 1)">删除</el-button></div>
           <el-button size="small" icon="el-icon-plus" @click="priorities.push({ province: '', stores: [] })">添加省份</el-button><p class="hint">先按省份优先顺序，再按默认顺序尝试；收货省份缺失时使用默认顺序。</p>
         </el-form-item>
-        <el-form-item label="允许多仓发货"><el-switch v-model="policy.allow_multi" :active-value="1" :inactive-value="0" @change="value => { if (!value) policy.allow_split_sku = 0 }" /><p class="hint">优先尝试整单单仓履约；单仓无法满足时允许组合多个实体仓。</p></el-form-item>
+        <el-form-item label="允许多虚拟仓发货"><el-switch v-model="policy.allow_multi" :active-value="1" :inactive-value="0" @change="value => { if (!value) policy.allow_split_sku = 0 }" /><p class="hint">优先尝试一个虚拟仓满足整单；无法满足时，允许组合店铺允许的多个虚拟仓。</p></el-form-item>
         <el-form-item label="允许部分发货"><el-switch v-model="policy.allow_partial" :active-value="1" :inactive-value="0" /><p class="hint">足量逻辑预占的 SKU 可先分仓，余量保留待补货；原单金额和销售数量保持完整。</p></el-form-item>
-        <el-form-item label="同 SKU 跨仓拆分"><el-switch v-model="policy.allow_split_sku" :active-value="1" :inactive-value="0" :disabled="!policy.allow_multi" /><p class="hint">关闭时，同一 SKU 固定由一个实体仓承担；允许部分发货时，后续余量仍从原仓分仓。开启后可跨仓拆分。</p></el-form-item>
+        <el-form-item label="同 SKU 跨虚拟仓拆分"><el-switch v-model="policy.allow_split_sku" :active-value="1" :inactive-value="0" :disabled="!policy.allow_multi" /><p class="hint">关闭时，同一 SKU 固定由一个虚拟仓承担；部分发货后的余量仍从原虚拟仓分仓。开启后可跨虚拟仓拆分。</p></el-form-item>
         <el-alert title="已有渠道锁库沿用原仓、原批次；原仓不在允许仓内时会阻止分仓。已有分仓订单继续使用首次分仓规则，重试仅处理余量。" type="info" :closable="false" />
       </el-form>
     </div>

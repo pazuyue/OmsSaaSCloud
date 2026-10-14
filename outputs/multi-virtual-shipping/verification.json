@@ -1,0 +1,73 @@
+{
+  "order_sn": "SO6b1fcaecd1f241cb945fa21c0c995a0c",
+  "order_id": 31,
+  "platform_tid": "99120261013194012",
+  "sku": "ACCEPT_MULTI_20261013194012",
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=31",
+  "physical_warehouse": "TW201",
+  "warehouse_shipments": [
+    {
+      "code": "ACCEPT_V1_20261013194012",
+      "quantity": 6,
+      "shipment_sn": "XS0676db3b77b24c0d8531a92a41508763",
+      "package_count": 2
+    },
+    {
+      "code": "ACCEPT_V2_20261013194012",
+      "quantity": 4,
+      "shipment_sn": "XSb16b4909e44640f7bf0f8c5cd1e892c4",
+      "package_count": 1
+    }
+  ],
+  "sales_documents": [
+    {
+      "shipment_id": "5",
+      "store_code": "ACCEPT_V1_20261013194012",
+      "ticket_id": "38",
+      "document_sn": "XS0a95e9c51615794c70c6acf9c4ec4af0",
+      "planned": "6",
+      "actual": "6",
+      "movement_count": "1"
+    },
+    {
+      "shipment_id": "6",
+      "store_code": "ACCEPT_V2_20261013194012",
+      "ticket_id": "39",
+      "document_sn": "XS0ea309e522ccdeda38cdbee5ff3a7643",
+      "planned": "4",
+      "actual": "4",
+      "movement_count": "1"
+    }
+  ],
+  "final_status": "SHIPPED",
+  "shipped_quantity": 10,
+  "packages": 3,
+  "platform_simulation_tasks": 3,
+  "platform_simulated_quantity": 10,
+  "duplicate_stock_deduction": false,
+  "real_platform_notification_sent": false,
+  "historical_documents_reallocated": false,
+  "original_inventory_quantities_unchanged": true,
+  "original_order_quantities_and_fulfillment_states_unchanged": true,
+  "background_original_record_metadata_changes": {
+    "qm_oms_saas_inventory.oms_channel_inventory": {
+      "modify_time": 4,
+      "version": 4
+    },
+    "qm_oms_saas_inventory.oms_order_stock_demand": {
+      "update_time": 1,
+      "decision_snapshot": 1
+    },
+    "qm_oms_saas_order.oms_order": {
+      "update_time": 1,
+      "stock_attempt_at": 1,
+      "issue_synced_at": 1
+    },
+    "qm_oms_saas_order.oms_platform_order": {
+      "next_retry_at": 1,
+      "update_time": 1
+    }
+  },
+  "live_ui_verification": "passed",
+  "independent_successful_wms_create_requests": 2
+}

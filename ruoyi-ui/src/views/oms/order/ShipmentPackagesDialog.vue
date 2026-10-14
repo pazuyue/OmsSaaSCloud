@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="包裹与运单" :visible.sync="visible" width="min(960px, 96vw)" append-to-body :close-on-click-modal="false" class="shipment-packages-dialog">
     <div class="packages-dialog-body"><p class="scope-label">{{ scopeLabel }}</p><el-alert v-if="loading" title="正在读取最新包裹信息" type="info" :closable="false" show-icon /><el-empty v-if="!loading && !entries.length" description="该仓库尚未生成发货单，也尚无实际包裹" :image-size="60" />
-      <section v-for="entry in entries" :key="entry.id" class="package-shipment"><div class="package-shipment-heading"><strong>{{ entry.shipment_sn }}</strong><span>{{ entry.real_store_name || entry.real_store_code }} · {{ entry.carrier_name || '快递未匹配' }}</span></div><div v-if="entry.error" class="load-error"><el-alert :title="entry.error" type="warning" :closable="false" show-icon /><el-button size="small" @click="refresh">重新读取</el-button></div><shipment-package-cards v-else :detail="entry" compact /></section>
+      <section v-for="entry in entries" :key="entry.id" class="package-shipment"><div class="package-shipment-heading"><strong>{{ entry.shipment_sn }}</strong><span>虚拟仓 {{ entry.store_code || '—' }} · {{ entry.real_store_name || entry.real_store_code }} · {{ entry.carrier_name || '快递未匹配' }}</span></div><div v-if="entry.error" class="load-error"><el-alert :title="entry.error" type="warning" :closable="false" show-icon /><el-button size="small" @click="refresh">重新读取</el-button></div><shipment-package-cards v-else :detail="entry" compact /></section>
     </div><span slot="footer"><el-button :loading="loading" @click="refresh">刷新包裹</el-button><el-button @click="visible=false">关闭</el-button></span>
   </el-dialog>
 </template>

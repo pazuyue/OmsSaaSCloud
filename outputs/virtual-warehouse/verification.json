@@ -1,0 +1,35 @@
+{
+  "backend_tests": {
+    "order": 193,
+    "inventory": 62,
+    "supplychain": 96,
+    "failed": 0,
+    "skipped": 0
+  },
+  "frontend_build": "passed",
+  "deployment": "local",
+  "services": [
+    "order",
+    "inventory"
+  ],
+  "inventory_tables_unchanged": 19,
+  "existing_document_quantities_and_states_unchanged": true,
+  "background_metadata_changes": {
+    "oms_order": {
+      "update_time": 1,
+      "issue_synced_at": 1
+    },
+    "oms_order_issue": {
+      "last_seen": 1
+    },
+    "oms_order_sales_document_sync": {
+      "next_attempt": 2,
+      "modify_time": 2
+    }
+  },
+  "schema": "shipment.store_code and virtual-warehouse-aware shipment_wave uniqueness",
+  "backfill": false,
+  "scenario": "V1=6,V2=4, same physical warehouse: 2 independent documents, no generated parcels",
+  "dispatch_results_independent": true,
+  "package_ui_scenario": "two virtual warehouses sharing one physical warehouse; separate documents and actual parcels"
+}

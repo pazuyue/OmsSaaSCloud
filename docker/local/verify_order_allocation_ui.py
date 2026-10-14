@@ -63,9 +63,9 @@ def main():
             page.goto(BASE+'/oms-order/settings?tab=allocation&channelId='+str(shop['channel_id']),wait_until='networkidle')
             dialog=page.get_by_role('dialog',name='店铺分仓规则',exact=True)
             expect(dialog).to_be_visible()
-            expect(dialog.get_by_text('允许多仓发货',exact=True)).to_be_visible()
+            expect(dialog.get_by_text('允许多虚拟仓发货',exact=True)).to_be_visible()
             expect(dialog.get_by_text('允许部分发货',exact=True)).to_be_visible()
-            expect(dialog.get_by_text('同 SKU 跨仓拆分',exact=True)).to_be_visible()
+            expect(dialog.get_by_text('同 SKU 跨虚拟仓拆分',exact=True)).to_be_visible()
             if rule['warehouses']:
                 mapped=rule['warehouses'][0]
                 owner=dialog.locator('.el-form-item').filter(has=page.locator('label',has_text=re.compile('^货主$')))
@@ -80,8 +80,8 @@ def main():
                     page.locator('.el-select-dropdown:visible').get_by_text(label,exact=True).click()
                 dialog.get_by_text('省份优先仓',exact=True).click()
                 expect(dialog.locator('.rank-row').filter(has_text=mapped['real_store_code']).first).to_be_visible()
-                multi=dialog.locator('.el-form-item').filter(has=page.locator('label',has_text=re.compile('^允许多仓发货$'))).locator('.el-switch')
-                split=dialog.locator('.el-form-item').filter(has=page.locator('label',has_text=re.compile('^同 SKU 跨仓拆分$'))).locator('.el-switch')
+                multi=dialog.locator('.el-form-item').filter(has=page.locator('label',has_text=re.compile('^允许多虚拟仓发货$'))).locator('.el-switch')
+                split=dialog.locator('.el-form-item').filter(has=page.locator('label',has_text=re.compile('^同 SKU 跨虚拟仓拆分$'))).locator('.el-switch')
                 if not rule['policy']['allow_multi']:
                     expect(split).to_have_class(re.compile('is-disabled'))
                     multi.click();expect(split).not_to_have_class(re.compile('is-disabled'))

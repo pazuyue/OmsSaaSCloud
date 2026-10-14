@@ -5,6 +5,8 @@ from seed_business import ensure_menu
 
 def install_order(database):
     execute((HERE/'migrations/20261011_order_shipments.sql').read_text(encoding='utf-8'),database)
+    from configure_shipment_virtual_warehouse import install as install_virtual_identity
+    install_virtual_identity(database)
     from configure_order_carriers import install_order as install_carriers
     install_carriers(database)
     from configure_order_dispatch import install_order as install_dispatch

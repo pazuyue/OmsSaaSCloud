@@ -108,15 +108,15 @@ def main():
             parcels.get_by_role('button', name='关闭', exact=True).click()
 
             # Two parcels in warehouse A, the same SKU split across source lines/parcels;
-            # warehouse B has an unshipped document and no parcel. All data below is intercepted.
+            # Virtual warehouse B shares the physical warehouse but has its own unshipped document. All data below is intercepted.
             fixture_order = copy.deepcopy(business)
             first = copy.deepcopy(live)
-            first.update(id=9900801, shipment_sn='XS_PARCEL_UI_A', order_id=9900800, order_sn='SO_PARCEL_UI', real_store_code='UI_W1', real_store_name='验收华东仓', quantity=8, shipped_quantity=6, packaged_quantity=4, unpacked_quantity=2, package_count=2, status='PART_SHIPPED', wms_progress_message='仓库状态：PARTDELIVERED；实际出库 6 / 8 件，剩余 2 件', wms_warehouse_status='PARTDELIVERED', can_register_package=False, can_dispatch=False, fulfillment_block='', logs=[], outbound_records=[])
+            first.update(id=9900801, shipment_sn='XS_PARCEL_UI_A', order_id=9900800, order_sn='SO_PARCEL_UI', store_code='UI_V1', real_store_code='UI_W1', real_store_name='验收华东仓', quantity=8, shipped_quantity=6, packaged_quantity=4, unpacked_quantity=2, package_count=2, status='PART_SHIPPED', platform_shipping_state='NONE', platform_shipping_success_quantity=0, wms_progress_message='仓库状态：PARTDELIVERED；实际出库 6 / 8 件，剩余 2 件', wms_warehouse_status='PARTDELIVERED', can_register_package=False, can_dispatch=False, fulfillment_block='', logs=[], outbound_records=[])
             source_line = lambda ident, sku, qty, batch: dict(shipment_line_id=ident, sku_sn=sku, goods_name='验收商品 ' + sku, platform_oid='9007664503219726110', store_code='UI_V1', batch_id=batch, quantity=qty)
             first['packages'] = [dict(id=9900811, package_code='UI_P1', express_code='UI-WAYBILL-1', carrier_name='顺丰快递', source_mode='WMS', quantity=2, outbound_time='2026-10-13 16:00:00', lines=[source_line(1, 'SKU-A', 1, 1), source_line(2, 'SKU-A', 1, 2)]), dict(id=9900812, package_code='UI_P2', express_code='UI-WAYBILL-2', carrier_name='顺丰快递', source_mode='WMS', quantity=2, outbound_time='2026-10-13 16:10:00', lines=[source_line(1, 'SKU-A', 1, 1), source_line(3, 'SKU-B', 1, 3)])]
             second = copy.deepcopy(first)
-            second.update(id=9900802, shipment_sn='XS_PARCEL_UI_B', real_store_code='UI_W2', real_store_name='验收华北仓', quantity=4, shipped_quantity=0, packaged_quantity=0, unpacked_quantity=0, package_count=0, packages=[], status='WAREHOUSE_PROCESSING', wms_progress_message='仓库已接收，等待实际出库回传', wms_warehouse_status='ACCEPT')
-            fixture_order.update(id=9900800, order_sn='SO_PARCEL_UI', demand_quantity=12, allocation_quantity=12, shipment_count=2, shipment_quantity=12, shipped_quantity=6, shipments=[first, second], logs=[], warehouse_allocations=[dict(real_store_code=row['real_store_code'], real_store_name=row['real_store_name'], owner_code=row['owner_code'], quantity=row['quantity']) for row in [first, second]])
+            second.update(id=9900802, shipment_sn='XS_PARCEL_UI_B', store_code='UI_V2', real_store_code='UI_W1', real_store_name='验收华东仓', quantity=4, shipped_quantity=0, packaged_quantity=0, unpacked_quantity=0, package_count=0, packages=[], status='WAREHOUSE_PROCESSING', wms_progress_message='仓库已接收，等待实际出库回传', wms_warehouse_status='ACCEPT')
+            fixture_order.update(id=9900800, order_sn='SO_PARCEL_UI', demand_quantity=12, allocation_quantity=12, shipment_count=2, shipment_quantity=12, shipped_quantity=6, warehouse_accepted_quantity=12, shipments=[first, second], logs=[], warehouse_allocations=[dict(store_code=row['store_code'], real_store_code=row['real_store_code'], real_store_name=row['real_store_name'], owner_code=row['owner_code'], quantity=row['quantity']) for row in [first, second]])
 
             def fixtures(route):
                 path = urlparse(route.request.url).path
@@ -137,6 +137,9 @@ def main():
             order_drawer.get_by_role('tab', name='分仓明细', exact=True).click()
             allocation = order_drawer.locator('.allocation-fulfillment')
             expect(allocation.locator('.allocation-warehouse')).to_have_count(2)
+            expect(allocation.locator('.allocation-warehouse').first).to_contain_text('虚拟仓 UI_V1')
+            expect(allocation.locator('.allocation-warehouse').nth(1)).to_contain_text('虚拟仓 UI_V2')
+            expect(allocation.locator('.allocation-warehouse').nth(1)).to_contain_text('包裹待回传 / 登记')
             allocation.get_by_role('button', name='查看包裹（2 个）', exact=True).click()
             expect(parcels.locator('.package-card')).to_have_count(2)
             expect(parcels).to_contain_text('剩余待出库 2 件')
@@ -148,7 +151,7 @@ def main():
             expect(parcels.locator('.package-card').first.locator('.el-table__body-wrapper tr')).to_have_count(2)
             page.screenshot(path=str(OUTPUT / 'multiple-parcels-source-lines.png'))
             parcels.get_by_role('button', name='关闭', exact=True).click()
-            allocation.get_by_role('button', name='查看包裹（0 个）', exact=True).click()
+            allocation.get_by_role('button', name='包裹待回传 / 登记', exact=True).click()
             expect(parcels.locator('.package-card')).to_have_count(0)
             expect(parcels.locator('.package-empty')).to_contain_text('尚无包裹')
             expect(parcels).to_contain_text('剩余待出库 4 件')
@@ -181,7 +184,7 @@ def main():
 
         after = request('/order/orders/shipments/3', token=token)['data']
         assert signature(live) == signature(after), 'UI must not change the retained document'
-        OUTPUT.joinpath('verification.json').write_text(json.dumps({'retained_shipment': SN, 'live_parcel_count': 1, 'live_quantity': 6, 'entries': ['allocation', 'business', 'shipment', 'warehouse_query'], 'copy_and_mobile': True, 'multiple_warehouses_and_parcels': True, 'same_sku_source_lines_preserved': True, 'empty_and_failed_reads_distinct': True, 'read_only_browser': True, 'retained_document_unchanged': True, 'parent_summary_refreshes_with_parcels': True}, ensure_ascii=False, indent=2), encoding='utf8')
+        OUTPUT.joinpath('verification.json').write_text(json.dumps({'retained_shipment': SN, 'live_parcel_count': 1, 'live_quantity': 6, 'entries': ['allocation', 'business', 'shipment', 'warehouse_query'], 'copy_and_mobile': True, 'multiple_warehouses_and_parcels': True, 'same_physical_different_virtual_separate_groups': True, 'same_sku_source_lines_preserved': True, 'empty_and_failed_reads_distinct': True, 'read_only_browser': True, 'retained_document_unchanged': True, 'parent_summary_refreshes_with_parcels': True}, ensure_ascii=False, indent=2), encoding='utf8')
         print('PASS parcel cards: four live entries, SKU quantities, clipboard, mobile, multi-warehouse/split parcels, empty/error recovery; GET-only')
     finally:
         request('/auth/logout', token=token, method='DELETE')

@@ -7,6 +7,8 @@ import java.util.*;
 
 @FeignClient(contextId="orderShipmentWmsClient",name="oms-supplychain",configuration=OrderShipmentWmsFeignConfig.class)
 public interface OrderShipmentWmsClient {
+    @GetMapping("/shipmentWms/internal/reviews") R<List<Map<String,Object>>> reviews(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/shipmentWms/internal/reviews/{review}") R<Map<String,Object>> review(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment,@PathVariable("review") long review,@RequestBody Map<String,Object> body,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/shipmentWms/internal/sales-document") R<Boolean> salesDocument(@RequestParam("company_code") String company,@RequestBody Map<String,Object> body,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/shipmentWms/internal/receipts") R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam("shipment_sn") String sn,@RequestParam("include_failed") boolean failed,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/shipmentWms/internal/receipts/{event}/result") R<Boolean> receiptResult(@RequestParam("company_code") String company,@PathVariable("event") long event,@RequestBody Map<String,Object> body,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);

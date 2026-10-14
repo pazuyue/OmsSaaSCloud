@@ -7,7 +7,7 @@
         <el-button v-if="detail.shipment_sn.startsWith('XS')" v-hasPermi="['warehouse:tickets:list']" type="text" @click="$router.push({ path: '/oms-supplychain/wmsTickets', query: { documentType: 'SALE_OUT', noSn: detail.shipment_sn }}); visible = false">查看销售出库单及明细</el-button>
         <el-alert v-if="detail.fulfillment_block && !['VOIDING', 'VOIDED', 'SHIPPED'].includes(detail.status)" :title="detail.fulfillment_block" type="warning" :closable="false" show-icon />
         <div class="platform-summary"><strong>平台发货回传</strong><platform-shipping-status :row="detail" @open="$refs.platformShipping.open($event)" /></div>
-        <div class="parcel-context">{{ detail.real_store_name || detail.real_store_code }} · OMS {{ detail.order_sn }} · 平台 {{ detail.platform_tid }}</div>
+        <div class="parcel-context">虚拟仓 {{ detail.store_code || '—' }} · {{ detail.real_store_name || detail.real_store_code }} · OMS {{ detail.order_sn }} · 平台 {{ detail.platform_tid }}</div>
         <shipment-package-cards :detail="detail"><el-button v-if="detail.can_register_package" slot="actions" v-hasPermi="['order:shipment:package']" type="primary" size="small" @click="$refs.packageRegister.open(detail.id)">登记运单</el-button></shipment-package-cards>
         <el-collapse class="detail-information"><el-collapse-item title="订单、仓库与收货信息" name="info">
         <el-descriptions border :column="2" class="summary"><el-descriptions-item label="仓库下发 / 出库任务" :span="2"><shipment-dispatch-status :row="detail" /></el-descriptions-item><template v-if="detail.warehouse_target"><el-descriptions-item label="仓库连接">{{ detail.warehouse_target.connection_name }}</el-descriptions-item><el-descriptions-item label="协议 / 环境">{{ detail.warehouse_target.provider === 'QIMEN' ? '奇门' : '京东虎符' }} · {{ detail.warehouse_target.environment === 'PRODUCTION' ? '正式' : '测试' }}</el-descriptions-item><el-descriptions-item label="外部仓库 / 货主" :span="2">{{ detail.warehouse_target.external_warehouse }} / {{ detail.warehouse_target.external_owner }}</el-descriptions-item></template>
@@ -20,7 +20,7 @@
           <el-descriptions-item label="OMS 订单"><el-button type="text" @click="openOrder">{{ detail.order_sn }}</el-button></el-descriptions-item>
           <el-descriptions-item label="平台单号">{{ detail.platform_tid }}</el-descriptions-item>
           <el-descriptions-item label="店铺 / 渠道">{{ detail.channel_name || detail.channel_id }} · 天猫</el-descriptions-item>
-          <el-descriptions-item label="实体仓">{{ detail.real_store_name || detail.real_store_code }}（{{ detail.real_store_code }}）</el-descriptions-item>
+          <el-descriptions-item label="虚拟仓">{{ detail.store_code || '—' }}</el-descriptions-item><el-descriptions-item label="实体仓">{{ detail.real_store_name || detail.real_store_code }}（{{ detail.real_store_code }}）</el-descriptions-item>
           <el-descriptions-item label="发货单数量">{{ detail.quantity }} 件</el-descriptions-item>
           <el-descriptions-item label="已发货数量">{{ detail.shipped_quantity }} 件</el-descriptions-item>
           <el-descriptions-item label="货主">{{ detail.owner_code }}</el-descriptions-item>
