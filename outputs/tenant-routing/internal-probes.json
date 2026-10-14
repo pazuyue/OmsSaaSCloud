@@ -1,0 +1,27 @@
+[
+  {
+    "service": "oms-order",
+    "unregistered_company_http_status": 503,
+    "strict_configured": true
+  },
+  {
+    "service": "oms-inventory",
+    "unregistered_company_http_status": 503,
+    "strict_configured": true
+  },
+  {
+    "service": "oms-supplychain",
+    "unregistered_company_http_status": 503,
+    "strict_configured": true
+  },
+  {
+    "service": "oms-channel",
+    "unregistered_company_http_status": 503,
+    "strict_configured": true
+  },
+  {
+    "service": "oms-modules-goods",
+    "unregistered_company_http_status": 503,
+    "strict_configured": true
+  }
+]

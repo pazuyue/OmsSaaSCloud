@@ -1,0 +1,91 @@
+{
+  "company": [
+    {
+      "sku": "ACCEPT_IMM_20261014141827",
+      "total": 0,
+      "available": 0,
+      "allocated": 0,
+      "reserved": 0,
+      "version": 6
+    }
+  ],
+  "channel": [
+    {
+      "sku": "ACCEPT_IMM_20261014141827",
+      "available": 0,
+      "allocated": 0,
+      "reserved": 0,
+      "quota": 0,
+      "quota_reserved": 0,
+      "version": 9
+    }
+  ],
+  "warehouse": [
+    {
+      "store": "IMMEDIATE_V1_20261014141827",
+      "actual": 0,
+      "available": 0,
+      "locked": 0,
+      "version": 4
+    },
+    {
+      "store": "IMMEDIATE_V2_20261014141827",
+      "actual": 0,
+      "available": 0,
+      "locked": 0,
+      "version": 4
+    }
+  ],
+  "batch": [
+    {
+      "id": 71,
+      "store": "IMMEDIATE_V1_20261014141827",
+      "actual": 0,
+      "available": 0,
+      "locked": 0,
+      "version": 4
+    },
+    {
+      "id": 72,
+      "store": "IMMEDIATE_V2_20261014141827",
+      "actual": 0,
+      "available": 0,
+      "locked": 0,
+      "version": 4
+    }
+  ],
+  "demand": [
+    {
+      "id": 52,
+      "quantity": 10,
+      "reserved": 10,
+      "outbound": 10
+    }
+  ],
+  "source": [
+    {
+      "id": 31,
+      "quantity": 10,
+      "outbound": 10,
+      "reserved": 1
+    }
+  ],
+  "allocation": [
+    {
+      "id": 13,
+      "store": "IMMEDIATE_V1_20261014141827",
+      "quantity": 6,
+      "outbound": 6,
+      "status": "OCCUPIED",
+      "method": "WMS"
+    },
+    {
+      "id": 14,
+      "store": "IMMEDIATE_V2_20261014141827",
+      "quantity": 4,
+      "outbound": 4,
+      "status": "OCCUPIED",
+      "method": "WMS"
+    }
+  ]
+}

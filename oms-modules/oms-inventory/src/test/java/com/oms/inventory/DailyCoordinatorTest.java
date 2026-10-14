@@ -48,6 +48,7 @@ public class DailyCoordinatorTest {
         @Bean AllocationReservationService reservations(){return new AllocationReservationService();}
         @Bean DailyAllocationService daily(){return new DailyAllocationService();}
         @Bean DailyAllocationScanner scanner(){return new DailyAllocationScanner();}
+        @Bean com.oms.common.tenant.TenantRouting tenantRouting(){com.oms.common.tenant.TenantRouting r=new com.oms.common.tenant.TenantRouting();r.setRoutes(Collections.singletonMap("QM","master"));return r;}
         @Bean DailyAllocationCoordinator coordinator(){return new DailyAllocationCoordinator();}
     }
     @BeforeAll static void init(){
@@ -61,8 +62,11 @@ public class DailyCoordinatorTest {
         DynamicDataSourceContextHolder.clear();for(String key:new ArrayList<>(routing.getDataSources().keySet()))if(!key.equals("master"))routing.removeDataSource(key);
         for(DataSource pool:Arrays.asList(primary,secondary))for(String table:Arrays.asList("rule_stock_daily_item","rule_stock_daily_run","rule_stock_reservation_event","rule_stock_order_reservation","rule_stock_reservation","rule_stock_result","rule_stock_channel_info","rule_stock_store_code_info","rule_stock_goods_info","rule_stock_info","oms_channel_inventory","wms_inventory_change_history","wms_inventory_batch","wms_inventory","oms_inventory"))new JdbcTemplate(pool).update("DELETE FROM "+table);
         ((Queue<?>)ReflectionTestUtils.getField(coordinator,"failures")).clear();
+        context.getBean(com.oms.common.tenant.TenantRouting.class).setRoutes(Collections.emptyMap());
     }
+    void register(String company,String pool){com.oms.common.tenant.TenantRouting tenants=context.getBean(com.oms.common.tenant.TenantRouting.class);Map<String,String> routes=new HashMap<>(tenants.getRoutes());routes.put(company,pool);tenants.setRoutes(routes);}
     long create(String company,int qty,boolean enable){
+        register(company,DynamicDataSourceContextHolder.peek()==null?"master":DynamicDataSourceContextHolder.peek());
         WmsInventoryBatch b=new WmsInventoryBatch();b.setCompanyCode(company);b.setSkuSn("A");b.setStoreCode("W1");b.setBatchCode("B1");b.setZpActualNumber(qty);b.setCpActualNumber(0);inventory.receive(b,"IN-A");
         AllocationDraft d=new AllocationDraft();d.setRuleType(1);d.setRuleName("自动发现验证");d.setStartTime(LocalDateTime.now().minusMinutes(1));d.setEndTime(LocalDateTime.now().plusHours(1));d.setStores(Arrays.asList("W1"));AllocationDraft.Channel c=new AllocationDraft.Channel();c.setChannelId(Math.floorMod(company.hashCode(),Integer.MAX_VALUE));c.setChannelName("渠道");c.setPercentage(BigDecimal.valueOf(100));d.getChannels().add(c);
         long id=workspace.save(company,d,"tester");workspace.submit(company,id,1,false);if(enable)daily.command(company,id,2,"ENABLE","tester");return id;
@@ -75,26 +79,26 @@ public class DailyCoordinatorTest {
         }
     }
     Map<String,Object> scan(){coordinator.poll();idle();Map<String,Object> result=new HashMap<>();result.put("failures",new ArrayList<>((Queue<?>)ReflectionTestUtils.getField(coordinator,"failures")));return result;}
-    @Test void newCompanyIsDiscoveredWithoutAnyTaskOrCompanyConfiguration(){
+    @Test void newCompanyRequiresRegistrationBeforeItCanBeScanned(){
         create("ALPHA",100,true);long beta=create("BETA",35,false);scan();assertEquals(100,stock(primary,"ALPHA"));assertEquals(0,stock(primary,"BETA"));
-        daily.command("BETA",beta,2,"ENABLE","tester");scan();assertEquals(35,stock(primary,"BETA"));assertNull(DynamicDataSourceContextHolder.peek());
+        daily.command("BETA",beta,2,"ENABLE","tester");context.getBean(com.oms.common.tenant.TenantRouting.class).setRoutes(Collections.singletonMap("ALPHA","master"));scan();assertEquals(0,stock(primary,"BETA"));register("BETA","master");scan();assertEquals(35,stock(primary,"BETA"));assertNull(DynamicDataSourceContextHolder.peek());
     }
-    @Test void dynamicallyLoadedDatabaseKeepsSameCompanyAndSkuIsolated(){
+    @Test void companyInAnUnmappedDatabaseIsNotDiscovered(){
         create("SAME",100,true);scan();routing.addDataSource("second",secondary);
         DynamicDataSourceContextHolder.push("second");try{create("SAME",27,true);}finally{DynamicDataSourceContextHolder.poll();}
-        scan();assertEquals(100,stock(primary,"SAME"));assertEquals(27,stock(secondary,"SAME"));assertNull(DynamicDataSourceContextHolder.peek());
-        routing.removeDataSource("second");scan();assertEquals(27,stock(secondary,"SAME"));
+        register("SAME","master");scan();assertEquals(100,stock(primary,"SAME"));assertEquals(0,stock(secondary,"SAME"));assertNull(DynamicDataSourceContextHolder.peek());
+        routing.removeDataSource("second");scan();assertEquals(0,stock(secondary,"SAME"));
     }
     @Test void brokenDatasourceDoesNotFallBackOrBlockHealthyCompanies() throws Exception {
-        create("GOOD",90,true);DataSource broken=mock(DataSource.class);when(broken.getConnection()).thenThrow(new SQLException("Intentional isolated test connection failure"));routing.addDataSource("aBroken",broken);
+        create("GOOD",90,true);DataSource broken=mock(DataSource.class);when(broken.getConnection()).thenThrow(new SQLException("Intentional isolated test connection failure"));routing.addDataSource("aBroken",broken);register("BROKEN","aBroken");
         DynamicDataSourceContextHolder.push("outer");try{Map<String,Object> result=scan();assertFalse(((List<?>)result.get("failures")).isEmpty());assertEquals("outer",DynamicDataSourceContextHolder.peek());}finally{DynamicDataSourceContextHolder.poll();}
         assertEquals(90,stock(primary,"GOOD"));assertEquals(1,new JdbcTemplate(primary).queryForObject("SELECT COUNT(*) FROM rule_stock_daily_run",Integer.class));
     }
-    @Test void invalidCompanyDoesNotPreventOtherCompanyFromRunning(){
+    @Test void unregisteredCompanyRowsCannotEnterTheScan(){
         create("GOOD",80,true);long invalid=create("BAD",10,true);db.update("UPDATE rule_stock_info SET company_code='BAD SPACE' WHERE id=?",invalid);
-        Map<String,Object> result=scan();assertEquals(1,((List<?>)result.get("failures")).size());assertEquals(80,stock(primary,"GOOD"));
+        Map<String,Object> result=scan();assertEquals(0,((List<?>)result.get("failures")).size());assertEquals(80,stock(primary,"GOOD"));assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM rule_stock_daily_run WHERE company_code='BAD SPACE'",Integer.class));
     }
-    @Test void everyCompanyIsDiscoveredInOneTriggerAndNewEarlierCompanyJoins(){
+    @Test void everyRegisteredCompanyIsVisitedAndNewRegistrationJoins(){
         for(int i=0;i<7;i++)create("T"+i,10+i,true);scan();assertEquals(7,db.queryForObject("SELECT COUNT(*) FROM rule_stock_daily_run",Integer.class));
         create("EARLIER",25,true);scan();assertEquals(25,stock(primary,"EARLIER"));
         Map<?,?> plan=db.queryForMap("EXPLAIN SELECT DISTINCT company_code FROM rule_stock_info FORCE INDEX (idx_daily_company_scan) WHERE rule_type=1 AND daily_enabled=1 AND company_code>'' ORDER BY company_code LIMIT 5");assertEquals("idx_daily_company_scan",plan.get("key"));assertFalse(String.valueOf(plan.get("Extra")).contains("filesort"));

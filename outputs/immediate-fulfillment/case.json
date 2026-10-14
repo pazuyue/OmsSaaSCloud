@@ -1,0 +1,219 @@
+{
+  "case_id": "20261014141827",
+  "created": "2026-10-14 14:18:27",
+  "sku": "ACCEPT_IMM_20261014141827",
+  "channel_name": "[即时验收] 回传与台账同步 20261014141827",
+  "seller": "ACCEPT_IMMEDIATE_20261014141827",
+  "platform_tid": "99420261014141827",
+  "platform_oid": "9942026101414182701",
+  "warehouses": [
+    {
+      "code": "IMMEDIATE_V1_20261014141827",
+      "quantity": 6,
+      "package_count": 2,
+      "id": 49,
+      "shipment_id": 11,
+      "shipment_sn": "XS8d3a281fc4234540bb343c553fb69b24",
+      "external_order": "SIMOUT_a5c4f606fb524ad3b6fe",
+      "external_owner": "VC00001",
+      "external_warehouse": "VC00001",
+      "plans": [
+        {
+          "id": 13,
+          "sku_sn": "ACCEPT_IMM_20261014141827",
+          "quantity": 6,
+          "platform_oid": "9942026101414182701",
+          "store_code": "IMMEDIATE_V1_20261014141827",
+          "batch_code": "TEST-MULTI-BATCH-20261014141827-V1",
+          "batch_id": 71
+        }
+      ],
+      "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS8d3a281fc4234540bb343c553fb69b24</deliveryOrderCode><deliveryOrderId>SIMOUT_a5c4f606fb524ad3b6fe</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_MULTI_XS8d3a281fc4234540bb343c553fb69b24</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-14 14:19:25</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>13</orderLineNo><itemCode>ACCEPT_IMM_20261014141827</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-20261014141827-V1</batchCode><inventoryType>ZP</inventoryType><actualQty>6</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS8d3a281fc4234540bb343c553fb69b24_P1</packageCode><expressCode>TEST-SF-XS8d3a281fc4234540bb343c553fb69b24-P1</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_IMM_20261014141827</itemCode><quantity>3</quantity></item></items></package><package><packageCode>SIMPKG_XS8d3a281fc4234540bb343c553fb69b24_P2</packageCode><expressCode>TEST-SF-XS8d3a281fc4234540bb343c553fb69b24-P2</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_IMM_20261014141827</itemCode><quantity>3</quantity></item></items></package></packages></request>"
+    },
+    {
+      "code": "IMMEDIATE_V2_20261014141827",
+      "quantity": 4,
+      "package_count": 1,
+      "id": 50,
+      "shipment_id": 12,
+      "shipment_sn": "XS77c90d8c1af24bc1951bffa994d2d892",
+      "external_order": "SIMOUT_9824127db21e470fa776",
+      "external_owner": "VC00001",
+      "external_warehouse": "VC00001",
+      "plans": [
+        {
+          "id": 14,
+          "sku_sn": "ACCEPT_IMM_20261014141827",
+          "quantity": 4,
+          "platform_oid": "9942026101414182701",
+          "store_code": "IMMEDIATE_V2_20261014141827",
+          "batch_code": "TEST-MULTI-BATCH-20261014141827-V2",
+          "batch_id": 72
+        }
+      ],
+      "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS77c90d8c1af24bc1951bffa994d2d892</deliveryOrderCode><deliveryOrderId>SIMOUT_9824127db21e470fa776</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_MULTI_XS77c90d8c1af24bc1951bffa994d2d892</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-14 14:19:26</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>14</orderLineNo><itemCode>ACCEPT_IMM_20261014141827</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-20261014141827-V2</batchCode><inventoryType>ZP</inventoryType><actualQty>4</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS77c90d8c1af24bc1951bffa994d2d892_P1</packageCode><expressCode>TEST-SF-XS77c90d8c1af24bc1951bffa994d2d892-P1</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>ACCEPT_IMM_20261014141827</itemCode><quantity>4</quantity></item></items></package></packages></request>"
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 31,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_IMM_20261014141827",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_IMM_20261014141827",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "IMMEDIATE_V1_20261014141827",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "IMMEDIATE_V2_20261014141827",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 71,
+        "store": "IMMEDIATE_V1_20261014141827",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 72,
+        "store": "IMMEDIATE_V2_20261014141827",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 118,
+  "order_id": 34,
+  "order_sn": "SO337a7a12108540a9acd72c69c1ce8766",
+  "allocated_stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_IMM_20261014141827",
+        "total": 10,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 4
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_IMM_20261014141827",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 5
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "IMMEDIATE_V1_20261014141827",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "store": "IMMEDIATE_V2_20261014141827",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "batch": [
+      {
+        "id": 71,
+        "store": "IMMEDIATE_V1_20261014141827",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "id": 72,
+        "store": "IMMEDIATE_V2_20261014141827",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "demand": [
+      {
+        "id": 52,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 31,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 13,
+        "store": "IMMEDIATE_V1_20261014141827",
+        "quantity": 6,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      },
+      {
+        "id": 14,
+        "store": "IMMEDIATE_V2_20261014141827",
+        "quantity": 4,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  },
+  "completed": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=34"
+}

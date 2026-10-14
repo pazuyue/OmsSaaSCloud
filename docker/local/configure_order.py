@@ -81,6 +81,7 @@ def main():
     assert ORDER_DB in content,'Channel service datasource template is unavailable'
     content+='''
 oms.order.encryption-key: ${OMS_ORDER_ENCRYPTION_KEY:}
+oms.tenant.routes.QM: master
 feign.client.config.default.connectTimeout: 5000
 feign.client.config.default.readTimeout: 30000
 '''

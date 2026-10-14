@@ -36,6 +36,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
     @Resource
     TokenService tokenService;
+    @Resource private com.oms.common.tenant.TenantRouting tenantRouting;
     // 设置排除路径
     private final List<String> excludeUrls =  Arrays.asList("/druid/**","/actuator/**");
 
@@ -46,79 +47,40 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-        //log.info("===> DynamicDatasourceInterceptor doFilter");
-        HttpServletRequest req = (HttpServletRequest) servletRequest;
-        CustomHttpServletRequest requestWrapper = new CustomHttpServletRequest(req);
-        HttpServletResponse resp = (HttpServletResponse) servletResponse;
-        // 获取请求参数
-        String company_code = req.getParameter("company_code");
-        String requestURI = req.getRequestURI();
-
-        // The authenticated internal coordinator selects exact configured routes itself.
-        // Public gateway requests cannot carry FROM_SOURCE; controller also requires @InnerAuth.
-        if (Arrays.asList("/allocation/internal/daily-scan-all", "/orders/internal/scan-all",
-                "/orders/internal/schedule/dispatch", "/orders/internal/schedule/receipts",
-                "/orders/internal/schedule/virtual", "/orders/internal/schedule/sales",
-                "/orders/internal/schedule/platform", "/orders/internal/schedule/issues",
-                "/shipmentWms/internal/schedule/inbound").contains(requestURI) && "POST".equals(req.getMethod())
-                && SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE))) {
-            DynamicDataSourceContextHolder.clear();
-            try { chain.doFilter(requestWrapper, resp); }
-            finally { DynamicDataSourceContextHolder.clear(); }
-            return;
-        }
-
-        if ("POST".equals(req.getMethod()) && requestURI.matches("^/wmsCallback/[A-Za-z0-9_-]{1,64}/[a-f0-9]{32}$")) {
-            DynamicDataSourceContextHolder.clear();
-            try { chain.doFilter(req, resp); }
-            finally { DynamicDataSourceContextHolder.clear(); }
-            return;
-        }
-        if (isExcluded(requestURI)) {
-            // 在排除列表中，跳过
-            //log.debug("在排除列表中，跳过");
-            chain.doFilter(requestWrapper, resp);
-            return;
-        }
-        log.debug("requestURI:" + requestURI);
-        log.debug("company_code:" + company_code);
-        // Public master routes always use the authenticated datasource.
-        // A company parameter may select an internal service route, but never another user's master data.
-        if (requestURI.matches("^/(orders(?!/internal)|channel|platform|api/channel|info|category|color|size|goodsAdministration|owner|realStore|simulationStore|ownerWarehouse|warehouseWorkspace|purchaseWorkspace|wmsIntegration|supplier|poInfo|noTickets|noTicketsGoods|noTicketsGoodsTmp|tmp|tickets)(/.*)?$")) {
-            String authenticated = getCompanyCode();
-            if (company_code != null && !company_code.trim().equalsIgnoreCase(authenticated.trim())) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.setContentType("application/json;charset=UTF-8");
-                resp.getWriter().write(new ObjectMapper().writeValueAsString(error("不能操作其他公司的基础资料")));
-                return;
-            }
-            company_code = authenticated;
-        }
-        if (Objects.isNull(company_code)) {
+        HttpServletRequest req=(HttpServletRequest)servletRequest;
+        HttpServletResponse resp=(HttpServletResponse)servletResponse;
+        com.oms.common.tenant.TenantRouting.clearContext();
+        try {
+            String path=req.getRequestURI();boolean inner=SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE));
+            if(isExcluded(path)){chain.doFilter(req,resp);return;}
+            if(inner&&"POST".equals(req.getMethod())&&Arrays.asList(
+                "/allocation/internal/daily-scan-all","/orders/internal/scan-all",
+                "/orders/internal/schedule/dispatch","/orders/internal/schedule/receipts",
+                "/orders/internal/schedule/virtual","/orders/internal/schedule/sales",
+                "/orders/internal/schedule/platform","/orders/internal/schedule/issues",
+                "/shipmentWms/internal/schedule/inbound").contains(path)) {chain.doFilter(new CustomHttpServletRequest(req),resp);return;}
+            // Callback company comes from its bound URL; signature and connection binding are checked in the controller.
+            if("POST".equals(req.getMethod())&&path.matches("^/wmsCallback/[A-Za-z0-9_-]{1,64}/[a-f0-9]{32}$")){chain.doFilter(req,resp);return;}
+            String company;
             try {
-                company_code = this.getCompanyCode();
-                log.debug("获取用户登陆公司:{}", company_code);
-            } catch (Exception exception) {
-                // 创建错误信息
-                AjaxResult errorInfo = error("company_code is null");
-                ObjectMapper mapper = new ObjectMapper();
-                String jsonInString = mapper.writeValueAsString(errorInfo);
-                // 设置HTTP状态码为400 Bad Request
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                // 输出错误信息
-                resp.getWriter().write(jsonInString);
-                return; // 不再执行后续的过滤器和请求处理
-            }
-        }
-
-        // 将集合存到自定义HttpServletRequestWrapper
-        requestWrapper.addParameter("company_code", company_code);
-        log.debug("parameterMap:{}", requestWrapper);
-        //切换到对应poolName的数据源
-        DynamicDataSourceContextHolder.clear();
-        DynamicDataSourceContextHolder.push(company_code);
-        try { chain.doFilter(requestWrapper, resp); }
-        finally { DynamicDataSourceContextHolder.clear(); }
+                String[] supplied=req.getParameterValues("company_code");
+                if(supplied!=null&&supplied.length!=1)throw new IllegalArgumentException("公司参数不能重复");
+                boolean internalPath=path.matches("^/(orders|orderCatalog|orderStock|shipmentWms|allocation)/internal(/.*)?$")
+                    ||Arrays.asList("/goodsReferences/internal","/warehouseReferences/internal","/api/goods/purchaseLookup","/api/WmsInventory/addInventory").contains(path);
+                if(inner&&internalPath)company=com.oms.common.tenant.TenantRouting.company(req.getParameter("company_code"));
+                else {
+                    company=com.oms.common.tenant.TenantRouting.company(getCompanyCode());
+                    if(supplied!=null&&!company.equals(com.oms.common.tenant.TenantRouting.company(supplied[0])))throw new IllegalArgumentException("不能操作其他公司的数据");
+                }
+            }catch(RuntimeException e){reject(resp,400,"公司身份缺失、无效或与登录公司不一致");return;}
+            CustomHttpServletRequest wrapper=new CustomHttpServletRequest(req);wrapper.addParameter("company_code",company);
+            com.oms.common.tenant.TenantRouting.Binding scope;
+            try{scope=tenantRouting.open(company);}catch(IllegalArgumentException e){reject(resp,503,e.getMessage());return;}
+            try(com.oms.common.tenant.TenantRouting.Binding ignored=scope){chain.doFilter(wrapper,resp);}
+        }finally{com.oms.common.tenant.TenantRouting.clearContext();}
+    }
+    private void reject(HttpServletResponse response,int status,String message) throws IOException {
+        response.setStatus(status);response.setContentType("application/json;charset=UTF-8");response.getWriter().write(new ObjectMapper().writeValueAsString(error(message)));
     }
 
 

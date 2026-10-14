@@ -25,6 +25,7 @@ public class ApiWmsInventoryController extends BaseController {
      * @param dto
      * @return
      */
+    @com.ruoyi.common.security.annotation.InnerAuth
     @PostMapping(value = "/addInventory")
     @SneakyThrows
     public AjaxResult addInventory(@RequestBody WmsInventoryBatchDto dto, @RequestParam("company_code") String company_code) {

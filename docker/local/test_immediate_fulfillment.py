@@ -16,7 +16,7 @@ def main():
         if MANIFEST.exists():case=json.loads(MANIFEST.read_text(encoding='utf8'))
         else:
             stamp=datetime.now().strftime('%Y%m%d%H%M%S');tid='994'+stamp
-            case={'case_id':stamp,'created':datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'sku':'ACCEPT_IMMEDIATE_'+stamp,'channel_name':'[即时验收] 回传与台账同步 '+stamp,'seller':'ACCEPT_IMMEDIATE_'+stamp,'platform_tid':tid,'platform_oid':tid+'01','warehouses':[{'code':'IMMEDIATE_V1_'+stamp,'quantity':6,'package_count':2},{'code':'IMMEDIATE_V2_'+stamp,'quantity':4,'package_count':1}]};save(MANIFEST,case)
+            case={'case_id':stamp,'created':datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'sku':'ACCEPT_IMM_'+stamp,'channel_name':'[即时验收] 回传与台账同步 '+stamp,'seller':'ACCEPT_IMMEDIATE_'+stamp,'platform_tid':tid,'platform_oid':tid+'01','warehouses':[{'code':'IMMEDIATE_V1_'+stamp,'quantity':6,'package_count':2},{'code':'IMMEDIATE_V2_'+stamp,'quantity':4,'package_count':1}]};save(MANIFEST,case)
         multi.OUTPUT,multi.MANIFEST=OUT,MANIFEST;original=multi.api
         def scoped_api(path,credential,payload=None,post=False):
             response=original(path,credential,payload,post)

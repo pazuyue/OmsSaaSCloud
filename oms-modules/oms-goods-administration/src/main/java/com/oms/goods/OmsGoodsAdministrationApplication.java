@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableRyFeignClients(basePackages = {"com.oms.goods", "com.ruoyi"})
 @SpringBootApplication
 @EnableOmsConfig
+@org.springframework.context.annotation.Import(com.oms.common.tenant.TenantRouting.class)
 public class OmsGoodsAdministrationApplication {
     public static void main(String[] args)
     {

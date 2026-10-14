@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Service
 public class DailyAllocationCoordinator {
-    @Resource private DataSource dataSource;
+    @Resource private com.oms.common.tenant.TenantRouting tenantRouting;
     @Resource private DailyAllocationScanner scanner;
     @Value("${inventory.daily.company-concurrency:2}") private int concurrency=2;
     private final AtomicBoolean discovering=new AtomicBoolean();
@@ -40,40 +40,22 @@ public class DailyAllocationCoordinator {
     }
     private void discover() {
         try {
-            if(!(dataSource instanceof DynamicRoutingDataSource))throw new IllegalStateException("库存动态数据源未配置");
-            DynamicRoutingDataSource routing=(DynamicRoutingDataSource)dataSource;
-            SortedMap<String,DataSource> pools=new TreeMap<>(routing.getDataSources());
-            if(pools.isEmpty())throw new IllegalStateException("没有已加载的库存数据源");
-            for(Map.Entry<String,DataSource> entry:pools.entrySet()) {
+            for(String company:tenantRouting.companies()) {
                 if(closing)break;
-                String route=entry.getKey(),cursor="";
                 try {
-                    exactRoute(routing,route,entry.getValue());
-                    JdbcTemplate discovery=new JdbcTemplate(entry.getValue());discovery.setQueryTimeout(5);
-                    while(!closing) {
-                        // Page size limits read memory only; every company page is visited.
-                        List<String> companies=discovery.queryForList("SELECT DISTINCT company_code FROM rule_stock_info FORCE INDEX (idx_daily_company_scan) WHERE rule_type=1 AND daily_enabled=1 AND company_code>? ORDER BY company_code LIMIT 100",String.class,cursor);
-                        for(String company:companies) {
-                            if(closing)break;
-                            cursor=company;String scope=route+"/"+company.toUpperCase(Locale.ROOT);
-                            if(!active.add(scope))continue;
-                            try {
-                                workers.execute(()->{
-                                    try{exactRoute(routing,route,entry.getValue());DynamicDataSourceContextHolder.push(route);scanner.drain(company);}
-                                    catch(RuntimeException e){failed(scope,e);}
-                                    finally{DynamicDataSourceContextHolder.clear();active.remove(scope);}
-                                });
-                            } catch(RuntimeException e){active.remove(scope);throw e;}
-                        }
-                        if(companies.size()<100)break;
-                    }
-                } catch(RuntimeException e){failed(route+"/数据源",e);}
+                    com.oms.common.tenant.TenantRouting.Route route=tenantRouting.capture(company);
+                    String scope=route.datasource()+"/"+company;
+                    if(!active.add(scope))continue;
+                    try{workers.execute(()->{
+                        com.oms.common.tenant.TenantRouting.clearContext();
+                        try{route.run(()->scanner.drain(company));}
+                        catch(RuntimeException e){failed(scope,e);}
+                        finally{com.oms.common.tenant.TenantRouting.clearContext();active.remove(scope);}
+                    });}catch(RuntimeException e){active.remove(scope);throw e;}
+                }catch(RuntimeException e){failed(company,e);}
             }
-        } catch(RuntimeException e){failed("全局扫描",e);}
+        }catch(RuntimeException e){failed("全局扫描",e);}
         finally{discovering.set(false);}
-    }
-    private void exactRoute(DynamicRoutingDataSource routing,String route,DataSource pool) {
-        if(!routing.getDataSources().containsKey(route) || routing.getDataSource(route)!=pool)throw new IllegalStateException("数据源已移除或路由存在歧义");
     }
     private void failed(String scope,RuntimeException e){failures.add(scope);org.slf4j.LoggerFactory.getLogger(getClass()).error("Daily allocation background task failed, scope={}",scope,e);}
     @PreDestroy public void stop(){closing=true;if(dispatcher!=null)dispatcher.shutdownNow();if(workers!=null)workers.shutdownNow();}

@@ -40,13 +40,8 @@ public class WmsIntegrationController {
     /** Only this exact public route bypasses user login. Provider signatures authenticate the body. */
     @PostMapping("/wmsCallback/{route}/{key}") public ResponseEntity<String> callback(@PathVariable String route,@PathVariable String key,@RequestBody String body,HttpServletRequest request){
         require(route.matches("[A-Za-z0-9_-]{1,64}")&&key.matches("[a-f0-9]{32}"),"无效回调地址");require(body.length()<=1024*1024,"回传报文超过1MB");
-        require(dataSource instanceof DynamicRoutingDataSource,"未配置租户数据源");DynamicRoutingDataSource routing=(DynamicRoutingDataSource)dataSource;
-        String datasource=tenantRoutes.datasource(route);
-        require(routing.getDataSources().containsKey(datasource)&&routing.getDataSource(datasource)==routing.getDataSources().get(datasource),"回调租户数据源不存在或不唯一");
         Map<String,String> params=new TreeMap<>();request.getParameterMap().forEach((k,v)->{require(v.length==1,"回传参数不能重复");params.put(k,v[0]);});
-        DynamicDataSourceContextHolder.push(datasource);
-        try {String method=params.get("method");String result=Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);}
-        finally{DynamicDataSourceContextHolder.clear();}
+        return tenantRoutes.call(route,()->{String method=params.get("method");String result=Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);});
     }
     @ExceptionHandler(IllegalArgumentException.class) public AjaxResult invalid(IllegalArgumentException error){return AjaxResult.error(error.getMessage());}
 }

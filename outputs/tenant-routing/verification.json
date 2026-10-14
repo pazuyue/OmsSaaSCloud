@@ -1,0 +1,34 @@
+{
+  "order_id": 35,
+  "order_sn": "SOf43dde59d3f74597bcc35aca14a72b3a",
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=35",
+  "phases": [
+    {
+      "shipment_id": 13,
+      "shipment_sn": "XS83223648ffd24fa19814694ada0a6598",
+      "quantity": 6,
+      "packages": 2,
+      "immediate_seconds": 1.203,
+      "actor": "出库回传即时记账",
+      "replay_stock_unchanged": true
+    },
+    {
+      "shipment_id": 14,
+      "shipment_sn": "XS644a918fbbd74e72a00a4a5804156b43",
+      "quantity": 4,
+      "packages": 1,
+      "immediate_seconds": 1.146,
+      "actor": "出库回传即时记账",
+      "replay_stock_unchanged": true
+    }
+  ],
+  "compensation_paused_throughout": true,
+  "sales_documents": [
+    "13\tXS16f1176fa375ae5646125b5188431bca\t6\t6\t1",
+    "14\tXS43dc51778b0135aa1f458078cebd1620\t4\t4\t1"
+  ],
+  "clean_sync_tasks_not_polled": true,
+  "old_acceptance_unchanged": true,
+  "job_switches_and_cron_preserved": true,
+  "real_platform_notification_sent": false
+}
