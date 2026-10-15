@@ -1,0 +1,11 @@
+{
+  "three_retained_orders_unchanged": true,
+  "inventory_unchanged": true,
+  "review_decisions_unchanged": true,
+  "all_job_switches_and_cron_unchanged": true,
+  "company_test_count": 14,
+  "order_test_count": 228,
+  "purchase_warehouse_test_count": 103,
+  "retained_company": "ONBOARD_TEST_20261014",
+  "retained_status": "DISABLED"
+}

@@ -42,7 +42,7 @@ public class InventoryTransactionsTest {
     }
     @AfterAll public static void stop(){if(context!=null)context.close();}
     @BeforeEach public void clear(){
-        for(String table:Arrays.asList("wms_inventory_change_history","wms_inventory_batch","wms_inventory","oms_inventory"))db.update("DELETE FROM "+table);
+        for(String table:Arrays.asList("oms_allocation_stock_signal","wms_inventory_change_history","wms_inventory_batch","wms_inventory","oms_inventory"))db.update("DELETE FROM "+table);
     }
     private void receive(String sku,String store,String batch,int qty) {
         WmsInventoryBatch row=new WmsInventoryBatch();row.setCompanyCode("VERIFY");row.setSkuSn(sku);row.setStoreCode(store);row.setBatchCode(batch);row.setZpActualNumber(qty);row.setCpActualNumber(0);
@@ -153,5 +153,23 @@ public class InventoryTransactionsTest {
             assertEquals(1,successes);assertEquals(1,scalar("SELECT SUM(zp_lock_number) FROM wms_inventory_batch"));
             assertEquals(1,scalar("SELECT COUNT(*) FROM wms_inventory_change_history WHERE operation_type='LOCK'"));balanced();
         } finally {pool.shutdownNow();}
+    }
+
+    @Test public void receiveSignalSharesTransactionAndDuplicateReceiveDoesNotWakeAgain(){
+        receive("SIGNAL","V1","B1",6);receive("SIGNAL","V1","B1",6);
+        assertEquals(1,db.queryForObject("SELECT revision FROM oms_allocation_stock_signal WHERE company_code='VERIFY' AND sku_sn='SIGNAL'",Integer.class));
+        TransactionTemplate tx=new TransactionTemplate(context.getBean(PlatformTransactionManager.class));
+        assertThrows(IllegalStateException.class,()->tx.execute(status->{receive("ROLLBACK-SIGNAL","V1","B2",4);throw new IllegalStateException("rollback");}));
+        assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM oms_allocation_stock_signal WHERE sku_sn='ROLLBACK-SIGNAL'",Integer.class));
+    }
+    @Test public void oldAcknowledgementCannotHideNewerStockSignal(){
+        receive("SIGNAL","V1","B1",6);
+        com.oms.inventory.controller.wms.api.OrderStockController controller=new com.oms.inventory.controller.wms.api.OrderStockController();org.springframework.test.util.ReflectionTestUtils.setField(controller,"jdbc",db);
+        Map<String,Object> ack=new HashMap<>();ack.put("sku_sn","SIGNAL");ack.put("store_code","V1");ack.put("revision",1);
+        controller.ackStockSignal("VERIFY",ack);assertTrue(controller.stockSignals("VERIFY").getData().isEmpty());
+        receive("SIGNAL","V1","B2",4);controller.ackStockSignal("VERIFY",ack);
+        assertEquals(1,controller.stockSignals("VERIFY").getData().size());
+        assertEquals(2,((Number)controller.stockSignals("VERIFY").getData().get(0).get("revision")).intValue());
+        assertTrue(controller.stockSignals("OTHER").getData().isEmpty());
     }
 }

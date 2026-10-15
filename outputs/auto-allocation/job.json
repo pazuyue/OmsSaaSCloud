@@ -1,0 +1,7 @@
+{
+  "job_id": 13,
+  "title": "订单自动分仓补偿扫描",
+  "status": "enabled",
+  "cron": "0/10 * * * * ?",
+  "existing_jobs_unchanged": true
+}

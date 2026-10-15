@@ -1,0 +1,10 @@
+{
+  "all_five_services_loaded_managed_version": true,
+  "enable_login_and_user_association": true,
+  "tenant_options_own_only": true,
+  "ordinary_user_cannot_administer_companies": true,
+  "cross_company_request_rejected": true,
+  "disabled_new_work_rejected": true,
+  "retained_status": "DISABLED",
+  "test_user": "onboard_261014"
+}

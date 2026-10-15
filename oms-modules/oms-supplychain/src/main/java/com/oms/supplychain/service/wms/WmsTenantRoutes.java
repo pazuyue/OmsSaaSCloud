@@ -11,8 +11,9 @@ import static com.oms.supplychain.service.wms.WmsStore.require;
 @Component
 public class WmsTenantRoutes {
     @Resource private TenantRouting tenantRouting;
-    public Map<String,String> all(){return tenantRouting.getRoutes();}
+    public Map<String,String> all(){Map<String,String> result=new TreeMap<>();for(String company:tenantRouting.continuingCompanies())result.put(company,tenantRouting.getRoutes().get(company));return result;}
+    public boolean enabled(String company){try(com.oms.common.tenant.TenantRouting.Binding ignored=tenantRouting.open(company)){return true;}catch(IllegalArgumentException e){return false;}}
     public String datasource(String company){return tenantRouting.capture(company).datasource();}
-    public <T> T call(String company,Supplier<T> work){return tenantRouting.call(company,work);}
-    public void run(String company,Runnable work){tenantRouting.run(company,work);}
+    public <T> T call(String company,Supplier<T> work){return tenantRouting.callForContinuation(company,work);}
+    public void run(String company,Runnable work){tenantRouting.captureForContinuation(company).run(work);}
 }

@@ -45,6 +45,7 @@ public class WmsInboundService {
     public Map<String,Object> task(String company,long ticket){List<Map<String,Object>> rows=db.jdbc.queryForList("SELECT t.*,c.provider,c.name connection_name FROM wms_inbound_task t JOIN wms_connection c ON c.id=t.connection_id AND c.company_code=t.company_code WHERE t.company_code=? AND t.ticket_id=?",company,ticket);return rows.isEmpty()?null:rows.get(0);}
     public void retry(String company,long ticket){db.tx().execute(s->{purchase.lockWmsTicket(company,ticket);Map<String,Object> t=task(company,ticket);require(t!=null,"该单据没有真实入库任务");require("FAILED".equals(t.get("dispatch_state")),"只有明确下发失败的单据可以重试，超时单据请先查询仓库结果");connections.usable(company,id(t.get("connection_id")));db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='PENDING',next_attempt=NOW(),last_error='' WHERE id=?",t.get("id"));return null;});}
     public void dispatch(String company,long taskId){
+        if(!tenantRoutes.enabled(company))return;
         int claimed=db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='SENDING',attempts=attempts+1,lease_until=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=? AND company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW()",taskId,company);
         if(claimed!=1)return;
         Map<String,Object> task=db.one("SELECT * FROM wms_inbound_task WHERE id=? AND company_code=?",taskId,company);
@@ -209,10 +210,11 @@ public class WmsInboundService {
         if(!lines.isEmpty())purchase.recordWmsEvent(company,text(ticket.get("sn")),success?"真实收货入账成功":"真实收货入账异常","收货明细 "+lines.size()+" 条");
         return success;
     });}
-    public Map<String,Object> pollCompany(String company){
+    public Map<String,Object> pollCompany(String company){return pollCompany(company,true);}
+    public Map<String,Object> pollCompany(String company,boolean allowDispatch){
         com.oms.common.task.ScanReport report=new com.oms.common.task.ScanReport();
         db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='UNKNOWN',lease_until=NULL,last_error='下发进程中断，需查询仓库结果' WHERE company_code=? AND dispatch_state='SENDING' AND lease_until<NOW()",company);
-        for(Map<String,Object> task:db.jdbc.queryForList("SELECT id,ticket_id,ticket_sn FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW() ORDER BY id LIMIT 10",company))try{
+        if(allowDispatch)for(Map<String,Object> task:db.jdbc.queryForList("SELECT id,ticket_id,ticket_sn FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW() ORDER BY id LIMIT 10",company))try{
             dispatch(company,id(task.get("id")));String state=db.jdbc.queryForObject("SELECT dispatch_state FROM wms_inbound_task WHERE company_code=? AND id=?",String.class,company,task.get("id"));report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"ACCEPTED".equals(state)?"SUCCESS":Arrays.asList("FAILED","UNKNOWN").contains(state)?state:"PENDING","采购入库下发结果，请查看原入库单");
         }catch(RuntimeException e){report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"FAILED","采购入库下发未确认，请核对原任务");}
         for(Map<String,Object> task:db.jdbc.queryForList("SELECT t.ticket_id,t.ticket_sn FROM wms_inbound_task t JOIN wms_tickets w ON w.id=t.ticket_id AND UPPER(w.company_code)=t.company_code WHERE t.company_code=? AND (EXISTS(SELECT 1 FROM wms_receipt_line l WHERE l.task_id=t.id AND l.posted=0) OR (t.receipt_state='COMPLETE' AND w.inventory_status=0)) ORDER BY t.id LIMIT 20",company))try{

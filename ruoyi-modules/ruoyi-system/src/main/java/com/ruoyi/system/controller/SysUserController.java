@@ -51,6 +51,8 @@ public class SysUserController extends BaseController
     @Autowired
     private ISysUserService userService;
 
+    @Autowired private com.ruoyi.system.company.CompanyOnboardingService companies;
+
     @Autowired
     private ISysRoleService roleService;
 
@@ -119,6 +121,7 @@ public class SysUserController extends BaseController
         {
             return R.fail("用户名或密码错误");
         }
+        if(!SysUser.isAdmin(sysUser.getUserId())&&!companies.loginAllowed(sysUser.getLoginCompanyCode()))return R.fail("公司尚未启用或已停用，请联系平台管理员");
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(sysUser);
         // 权限集合

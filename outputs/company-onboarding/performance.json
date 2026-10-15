@@ -1,0 +1,25 @@
+{
+  "timings": {
+    "company_list": {
+      "requests": 20,
+      "p50_ms": 22.77,
+      "p95_ms": 31.93,
+      "max_ms": 33.58
+    },
+    "existing_order_detail": {
+      "requests": 20,
+      "p50_ms": 49.51,
+      "p95_ms": 67.1,
+      "max_ms": 79.67
+    }
+  },
+  "list_no_runtime_probes_verified_in_unit_test": true,
+  "nested_50_scopes_one_runtime_check": true,
+  "probe_max_concurrency": 3,
+  "schema": {
+    "company_list_max_page_size": 100,
+    "checks_manual_only": true,
+    "overall_deadline_ms": 12000
+  },
+  "ui_js_errors": 0
+}

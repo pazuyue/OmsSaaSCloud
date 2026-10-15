@@ -1,0 +1,401 @@
+{
+  "jobs": [
+    {
+      "jobId": 1,
+      "invokeTarget": "ryTask.ryNoParams",
+      "status": "1",
+      "cronExpression": "0/10 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 2,
+      "invokeTarget": "ryTask.ryParams('ry')",
+      "status": "1",
+      "cronExpression": "0/15 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 3,
+      "invokeTarget": "ryTask.ryMultipleParams('ry', true, 2000L, 316.50D, 100)",
+      "status": "1",
+      "cronExpression": "0/20 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 4,
+      "invokeTarget": "dailyAllocationTask.scanAll()",
+      "status": "1",
+      "cronExpression": "1 0/30 * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 5,
+      "invokeTarget": "orderPullTask.scanAll()",
+      "status": "1",
+      "cronExpression": "0/10 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 6,
+      "invokeTarget": "fulfillmentScanTask.dispatch()",
+      "status": "1",
+      "cronExpression": "0/5 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 7,
+      "invokeTarget": "fulfillmentScanTask.receipts()",
+      "status": "1",
+      "cronExpression": "1/5 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 8,
+      "invokeTarget": "fulfillmentScanTask.virtualOutbound()",
+      "status": "1",
+      "cronExpression": "2/5 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 9,
+      "invokeTarget": "fulfillmentScanTask.salesDocuments()",
+      "status": "1",
+      "cronExpression": "3/5 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 10,
+      "invokeTarget": "fulfillmentScanTask.platformShipping()",
+      "status": "1",
+      "cronExpression": "0/15 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 11,
+      "invokeTarget": "fulfillmentScanTask.orderIssues()",
+      "status": "0",
+      "cronExpression": "0/30 * * * * ?",
+      "jobGroup": "DEFAULT"
+    },
+    {
+      "jobId": 12,
+      "invokeTarget": "fulfillmentScanTask.purchaseInbound()",
+      "status": "1",
+      "cronExpression": "4/5 * * * * ?",
+      "jobGroup": "DEFAULT"
+    }
+  ],
+  "cases": {
+    "receipt-review-pending": {
+      "stock": {
+        "company": [
+          {
+            "sku": "ACCEPT_MULTI_20261014110948",
+            "total": 0,
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "version": 6
+          }
+        ],
+        "channel": [
+          {
+            "sku": "ACCEPT_MULTI_20261014110948",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "quota": 0,
+            "quota_reserved": 0,
+            "version": 9
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "PENDING_V1_20261014110948",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "store": "PENDING_V2_20261014110948",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "batch": [
+          {
+            "id": 69,
+            "store": "PENDING_V1_20261014110948",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "id": 70,
+            "store": "PENDING_V2_20261014110948",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "demand": [
+          {
+            "id": 51,
+            "quantity": 10,
+            "reserved": 10,
+            "outbound": 10
+          }
+        ],
+        "source": [
+          {
+            "id": 30,
+            "quantity": 10,
+            "outbound": 10,
+            "reserved": 1
+          }
+        ],
+        "allocation": [
+          {
+            "id": 11,
+            "store": "PENDING_V1_20261014110948",
+            "quantity": 6,
+            "outbound": 6,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          },
+          {
+            "id": 12,
+            "store": "PENDING_V2_20261014110948",
+            "quantity": 4,
+            "outbound": 4,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          }
+        ]
+      },
+      "order": {
+        "id": 33,
+        "order_sn": "SOd9118886958347c895247b99db752f84",
+        "business_status": "SHIPPED",
+        "shipped_quantity": 10,
+        "logical_inventory_status": "CONSUMED",
+        "warehouse_inventory_status": "OUTBOUND"
+      }
+    },
+    "immediate-fulfillment": {
+      "stock": {
+        "company": [
+          {
+            "sku": "ACCEPT_IMM_20261014141827",
+            "total": 0,
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "version": 6
+          }
+        ],
+        "channel": [
+          {
+            "sku": "ACCEPT_IMM_20261014141827",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "quota": 0,
+            "quota_reserved": 0,
+            "version": 9
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "IMMEDIATE_V1_20261014141827",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "store": "IMMEDIATE_V2_20261014141827",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "batch": [
+          {
+            "id": 71,
+            "store": "IMMEDIATE_V1_20261014141827",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "id": 72,
+            "store": "IMMEDIATE_V2_20261014141827",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "demand": [
+          {
+            "id": 52,
+            "quantity": 10,
+            "reserved": 10,
+            "outbound": 10
+          }
+        ],
+        "source": [
+          {
+            "id": 31,
+            "quantity": 10,
+            "outbound": 10,
+            "reserved": 1
+          }
+        ],
+        "allocation": [
+          {
+            "id": 13,
+            "store": "IMMEDIATE_V1_20261014141827",
+            "quantity": 6,
+            "outbound": 6,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          },
+          {
+            "id": 14,
+            "store": "IMMEDIATE_V2_20261014141827",
+            "quantity": 4,
+            "outbound": 4,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          }
+        ]
+      },
+      "order": {
+        "id": 34,
+        "order_sn": "SO337a7a12108540a9acd72c69c1ce8766",
+        "business_status": "SHIPPED",
+        "shipped_quantity": 10,
+        "logical_inventory_status": "CONSUMED",
+        "warehouse_inventory_status": "OUTBOUND"
+      }
+    },
+    "tenant-routing": {
+      "stock": {
+        "company": [
+          {
+            "sku": "ACCEPT_IMM_20261014154927",
+            "total": 0,
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "version": 6
+          }
+        ],
+        "channel": [
+          {
+            "sku": "ACCEPT_IMM_20261014154927",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "quota": 0,
+            "quota_reserved": 0,
+            "version": 9
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "IMMEDIATE_V1_20261014154927",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "store": "IMMEDIATE_V2_20261014154927",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "batch": [
+          {
+            "id": 73,
+            "store": "IMMEDIATE_V1_20261014154927",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          },
+          {
+            "id": 74,
+            "store": "IMMEDIATE_V2_20261014154927",
+            "actual": 0,
+            "available": 0,
+            "locked": 0,
+            "version": 4
+          }
+        ],
+        "demand": [
+          {
+            "id": 53,
+            "quantity": 10,
+            "reserved": 10,
+            "outbound": 10
+          }
+        ],
+        "source": [
+          {
+            "id": 32,
+            "quantity": 10,
+            "outbound": 10,
+            "reserved": 1
+          }
+        ],
+        "allocation": [
+          {
+            "id": 15,
+            "store": "IMMEDIATE_V1_20261014154927",
+            "quantity": 6,
+            "outbound": 6,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          },
+          {
+            "id": 16,
+            "store": "IMMEDIATE_V2_20261014154927",
+            "quantity": 4,
+            "outbound": 4,
+            "status": "OCCUPIED",
+            "method": "WMS"
+          }
+        ]
+      },
+      "order": {
+        "id": 35,
+        "order_sn": "SOf43dde59d3f74597bcc35aca14a72b3a",
+        "business_status": "SHIPPED",
+        "shipped_quantity": 10,
+        "logical_inventory_status": "CONSUMED",
+        "warehouse_inventory_status": "OUTBOUND"
+      }
+    }
+  },
+  "reviews": [
+    {
+      "id": 2,
+      "state": "CONFIRMED",
+      "stock_state": "POSTED",
+      "event_id": 9
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "order": {
+    "tests": 232,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "inventory": {
+    "tests": 73,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "total_tests": 305,
+  "inventory_partial_10000_batches_ms": 406,
+  "inventory_preview_100_candidate_warehouses_read_queries": 6
+}

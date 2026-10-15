@@ -40,6 +40,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
+          <el-form-item label="所属公司" prop="loginCompanyCode"><el-select v-model="queryParams.loginCompanyCode" filterable remote clearable :remote-method="loadCompanies" placeholder="公司编码 / 名称"><el-option v-for="c in companyOptions" :key="c.company_code" :value="c.company_code" :label="c.company_name+'（'+c.company_code+'）'" /></el-select></el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
             <el-input
               v-model="queryParams.phonenumber"
@@ -140,6 +141,7 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="所属公司" prop="loginCompanyCode" width="160" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
@@ -207,6 +209,7 @@
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="所属公司" prop="loginCompanyCode"><el-select v-model="form.loginCompanyCode" filterable remote :remote-method="loadCompanies" :disabled="$store.state.user.id !== 1" style="width:100%" placeholder="选择已建档的公司"><el-option v-for="c in companyOptions" :key="c.company_code" :value="c.company_code" :label="c.company_name+'（'+c.company_code+'）'" /></el-select></el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
@@ -344,6 +347,7 @@
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
+import { companyOptions } from '@/api/system/company';
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -368,6 +372,7 @@ export default {
       total: 0,
       // 用户表格数据
       userList: null,
+      companyOptions: [],
       // 弹出层标题
       title: "",
       // 部门树选项
@@ -409,6 +414,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        loginCompanyCode: this.$route.query.company_code || undefined,
         userName: undefined,
         phonenumber: undefined,
         status: undefined,
@@ -426,6 +432,7 @@ export default {
       ],
       // 表单校验
       rules: {
+        loginCompanyCode: [{ required: true, message: "请选择所属公司", trigger: "change" }],
         userName: [
           { required: true, message: "用户名称不能为空", trigger: "blur" },
           { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
@@ -462,6 +469,7 @@ export default {
     }
   },
   created() {
+    this.loadCompanies();
     this.getList();
     this.getDeptTree();
     this.getConfigKey("sys.user.initPassword").then(response => {
@@ -469,6 +477,7 @@ export default {
     });
   },
   methods: {
+    async loadCompanies(query = "") { const r = await companyOptions(query); this.companyOptions = r.data; },
     /** 查询用户列表 */
     getList() {
       this.loading = true;
@@ -515,6 +524,7 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
+        loginCompanyCode: (this.$route.query.company_code || this.$store.state.user.companyCode || "").toUpperCase(),
         deptId: undefined,
         userName: undefined,
         nickName: undefined,
@@ -578,6 +588,7 @@ export default {
       const userId = row.userId || this.ids;
       getUser(userId).then(response => {
         this.form = response.data;
+        this.loadCompanies(this.form.loginCompanyCode);
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.$set(this.form, "postIds", response.postIds);

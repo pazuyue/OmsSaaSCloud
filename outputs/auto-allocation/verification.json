@@ -1,0 +1,71 @@
+{
+  "cases": [
+    {
+      "kind": "full",
+      "order_sn": "SO6045f58dded34ac9b7110d2ef8f14b76",
+      "order_id": 37,
+      "auto_state": "DONE",
+      "allocation_quantity": 10,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=37",
+      "shipments": [
+        {
+          "shipment_sn": "XS013ff125d543474383d59f24d035a17c",
+          "quantity": 6,
+          "store_code": "AUTO_V1_202610142021271",
+          "wms_dispatch_state": "NONE"
+        },
+        {
+          "shipment_sn": "XS1defc357d90a4404837f42e42eb6fc02",
+          "quantity": 4,
+          "store_code": "AUTO_V2_202610142021271",
+          "wms_dispatch_state": "NONE"
+        }
+      ]
+    },
+    {
+      "kind": "replenished",
+      "order_sn": "SO9957b271edd4449b9138e9ff2aac140b",
+      "order_id": 38,
+      "auto_state": "DONE",
+      "allocation_quantity": 10,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=38",
+      "shipments": [
+        {
+          "shipment_sn": "XS770594c22ac44f5581fc5935826514fb",
+          "quantity": 6,
+          "store_code": "AUTO_V1_202610142021272",
+          "wms_dispatch_state": "NONE"
+        },
+        {
+          "shipment_sn": "XS7456677cd22d48729698a8151b985be0",
+          "quantity": 4,
+          "store_code": "AUTO_V1_202610142021272",
+          "wms_dispatch_state": "NONE"
+        }
+      ]
+    },
+    {
+      "kind": "waiting",
+      "order_sn": "SO78b5584fd11e413789cadbce538be218",
+      "order_id": 39,
+      "auto_state": "WAIT_STOCK",
+      "allocation_quantity": 6,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=39",
+      "shipments": [
+        {
+          "shipment_sn": "XS3fdee61fc4664d5293225564ed4ccfc4",
+          "quantity": 6,
+          "store_code": "AUTO_V1_202610142021273",
+          "wms_dispatch_state": "NONE"
+        }
+      ]
+    }
+  ],
+  "no_warehouse_submission": true,
+  "no_actual_outbound": true,
+  "no_platform_send": true,
+  "actual_quartz_stock_wake": true,
+  "held_order_blocked": true,
+  "pause_survives_order_resume": true,
+  "ui_resume_verified": true
+}

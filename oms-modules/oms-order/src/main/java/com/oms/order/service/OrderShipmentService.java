@@ -49,6 +49,7 @@ public class OrderShipmentService {
         require(owners.size()==1,"同一订单的分仓回执必须属于同一货主");require(ids.containsAll(previous.keySet()),"累计分仓回执缺失，不能重建发货单");
         if(!text(order,"allocation_policy").isEmpty())try{require(owners.contains(JSON.readTree(text(order,"allocation_policy")).path("owner_code").asText()),"分仓回执货主与规则不一致");}catch(java.io.IOException e){throw new IllegalArgumentException("分仓规则快照无效");}
         List<Map<String,Object>> created=new ArrayList<>();if(groups.isEmpty())return created;
+        if(!text(order,"allocation_policy").isEmpty())try{long max=JSON.readTree(text(order,"allocation_policy")).path("max_shipments").asLong(0);if(max>0)require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_shipment WHERE company_code=? AND order_id=?",Long.class,company,order.get("id"))+groups.size()<=max,"累计发货单数量超过本单规则上限，请核对分仓回执");}catch(java.io.IOException e){throw new IllegalArgumentException("分仓规则快照无效");}
         Map<String,Object> address=order;
         if(!order.containsKey("processing_payload")){
             List<Map<String,Object>> platform=repository.db().query("SELECT processing_payload FROM oms_platform_order WHERE company_code=? AND id=?",ROW,company,order.get("platform_order_id"));

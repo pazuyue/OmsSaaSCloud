@@ -1,0 +1,206 @@
+{
+  "kind": "full",
+  "case_id": "202610142021271",
+  "created": "2026-10-14 20:21:27",
+  "sku": "AUTO_ALLOC_202610142021271",
+  "channel_name": "[自动分仓验收] full 202610142021271",
+  "seller": "ACCEPT_AUTO_202610142021271",
+  "platform_tid": "996202610142021271",
+  "platform_oid": "99620261014202127101",
+  "warehouses": [
+    {
+      "code": "AUTO_V1_202610142021271",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 55
+    },
+    {
+      "code": "AUTO_V2_202610142021271",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 56
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 34,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "AUTO_ALLOC_202610142021271",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "AUTO_ALLOC_202610142021271",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "AUTO_V1_202610142021271",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "AUTO_V2_202610142021271",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 78,
+        "store": "AUTO_V1_202610142021271",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 79,
+        "store": "AUTO_V2_202610142021271",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 121,
+  "order_id": 37,
+  "order_sn": "SO6045f58dded34ac9b7110d2ef8f14b76",
+  "auto_configured": true,
+  "approved": true,
+  "completed": true,
+  "paused_survives_order_resume": true,
+  "ui_resume_verified": true,
+  "auto_state": "DONE",
+  "allocation_quantity": 10,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=37",
+  "shipments": [
+    {
+      "shipment_sn": "XS013ff125d543474383d59f24d035a17c",
+      "quantity": 6,
+      "store_code": "AUTO_V1_202610142021271",
+      "wms_dispatch_state": "NONE"
+    },
+    {
+      "shipment_sn": "XS1defc357d90a4404837f42e42eb6fc02",
+      "quantity": 4,
+      "store_code": "AUTO_V2_202610142021271",
+      "wms_dispatch_state": "NONE"
+    }
+  ],
+  "stock_after": {
+    "company": [
+      {
+        "sku": "AUTO_ALLOC_202610142021271",
+        "total": 10,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 4
+      }
+    ],
+    "channel": [
+      {
+        "sku": "AUTO_ALLOC_202610142021271",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 5
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "AUTO_V1_202610142021271",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "store": "AUTO_V2_202610142021271",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "batch": [
+      {
+        "id": 78,
+        "store": "AUTO_V1_202610142021271",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "id": 79,
+        "store": "AUTO_V2_202610142021271",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      }
+    ],
+    "demand": [
+      {
+        "id": 55,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 34,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 19,
+        "store": "AUTO_V1_202610142021271",
+        "quantity": 6,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      },
+      {
+        "id": 20,
+        "store": "AUTO_V2_202610142021271",
+        "quantity": 4,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  }
+}

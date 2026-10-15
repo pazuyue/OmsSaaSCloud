@@ -20,6 +20,11 @@ public class OrderRepository {
         if(immediate!=null){com.oms.common.task.CommittedWork.afterCommit(()->immediate.getObject().salesChanged(company,shipment));}
     }
 
+    @org.springframework.beans.factory.annotation.Autowired private org.springframework.beans.factory.ObjectProvider<OrderAutoAllocationWorker> autoAllocation;
+    public void autoAllocationChanged(String company,long order,String cause){
+        if(OrderAutoAllocationService.enqueue(jdbc,company,order,cause)&&autoAllocation!=null)
+            com.oms.common.task.CommittedWork.afterCommit(()->autoAllocation.getObject().kick(company));
+    }
     public JdbcTemplate db(){return jdbc;}
     public Map<String,String> manualMatches(String company,long id){Map<String,String> result=new HashMap<>();for(Map<String,Object> line:jdbc.query("SELECT platform_oid,manual_sku_sn FROM oms_platform_order_line WHERE company_code=? AND platform_order_id=? AND manual_sku_sn IS NOT NULL",ROW,company,id))result.put(text(line,"platform_oid"),text(line,"manual_sku_sn"));return result;}
     /** Least recently attempted first, so repeatedly short large orders cannot monopolize a batch. */
@@ -126,5 +131,7 @@ String tid=text(row,"tid"),payload=text(row,"jdp_response"),fingerprint,block;tr
         for(Map<String,Object> row:stock)jdbc.update("UPDATE oms_order_line SET inventory_reason_code=? WHERE company_code=? AND order_id=? AND platform_oid=?",text(row,"reason_code"),company,orderId,row.get("platform_oid"));
         jdbc.update("UPDATE oms_order SET stock_attempt_status='DONE',stock_error='',stock_attempt_at=COALESCE(stock_attempt_at,NOW()),reserved_at=IF(?='RESERVED',COALESCE(reserved_at,NOW()),reserved_at) WHERE company_code=? AND id=?",state,company,orderId);
         jdbc.update("UPDATE oms_platform_order SET next_retry_at=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=?",id);
+        long oldReserved=existing?lines.stream().mapToLong(line->number(line,"reserved_quantity")).sum():-1;
+        if(oldReserved!=reserved)autoAllocationChanged(company,orderId,"逻辑预占更新");
     }
 }

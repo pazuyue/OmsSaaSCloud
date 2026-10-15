@@ -19,7 +19,7 @@ public class OrderBusinessService {
     @Resource private OrderCatalog catalog;
     @Resource private OrderShipmentReceiptReviewService receiptReviews;
     private static final String JOIN=" FROM oms_order o JOIN oms_platform_order p ON p.company_code=o.company_code AND p.id=o.platform_order_id LEFT JOIN oms_order_pull_config c ON c.company_code=o.company_code AND c.channel_id=o.channel_id LEFT JOIN oms_order_allocation_config ac ON ac.company_code=o.company_code AND ac.channel_id=o.channel_id";
-    private static final String PROGRESS=",p.change_pending,p.platform_status,p.fulfillment_block_reason,p.next_retry_at,c.channel_name,c.allow_public_stock,c.last_error shop_error,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.enabled'),0) allocation_enabled,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.allow_partial'),0) allocation_allow_partial";
+    private static final String PROGRESS=",COALESCE(JSON_UNQUOTE(JSON_EXTRACT(ac.policy_json,'$.execution_mode')),'MANUAL') auto_execution_mode,COALESCE(JSON_EXTRACT(ac.policy_json,'$.enabled'),0) auto_enabled,COALESCE(JSON_EXTRACT(ac.policy_json,'$.auto_replenish'),0) auto_replenish,p.change_pending,p.platform_status,p.fulfillment_block_reason,p.next_retry_at,c.channel_name,c.allow_public_stock,c.last_error shop_error,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.enabled'),0) allocation_enabled,COALESCE(JSON_EXTRACT(COALESCE(o.allocation_policy,ac.policy_json),'$.allow_partial'),0) allocation_allow_partial";
     private String marks(int n){return String.join(",",Collections.nCopies(n,"?"));}
     private List<Long> ids(List<Long> values){require(values!=null&&!values.isEmpty()&&values.size()<=100,"每次请选择1至100张订单");for(Long id:values)require(id!=null&&id>0,"订单ID无效");return new ArrayList<>(new LinkedHashSet<>(values));}
 
@@ -57,6 +57,7 @@ public class OrderBusinessService {
         int count=size(pageSize);args.add(count);args.add(offset(page,count));
         List<Map<String,Object>> rows=repository.db().query("SELECT o.issue_synced_at,o.issue_sync_error,o.locked_reserved_quantity,o.public_reserved_quantity,o.allocation_status,o.allocation_quantity,o.allocation_error,o.allocation_at,o.void_reason,o.void_by,o.void_requested_at,o.void_at,o.void_error,o.status,o.review_status,o.review_policy,o.review_by,o.review_at,o.review_reason,o.manual_hold,o.hold_reason,o.hold_by,o.hold_at,o.control_version,o.id,o.order_sn,o.platform_tid,o.channel_id,o.inventory_status,o.payment,o.create_time,o.stock_attempt_status,o.stock_attempt_at,o.stock_error,o.reserved_at"+PROGRESS+JOIN+where+" ORDER BY o.id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
         summarize(company,rows);
+        OrderAutoAllocationService.attach(repository.db(),company,rows);
         new OrderIssueService(repository).attach(company,rows);
         if(receiptReviews!=null)receiptReviews.attachOrders(company,rows);
         return page(rows,total);
@@ -92,6 +93,7 @@ public class OrderBusinessService {
         order.remove("allocation_receipts");order.remove("allocation_policy");decorate(order);
         OrderIssueService issueReader=new OrderIssueService(repository);issueReader.attach(company,Collections.singletonList(order));Map<String,Object> report=issueReader.report(company,id);order.put("issue_history",report.get("issues"));order.put("issue_events",report.get("events"));
         for(Map<String,Object> line:lines){line.put("issues",((List<Map<String,Object>>)order.get("issues")).stream().filter(issue->text(issue,"sku_sn").equals(text(line,"sku_sn"))).collect(java.util.stream.Collectors.toList()));long lock=0,pub=0;for(Map<String,Object> source:(List<Map<String,Object>>)line.getOrDefault("stock_sources",Collections.emptyList())){if("LOCK".equals(text(source,"source_type")))lock+=number(source,"quantity");else if("PUBLIC_EXTRA".equals(text(source,"source_type")))pub+=number(source,"quantity");}line.put("locked_reserved_quantity",lock);line.put("public_reserved_quantity",pub);line.put("issue_evidence",((List<Map<String,Object>>)report.get("issues")).stream().filter(issue->!"RESOLVED".equals(text(issue,"state"))&&text(issue,"sku_sn").equals(text(line,"sku_sn"))).map(issue->issue.get("evidence")).findFirst().orElse(null));}
+        OrderAutoAllocationService.attach(repository.db(),company,Collections.singletonList(order));
         order.put("logs",repository.db().query("SELECT action,result,message,operator_name,create_time FROM oms_order_process_log WHERE company_code=? AND platform_order_id=? ORDER BY id DESC LIMIT 100",ROW,company,order.get("platform_order_id")));return order;
     }
 

@@ -91,6 +91,8 @@ public class InventoryMutationService {
             args.add(before.get(key));args.add(after.get(key));
         }
         jdbc.update("INSERT INTO wms_inventory_change_history ("+cols+") VALUES ("+String.join(",",Collections.nCopies(args.size(),"?"))+")",args.toArray());
+        if(((Number)after.get("zpAvailableNumber")).longValue()>((Number)before.get("zpAvailableNumber")).longValue())
+            jdbc.update("INSERT INTO oms_allocation_stock_signal(company_code,sku_sn,store_code) VALUES (?,?,?) ON DUPLICATE KEY UPDATE revision=revision+1,update_time=NOW()",company,before.get("skuSn"),before.get("storeCode"));
     }
 
     private String camel(String value) {

@@ -21,8 +21,8 @@ public class OrderShipmentDispatchWorker {
     public Map<String,Object> scan(String kind){
         require(Arrays.asList("dispatch","receipts","virtual","sales").contains(kind),"扫描类型无效");
         ScanReport report=new ScanReport();
-        for(String company:tenantRouting.companies()){
-            try(com.oms.common.tenant.TenantRouting.Binding ignored=tenantRouting.open(company)){
+        for(String company:(Arrays.asList("receipts","sales").contains(kind)?tenantRouting.continuingCompanies():tenantRouting.companies())){
+            try(com.oms.common.tenant.TenantRouting.Binding ignored=(Arrays.asList("receipts","sales").contains(kind)?tenantRouting.openForContinuation(company):tenantRouting.open(company))){
                 JdbcTemplate db=jdbc;
                 if("receipts".equals(kind)){report.merge(receipts.pollCompany(company));continue;}
                 String table="dispatch".equals(kind)?"oms_order_shipment_dispatch":"virtual".equals(kind)?"oms_order_shipment_virtual_outbound":"oms_order_sales_document_sync";

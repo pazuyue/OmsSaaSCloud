@@ -10,6 +10,7 @@ public class FulfillmentScanTask {
     @Resource private FulfillmentScanClient orders;
     @Resource private WmsScheduleClient warehouse;
     private JobScanResult scan(String kind){R<Map<String,Object>> r="inbound".equals(kind)?warehouse.scan(SecurityConstants.INNER):orders.scan(kind,SecurityConstants.INNER);if(r==null||!R.isSuccess(r))throw new IllegalStateException("业务扫描服务调用未确认，请查看对应服务日志");return new JobScanResult(kind,r.getData());}
+    public JobScanResult allocation(){return scan("allocation");}
     public JobScanResult dispatch(){return scan("dispatch");}
     public JobScanResult receipts(){return scan("receipts");}
     public JobScanResult virtualOutbound(){return scan("virtual");}

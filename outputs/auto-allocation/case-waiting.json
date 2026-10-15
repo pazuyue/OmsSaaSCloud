@@ -1,0 +1,190 @@
+{
+  "kind": "waiting",
+  "case_id": "202610142021273",
+  "created": "2026-10-14 20:21:27",
+  "sku": "AUTO_ALLOC_202610142021273",
+  "channel_name": "[自动分仓验收] waiting 202610142021273",
+  "seller": "ACCEPT_AUTO_202610142021273",
+  "platform_tid": "996202610142021273",
+  "platform_oid": "99620261014202127301",
+  "warehouses": [
+    {
+      "code": "AUTO_V1_202610142021273",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 59
+    },
+    {
+      "code": "AUTO_V2_202610142021273",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 60
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 36,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "AUTO_ALLOC_202610142021273",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "AUTO_ALLOC_202610142021273",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "AUTO_V1_202610142021273",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "AUTO_V2_202610142021273",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 83,
+        "store": "AUTO_V1_202610142021273",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 84,
+        "store": "AUTO_V2_202610142021273",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 123,
+  "order_id": 39,
+  "order_sn": "SO78b5584fd11e413789cadbce538be218",
+  "auto_configured": true,
+  "approved": true,
+  "waiting_verified": true,
+  "auto_state": "WAIT_STOCK",
+  "allocation_quantity": 6,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=39",
+  "shipments": [
+    {
+      "shipment_sn": "XS3fdee61fc4664d5293225564ed4ccfc4",
+      "quantity": 6,
+      "store_code": "AUTO_V1_202610142021273",
+      "wms_dispatch_state": "NONE"
+    }
+  ],
+  "stock_after": {
+    "company": [
+      {
+        "sku": "AUTO_ALLOC_202610142021273",
+        "total": 10,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 4
+      }
+    ],
+    "channel": [
+      {
+        "sku": "AUTO_ALLOC_202610142021273",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 5
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "AUTO_V1_202610142021273",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "store": "AUTO_V2_202610142021273",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 83,
+        "store": "AUTO_V1_202610142021273",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "id": 84,
+        "store": "AUTO_V2_202610142021273",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [
+      {
+        "id": 57,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 36,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 23,
+        "store": "AUTO_V1_202610142021273",
+        "quantity": 6,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  }
+}

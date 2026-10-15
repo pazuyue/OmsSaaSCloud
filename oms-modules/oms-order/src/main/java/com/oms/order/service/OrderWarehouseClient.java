@@ -8,6 +8,8 @@ import java.util.*;
 
 @FeignClient(contextId="orderWarehouseAllocationClient",name="oms-inventory",configuration=OrderShipmentWmsFeignConfig.class)
 public interface OrderWarehouseClient {
+    @GetMapping("/orderStock/internal/allocation-stock-signals") R<List<Map<String,Object>>> stockSignals(@RequestParam("company_code") String company,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderStock/internal/allocation-stock-signals/ack") R<Map<String,Object>> ackStockSignal(@RequestParam("company_code") String company,@RequestBody Map<String,Object> signal,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/orderStock/internal/warehouse-outbound/{request}") R<Map<String,Object>> warehouseReceipt(@RequestParam("company_code") String company,@PathVariable("request") String request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/warehouse-outbound") R<Map<String,Object>> warehouseOutbound(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/orderStock/internal/virtual-outbound/{request}")
@@ -16,6 +18,8 @@ public interface OrderWarehouseClient {
     R<Map<String,Object>> virtualOutbound(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/orderStock/internal/warehouse-receipts")
     R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam("channel_id") long channel,@RequestParam("platform_tid") String tid,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderStock/internal/warehouse-allocation-preview")
+    R<Map<String,Object>> preview(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/warehouse-allocate")
     R<List<Map<String,Object>>> allocate(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 }

@@ -53,11 +53,12 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
         try {
             String path=req.getRequestURI();boolean inner=SecurityConstants.INNER.equals(req.getHeader(SecurityConstants.FROM_SOURCE));
             if(isExcluded(path)){chain.doFilter(req,resp);return;}
+            if(inner&&"POST".equals(req.getMethod())&&"/tenantRouting/internal/probe".equals(path)){chain.doFilter(req,resp);return;}
             if(inner&&"POST".equals(req.getMethod())&&Arrays.asList(
                 "/allocation/internal/daily-scan-all","/orders/internal/scan-all",
                 "/orders/internal/schedule/dispatch","/orders/internal/schedule/receipts",
                 "/orders/internal/schedule/virtual","/orders/internal/schedule/sales",
-                "/orders/internal/schedule/platform","/orders/internal/schedule/issues",
+                "/orders/internal/schedule/platform","/orders/internal/schedule/issues","/orders/internal/schedule/allocation",
                 "/shipmentWms/internal/schedule/inbound").contains(path)) {chain.doFilter(new CustomHttpServletRequest(req),resp);return;}
             // Callback company comes from its bound URL; signature and connection binding are checked in the controller.
             if("POST".equals(req.getMethod())&&path.matches("^/wmsCallback/[A-Za-z0-9_-]{1,64}/[a-f0-9]{32}$")){chain.doFilter(req,resp);return;}
@@ -75,7 +76,10 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             }catch(RuntimeException e){reject(resp,400,"公司身份缺失、无效或与登录公司不一致");return;}
             CustomHttpServletRequest wrapper=new CustomHttpServletRequest(req);wrapper.addParameter("company_code",company);
             com.oms.common.tenant.TenantRouting.Binding scope;
-            try{scope=tenantRouting.open(company);}catch(IllegalArgumentException e){reject(resp,503,e.getMessage());return;}
+            boolean continuation="GET".equals(req.getMethod())
+                ||(inner&&!Arrays.asList("/shipmentWms/internal/submit","/shipmentWms/internal/resolve","/orderStock/internal/virtual-outbound").contains(path)&&!path.matches("^/orderStock/internal/(register|reserve|release|cancel|allocate|warehouse-allocate)$"))
+                ||path.matches("^/orders/shipments/[0-9]+/(receipt-reviews/[0-9]+|reconcile-receipts|query-warehouse)$");
+            try{scope=continuation?tenantRouting.openForContinuation(company):tenantRouting.open(company);}catch(IllegalArgumentException e){reject(resp,503,e.getMessage());return;}catch(IllegalStateException e){reject(resp,503,"公司执行开关暂时无法核实，请稍后重试");return;}
             try(com.oms.common.tenant.TenantRouting.Binding ignored=scope){chain.doFilter(wrapper,resp);}
         }finally{com.oms.common.tenant.TenantRouting.clearContext();}
     }

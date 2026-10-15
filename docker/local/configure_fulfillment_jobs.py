@@ -4,6 +4,7 @@ Existing job status, cron and operator edits are preserved on rerun.
 from local_db import execute, quote
 
 JOBS = [
+ ('订单自动分仓补偿扫描','allocation','0/10 * * * * ?','处理到期自动分仓待办及补货唤醒；不自动下发仓库'),
  ('发货单仓库下发扫描','dispatch','0/5 * * * * ?','扫描到期下发任务；受理成功不代表实际出库'),
  ('仓库出库回传记账补偿扫描','receipts','1/5 * * * * ?','正常回传即时记账；本任务补偿未完成事件，待人工核对不自动审批'),
  ('发货单虚拟出库扫描','virtualOutbound','2/5 * * * * ?','按原出库请求处理到期任务，结果不明先核对原回执'),

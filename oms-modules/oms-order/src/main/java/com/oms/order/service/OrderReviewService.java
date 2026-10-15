@@ -43,6 +43,7 @@ public class OrderReviewService {
                     repository.db().update("UPDATE oms_order SET manual_hold=0,hold_reason='',hold_by='',hold_at=NULL,control_version=control_version+1 WHERE company_code=? AND id=?",company,id);
                     repository.db().update("UPDATE oms_platform_order SET next_retry_at=NOW() WHERE company_code=? AND id=?",company,order.get("platform_order_id"));
                 }
+                if(!"hold".equals(action))repository.autoAllocationChanged(company,id,"approve".equals(action)?"审核通过":"解除人工挂起");
                 repository.log(company,number(order,"platform_order_id"),"approve".equals(action)?"REVIEW_APPROVE":"hold".equals(action)?"ORDER_HOLD":"ORDER_RESUME","SUCCESS",message,actor);return null;
             });result.put("success",true);result.put("message","approve".equals(action)?"审核通过，原挂起状态保留":"hold".equals(action)?"已挂起，保留需求和已预占库存":"已解除人工挂起，审核结果保留");}
             catch(IllegalArgumentException e){result.put("success",false);result.put("message",e.getMessage());}

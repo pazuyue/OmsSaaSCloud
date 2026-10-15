@@ -67,6 +67,7 @@ public class SysUser extends BaseEntity
     private String loginIp;
 
 
+    @Excel(name = "所属公司编码")
     private String loginCompanyCode;
 
     /** 最后登录时间 */

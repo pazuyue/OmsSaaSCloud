@@ -39,6 +39,19 @@ import com.ruoyi.system.service.ISysUserService;
 @Service
 public class SysUserServiceImpl implements ISysUserService
 {
+    @Autowired private com.ruoyi.system.company.CompanyOnboardingService companies;
+
+    private void companyAssignment(SysUser user) {
+        String target=user.getLoginCompanyCode();
+        com.ruoyi.system.api.model.LoginUser login=SecurityUtils.getLoginUser();
+        if(login!=null&&!SysUser.isAdmin(SecurityUtils.getUserId())) {
+            String own=com.ruoyi.system.company.CompanyServices.company(login.getCompanyCode());
+            if(target==null||target.isEmpty())target=own;
+            if(!own.equals(com.ruoyi.system.company.CompanyServices.company(target)))throw new ServiceException("不能为其他公司分配用户");
+        }
+        target=com.ruoyi.system.company.CompanyServices.company(target);companies.validateUserCompany(target);user.setLoginCompanyCode(target);
+    }
+
     private static final Logger log = LoggerFactory.getLogger(SysUserServiceImpl.class);
 
     @Autowired
@@ -75,6 +88,7 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> selectUserList(SysUser user)
     {
+        if(!SysUser.isAdmin(SecurityUtils.getUserId())&&SecurityUtils.getLoginUser()!=null)user.setLoginCompanyCode(SecurityUtils.getLoginUser().getCompanyCode());
         return userMapper.selectUserList(user);
     }
 
@@ -260,6 +274,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUser user)
     {
+        companyAssignment(user);
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
@@ -278,6 +293,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean registerUser(SysUser user)
     {
+        companies.validateUserCompany(user.getLoginCompanyCode());
+        if(!companies.loginAllowed(user.getLoginCompanyCode()))throw new ServiceException("公司尚未启用或已停用");
         return userMapper.insertUser(user) > 0;
     }
 
@@ -291,6 +308,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional(rollbackFor = Exception.class)
     public int updateUser(SysUser user)
     {
+        companyAssignment(user);
         Long userId = user.getUserId();
         // 删除用户与角色关联
         userRoleMapper.deleteUserRoleByUserId(userId);
@@ -326,7 +344,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int updateUserStatus(SysUser user)
     {
-        return userMapper.updateUser(user);
+        SysUser change=new SysUser(user.getUserId());change.setStatus(user.getStatus());change.setUpdateBy(user.getUpdateBy());
+        return userMapper.updateUser(change);
     }
 
     /**
@@ -338,7 +357,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int updateUserProfile(SysUser user)
     {
-        return userMapper.updateUser(user);
+        SysUser change=new SysUser(user.getUserId());change.setNickName(user.getNickName());change.setEmail(user.getEmail());change.setPhonenumber(user.getPhonenumber());change.setSex(user.getSex());change.setUpdateBy(user.getUpdateBy());
+        return userMapper.updateUser(change);
     }
 
     /**
@@ -363,7 +383,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int resetPwd(SysUser user)
     {
-        return userMapper.updateUser(user);
+        SysUser change=new SysUser(user.getUserId());change.setPassword(user.getPassword());change.setUpdateBy(user.getUpdateBy());
+        return userMapper.updateUser(change);
     }
 
     /**
@@ -506,6 +527,7 @@ public class SysUserServiceImpl implements ISysUserService
                     String password = configService.selectConfigByKey("sys.user.initPassword");
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
+                    companyAssignment(user);
                     userMapper.insertUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
@@ -518,6 +540,8 @@ public class SysUserServiceImpl implements ISysUserService
                     deptService.checkDeptDataScope(user.getDeptId());
                     user.setUserId(u.getUserId());
                     user.setUpdateBy(operName);
+                    if(StringUtils.isEmpty(user.getLoginCompanyCode()))user.setLoginCompanyCode(u.getLoginCompanyCode());
+                    companyAssignment(user);
                     userMapper.updateUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");

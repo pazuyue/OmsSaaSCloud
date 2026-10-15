@@ -10,7 +10,9 @@ public class OrderScheduleController {
     @Resource private OrderShipmentDispatchWorker shipments;
     @Resource private OrderPlatformShippingWorker platform;
     @Resource private OrderIssueWorker issues;
+    @Resource private OrderAutoAllocationWorker allocations;
     @InnerAuth @PostMapping("/{kind}") public R<Map<String,Object>> scan(@PathVariable String kind){
+        if("allocation".equals(kind))return R.ok(allocations.poll());
         if("platform".equals(kind))return R.ok(platform.poll());if("issues".equals(kind))return R.ok(issues.poll());return R.ok(shipments.scan(kind));
     }
 }

@@ -1,0 +1,5 @@
+{
+  "company_status_page": "1\tSIMPLE\tsys_company\tNULL\tref\tidx_company_status_updated\tidx_company_status_updated\t66\tconst\t1\t100.00\tUsing where",
+  "route_count": "1\tSIMPLE\tsys_company_service_route\tNULL\tref\tPRIMARY\tPRIMARY\t258\tconst\t5\t100.00\tUsing index",
+  "pending_release": "1\tSIMPLE\tsys_company_release\tNULL\tindex\tidx_release_state\tidx_release_state\t356\tNULL\t1\t100.00\tUsing where; Using index"
+}

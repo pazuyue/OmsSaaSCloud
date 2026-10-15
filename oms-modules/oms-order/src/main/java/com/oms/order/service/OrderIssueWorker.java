@@ -8,5 +8,5 @@ import java.util.*;
 public class OrderIssueWorker {
     @Resource private TenantRouting tenantRouting;
     @Resource private OrderIssueService issues;
-    public Map<String,Object> poll(){ScanReport report=new ScanReport();for(String company:tenantRouting.companies())try{tenantRouting.run(company,()->report.merge(issues.pollCompany(company)));}catch(RuntimeException e){report.scopeFailure(company);org.slf4j.LoggerFactory.getLogger(getClass()).warn("Company scan unavailable company={}",company);}return report;}
+    public Map<String,Object> poll(){ScanReport report=new ScanReport();for(String company:tenantRouting.continuingCompanies())try{tenantRouting.captureForContinuation(company).run(()->report.merge(issues.pollCompany(company)));}catch(RuntimeException e){report.scopeFailure(company);org.slf4j.LoggerFactory.getLogger(getClass()).warn("Company scan unavailable company={}",company);}return report;}
 }

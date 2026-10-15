@@ -23,6 +23,7 @@
                 <svg-icon icon-class="email" />用户邮箱
                 <div class="pull-right">{{ user.email }}</div>
               </li>
+              <li class="list-group-item">所属公司<div style="margin-top:8px">{{ company.company_name || user.loginCompanyCode }} · {{ company.company_code }} <el-tag size="mini" :type="company.status === 'ENABLED' ? 'success' : 'info'">{{ { ENABLED: '已启用', DRAFT: '未启用', DISABLED: '已停用' }[company.status] || '未知' }}</el-tag></div></li>
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />所属部门
                 <div class="pull-right" v-if="user.dept">{{ user.dept.deptName }} / {{ postGroup }}</div>
@@ -62,6 +63,7 @@
 import userAvatar from "./userAvatar";
 import userInfo from "./userInfo";
 import resetPwd from "./resetPwd";
+import { myCompany } from '@/api/system/company';
 import { getUserProfile } from "@/api/system/user";
 
 export default {
@@ -70,6 +72,7 @@ export default {
   data() {
     return {
       user: {},
+      company: {},
       roleGroup: {},
       postGroup: {},
       activeTab: "userinfo"
@@ -77,6 +80,7 @@ export default {
   },
   created() {
     this.getUser();
+    myCompany().then(r => { this.company = r.data; }).catch(() => {});
   },
   methods: {
     getUser() {

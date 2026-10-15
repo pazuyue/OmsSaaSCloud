@@ -1,0 +1,223 @@
+{
+  "case_id": "20261014185442",
+  "created": "2026-10-14 18:54:42",
+  "sku": "ACCEPT_ALLOC_20261014185442",
+  "channel_name": "[验收] 分仓策略与预览 20261014185442",
+  "seller": "ACCEPT_ALLOC_20261014185442",
+  "platform_tid": "99520261014185442",
+  "platform_oid": "9952026101418544201",
+  "warehouses": [
+    {
+      "code": "ALLOC_V1_20261014185442",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 53
+    },
+    {
+      "code": "ALLOC_V2_20261014185442",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 54
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 33,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "ACCEPT_ALLOC_20261014185442",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_ALLOC_20261014185442",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "ALLOC_V1_20261014185442",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "ALLOC_V2_20261014185442",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 75,
+        "store": "ALLOC_V1_20261014185442",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 76,
+        "store": "ALLOC_V2_20261014185442",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 120,
+  "order_id": 36,
+  "order_sn": "SO14486520b3ee44828afefa32725332a9",
+  "before_restock_preview": {
+    "id": 36,
+    "control_version": 1,
+    "policy_fingerprint": "59f94d2bbc4d334e94688e31361c776bfaa03890e6b32b38247a0bbac46848f2",
+    "plan_fingerprint": "cc89c8c836d72925c7efed7d897d371c317b6529eafceb873b92c6925cc6a598"
+  },
+  "scenarios_verified": true,
+  "extra_received": true,
+  "plan_change_verified": true,
+  "performance": {
+    "requests": 20,
+    "p50_ms": 50.405,
+    "p95_ms": 58.38,
+    "max_ms": 58.47,
+    "stock_unchanged_after_previews": true
+  },
+  "shipments": [
+    {
+      "id": 15,
+      "shipment_sn": "XSde30f360543e49e286d8d2ea9ef8eddd",
+      "quantity": 6,
+      "store_code": "ALLOC_V1_20261014185442"
+    },
+    {
+      "id": 16,
+      "shipment_sn": "XS6a24890b0f9f43e2b04bb6bb1d75c4b1",
+      "quantity": 4,
+      "store_code": "ALLOC_V2_20261014185442"
+    }
+  ],
+  "completed": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=36",
+  "stock_after": {
+    "company": [
+      {
+        "sku": "ACCEPT_ALLOC_20261014185442",
+        "total": 16,
+        "available": 6,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 5
+      }
+    ],
+    "channel": [
+      {
+        "sku": "ACCEPT_ALLOC_20261014185442",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 6
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "ALLOC_V1_20261014185442",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "store": "ALLOC_V2_20261014185442",
+        "actual": 10,
+        "available": 6,
+        "locked": 4,
+        "version": 4
+      }
+    ],
+    "batch": [
+      {
+        "id": 75,
+        "store": "ALLOC_V1_20261014185442",
+        "actual": 6,
+        "available": 0,
+        "locked": 6,
+        "version": 3
+      },
+      {
+        "id": 76,
+        "store": "ALLOC_V2_20261014185442",
+        "actual": 4,
+        "available": 0,
+        "locked": 4,
+        "version": 3
+      },
+      {
+        "id": 77,
+        "store": "ALLOC_V2_20261014185442",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [
+      {
+        "id": 54,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 33,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": [
+      {
+        "id": 17,
+        "store": "ALLOC_V1_20261014185442",
+        "quantity": 6,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      },
+      {
+        "id": 18,
+        "store": "ALLOC_V2_20261014185442",
+        "quantity": 4,
+        "outbound": 0,
+        "status": "OCCUPIED",
+        "method": "VIRTUAL"
+      }
+    ]
+  }
+}

@@ -57,4 +57,40 @@ class TenantRoutingTest {
         MockHttpServletRequest request=new MockHttpServletRequest("GET","/productInventory");DynamicDataSourceContextHolder.push("stale");assertThrows(javax.servlet.ServletException.class,()->filter().doFilter(request,new MockHttpServletResponse(),(req,res)->{assertEquals("master",DynamicDataSourceContextHolder.peek());throw new javax.servlet.ServletException("expected");}));assertNull(DynamicDataSourceContextHolder.peek());
         request.addParameter("company_code",new String[]{"QM","BETA"});MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(request,rejected,(req,res)->fail("duplicate identity"));assertEquals(400,rejected.getStatus());
     }
+
+    com.oms.common.tenant.TenantCompanyAccess manageQM(){
+        com.oms.common.tenant.TenantCompanyAccess access=mock(com.oms.common.tenant.TenantCompanyAccess.class);
+        org.springframework.beans.factory.ObjectProvider<com.oms.common.tenant.TenantCompanyAccess> provider=mock(org.springframework.beans.factory.ObjectProvider.class);
+        when(provider.getObject()).thenReturn(access);ReflectionTestUtils.setField(tenants,"companyAccess",provider);tenants.setManaged(Collections.singletonMap("QM",true));return access;
+    }
+    @Test void nestedCompanyScopeChecksRuntimeSwitchOnlyOnce(){
+        com.oms.common.tenant.TenantCompanyAccess access=manageQM();
+        tenants.run("QM",()->{for(int i=0;i<50;i++)tenants.run("QM",()->{});tenants.callForContinuation("QM",()->null);});
+        verify(access,times(1)).requireEnabled("QM");verify(access,never()).requireExisting(anyString());
+    }
+    @Test void scanReadsManagedStatesInOneBatchAndKeepsLegacyCompanyOnFailure(){
+        com.oms.common.tenant.TenantCompanyAccess access=manageQM();when(access.states(Collections.singleton("QM"))).thenReturn(Collections.singletonMap("QM","DISABLED"));
+        assertFalse(tenants.companies().contains("QM"));verify(access,times(1)).states(anyCollection());assertTrue(tenants.continuingCompanies().contains("QM"));
+        when(access.states(anyCollection())).thenThrow(new IllegalStateException("redis down"));assertEquals(new TreeSet<>(Arrays.asList("BETA","SHARED")),tenants.companies());
+    }
+    @Test void capturedNewWorkIsRejectedAfterDisableButReceiptWorkContinues(){
+        com.oms.common.tenant.TenantCompanyAccess access=manageQM();TenantRouting.Route queued=tenants.capture("QM");
+        doThrow(new IllegalArgumentException("disabled")).when(access).requireEnabled("QM");
+        assertThrows(IllegalArgumentException.class,()->queued.run(()->fail("new work")));assertEquals("ok",tenants.callForContinuation("QM",()->"ok"));assertNull(DynamicDataSourceContextHolder.peek());
+    }
+    @Test void continuingScopeCannotEscalateToNewWorkAfterDisable(){
+        com.oms.common.tenant.TenantCompanyAccess access=manageQM();doThrow(new IllegalArgumentException("disabled")).when(access).requireEnabled("QM");
+        tenants.callForContinuation("QM",()->{assertThrows(IllegalArgumentException.class,()->tenants.run("QM",()->fail("escalation")));return null;});verify(access).requireExisting("QM");verify(access).requireEnabled("QM");
+    }
+    @Test void disabledCompanyAllowsWarehouseReceiptButRefusesNewAllocation() throws Exception {
+        com.oms.common.tenant.TenantCompanyAccess access=manageQM();doThrow(new IllegalArgumentException("disabled")).when(access).requireEnabled("QM");
+        MockHttpServletRequest req=new MockHttpServletRequest("POST","/orderStock/internal/warehouse-outbound");req.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);req.addParameter("company_code","QM");
+        filter().doFilter(req,new MockHttpServletResponse(),(request,response)->{});
+        req.setRequestURI("/orderStock/internal/warehouse-allocate");MockHttpServletResponse denied=new MockHttpServletResponse();filter().doFilter(req,denied,(request,response)->fail("new allocation"));assertEquals(503,denied.getStatus());
+    }
+
+    @Test void allocationScanUsesServiceScopedRouteDiscoveryAndRequiresInternalIdentity() throws Exception {
+        MockHttpServletRequest req=new MockHttpServletRequest("POST","/orders/internal/schedule/allocation");req.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);
+        filter().doFilter(req,new MockHttpServletResponse(),(request,response)->assertNull(DynamicDataSourceContextHolder.peek()));assertNull(DynamicDataSourceContextHolder.peek());
+    }
 }

@@ -1,0 +1,41 @@
+{
+  "order_sn": "SO14486520b3ee44828afefa32725332a9",
+  "order_id": 36,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=36",
+  "strategy": "REGION_FIRST",
+  "virtual_warehouses": 2,
+  "shipments": [
+    {
+      "id": 15,
+      "shipment_sn": "XSde30f360543e49e286d8d2ea9ef8eddd",
+      "quantity": 6,
+      "store_code": "ALLOC_V1_20261014185442"
+    },
+    {
+      "id": 16,
+      "shipment_sn": "XS6a24890b0f9f43e2b04bb6bb1d75c4b1",
+      "quantity": 4,
+      "store_code": "ALLOC_V2_20261014185442"
+    }
+  ],
+  "allocated_quantity": 10,
+  "actual_stock": 16,
+  "warehouse_occupied": 10,
+  "remaining_warehouse_available": 6,
+  "warehouse_submission_performed": false,
+  "real_platform_send_performed": false,
+  "preview_no_mutation": true,
+  "stale_rules_rejected": true,
+  "stale_plan_rejected": true,
+  "split_caps_verified": true,
+  "first_partial_threshold_verified": true,
+  "three_existing_orders_and_jobs_unchanged": true,
+  "performance": {
+    "requests": 20,
+    "p50_ms": 50.405,
+    "p95_ms": 58.38,
+    "max_ms": 58.47,
+    "stock_unchanged_after_previews": true
+  },
+  "duplicate_submit_stock_unchanged": true
+}

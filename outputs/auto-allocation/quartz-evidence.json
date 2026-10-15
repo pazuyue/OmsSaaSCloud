@@ -1,0 +1,27 @@
+[
+  {
+    "log_id": 17557,
+    "status": "0",
+    "report": {
+      "kind": "allocation",
+      "scanned": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "unconfirmed": 0,
+      "pending": 0,
+      "skipped": 0,
+      "review_pending": 0,
+      "scope_failures": 0,
+      "omitted": 0,
+      "items": [
+        {
+          "company_code": "QM",
+          "reference_sn": "SO9957b271edd4449b9138e9ff2aac140b",
+          "state": "SUCCESS",
+          "message": "自动分仓完成，发货单待后续处理",
+          "reference_id": 38
+        }
+      ]
+    }
+  }
+]

@@ -19,6 +19,7 @@ def column(database, table, name, definition):
     return False
 
 def install_inventory(database):
+    execute((HERE/"migrations/20261014_allocation_stock_signal.sql").read_text(encoding="utf-8"),database)
     from configure_order_warehouse import install_inventory as install_warehouse_inventory
     install_warehouse_inventory(database)
     execute((HERE / 'migrations/20261010_order_stock.sql').read_text(encoding='utf-8'), database)

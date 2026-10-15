@@ -1,0 +1,14 @@
+[
+  "1\tryTask.ryNoParams\t1\t0/10 * * * * ?",
+  "2\tryTask.ryParams('ry')\t1\t0/15 * * * * ?",
+  "3\tryTask.ryMultipleParams('ry', true, 2000L, 316.50D, 100)\t1\t0/20 * * * * ?",
+  "4\tdailyAllocationTask.scanAll()\t1\t1 0/30 * * * ?",
+  "5\torderPullTask.scanAll()\t1\t0/10 * * * * ?",
+  "6\tfulfillmentScanTask.dispatch()\t1\t0/5 * * * * ?",
+  "7\tfulfillmentScanTask.receipts()\t1\t1/5 * * * * ?",
+  "8\tfulfillmentScanTask.virtualOutbound()\t1\t2/5 * * * * ?",
+  "9\tfulfillmentScanTask.salesDocuments()\t1\t3/5 * * * * ?",
+  "10\tfulfillmentScanTask.platformShipping()\t1\t0/15 * * * * ?",
+  "11\tfulfillmentScanTask.orderIssues()\t0\t0/30 * * * * ?",
+  "12\tfulfillmentScanTask.purchaseInbound()\t1\t4/5 * * * * ?"
+]

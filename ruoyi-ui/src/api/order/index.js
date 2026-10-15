@@ -32,6 +32,7 @@ export const voidResults = ids => request({ url: `${base}/business/void-results`
 
 export const allocationConfig = channel => request({ url: `${base}/allocation-config/${channel}` })
 export const saveAllocationConfig = data => request({ url: `${base}/allocation-config`, method: 'post', data })
+export const previewOrderAllocation = data => request({ url: `${base}/business/allocation-preview`, method: 'post', data, timeout: 120000 })
 export const allocateOrders = data => request({ url: `${base}/business/allocate-batch`, method: 'post', data, timeout: 600000 })
 
 export const conversionConfigs = () => request({ url: `${base}/conversion-configs` })
@@ -71,3 +72,5 @@ export const savePlatformShippingConfig = (channel, data) => request({ url: `/or
 
 export const receiptReviews = id => request({ url: `/order/orders/shipments/${id}/receipt-reviews`, method: 'get' })
 export const decideReceiptReview = (id, review, data) => request({ url: `/order/orders/shipments/${id}/receipt-reviews/${review}`, method: 'post', data })
+
+export const autoAllocationAction = (id, action, data) => request({ url: `${base}/business/${id}/auto-allocation/${action}`, method: 'post', data })

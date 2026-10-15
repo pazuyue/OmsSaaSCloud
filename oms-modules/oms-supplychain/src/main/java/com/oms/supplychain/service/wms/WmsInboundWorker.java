@@ -19,7 +19,7 @@ public class WmsInboundWorker {
         ScanReport report=new ScanReport();
         for(Map.Entry<String,String> entry:tenantRoutes.all().entrySet()){
             try{
-                tenantRoutes.run(entry.getKey(),()->report.merge(inbound.pollCompany(entry.getKey())));
+                tenantRoutes.run(entry.getKey(),()->report.merge(inbound.pollCompany(entry.getKey(),tenantRoutes.enabled(entry.getKey()))));
             }catch(Exception e){report.scopeFailure(entry.getKey());org.slf4j.LoggerFactory.getLogger(getClass()).error("WMS任务数据源异常，route={}",entry.getKey(),e);}
         }
         return report;

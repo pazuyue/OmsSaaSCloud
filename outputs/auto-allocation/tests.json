@@ -1,0 +1,21 @@
+{
+  "groups": {
+    "order": {
+      "tests": 248,
+      "classes": 27
+    },
+    "inventory_order": {
+      "tests": 73,
+      "classes": 3
+    },
+    "inventory_transactions": {
+      "tests": 64,
+      "classes": 5,
+      "evidence": "docker/local/logs/inventory-tests.log"
+    }
+  },
+  "total": 385,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

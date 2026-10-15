@@ -241,8 +241,8 @@ export default {
   },
   methods: {
     scanData(row) { if (!row.executionData) return null; try { const data = JSON.parse(row.executionData); return data && data.kind && Array.isArray(data.items) ? data : null } catch (_) { return null } },
-    scanState(state) { return ({ SUCCESS: '已完成', FAILED: '本轮失败', UNKNOWN: '结果待确认', PENDING: '仍待处理', PROCESSING: '处理中', SKIPPED: '暂未处理', WAIT_REVIEW: '待人工核对' })[state] || state },
-    openReference(row, kind) { if (kind === 'issues') this.$router.push({ path: '/oms-order/business', query: { view: 'business', orderId: row.reference_id }}); else if (kind === 'inbound') this.$router.push({ path: '/oms-supplychain/wmsTickets', query: { noSn: row.reference_sn }}); else this.$router.push({ path: '/oms-order/shipments', query: { number: row.reference_sn }}); this.open = false },
+    scanState(state) { return ({ WAIT_STOCK: '等待补货', WAIT_CONDITION: '等待前置条件', RETRY: '等待重试', DISABLED: '已关闭自动分仓', PARTIAL_PAUSED: '余量待人工处理', CANCELED: '已停止', SUCCESS: '已完成', FAILED: '本轮失败', UNKNOWN: '结果待确认', PENDING: '仍待处理', PROCESSING: '处理中', SKIPPED: '暂未处理', WAIT_REVIEW: '待人工核对' })[state] || state },
+    openReference(row, kind) { if (['issues', 'allocation'].includes(kind)) this.$router.push({ path: '/oms-order/business', query: { view: 'business', orderId: row.reference_id }}); else if (kind === 'inbound') this.$router.push({ path: '/oms-supplychain/wmsTickets', query: { noSn: row.reference_sn }}); else this.$router.push({ path: '/oms-order/shipments', query: { number: row.reference_sn }}); this.open = false },
     /** 查询调度日志列表 */
     getList() {
       this.loading = true;
