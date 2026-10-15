@@ -31,11 +31,11 @@ def main():
             jump(d,'2 允许仓与顺序')
             d.get_by_role('button',name='默认仓库下移 '+v1,exact=True).click()
             assert v2 in d.locator('.rank-row').first.inner_text()
-            d.locator('.province-row .el-select').nth(1).locator('.el-input__inner').click()
-            page.locator('.el-select-dropdown:visible').get_by_text(re.compile(re.escape(v2))).click();page.keyboard.press('Escape')
+            d.locator('.province-rule').first.evaluate('(e)=>e.scrollIntoView({block: "center"})');d.locator('.province-row .el-select').nth(1).locator('.el-input__suffix').click()
+            page.locator('.el-select-dropdown:visible').get_by_text(re.compile(re.escape(v2))).click();d.get_by_text('省份优先仓',exact=True).click()
             d.get_by_role('button',name='省份仓库上移 '+v2,exact=True).click()
             assert v2 in d.locator('.province-rank').first.inner_text()
-            d.get_by_role('button',name='添加省份优先规则',exact=True).click()
+            d.get_by_text('添加省份优先规则',exact=True).click()
             d.get_by_role('button',name='保存分仓规则',exact=True).click()
             expect(page.get_by_text('请完整填写省份优先仓，或删除空白规则',exact=True)).to_be_visible()
             assert request(path,token=token)['data']['revision']==original['revision']
@@ -52,7 +52,7 @@ def main():
             changed=request(path,token=token)['data']['policy']
             assert changed['execution_mode']=='MANUAL' and changed['auto_replenish']==policy['auto_replenish'] and changed['allow_multi']==0 and changed['allow_split_sku']==0 and changed['allow_partial']==0 and changed['strategy']=='FEWEST_SHIPMENTS'
             assert changed['warehouse_order']==[v2,v1] and changed['province_priorities']=={'北京':[v2,v1]}
-            row=page.locator('.el-table__body tr').filter(has_text=case['channel_name']).filter(has_text='配置分仓规则');expect(row).to_contain_text('限 1 个虚拟仓')
+            row=page.locator('.el-table__body tr').filter(has_text=case['channel_name']).filter(has_text='配置分仓规则').first;expect(row).to_contain_text('限 1 个虚拟仓')
             d=open_config();d.get_by_text('满足条件自动分仓',exact=True).click()
             jump(d,'2 允许仓与顺序');d.get_by_role('button',name='默认仓库下移 '+v2,exact=True).click()
             d.get_by_role('button',name='省份仓库上移 '+v1,exact=True).click()
@@ -66,7 +66,7 @@ def main():
             d.get_by_role('button',name='保存分仓规则',exact=True).click();expect(d).not_to_be_visible()
             assert request(path,token=token)['data']['policy']==policy;restored=True
             page.screenshot(path=str(OUT/'settings-list.png'))
-            context.set_viewport_size({'width':1280,'height':720});d=open_config();jump(d,'4 库存与拆分');expect(d.get_by_role('button',name='保存分仓规则',exact=True)).to_be_in_viewport();expect(d.get_by_text('库存不足与拆分限制',exact=True)).to_be_in_viewport()
+            page.set_viewport_size({'width':1280,'height':720});d=open_config();jump(d,'4 库存与拆分');expect(d.get_by_role('button',name='保存分仓规则',exact=True)).to_be_in_viewport();expect(d.get_by_text('库存不足与拆分限制',exact=True)).to_be_in_viewport()
             assert d.locator('.allocation-layout').evaluate('(e)=>e.scrollWidth<=e.clientWidth+1')
             page.screenshot(path=str(OUT/'compact-screen.png'));assert not errors,errors;browser.close()
         after=request('/order/orders/business/42',token=token)['data']

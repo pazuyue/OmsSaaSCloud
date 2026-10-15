@@ -1,0 +1,13 @@
+{
+  "four_sections_and_navigation": true,
+  "manual_keeps_warehouse_rules_editable": true,
+  "default_and_province_orders_saved": true,
+  "incomplete_province_validation": true,
+  "multi_and_sku_dependencies": true,
+  "partial_ratio_visibility": true,
+  "single_warehouse_effective_limit": true,
+  "policy_saved_and_restored": true,
+  "order_and_stock_unchanged": true,
+  "compact_screen_footer_visible": true,
+  "browser_errors": []
+}
