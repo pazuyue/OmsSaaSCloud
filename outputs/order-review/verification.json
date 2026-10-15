@@ -1,0 +1,75 @@
+{
+  "cases": [
+    {
+      "kind": "allow-shortage",
+      "order_id": 40,
+      "order_sn": "SO351372d56d924c3ea5c2d90319af1c22",
+      "review_decision": "AUTO_APPROVED",
+      "allocation_quantity": 0,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=40",
+      "shipments": []
+    },
+    {
+      "kind": "stock-replenished",
+      "order_id": 41,
+      "order_sn": "SO65add83b69594ff19acb2055c55b850a",
+      "review_decision": "AUTO_APPROVED",
+      "allocation_quantity": 14,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=41",
+      "shipments": [
+        {
+          "shipment_sn": "XS98230946194143f4b933743fdf11a4a1",
+          "quantity": 10,
+          "store_code": "REVIEW_V1_202610151023132",
+          "wms_dispatch_state": "NONE"
+        },
+        {
+          "shipment_sn": "XS2fbad9444a4f48ddaa35b30924050b95",
+          "quantity": 4,
+          "store_code": "REVIEW_V2_202610151023132",
+          "wms_dispatch_state": "NONE"
+        }
+      ]
+    },
+    {
+      "kind": "human-confirmed",
+      "order_id": 42,
+      "order_sn": "SO68bde25a5e914b2ab9817796bd8f079a",
+      "review_decision": "HUMAN_APPROVED",
+      "allocation_quantity": 10,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=42",
+      "shipments": [
+        {
+          "shipment_sn": "XSff39896dd13344969f86af185dada20d",
+          "quantity": 6,
+          "store_code": "REVIEW_V1_202610151023133",
+          "wms_dispatch_state": "NONE"
+        },
+        {
+          "shipment_sn": "XS32db27f63f8547c593d4153cb3a3c348",
+          "quantity": 4,
+          "store_code": "REVIEW_V2_202610151023133",
+          "wms_dispatch_state": "NONE"
+        }
+      ]
+    },
+    {
+      "kind": "wait-stock",
+      "order_id": 43,
+      "order_sn": "SOa0171f8c65dd4cb38e405f656fcbe857",
+      "review_decision": "WAIT_STOCK",
+      "allocation_quantity": 0,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=43",
+      "shipments": []
+    }
+  ],
+  "compensation_schedule_preserved": "paused; existing job invoked manually for acceptance",
+  "stock_condition_configurable": true,
+  "stock_progress_triggers_review": true,
+  "approval_triggers_allocation": true,
+  "human_hits_and_note_retained": true,
+  "preview_read_only": true,
+  "warehouse_submissions": 0,
+  "actual_outbound": 0,
+  "platform_notifications": 0
+}

@@ -74,3 +74,9 @@ export const receiptReviews = id => request({ url: `/order/orders/shipments/${id
 export const decideReceiptReview = (id, review, data) => request({ url: `/order/orders/shipments/${id}/receipt-reviews/${review}`, method: 'post', data })
 
 export const autoAllocationAction = (id, action, data) => request({ url: `${base}/business/${id}/auto-allocation/${action}`, method: 'post', data })
+
+export const reviewConfigs = () => request({ url: `${base}/review-configs` })
+export const reviewConfig = channel => request({ url: `${base}/review-config/${channel}` })
+export const saveReviewConfig = data => request({ url: `${base}/review-config`, method: 'post', data })
+export const previewReview = id => request({ url: `${base}/business/${id}/review-preview` })
+export const recheckReview = (id, data) => request({ url: `${base}/business/${id}/review-recheck`, method: 'post', data })

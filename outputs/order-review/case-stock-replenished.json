@@ -1,0 +1,117 @@
+{
+  "kind": "stock-replenished",
+  "case_id": "202610151023132",
+  "created": "2026-10-15 10:23:13",
+  "sku": "RV_202610151023132",
+  "channel_name": "[审单验收] stock-replenished 202610151023132",
+  "seller": "REVIEW_202610151023132",
+  "platform_tid": "997202610151023132",
+  "platform_oid": "99720261015102313201",
+  "warehouses": [
+    {
+      "code": "REVIEW_V1_202610151023132",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 63
+    },
+    {
+      "code": "REVIEW_V2_202610151023132",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 64
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 38,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "RV_202610151023132",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "RV_202610151023132",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_202610151023132",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "REVIEW_V2_202610151023132",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 87,
+        "store": "REVIEW_V1_202610151023132",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 88,
+        "store": "REVIEW_V2_202610151023132",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "review_configured": true,
+  "platform_id": 125,
+  "order_id": 41,
+  "order_sn": "SO65add83b69594ff19acb2055c55b850a",
+  "seeded": true,
+  "wait_stock_verified": true,
+  "restocked": true,
+  "compensation_invocation": "manual_existing_paused_job",
+  "review_decision": "AUTO_APPROVED",
+  "review_status": "APPROVED",
+  "allocation_quantity": 14,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=41",
+  "completed": true,
+  "shipments": [
+    {
+      "shipment_sn": "XS98230946194143f4b933743fdf11a4a1",
+      "quantity": 10,
+      "store_code": "REVIEW_V1_202610151023132",
+      "wms_dispatch_state": "NONE"
+    },
+    {
+      "shipment_sn": "XS2fbad9444a4f48ddaa35b30924050b95",
+      "quantity": 4,
+      "store_code": "REVIEW_V2_202610151023132",
+      "wms_dispatch_state": "NONE"
+    }
+  ]
+}

@@ -62,6 +62,12 @@ public class OrderController {
     @RequiresPermissions("order:order:void") @PostMapping("/business/void-batch") public AjaxResult voidBatch(@RequestBody Map<String,Object> body){List<Map<String,Object>> result=voids.request(company(),body,SecurityUtils.getUsername());coordinator.poll();return AjaxResult.success(result);}
     @RequiresPermissions("order:order:list") @PostMapping("/business/void-results") public AjaxResult voidResults(@RequestBody List<Long> ids){return AjaxResult.success(businessOrders.results(company(),ids));}
 
+    @Resource private OrderAutoReviewService autoReviews;
+    @RequiresPermissions("order:pull:config") @GetMapping("/review-configs") public AjaxResult reviewConfigs(){return AjaxResult.success(autoReviews.configurations(company()));}
+    @RequiresPermissions("order:pull:config") @GetMapping("/review-config/{channel}") public AjaxResult reviewConfig(@PathVariable long channel){return AjaxResult.success(autoReviews.configuration(company(),channel));}
+    @RequiresPermissions("order:pull:config") @PostMapping("/review-config") public AjaxResult saveReviewConfig(@RequestBody Map<String,Object> body){autoReviews.save(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
+    @RequiresPermissions("order:order:query") @GetMapping("/business/{id}/review-preview") public AjaxResult reviewPreview(@PathVariable long id){return AjaxResult.success(autoReviews.preview(company(),id));}
+    @RequiresPermissions("order:order:review") @PostMapping("/business/{id}/review-recheck") public AjaxResult reviewRecheck(@PathVariable long id,@RequestBody Map<String,Object> body){require(body.containsKey("control_version"),"请刷新订单后重新判定");autoReviews.recheck(company(),id,number(body,"control_version"),SecurityUtils.getUsername());return AjaxResult.success();}
     @Resource private OrderReviewService reviews;
     @RequiresPermissions("order:order:review") @PostMapping("/business/approve-batch") public AjaxResult approve(@RequestBody Map<String,Object> body){return AjaxResult.success(reviews.apply(company(),"approve",body,SecurityUtils.getUsername()));}
     @RequiresPermissions("order:order:hold") @PostMapping("/business/hold-batch") public AjaxResult hold(@RequestBody Map<String,Object> body){return AjaxResult.success(reviews.apply(company(),"hold",body,SecurityUtils.getUsername()));}

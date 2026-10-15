@@ -3,6 +3,8 @@ from configure_order import column
 from local_db import execute
 
 def install_order(database):
+    from configure_order_review import install as install_review
+    install_review(database)
     from local_db import HERE
     execute((HERE/"migrations/20261014_auto_allocation.sql").read_text(encoding="utf-8"),database)
     from configure_platform_shipping import install as install_shipping

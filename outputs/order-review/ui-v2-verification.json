@@ -1,0 +1,10 @@
+{
+  "three_sections_visible": true,
+  "manual_disables_automatic_rules": true,
+  "missing_threshold_validation": true,
+  "stock_option_saved_and_restored": true,
+  "policy_restored": true,
+  "business_order_and_stock_unchanged": true,
+  "inactive_thresholds_hidden": true,
+  "browser_errors": 0
+}

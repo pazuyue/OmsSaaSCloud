@@ -25,7 +25,7 @@ public class OrderAutoAllocationWorker {
         for(int offset=0;offset<companies.size()&&System.nanoTime()<deadline;offset++){
             String company=companies.get((start+offset)%companies.size());
             try(TenantRouting.Binding ignored=tenantRouting.open(company)){
-                try{if(service.wakeStock(company)>0)coordinator.poll();}catch(RuntimeException e){org.slf4j.LoggerFactory.getLogger(getClass()).warn("Stock wake unavailable company={}",company);}
+                try{if(service.wakeStock(company)>0||service.reviewStockDue(company))coordinator.poll();}catch(RuntimeException e){org.slf4j.LoggerFactory.getLogger(getClass()).warn("Stock wake unavailable company={}",company);}
                 if(System.nanoTime()<deadline)report.merge(runCompany(company,deadline));
             }catch(RuntimeException e){report.scopeFailure(company);}
         }return report;

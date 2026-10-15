@@ -1,0 +1,101 @@
+{
+  "kind": "wait-stock",
+  "case_id": "202610151023134",
+  "created": "2026-10-15 10:23:13",
+  "sku": "RV_202610151023134",
+  "channel_name": "[审单验收] wait-stock 202610151023134",
+  "seller": "REVIEW_202610151023134",
+  "platform_tid": "997202610151023134",
+  "platform_oid": "99720261015102313401",
+  "warehouses": [
+    {
+      "code": "REVIEW_V1_202610151023134",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 67
+    },
+    {
+      "code": "REVIEW_V2_202610151023134",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 68
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 40,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "RV_202610151023134",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "RV_202610151023134",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "REVIEW_V1_202610151023134",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "REVIEW_V2_202610151023134",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 92,
+        "store": "REVIEW_V1_202610151023134",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 93,
+        "store": "REVIEW_V2_202610151023134",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "review_configured": true,
+  "platform_id": 127,
+  "order_id": 43,
+  "order_sn": "SOa0171f8c65dd4cb38e405f656fcbe857",
+  "seeded": true,
+  "review_decision": "WAIT_STOCK",
+  "review_status": "PENDING",
+  "allocation_quantity": 0,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=43",
+  "completed": true,
+  "shipments": []
+}

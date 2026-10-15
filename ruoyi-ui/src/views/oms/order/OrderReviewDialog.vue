@@ -3,7 +3,7 @@
     <template v-if="!completed">
       <el-alert :title="explanation" type="info" :closable="false" show-icon />
       <p>本次处理 {{ orders.length }} 张订单。每张订单独立校验，不符合条件的订单会显示原因。</p>
-      <el-input v-model.trim="reason" type="textarea" :rows="3" maxlength="200" show-word-limit :placeholder="action === 'hold' ? '请填写挂起原因（必填）' : '操作说明（选填）'" />
+      <el-input v-model.trim="reason" type="textarea" :rows="3" maxlength="200" show-word-limit :placeholder="action === 'hold' ? '请填写挂起原因（必填）' : action === 'approve' ? '请填写人工审核说明（必填），原命中条件将保留' : '操作说明（选填）'" />
     </template>
     <el-table v-else :data="results" max-height="440"><el-table-column label="业务订单" min-width="240"><template slot-scope="s">{{ s.row.order_sn || s.row.id }}</template></el-table-column><el-table-column label="结果" width="90"><template slot-scope="s"><el-tag :type="s.row.success ? 'success' : 'warning'">{{ s.row.success ? '成功' : '未处理' }}</el-tag></template></el-table-column><el-table-column label="说明" prop="message" min-width="260" /></el-table>
     <span slot="footer"><el-button :disabled="saving" @click="visible=false">{{ completed ? '关闭' : '取消' }}</el-button><el-button v-if="!completed" type="primary" :loading="saving" @click="submit">确认{{ title }}</el-button></span>
@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     open(action, rows) { if (!rows.length || rows.length > 100) return this.$message.warning('请选择1至100张订单'); this.action = action; this.orders = rows.map(r => ({ id: r.id, control_version: r.control_version })); this.reason = ''; this.results = []; this.completed = false; this.visible = true },
-    async submit() { if (this.saving) return; if (this.action === 'hold' && !this.reason) return this.$message.warning('请填写挂起原因'); this.saving = true; try { this.results = (await reviewOrders(this.action, { orders: this.orders, reason: this.reason })).data; this.completed = true; this.$emit('changed') } finally { this.saving = false } }
+    async submit() { if (this.saving) return; if (['hold', 'approve'].includes(this.action) && !this.reason) return this.$message.warning(this.action === 'hold' ? '请填写挂起原因' : '请填写人工审核说明'); this.saving = true; try { this.results = (await reviewOrders(this.action, { orders: this.orders, reason: this.reason })).data; this.completed = true; this.$emit('changed') } finally { this.saving = false } }
   }
 }
 </script>

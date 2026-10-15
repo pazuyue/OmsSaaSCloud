@@ -15,32 +15,30 @@ public class OrderWorkspaceService {
     @Resource private OrderBusinessService businessOrders;
     /** Business settings never expose or change pull connection/progress. */
     public List<Map<String,Object>> conversionConfigs(String company){
-        List<Map<String,Object>> rows=repository.db().query("SELECT channel_id,channel_name,auto_convert,review_mode,manual_match_review,allowed_trade_types,allow_public_stock,revision FROM oms_order_pull_config WHERE company_code=? ORDER BY channel_id",ROW,company);
+        List<Map<String,Object>> rows=repository.db().query("SELECT channel_id,channel_name,auto_convert,allowed_trade_types,allow_public_stock,revision FROM oms_order_pull_config WHERE company_code=? ORDER BY channel_id",ROW,company);
         for(Map<String,Object> row:rows)row.put("allowed_trade_types",tradeTypes(row.get("allowed_trade_types")));return rows;
     }
     public void saveConversion(String company,Map<String,Object> input,String actor){
         long channel=number(input,"channel_id");catalog.validateShop(company,channel);
         List<String> types=tradeTypes(input.get("allowed_trade_types"));
-        for(String flag:Arrays.asList("auto_convert","allow_public_stock","manual_match_review"))require(number(input,flag)==0||number(input,flag)==1,"配置开关值无效");
-        require(Arrays.asList("AUTO","MANUAL").contains(text(input,"review_mode")),"请选择审单方式");
+        for(String flag:Arrays.asList("auto_convert","allow_public_stock"))require(number(input,flag)==0||number(input,flag)==1,"配置开关值无效");
         org.springframework.transaction.support.TransactionTemplate tx=new org.springframework.transaction.support.TransactionTemplate(new org.springframework.jdbc.datasource.DataSourceTransactionManager(repository.db().getDataSource()));
         tx.execute(status->{
             List<Map<String,Object>> found=repository.db().query("SELECT revision,lease_until FROM oms_order_pull_config WHERE company_code=? AND channel_id=? FOR UPDATE",ROW,company,channel);
             require(found.size()==1,"请先在拉单管理完成店铺接入");Map<String,Object> before=found.get(0);
             require(number(before,"revision")==number(input,"revision"),"配置已变化，请刷新后重试");
             require(before.get("lease_until")==null||time(text(before,"lease_until")).isBefore(LocalDateTime.now()),"店铺任务正在执行，请稍后修改设置");
-            repository.db().update("UPDATE oms_order_pull_config SET auto_convert=?,review_mode=?,manual_match_review=?,allowed_trade_types=?,allow_public_stock=?,revision=revision+1 WHERE company_code=? AND channel_id=?",number(input,"auto_convert"),text(input,"review_mode"),number(input,"manual_match_review"),encode(types),number(input,"allow_public_stock"),company,channel);return null;
+            repository.db().update("UPDATE oms_order_pull_config SET auto_convert=?,allowed_trade_types=?,allow_public_stock=?,revision=revision+1 WHERE company_code=? AND channel_id=?",number(input,"auto_convert"),encode(types),number(input,"allow_public_stock"),company,channel);return null;
         });
     }
     public Map<String,Object> catalog(String company){Map<String,Object> result=new LinkedHashMap<>();List<Map<String,Object>> channels=catalog.channels(company);channels.removeIf(c->!"TM".equals(text(c,"channel_type")));Set<Long> configured=new HashSet<>();for(Map<String,Object> c:repository.db().query("SELECT c.channel_id FROM oms_order_pull_config c JOIN oms_order_push_source s ON s.company_code=c.company_code AND s.source_key=c.source_key WHERE c.company_code=? AND s.enabled=1",ROW,company))configured.add(number(c,"channel_id"));for(Map<String,Object> c:channels)c.put("pull_configured",configured.contains(number(c,"channel_id")));result.put("channels",channels);result.put("sources",push.choices(company));return result;}
-    public List<Map<String,Object>> configs(String company){List<Map<String,Object>> rows=repository.db().query("SELECT c.id,c.company_code,c.channel_id,c.channel_name,c.source_key,c.seller_nick,c.enabled,c.auto_convert,c.review_mode,c.manual_match_review,c.allowed_trade_types,c.allow_public_stock,c.interval_seconds,c.initial_time,c.cursor_time,c.next_run_at,c.last_error,c.revision,s.source_name,s.enabled source_enabled FROM oms_order_pull_config c LEFT JOIN oms_order_push_source s ON s.company_code=c.company_code AND s.source_key=c.source_key WHERE c.company_code=? ORDER BY c.channel_id",ROW,company);for(Map<String,Object> row:rows)row.put("allowed_trade_types",tradeTypes(row.get("allowed_trade_types")));return rows;}
+    public List<Map<String,Object>> configs(String company){List<Map<String,Object>> rows=repository.db().query("SELECT c.id,c.company_code,c.channel_id,c.channel_name,c.source_key,c.seller_nick,c.enabled,c.auto_convert,c.allowed_trade_types,c.allow_public_stock,c.interval_seconds,c.initial_time,c.cursor_time,c.next_run_at,c.last_error,c.revision,s.source_name,s.enabled source_enabled FROM oms_order_pull_config c LEFT JOIN oms_order_push_source s ON s.company_code=c.company_code AND s.source_key=c.source_key WHERE c.company_code=? ORDER BY c.channel_id",ROW,company);for(Map<String,Object> row:rows)row.put("allowed_trade_types",tradeTypes(row.get("allowed_trade_types")));return rows;}
     public void save(String company,Map<String,Object> input,String actor){
         long channel=number(input,"channel_id");String seller=text(input,"seller_nick").trim(),source=text(input,"source_key");
         Map<String,Object> shop=catalog.validateShop(company,channel);List<String> allowedTypes=tradeTypes(input.get("allowed_trade_types"));
         require(!seller.isEmpty()&&seller.length()<=200,"请填写推送库卖家账号");require(push.configured(company,source),"推送库不存在或已停用");
-        for(String flag:Arrays.asList("enabled","auto_convert","allow_public_stock","manual_match_review"))require(number(input,flag)==0||number(input,flag)==1,"配置开关值无效");
+        for(String flag:Arrays.asList("enabled","auto_convert","allow_public_stock"))require(number(input,flag)==0||number(input,flag)==1,"配置开关值无效");
         
-        require(Arrays.asList("AUTO","MANUAL").contains(text(input,"review_mode")),"请选择审单方式");
         long interval=number(input,"interval_seconds");require(interval>=10&&interval<=86400,"拉单间隔须为10至86400秒");
         LocalDateTime initial=time(text(input,"initial_time"));require(!initial.isAfter(LocalDateTime.now()),"首次拉取起点不能晚于当前时间");
         org.springframework.transaction.support.TransactionTemplate tx=new org.springframework.transaction.support.TransactionTemplate(new org.springframework.jdbc.datasource.DataSourceTransactionManager(repository.db().getDataSource()));
@@ -53,7 +51,7 @@ public class OrderWorkspaceService {
             boolean newMapping=old.isEmpty()||!source.equals(text(old.get(0),"source_key"))||!seller.equals(text(old.get(0),"seller_nick"));
             if(newMapping&&!text(shop,"seller_nick").isEmpty()&&!seller.equals(text(shop,"seller_nick")))
                 require(number(input,"confirm_seller_mapping")==1,"推送库卖家账号与平台授权名称不同，请确认店铺映射后保存");
-            if(old.isEmpty())repository.db().update("INSERT INTO oms_order_pull_config(company_code,channel_id,channel_name,source_key,seller_nick,enabled,auto_convert,review_mode,manual_match_review,allowed_trade_types,allow_public_stock,interval_seconds,initial_time,cursor_time) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",company,channel,shop.get("channel_name"),source,seller,number(input,"enabled"),number(input,"auto_convert"),text(input,"review_mode"),number(input,"manual_match_review"),encode(allowedTypes),number(input,"allow_public_stock"),interval,initial.format(TIME),initial.format(TIME));
+            if(old.isEmpty())repository.db().update("INSERT INTO oms_order_pull_config(company_code,channel_id,channel_name,source_key,seller_nick,enabled,auto_convert,allowed_trade_types,allow_public_stock,interval_seconds,initial_time,cursor_time) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",company,channel,shop.get("channel_name"),source,seller,number(input,"enabled"),number(input,"auto_convert"),encode(allowedTypes),number(input,"allow_public_stock"),interval,initial.format(TIME),initial.format(TIME));
             else{
                 Map<String,Object> before=old.get(0);require(number(before,"revision")==number(input,"revision"),"配置已变化，请刷新后重试");
                 require(before.get("lease_until")==null||time(text(before,"lease_until")).isBefore(LocalDateTime.now()),"店铺任务正在执行，请稍后修改配置");
@@ -63,7 +61,7 @@ public class OrderWorkspaceService {
                 if(changed){require(number(input,"reset_cursor")==1,"切换来源或卖家须确认重新拉取起点");
                     require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_pull_task WHERE company_code=? AND channel_id=? AND status IN ('PENDING','RUNNING')",Long.class,company,channel)==0,"尚有未完成拉单任务，请完成后再切换来源");}
                 String cursor=changed?initial.format(TIME):text(before,"cursor_time"),origin=changed?initial.format(TIME):text(before,"initial_time");
-                repository.db().update("UPDATE oms_order_pull_config SET channel_name=?,source_key=?,seller_nick=?,enabled=?,auto_convert=?,review_mode=?,manual_match_review=?,allowed_trade_types=?,allow_public_stock=?,interval_seconds=?,initial_time=?,cursor_time=?,revision=revision+1,next_run_at=NOW(),last_error='' WHERE company_code=? AND channel_id=?",shop.get("channel_name"),source,seller,number(input,"enabled"),number(input,"auto_convert"),text(input,"review_mode"),number(input,"manual_match_review"),encode(allowedTypes),number(input,"allow_public_stock"),interval,origin,cursor,company,channel);
+                repository.db().update("UPDATE oms_order_pull_config SET channel_name=?,source_key=?,seller_nick=?,enabled=?,auto_convert=?,allowed_trade_types=?,allow_public_stock=?,interval_seconds=?,initial_time=?,cursor_time=?,revision=revision+1,next_run_at=NOW(),last_error='' WHERE company_code=? AND channel_id=?",shop.get("channel_name"),source,seller,number(input,"enabled"),number(input,"auto_convert"),encode(allowedTypes),number(input,"allow_public_stock"),interval,origin,cursor,company,channel);
             }
             return null;
         });

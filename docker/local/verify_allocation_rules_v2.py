@@ -19,7 +19,7 @@ def api(path,credential,payload=None,post=False):
         assert result.returncode==0,'Local test receive API unavailable';reply=json.loads(result.stdout);assert reply['code']==200,reply.get('msg');return reply
     return business_api(path,credential,payload,post)
 
-def prepare_case(case, credential, approve=True):
+def prepare_case(case, credential, approve=True, before_conversion=None, order_quantity=10, require_reserved=True):
     goods_db, channel_db, order_db = 'qm_oms_saas_commodity', 'qm_oms_saas_channel', 'qm_oms_saas_order'
     if not sql('SELECT id FROM goods_sku_sn_info WHERE UPPER(company_code)=\'QM\' AND sku_sn=' + quote(case['sku']), goods_db):
         sample = api('/goods/info/list?pageNum=1&pageSize=1', credential, {}, post=True)['rows'][0]
@@ -67,9 +67,10 @@ def prepare_case(case, credential, approve=True):
         case['initial_stock'] = stock(case)
         assert case['initial_stock']['company'][0]['total'] == 10
         save(MANIFEST, case)
+    if before_conversion is not None:before_conversion(case,credential)
     platform = sql(f"SELECT id FROM oms_platform_order WHERE company_code='QM' AND channel_id={channel} AND platform_tid={quote(case['platform_tid'])}", order_db)
     if not platform:
-        trade = {'tid': case['platform_tid'], 'status': 'WAIT_SELLER_SEND_GOODS', 'type': 'fixed', 'seller_nick': case['seller'], 'created': case['created'], 'modified': case['created'], 'payment': '10.00', 'receiver_name': '多虚拟仓验收收件人', 'receiver_mobile': 'TEST-MASKED', 'receiver_state': '北京市', 'receiver_city': '北京市', 'receiver_district': '验收测试区', 'receiver_address': '验收测试地址，无实际配送', 'orders': {'order': [{'oid': case['platform_oid'], 'outer_sku_id': case['sku'], 'num': 10, 'payment': '10.00', 'title': '[验收测试] 分仓策略、上限与预览', 'sku_properties_name': '验收:同一SKU跨虚拟仓'}]}}
+        trade = {'tid': case['platform_tid'], 'status': 'WAIT_SELLER_SEND_GOODS', 'type': 'fixed', 'seller_nick': case['seller'], 'created': case['created'], 'modified': case['created'], 'payment': '10.00', 'receiver_name': '多虚拟仓验收收件人', 'receiver_mobile': 'TEST-MASKED', 'receiver_state': '北京市', 'receiver_city': '北京市', 'receiver_district': '验收测试区', 'receiver_address': '验收测试地址，无实际配送', 'orders': {'order': [{'oid': case['platform_oid'], 'outer_sku_id': case['sku'], 'num': order_quantity, 'payment': '10.00', 'title': '[验收测试] 分仓策略、上限与预览', 'sku_properties_name': '验收:同一SKU跨虚拟仓'}]}}
         payload = json.dumps({'trade_fullinfo_get_response': {'trade': trade}}, ensure_ascii=False)
         digest = hashlib.sha256(payload.encode()).hexdigest()
         sql(f"INSERT INTO oms_platform_order(company_code,channel_id,platform_tid,platform_status,trade_type,seller_nick,platform_created,platform_modified,source_modified,payload_hash,raw_payload,conversion_status) VALUES ('QM',{channel},{quote(case['platform_tid'])},'WAIT_SELLER_SEND_GOODS','fixed',{quote(case['seller'])},{quote(case['created'])},{quote(case['created'])},{quote(case['created'])},{quote(digest)},{quote(payload)},'WAITING')", order_db)
@@ -83,7 +84,7 @@ def prepare_case(case, credential, approve=True):
     current = wait_for(lambda: api(platform_path, credential)['data'], lambda p: p.get('business_order_id') is not None, 'Conversion did not complete')
     case['order_id'] = current['business_order_id']
     order_path = '/order/orders/business/' + str(case['order_id'])
-    business = wait_for(lambda: api(order_path, credential)['data'], lambda b: b['inventory_status'] == 'RESERVED' or case.get('completed'), 'Logical reservation did not complete')
+    business = wait_for(lambda: api(order_path, credential)['data'], lambda b: not require_reserved or b['inventory_status'] == 'RESERVED' or case.get('completed'), 'Logical reservation did not complete')
     case['order_sn'] = business['order_sn']
     if approve and business['review_status'] != 'APPROVED':
         response = api('/order/orders/business/approve-batch', credential, {'orders': [{'id': business['id'], 'control_version': business['control_version']}], 'reason': '分仓规则迭代验收'})['data']

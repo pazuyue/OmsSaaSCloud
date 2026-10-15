@@ -117,11 +117,6 @@ String tid=text(row,"tid"),payload=text(row,"jdp_response"),fingerprint,block;tr
         long reserved=0,quantity=0;for(Map<String,Object> line:lines){Map<String,Object> inventory=byOid.get(text(line,"platform_oid"));require(inventory!=null,"库存服务返回的订单明细不完整");require(number(inventory,"reserved_quantity")==0||number(inventory,"reserved_quantity")==number(line,"quantity"),"库存服务返回的预占数量无效");quantity+=number(line,"quantity");reserved+=number(inventory,"reserved_quantity");}
         String state=reserved==quantity?"RESERVED":reserved==0?"WAIT_RESERVE":"PART_RESERVED";long orderId;
         if(platform.get("business_order_id")==null){orderId=insert("INSERT INTO oms_order(company_code,order_sn,channel_id,platform_order_id,platform_tid,inventory_status,payment,receiver_name,receiver_phone,receiver_address,oaid) VALUES (?,?,?,?,?,?,?,?,?,?,?)",company,"SO"+token(),channel,id,platform.get("platform_tid"),state,platform.get("payment"),platform.get("receiver_name"),platform.get("receiver_phone"),platform.get("receiver_address"),platform.get("oaid"));
-            boolean manualMatch=lines.stream().anyMatch(line->!text(line,"manual_sku_sn").isEmpty());
-            String policy=manualMatch&&number(config,"manual_match_review")==1?"MANUAL_MATCH":text(config,"review_mode");
-            boolean approved="AUTO".equals(policy);String reason=approved?"按店铺设置自动审核通过":"MANUAL_MATCH".equals(policy)?"人工匹配商品，等待人工审核":"店铺配置为人工审核";
-            jdbc.update("UPDATE oms_order SET review_status=?,review_policy=?,review_by=?,review_at=IF(?=1,NOW(),NULL),review_reason=? WHERE company_code=? AND id=?",approved?"APPROVED":"PENDING",policy,approved?"系统":"",approved?1:0,reason,company,orderId);
-            log(company,id,approved?"REVIEW_AUTO":"REVIEW_PENDING",approved?"SUCCESS":"PENDING",reason,"订单任务");
             for(Map<String,Object> line:lines){Map<String,Object> inventory=byOid.get(text(line,"platform_oid"));jdbc.update("INSERT INTO oms_order_line(company_code,order_id,platform_oid,sku_sn,goods_name,quantity,payment,reserved_quantity,inventory_reason) VALUES (?,?,?,?,?,?,?,?,?)",company,orderId,line.get("platform_oid"),line.get("sku_sn"),line.get("title"),line.get("quantity"),line.get("payment"),inventory.get("reserved_quantity"),inventory.get("reason"));}
             jdbc.update("UPDATE oms_platform_order SET business_order_id=?,conversion_status='SUCCESS',conversion_error='',exception_code='',exception_details=NULL,exception_line_count=0,system_failures=0 WHERE id=?",orderId,id);log(company,id,"CONVERT","SUCCESS","已生成业务订单；逻辑预占状态："+("RESERVED".equals(state)?"逻辑预占完成":"PART_RESERVED".equals(state)?"部分逻辑预占":"待逻辑预占"),"订单任务");
         }else{orderId=number(platform,"business_order_id");jdbc.update("UPDATE oms_order SET inventory_status=? WHERE company_code=? AND id=?",state,company,orderId);
@@ -132,6 +127,7 @@ String tid=text(row,"tid"),payload=text(row,"jdp_response"),fingerprint,block;tr
         jdbc.update("UPDATE oms_order SET stock_attempt_status='DONE',stock_error='',stock_attempt_at=COALESCE(stock_attempt_at,NOW()),reserved_at=IF(?='RESERVED',COALESCE(reserved_at,NOW()),reserved_at) WHERE company_code=? AND id=?",state,company,orderId);
         jdbc.update("UPDATE oms_platform_order SET next_retry_at=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=?",id);
         long oldReserved=existing?lines.stream().mapToLong(line->number(line,"reserved_quantity")).sum():-1;
+        if(!existing||oldReserved!=reserved)OrderAutoReviewService.evaluate(this,company,orderId,false,"系统审单");
         if(oldReserved!=reserved)autoAllocationChanged(company,orderId,"逻辑预占更新");
     }
 }

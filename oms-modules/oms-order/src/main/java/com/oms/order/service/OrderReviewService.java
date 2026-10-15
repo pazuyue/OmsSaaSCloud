@@ -32,8 +32,10 @@ public class OrderReviewService {
                 order.putAll(platform);result.put("order_sn",order.get("order_sn"));String message;
                 if("approve".equals(action)){
                     require("PENDING".equals(text(order,"review_status")),"订单已审核，无需重复审核");String block=OrderReviewPolicy.systemBlock(order);require(block.isEmpty(),block);
-                    message=reason.isEmpty()?"人工审核通过":reason;
-                    repository.db().update("UPDATE oms_order SET review_status='APPROVED',review_by=?,review_at=NOW(),review_reason=?,control_version=control_version+1 WHERE company_code=? AND id=?",actor,message,company,id);
+                    require(!reason.isEmpty(),"请填写人工审核说明，原命中条件将保留");message=reason;
+                    repository.db().update("UPDATE oms_order SET review_status='APPROVED',review_decision='HUMAN_APPROVED',review_by=?,review_at=NOW(),review_reason=?,control_version=control_version+1 WHERE company_code=? AND id=?",actor,message,company,id);
+                    Map<String,Object> evidence=new LinkedHashMap<>();evidence.put("note",reason);evidence.put("previous_decision",order.get("review_decision"));if(order.get("review_snapshot")!=null)try{evidence.put("original_assessment",JSON.readValue(text(order,"review_snapshot"),Map.class));}catch(Exception e){evidence.put("original_assessment_error","原依据不可读，已保留原始记录");}
+                    repository.db().update("INSERT INTO oms_order_review_event(company_code,order_id,action,decision,assessment,operator_name) VALUES (?,?,'HUMAN_APPROVE','HUMAN_APPROVED',?,?)",company,id,encode(evidence),actor);
                 }else if("hold".equals(action)){
                     require(number(order,"manual_hold")==0,"订单已人工挂起");message=reason;
                     repository.db().update("UPDATE oms_order SET manual_hold=1,hold_reason=?,hold_by=?,hold_at=NOW(),control_version=control_version+1,stock_attempt_status=IF(stock_attempt_status='QUEUED','DONE',stock_attempt_status) WHERE company_code=? AND id=?",reason,actor,company,id);
@@ -43,6 +45,7 @@ public class OrderReviewService {
                     repository.db().update("UPDATE oms_order SET manual_hold=0,hold_reason='',hold_by='',hold_at=NULL,control_version=control_version+1 WHERE company_code=? AND id=?",company,id);
                     repository.db().update("UPDATE oms_platform_order SET next_retry_at=NOW() WHERE company_code=? AND id=?",company,order.get("platform_order_id"));
                 }
+                if("resume".equals(action))OrderAutoReviewService.evaluate(repository,company,id,false,"解除挂起后审单");
                 if(!"hold".equals(action))repository.autoAllocationChanged(company,id,"approve".equals(action)?"审核通过":"解除人工挂起");
                 repository.log(company,number(order,"platform_order_id"),"approve".equals(action)?"REVIEW_APPROVE":"hold".equals(action)?"ORDER_HOLD":"ORDER_RESUME","SUCCESS",message,actor);return null;
             });result.put("success",true);result.put("message","approve".equals(action)?"审核通过，原挂起状态保留":"hold".equals(action)?"已挂起，保留需求和已预占库存":"已解除人工挂起，审核结果保留");}

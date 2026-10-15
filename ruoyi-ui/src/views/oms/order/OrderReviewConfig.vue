@@ -1,0 +1,54 @@
+<template>
+  <el-dialog title="店铺审单规则" :visible.sync="visible" width="min(1040px, 96vw)" top="5vh" append-to-body :close-on-click-modal="false">
+    <div v-loading="loading" class="review-layout">
+      <div class="shop-summary"><div><strong>{{ shop.channel_name }}</strong><span class="muted">渠道 ID：{{ shop.channel_id }}</span></div><el-tag size="small" type="info">{{ revision ? '规则 v' + revision : '尚未配置' }}</el-tag></div>
+      <template v-if="policy">
+        <section class="rule-section">
+          <div class="section-title"><span class="step">1</span><h3>选择审单方式</h3></div>
+          <el-radio-group v-model="policy.mode" class="option-grid" aria-label="审单方式">
+            <el-radio label="MANUAL" class="option"><span class="option-title">全部人工审核</span><span class="option-description">新订单进入待人工审核，由操作人员确认后通过。</span><span class="option-outcome neutral">结果：待人工审核</span></el-radio>
+            <el-radio label="AUTO" class="option"><span class="option-title">符合规则自动审核</span><span class="option-description">先识别需人工确认的订单，再检查库存条件。</span><span class="option-outcome positive">符合条件 → 自动审核通过</span></el-radio>
+          </el-radio-group>
+        </section>
+        <div v-if="policy.mode === 'MANUAL'" class="manual-notice"><i class="el-icon-info" /> 当前所有新订单均需人工审核。下方自动规则暂不生效，保存时保留原设置。</div>
+        <el-form :disabled="policy.mode !== 'AUTO'" class="conditions" :class="{ inactive: policy.mode !== 'AUTO' }">
+          <section class="rule-section">
+            <div class="section-title"><span class="step">2</span><h3>哪些订单需要人工确认</h3><el-tag size="mini" type="warning">任意一项命中，即转人工</el-tag></div>
+            <p class="section-description">未命中以下条件的订单，才会继续检查第 3 步的库存条件。</p>
+            <div class="condition-grid">
+              <div class="condition" :class="{ enabled: policy.manual_match_required }"><div class="condition-title"><strong>人工匹配过商品</strong><el-switch v-model="policy.manual_match_required" :active-value="1" :inactive-value="0" aria-label="人工匹配商品需复核" /></div><p class="muted">商品对应关系由人工指定，需要再次确认。</p><span class="condition-result">{{ policy.manual_match_required ? '命中后：待人工审核' : '未启用，不参与判定' }}</span></div>
+              <div class="condition" :class="{ enabled: policy.amount_enabled }"><div class="condition-title"><strong>实付金额较高</strong><el-switch v-model="policy.amount_enabled" :active-value="1" :inactive-value="0" aria-label="实付金额复核" /></div><div v-if="policy.amount_enabled" class="threshold">实付金额 ≥ <el-input-number v-model="policy.amount_threshold" :min="0.01" :max="999999999999.99" :precision="2" controls-position="right" placeholder="填写金额" aria-label="实付金额阈值" /> 元</div><p v-else class="muted">按整单实付金额设置人工复核门槛。</p><span class="condition-result">{{ policy.amount_enabled ? '达到该金额（含）即转人工' : '未启用，不参与判定' }}</span></div>
+              <div class="condition" :class="{ enabled: policy.quantity_enabled }"><div class="condition-title"><strong>商品总件数较多</strong><el-switch v-model="policy.quantity_enabled" :active-value="1" :inactive-value="0" aria-label="商品件数复核" /></div><div v-if="policy.quantity_enabled" class="threshold">商品总数 ≥ <el-input-number v-model="policy.quantity_threshold" :min="1" :max="1000000" :precision="0" controls-position="right" placeholder="填写件数" aria-label="总件数阈值" /> 件</div><p class="muted">统计整单商品件数，同 SKU 合并计数，不按明细行数。</p><span class="condition-result">{{ policy.quantity_enabled ? '达到该件数（含）即转人工' : '未启用，不参与判定' }}</span></div>
+              <div class="condition" :class="{ enabled: skuEnabled }"><div class="condition-title"><strong>包含指定商品</strong><el-switch v-model="skuEnabled" aria-label="指定SKU复核" /></div><el-select v-if="skuEnabled" v-model="policy.review_skus" multiple filterable allow-create default-first-option :multiple-limit="200" placeholder="输入内部 SKU，按回车添加" aria-label="需要复核的SKU"><el-option v-for="sku in policy.review_skus" :key="sku" :label="sku" :value="sku" /></el-select><p class="muted">{{ skuEnabled ? '最多 200 个 SKU，任意一个命中即转人工。' : '指定需要人工确认的商品，默认不限制。' }}</p><span class="condition-result">{{ skuEnabled ? '已选择 ' + policy.review_skus.length + ' 个 SKU' : '未启用，不参与判定' }}</span></div>
+            </div>
+          </section>
+          <section class="rule-section stock-section">
+            <div class="section-title"><span class="step">3</span><h3>库存不足时如何处理</h3><span class="muted">仅适用于未命中人工复核条件的订单</span></div>
+            <el-radio-group v-model="policy.stock_condition" class="option-grid" aria-label="库存审核条件">
+              <el-radio label="ANY" class="option"><span class="option-title">库存不足也允许自动审核</span><span class="option-description">不要求整单完成逻辑预占。审核通过后，分仓环节再等待库存。</span><span class="option-outcome positive">库存不足 → 仍可自动审核通过</span></el-radio>
+              <el-radio label="FULL_RESERVED" class="option"><span class="option-title">库存满足后才自动审核</span><span class="option-description">要求整单完成逻辑预占。补货预占成功后，自动重新判定。</span><span class="option-outcome waiting">库存不足 → 待库存满足</span></el-radio>
+            </el-radio-group>
+            <div class="stock-explanation"><i class="el-icon-info" /><span>这里的“库存满足”指整单逻辑预占完成，渠道锁库与允许的公共库存补占均计入。此项与“允许部分分仓”独立配置。</span></div>
+          </section>
+        </el-form>
+        <div class="effective-summary"><div><strong>当前生效方式</strong><p v-if="policy.mode === 'MANUAL'">全部新订单 → 待人工审核</p><p v-else>基础校验通过 → {{ manualCount ? '命中 ' + manualCount + ' 项已启用条件中的任一项，转人工；未命中则' : '无人工复核条件，直接' }}{{ policy.stock_condition === 'FULL_RESERVED' ? '等待整单逻辑预占完成后自动通过' : '自动通过，不等待库存' }}。</p></div><el-tag :type="policy.mode === 'AUTO' ? 'success' : 'info'" size="small">{{ policy.mode === 'AUTO' ? '自动审核' : '人工审核' }}</el-tag></div>
+        <p class="boundary"><i class="el-icon-lock" /> 平台阻断、关键交易信息变化及库存台账异常始终拦截自动审核。已审核订单不因修改规则被自动重审。</p>
+      </template>
+    </div>
+    <span slot="footer"><el-button :disabled="saving" @click="visible=false">取消</el-button><el-button type="primary" :loading="saving" :disabled="loading || !policy" @click="save">保存审单规则</el-button></span>
+  </el-dialog>
+</template>
+<script>
+import { reviewConfig, saveReviewConfig } from '@/api/order'
+export default {
+  data() { return { visible: false, loading: false, saving: false, shop: {}, policy: null, originalPolicy: null, skuEnabled: false, revision: 0 } },
+  computed: { manualCount() { return this.policy ? Number(this.policy.manual_match_required) + Number(this.policy.amount_enabled) + Number(this.policy.quantity_enabled) + Number(this.skuEnabled) : 0 } },
+  methods: {
+    async open(shop) { this.shop = shop; this.policy = null; this.visible = true; this.loading = true; try { const r = (await reviewConfig(shop.channel_id)).data; this.revision = r.revision; this.originalPolicy = { ...r.policy, review_skus: [...r.policy.review_skus] }; this.policy = { ...r.policy, amount_threshold: Number(r.policy.amount_threshold) || undefined, quantity_threshold: Number(r.policy.quantity_threshold) || undefined, review_skus: [...r.policy.review_skus] }; this.skuEnabled = this.policy.review_skus.length > 0 } finally { this.loading = false } },
+    async save() { if (this.saving || !this.policy) return; let policy = { ...this.originalPolicy, mode: 'MANUAL' }; if (this.policy.mode === 'AUTO') { if (this.policy.amount_enabled && !(Number(this.policy.amount_threshold) > 0)) return this.$message.warning('请填写大于 0 的实付金额阈值'); if (this.policy.quantity_enabled && !(Number(this.policy.quantity_threshold) >= 1)) return this.$message.warning('请填写至少 1 件的商品件数阈值'); if (this.skuEnabled && !this.policy.review_skus.length) return this.$message.warning('请至少添加一个需要复核的内部 SKU'); policy = { ...this.policy, amount_threshold: this.policy.amount_threshold || 0, quantity_threshold: this.policy.quantity_threshold || 0, review_skus: this.skuEnabled ? this.policy.review_skus : [] } } this.saving = true; try { await saveReviewConfig({ channel_id: this.shop.channel_id, revision: this.revision, policy }); this.visible = false; this.$message.success('审单规则已保存'); this.$emit('changed') } finally { this.saving = false } }
+  }
+}
+</script>
+<style scoped>
+.review-layout{max-height:calc(100vh - 235px);overflow-y:auto;padding-right:8px;color:#344256}.shop-summary{display:flex;align-items:center;justify-content:space-between;padding:0 0 18px;border-bottom:1px solid #edf0f5}.shop-summary strong{font-size:15px}.shop-summary .muted{margin-left:14px}.rule-section{padding-top:20px}.section-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.section-title h3{font-size:15px;margin:0;color:#25364b}.step{display:inline-flex;justify-content:center;align-items:center;width:23px;height:23px;border-radius:50%;background:#eaf3ff;color:#0066d6;font-size:12px;font-weight:600}.section-description{font-size:12px;color:#78869b;margin:-4px 0 12px 33px}.option-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.option{margin:0!important;border:1px solid #dde5ef;border-radius:8px;padding:16px;display:flex;align-items:flex-start;white-space:normal;box-sizing:border-box;min-width:0}.option.is-checked{border-color:#2583ef;background:#f4f9ff}.option ::v-deep .el-radio__input{margin-top:3px}.option ::v-deep .el-radio__label{padding-left:10px;min-width:0;line-height:1.6}.option-title{display:block;font-size:14px;font-weight:600;color:#263950}.option-description{display:block;font-size:12px;color:#78869b;line-height:1.7;margin-top:6px}.option-outcome{display:inline-block;font-size:12px;margin-top:10px;padding:3px 8px;border-radius:4px}.neutral{background:#edf1f6;color:#68798e}.positive{background:#eaf6f0;color:#26815b}.waiting{background:#fff3df;color:#a46b0b}.condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.condition{border:1px solid #e5eaf1;border-radius:8px;padding:14px 16px;min-width:0}.condition.enabled{background:#fbfcff}.condition-title{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:13px}.muted{font-size:12px;line-height:1.7;color:#78869b}.condition .muted{margin:10px 0 6px}.condition-result{font-size:12px;color:#8995a7}.threshold{display:flex;align-items:center;gap:8px;margin:12px 0 8px;font-size:12px;flex-wrap:wrap}.threshold .el-input-number{width:150px}.condition .el-select{width:100%;margin-top:12px}.stock-explanation{display:flex;align-items:flex-start;gap:8px;margin-top:12px;font-size:12px;line-height:1.7;color:#78869b}.stock-explanation i{margin-top:4px}.effective-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#f1f6fd;border:1px solid #e2ebf7;border-radius:8px;padding:14px 16px;margin-top:20px;font-size:13px}.effective-summary p{margin:7px 0 0;line-height:1.8}.boundary{font-size:12px;line-height:1.7;color:#78869b;margin:14px 0 0}.manual-notice{margin-top:16px;background:#f5f7fa;border-radius:6px;padding:12px;font-size:12px;color:#68798e}.inactive{opacity:.65}@media(max-width:720px){.option-grid,.condition-grid{grid-template-columns:1fr}.shop-summary .muted{display:block;margin-left:0}}
+</style>
