@@ -1,15 +1,16 @@
 <template>
   <section class="ticket-summary">
     <div class="heading"><strong>单据进度</strong><el-tag type="info">{{ document.modeLabel }}</el-tag><el-tag :type="color">{{ document.progressLabel }}</el-tag><span>{{ document.executionLabel }} · {{ document.postingLabel }}</span></div>
+    <el-alert v-if="Number(document.sharedPendingCount)>0" :title="`仓库已回传 ${document.sharedPendingQuantity} 件待核对；未分配部分未入账，不计入下方已确认实收。`" type="warning" show-icon :closable="false"/>
     <p :class="{ warning: document.receiptMissing || document.progress === 'ATTENTION' }">{{ document.nextAction }}</p>
     <div v-if="document.ticketType === 2 && document.progress !== 'CANCELED'" class="outbound-progress"><div class="muted">实际出库进度 · {{ document.numberActually }} / {{ document.numberExpected }} 件</div><el-progress :percentage="outboundPercent" :status="document.progress === 'COMPLETE' ? 'success' : document.progress === 'ATTENTION' ? 'exception' : undefined" :stroke-width="8" /></div>
-    <el-steps v-if="document.ticketType !== 2 && document.progress !== 'CANCELED'" :active="Number(document.step)" :process-status="document.progress === 'ATTENTION' ? 'error' : 'process'" finish-status="success" simple>
+    <el-steps v-if="document.ticketType !== 2 && !['CANCELED','CLOSED'].includes(document.progress)" :active="Number(document.step)" :process-status="document.progress === 'ATTENTION' ? 'error' : 'process'" finish-status="success" simple>
       <template v-if="document.actualWarehouse === 1"><el-step title="下发" /><el-step title="仓库受理" /><el-step :title="document.ticketType === 2 ? '出库' : '收货'" /><el-step :title="document.ticketType === 2 ? '扣账' : '入账'" /></template>
       <template v-else><el-step :title="document.ticketType === 2 ? '虚拟出库' : '自动收货'" /><el-step :title="document.ticketType === 2 ? '扣账' : '入账'" /></template>
     </el-steps>
     <div class="quantities"><div v-for="item in metrics" :key="item[0]"><span>{{ item[1] }}</span><strong>{{ document[item[0]] }}</strong></div></div>
     <p v-if="document.errorStage" class="warning">异常环节：{{ document.errorStage }} · 最近更新 {{ parseTime(document.businessUpdatedTime) }}<br>{{ document.lastError || (document.errorStage === '库存入账' ? '请在实际收货批次中查看每条失败原因。' : document.nextAction) }}</p>
-    <p v-if="document.cancelBlockedReason && !['COMPLETE', 'CANCELED'].includes(document.progress)" class="muted">{{ document.cancelBlockedReason }}</p>
+    <p v-if="document.cancelBlockedReason && !['COMPLETE', 'CANCELED', 'CLOSED'].includes(document.progress)" class="muted">{{ document.cancelBlockedReason }}</p>
   </section>
 </template>
 <script>
@@ -17,8 +18,8 @@ export default {
   props: { document: { type: Object, required: true } },
   computed: {
     outboundPercent() { return this.document.numberExpected > 0 ? Math.min(100, Math.round(this.document.numberActually * 100 / this.document.numberExpected)) : 0 },
-    color() { return { COMPLETE: 'success', ATTENTION: 'danger', CANCELED: 'info', PROCESSING: '' }[this.document.progress] },
-    metrics() { if (this.document.ticketType === 2) return [['numberExpected', '计划数量'], ['numberActually', '实际出库'], ['numberPosted', '已扣账'], ['remainingQuantity', '待出库']]; const m = [['numberExpected', '计划数量'], ['numberActually', '实收数量'], ['numberPosted', '已入账'], ['numberPending', '待入账']]; if (this.document.receiptFinal) m.push(['shortQuantity', '最终短收']); return m }
+    color() { return { COMPLETE: 'success', ATTENTION: 'danger', CANCELED: 'info', CLOSED: 'info', PROCESSING: '' }[this.document.progress] },
+    metrics() { if (this.document.ticketType === 2) return [['numberExpected', '计划数量'], ['numberActually', '实际出库'], ['numberPosted', '已扣账'], ['remainingQuantity', '待出库']]; const m = [['numberExpected', '计划数量'], ['numberActually', '实收数量'], ['numberPosted', '已入账'], ['numberPending', '待入账']]; if (this.document.cancelledQuantity) m.push(['cancelledQuantity', '已截停'], ['remainingQuantity', '待收货']); else if (this.document.receiptFinal) m.push(['shortQuantity', '最终短收']); return m }
   }
 }
 </script>

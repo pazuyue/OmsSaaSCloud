@@ -1,0 +1,38 @@
+{
+  "case_id": "20261017204001",
+  "order_sn": "SOe5a7ec23d6d94944bc1736f217c9a868",
+  "order_id": 60,
+  "channel_id": 55,
+  "platform_tid": "99420261017204001",
+  "refunds": [
+    {
+      "id": 1,
+      "refund_sn": "TKb7d3ce465da7470680308f8aa5a5e84c",
+      "refund_id": "9982026101720400101",
+      "goods_state": "DONE",
+      "funds_state": "NONE",
+      "state": "PROCESSING"
+    },
+    {
+      "id": 2,
+      "refund_sn": "TKd6e70d8509394025adc749eea4b636c2",
+      "refund_id": "9982026101720400102",
+      "goods_state": "WAIT_ACTION",
+      "funds_state": "SUCCESS",
+      "state": "PROCESSING"
+    }
+  ],
+  "manual_task": 1,
+  "missing_id": "9982026101720400199",
+  "missing_result": "NOT_FOUND",
+  "replay_task": 2,
+  "log_ids": [
+    4132,
+    4131
+  ],
+  "stock_unchanged": true,
+  "independent_cursor_unchanged": true,
+  "real_platform_refund_called": false,
+  "goods_still_pending": true,
+  "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=2"
+}

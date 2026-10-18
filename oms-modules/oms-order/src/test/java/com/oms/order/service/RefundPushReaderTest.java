@@ -1,0 +1,15 @@
+package com.oms.order.service;
+import org.junit.jupiter.api.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
+import java.util.*;
+import static com.oms.order.service.RefundValues.*;
+import static com.oms.order.service.OrderValues.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+class RefundPushReaderTest {
+    @Test void refundCursorUsesStableTimestampAndFullIdAndNeverCrossesSeller(){String url=System.getenv("ORDER_TEST_URL");Assumptions.assumeTrue(url!=null&&url.contains("/order_workspace_test?"));JdbcTemplate db=OrderTestDatabase.jdbc(url);db.execute("CREATE TABLE IF NOT EXISTS jdp_tb_refund(refund_id DECIMAL(20,0) PRIMARY KEY,tid DECIMAL(20,0),oid DECIMAL(20,0),status VARCHAR(64),seller_nick VARCHAR(200),created DATETIME,modified DATETIME,jdp_modified DATETIME,jdp_response MEDIUMTEXT,KEY idx_seller_time(seller_nick,jdp_modified,refund_id))");TmallPushReader.Source s=new TmallPushReader.Source();s.setJdbcUrl(url);s.setUsername("root");s.setPassword(System.getenv("INVENTORY_TEST_PASSWORD"));s.setRevision(1);PushSourceService sources=mock(PushSourceService.class);when(sources.resolve("VERIFY","fixture")).thenReturn(s);ConfiguredPushReader reader=new ConfiguredPushReader();ReflectionTestUtils.setField(reader,"sources",sources);
+        try{for(String id:Arrays.asList("9007199254740992","9007199254740993","18446744073709551614"))db.update("INSERT INTO jdp_tb_refund(refund_id,tid,oid,seller_nick,jdp_modified,jdp_response) VALUES (?,1,2,'__REFUND_READER__','2026-10-01 00:00:00','payload')",id);db.update("INSERT INTO jdp_tb_refund(refund_id,tid,oid,seller_nick,jdp_modified,jdp_response) VALUES (9007199254740994,1,2,'__OTHER_REFUND_READER__','2026-10-01 00:00:00','payload')");Map<String,Object> task=m("mode","MANUAL","start_time","2026-10-01 00:00:00","end_time","2026-10-02 00:00:00","page_time","2026-10-01 00:00:00","page_refund_id","9007199254740992");List<Map<String,Object>> page=reader.readRefund("VERIFY","fixture","__REFUND_READER__",task,1);assertEquals(1,page.size());assertEquals("9007199254740993",page.get(0).get("refund_id"));task.put("page_refund_id",page.get(0).get("refund_id"));page=reader.readRefund("VERIFY","fixture","__REFUND_READER__",task,50);assertEquals(1,page.size());assertEquals("18446744073709551614",page.get(0).get("refund_id"));task.put("mode","IDS");task.put("selected_ids",Arrays.asList("9007199254740993","9007199254740994"));task.put("start_time","2000-01-01 00:00:00");task.put("end_time","2000-01-01 00:00:00");page=reader.readRefund("VERIFY","fixture","__REFUND_READER__",task,50);assertEquals(1,page.size());assertEquals("9007199254740993",page.get(0).get("refund_id"));assertEquals(4,db.queryForObject("SELECT COUNT(*) FROM jdp_tb_refund WHERE seller_nick IN ('__REFUND_READER__','__OTHER_REFUND_READER__')",Integer.class));}
+        finally{reader.close();db.update("DELETE FROM jdp_tb_refund WHERE seller_nick IN ('__REFUND_READER__','__OTHER_REFUND_READER__')");}
+    }
+}

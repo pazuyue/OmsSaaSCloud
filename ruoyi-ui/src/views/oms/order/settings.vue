@@ -36,7 +36,7 @@
       <el-tab-pane label="快递资料" name="carriers" lazy><order-carrier-settings v-if="tab === 'carriers'" kind="catalog" /></el-tab-pane>
       <el-tab-pane label="快递规则" name="carrier-rules" lazy><order-carrier-settings v-if="tab === 'carrier-rules'" kind="rules" /></el-tab-pane>
     </el-tabs>
-    <p v-if="!loading && !conversions.length" class="hint">暂无已接入店铺，请先在<router-link to="/oms-order/management">拉单管理</router-link>完成店铺接入。</p>
+    <p v-if="!loading && !conversions.length" class="hint">暂无已接入店铺，请先在<router-link to="/oms-order/management">订单与售后接入</router-link>完成店铺接入。</p>
     <order-review-config ref="review" @changed="load" />
     <order-conversion-config ref="conversion" @changed="load" />
     <order-allocation-config ref="allocation" @changed="load" />
@@ -65,7 +65,7 @@ export default {
       const key = `${this.tab}:${id}`; if (this.handledKey === key) return; this.handledKey = key;
       this.$refs.conversion.visible = false; this.$refs.allocation.visible = false; this.$refs.review.visible = false;
       const row = (this.tab === 'review' ? this.reviews : this.tab === 'allocation' ? this.allocations : this.conversions).find(s => String(s.channel_id) === String(id));
-      if (row) this.$nextTick(() => this.$refs[this.tab].open(row)); else this.$message.warning('该店铺尚未接入，请先在拉单管理完成店铺接入');
+      if (row) this.$nextTick(() => this.$refs[this.tab].open(row)); else this.$message.warning('该店铺尚未接入，请先在订单与售后接入完成店铺接入');
     }
   }
 }

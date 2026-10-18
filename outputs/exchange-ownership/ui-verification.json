@@ -1,0 +1,9 @@
+{
+  "source_visible": true,
+  "exchange_shipments_visible": true,
+  "root_after_sales_records_visible": true,
+  "immutable_before_lines_visible": true,
+  "return_batches_visible": true,
+  "exchange_ledger_owner_visible": true,
+  "page_errors": []
+}

@@ -63,7 +63,7 @@ class OrderProcessorTest {
         Map<String,Object> order=new HashMap<>();order.put("business_order_id",9L);order.put("platform_tid","12345");order.put("channel_id",1L);order.put("processing_payload","invalid payload must not be reparsed");when(repository.snapshot("VERIFY",1,"lease")).thenReturn(order);
         org.springframework.jdbc.core.JdbcTemplate jdbc=mock(org.springframework.jdbc.core.JdbcTemplate.class);when(repository.db()).thenReturn(jdbc);
         Map<String,Object> line=new HashMap<>();line.put("platform_oid","123451");line.put("sku_sn","MATCHED");line.put("quantity",20);
-        when(jdbc.query(anyString(),eq(OrderValues.ROW),eq("VERIFY"),eq(9L))).thenReturn(Arrays.asList(line));when(inventory.execute(anyString(),anyString(),any(),anyString())).thenReturn(R.ok(Collections.emptyList()));
+        when(jdbc.query(contains("FROM oms_order_line"),eq(OrderValues.ROW),eq("VERIFY"),eq(9L))).thenReturn(Arrays.asList(line));when(inventory.execute(anyString(),anyString(),any(),anyString())).thenReturn(R.ok(Collections.emptyList()));
         Map<String,Object> config=new HashMap<>();config.put("allow_public_stock",1);processor.process("VERIFY",1,"lease",config,false);
         verify(inventory).execute(eq("reserve"),eq("VERIFY"),argThat(c->c.isAllowPublicStock()&&c.getLines().size()==1&&"MATCHED".equals(c.getLines().get(0).getSkuSn())),anyString());
         verifyNoInteractions(catalog);verify(inventory,never()).execute(eq("register"),anyString(),any(),anyString());verify(repository).complete(eq("VERIFY"),eq(1L),eq("lease"),eq(config),anyList());

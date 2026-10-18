@@ -22,6 +22,7 @@ public final class OrderValues {
     public static void require(boolean valid,String message){if(!valid)throw new IllegalArgumentException(message);}
     public static String text(Map<String,?> row,String key){Object value=row.get(key);return value==null?"":String.valueOf(value);}
     public static long number(Map<String,?> row,String key){String value=text(row,key);return value.isEmpty()?0:Long.parseLong(value);}
+    public static String stockReference(Map<String,?> row){String reference=text(row,"stock_reference");return reference.isEmpty()?text(row,"platform_tid"):reference;}
     public static String company(String value){require(value!=null&&value.matches("[A-Za-z0-9_-]{1,50}"),"公司编码无效");return value.toUpperCase(Locale.ROOT);}
     public static String encode(Object value){try{return JSON.writeValueAsString(value);}catch(Exception e){throw new IllegalArgumentException("订单数据无法编码",e);}}
     public static List<String> strings(Object value){try{return JSON.readValue(String.valueOf(value),new TypeReference<List<String>>(){});}catch(Exception e){throw new IllegalArgumentException("库存范围配置无效",e);}}

@@ -1,0 +1,172 @@
+{
+  "kind": "goods-refund",
+  "case_id": "202610161139002",
+  "created": "2026-10-16 11:39:00",
+  "sku": "UPD_202610161139002",
+  "channel_name": "[订单更新验收] goods-refund 202610161139002",
+  "seller": "UPDATE_202610161139002",
+  "platform_tid": "994202610161139002",
+  "platform_oid": "99420261016113900201",
+  "warehouses": [
+    {
+      "code": "UPD_V1_202610161139002",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 81
+    },
+    {
+      "code": "UPD_V2_202610161139002",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 82
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 46,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "UPD_202610161139002",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "UPD_202610161139002",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "UPD_V1_202610161139002",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "UPD_V2_202610161139002",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 106,
+        "store": "UPD_V1_202610161139002",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 107,
+        "store": "UPD_V2_202610161139002",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 133,
+  "order_id": 49,
+  "order_sn": "SO09c6fcabf50342fdb768290ca8bea2fb",
+  "seeded": true,
+  "source_bound": true,
+  "stock_before_update": {
+    "company": [
+      {
+        "sku": "UPD_202610161139002",
+        "total": 10,
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "version": 4
+      }
+    ],
+    "channel": [
+      {
+        "sku": "UPD_202610161139002",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 10,
+        "quota": 10,
+        "quota_reserved": 10,
+        "version": 4
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "UPD_V1_202610161139002",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "UPD_V2_202610161139002",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 106,
+        "store": "UPD_V1_202610161139002",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 107,
+        "store": "UPD_V2_202610161139002",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [
+      {
+        "id": 67,
+        "quantity": 10,
+        "reserved": 10,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 44,
+        "quantity": 10,
+        "outbound": 0,
+        "reserved": 1
+      }
+    ],
+    "allocation": []
+  },
+  "pull_task_id": 182,
+  "pulled": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=49"
+}

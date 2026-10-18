@@ -1,0 +1,94 @@
+{
+  "case_id": "20261017204001",
+  "created": "2026-10-17 20:40:01",
+  "sku": "EXCH_REFUND_20261017204001_A",
+  "target_sku": "EXCH_REFUND_20261017204001_B",
+  "channel_name": "[仅退款验收] 退差价与拒收 20261017204001",
+  "seller": "EXCH_REFUND_20261017204001",
+  "platform_tid": "99420261017204001",
+  "platform_oid": "9942026101720400101",
+  "warehouses": [
+    {
+      "code": "EXCH_REFUND_20261017204001_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 91
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 55,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_REFUND_20261017204001_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_REFUND_20261017204001_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_REFUND_20261017204001_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 136,
+        "store": "EXCH_REFUND_20261017204001_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 144,
+  "order_id": 60,
+  "order_sn": "SOe5a7ec23d6d94944bc1736f217c9a868",
+  "prepared": true,
+  "original_shipped": true,
+  "original_shipment_id": 62,
+  "refunds": [
+    {
+      "id": 1,
+      "refund_sn": "TKb7d3ce465da7470680308f8aa5a5e84c",
+      "refund_id": "9982026101720400101",
+      "goods_state": "DONE",
+      "funds_state": "NONE",
+      "state": "PROCESSING"
+    },
+    {
+      "id": 2,
+      "refund_sn": "TKd6e70d8509394025adc749eea4b636c2",
+      "refund_id": "9982026101720400102",
+      "goods_state": "WAIT_ACTION",
+      "funds_state": "SUCCESS",
+      "state": "PROCESSING"
+    }
+  ]
+}

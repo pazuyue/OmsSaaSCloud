@@ -1,0 +1,18 @@
+{
+  "stock_before": 0,
+  "refund_sn": "TKd6e70d8509394025adc749eea4b636c2",
+  "plan_id": 1,
+  "original_return_sn": "THK180A5F2F85C304097D083B29D3CB53",
+  "partial": true,
+  "scan_validation": "one-off existing paused job; switch retained",
+  "late": true,
+  "goods_state": "WAIT_CHECK",
+  "latest_return_sn": "THKA24A35F77F22A206117583457CCB0D",
+  "received": 3,
+  "posted": 3,
+  "pending_review": 1,
+  "remaining": 7,
+  "stock_after": 3,
+  "real_platform_writes": false,
+  "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=2"
+}

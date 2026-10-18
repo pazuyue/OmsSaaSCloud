@@ -1,0 +1,31 @@
+{
+  "parcel_sn": "RPKdf842b9dd3394a2b8abb0b29b6de7dad",
+  "waybill": "TEST_SHARED_20261018095428",
+  "refunds": [
+    {
+      "id": 3,
+      "refund_sn": "TK592b07ae94014831b7eb1e83062dde29",
+      "state": "COMPLETED",
+      "goods_state": "DONE",
+      "funds_state": "SUCCESS"
+    },
+    {
+      "id": 4,
+      "refund_sn": "TKf44db7d8fc864c81a042fd01e00ad6fb",
+      "state": "PROCESSING",
+      "goods_state": "DONE",
+      "funds_state": "NONE"
+    },
+    {
+      "id": 5,
+      "refund_sn": "TK105950380f714ccdb71321599acec54b",
+      "state": "PROCESSING",
+      "goods_state": "WAIT_CHECK",
+      "funds_state": "NONE"
+    }
+  ],
+  "stock_added": 3,
+  "unallocated_quantity": 1,
+  "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=5",
+  "real_platform_writes": false
+}

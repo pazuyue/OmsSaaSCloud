@@ -9,3 +9,9 @@ export const removeSupplier = id => request({ url: `${root}/supplier/${id}`, met
 export const previewImport = file => { const data = new FormData(); data.append('file', file); return request({ url: root + '/importPreview', method: 'post', data, timeout: 120000 }) }
 
 export const receiptBatches = (id, params) => request({ url: `${root}/ticket/${id}/batches`, params })
+export const cutoffReport = (kind, id) => request({ url: `${root}/${kind}/${id}/cutoff` })
+export const requestCutoff = (kind, id, data) => request({ url: `${root}/${kind}/${id}/cutoff`, method: 'post', data })
+export const retryCutoff = (kind, id, data) => request({ url: `${root}/${kind}/${id}/cutoff/retry`, method: 'post', data })
+export const confirmCutoff = (id, data) => request({ url: `${root}/cutoff/items/${id}/confirm`, method: 'post', data })
+export const inboundReview = id => request({ url: `${root}/inbound-reviews/${id}` })
+export const decideInboundReview = (id, data) => request({ url: `${root}/inbound-reviews/${id}`, method: 'post', data })

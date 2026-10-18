@@ -2,13 +2,13 @@
   <el-drawer title="发货单详情" :visible.sync="visible" size="min(1180px, 94vw)" append-to-body @opened="drawerReady = true; focusReviewIfReady()" @closed="drawerReady = false">
     <div v-loading="loading" class="shipment-detail">
       <template v-if="detail">
-        <div class="identity"><strong>{{ detail.shipment_sn }}</strong><el-tag :type="tone(detail.status)">{{ label(detail.status, detail.outbound_mode) }}</el-tag></div>
+        <div class="identity"><platform-log-link :number="detail.shipment_sn" number-type="SHIPMENT" /><strong>{{ detail.shipment_sn }}</strong><el-tag :type="tone(detail.status)">{{ label(detail.status, detail.outbound_mode) }}</el-tag></div>
         <el-alert v-if="Number(detail.receipt_review_pending_count) > 0" title="仓库回传被拒绝，待人工核对；本次回传尚未扣账，包裹尚未接纳。" type="warning" :closable="false" show-icon><el-button type="text" @click="showReviews">处理回传异常</el-button></el-alert>
         <el-alert v-else-if="detail.receipt_review_lookup_failed" title="回传核对状态读取失败，请查看下方仓库回传核对区域并重试。" type="warning" :closable="false" show-icon />
         <el-alert v-if="nextAction" :title="nextAction" type="info" :closable="false" show-icon />
-        <el-button v-if="detail.shipment_sn.startsWith('XS')" v-hasPermi="['warehouse:tickets:list']" type="text" @click="$router.push({ path: '/oms-supplychain/wmsTickets', query: { documentType: 'SALE_OUT', noSn: detail.shipment_sn }}); visible = false">查看销售出库单及明细</el-button>
+        <el-button v-if="detail.shipment_sn.startsWith('XS')" v-hasPermi="['warehouse:tickets:list']" type="text" @click="$router.push({ path: '/oms-supplychain/wmsTickets', query: { documentType: detail.business_type === 'EXCHANGE' ? 'EXCHANGE_OUT' : 'SALE_OUT', noSn: detail.shipment_sn }}); visible = false">查看出库单及明细</el-button>
         <el-alert v-if="detail.fulfillment_block && !['VOIDING', 'VOIDED', 'SHIPPED'].includes(detail.status)" :title="detail.fulfillment_block" type="warning" :closable="false" show-icon />
-        <div class="platform-summary"><strong>平台发货回传</strong><platform-shipping-status :row="detail" @open="$refs.platformShipping.open($event)" /></div>
+        <el-alert v-if="detail.business_type === 'EXCHANGE'" :title="'归属换货单：' + detail.business_owner_sn" description="换出物流从所属换货单回传，原 SO 用于追溯原交易。" type="info" :closable="false" /><div v-if="detail.business_type !== 'EXCHANGE'" class="platform-summary"><strong>平台发货回传</strong><platform-shipping-status :row="detail" @open="$refs.platformShipping.open($event)" /></div>
         <div class="parcel-context">虚拟仓 {{ detail.store_code || '—' }} · {{ detail.real_store_name || detail.real_store_code }} · OMS {{ detail.order_sn }} · 平台 {{ detail.platform_tid }}</div>
         <shipment-package-cards :detail="detail"><el-button v-if="detail.can_register_package" slot="actions" v-hasPermi="['order:shipment:package']" type="primary" size="small" @click="$refs.packageRegister.open(detail.id)">登记运单</el-button></shipment-package-cards>
         <el-collapse class="detail-information"><el-collapse-item title="订单、仓库与收货信息" name="info">
@@ -39,22 +39,24 @@
           <el-table-column label="平台子单号" prop="platform_oid" min-width="180" />
           <el-table-column label="虚拟仓 / 库存批次" min-width="150"><template slot-scope="s">{{ s.row.store_code }}<div class="hint">批次 {{ s.row.batch_id }}</div></template></el-table-column>
           <el-table-column label="单据数量" prop="quantity" width="100" />
-          <el-table-column label="已发货" prop="shipped_quantity" width="90" />
+          <el-table-column label="已发货" prop="shipped_quantity" width="90" /><el-table-column label="已截停" prop="cancelled_quantity" width="90" />
           <el-table-column label="占用来源" min-width="155"><template slot-scope="s">{{ s.row.source_type === 'LOCK' ? '继承渠道锁库' : '公共库存转占用' }}<div class="hint">分仓回执 {{ s.row.allocation_id }}</div></template></el-table-column>
         </el-table>
         <shipment-outbound-history ref="outboundHistory" :detail="detail" @changed="changed" />
         <el-table v-if="detail.logs && detail.logs.length" :data="detail.logs" class="summary"><el-table-column label="操作时间" prop="create_time" width="170" /><el-table-column label="操作人" prop="operator_name" width="130" /><el-table-column label="结果" width="90"><template slot-scope="s">{{ s.row.result === 'SUCCESS' ? '成功' : s.row.result === 'FAILED' ? '失败' : '待处理' }}</template></el-table-column><el-table-column label="处理记录" prop="message" min-width="280" /></el-table>
-        <div class="footer"><el-button v-if="detail.can_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" type="primary" @click="$refs.virtualOutbound.open([detail])">虚拟出库</el-button><el-button v-if="detail.can_retry_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'RETRY')">重试虚拟出库</el-button><el-button v-if="detail.can_query_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'QUERY')">核对出库</el-button><el-button v-if="detail.can_dispatch" v-hasPermi="['order:shipment:dispatch']" type="primary" @click="$refs.dispatch.open([detail])">{{ detail.wms_dispatch_state === 'FAILED' ? '重试下发' : '下发仓库' }}</el-button><el-button v-if="detail.can_query_warehouse" v-hasPermi="['order:shipment:queryWarehouse']" @click="$refs.dispatch.open([detail], 'QUERY')">核对仓库结果</el-button><el-button v-if="detail.wms_dispatch_state && detail.wms_dispatch_state !== 'NONE'" v-hasPermi="['warehouse:wms:log']" @click="$refs.wmsLogs.open(detail.shipment_sn)">仓库交互日志</el-button><template v-if="detail.can_match_carrier"><el-button v-if="detail.status === 'WAIT_CARRIER'" v-hasPermi="['order:shipment:carrier']" type="primary" @click="$refs.carrier.open([detail])">匹配快递</el-button><el-button v-hasPermi="['order:shipment:carrier']" @click="$refs.carrier.open([detail], 'MANUAL')">{{ detail.carrier_code ? '调整快递' : '手工选择' }}</el-button></template><el-button @click="openOrder">查看来源订单</el-button><el-button @click="open(detail.id)">刷新详情</el-button><el-button @click="visible=false">关闭</el-button></div>
+        <div class="footer"><el-button v-if="detail.status !== 'VOIDED' && Number(detail.quantity) > Number(detail.shipped_quantity || 0) + Number(detail.cancelled_quantity || 0)" v-hasPermi="['order:order:cutoff']" @click="$refs.cutoff.open(detail.order_id, detail)">截单 / 撤回</el-button><el-button v-if="detail.can_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" type="primary" @click="$refs.virtualOutbound.open([detail])">虚拟出库</el-button><el-button v-if="detail.can_retry_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'RETRY')">重试虚拟出库</el-button><el-button v-if="detail.can_query_virtual_outbound" v-hasPermi="['order:shipment:virtualOutbound']" @click="$refs.virtualOutbound.open([detail], 'QUERY')">核对出库</el-button><el-button v-if="detail.can_dispatch" v-hasPermi="['order:shipment:dispatch']" type="primary" @click="$refs.dispatch.open([detail])">{{ detail.wms_dispatch_state === 'FAILED' ? '重试下发' : '下发仓库' }}</el-button><el-button v-if="detail.wms_dispatch_state === 'PENDING'" v-hasPermi="['order:shipment:dispatch']" type="primary" :disabled="loading" @click="continueDispatch">执行待下发任务</el-button><el-button v-if="detail.can_query_warehouse" v-hasPermi="['order:shipment:queryWarehouse']" @click="$refs.dispatch.open([detail], 'QUERY')">核对仓库结果</el-button><el-button v-if="detail.wms_dispatch_state && detail.wms_dispatch_state !== 'NONE'" v-hasPermi="['warehouse:wms:log']" @click="$refs.wmsLogs.open(detail.shipment_sn)">仓库交互日志</el-button><template v-if="detail.can_match_carrier"><el-button v-if="detail.status === 'WAIT_CARRIER'" v-hasPermi="['order:shipment:carrier']" type="primary" @click="$refs.carrier.open([detail])">匹配快递</el-button><el-button v-hasPermi="['order:shipment:carrier']" @click="$refs.carrier.open([detail], 'MANUAL')">{{ detail.carrier_code ? '调整快递' : '手工选择' }}</el-button></template><el-button @click="openOrder">查看来源订单</el-button><el-button @click="open(detail.id)">刷新详情</el-button><el-button @click="visible=false">关闭</el-button></div>
       </template>
       <el-empty v-else-if="!loading" description="详情加载失败，请重试" />
     </div>
-    <platform-shipping-dialog ref="platformShipping" @changed="changed" /><shipment-package-dialog ref="packageRegister" @changed="changed" /><shipment-carrier-dialog ref="carrier" @changed="changed" /><shipment-dispatch-dialog ref="dispatch" @changed="changed" @open-detail="open($event)" /><shipment-virtual-outbound-dialog ref="virtualOutbound" @changed="changed" /><wms-logs ref="wmsLogs" />
+    <order-cutoff-dialog ref="cutoff" @changed="changed" @open-review="open($event, true)" /><platform-shipping-dialog ref="platformShipping" @changed="changed" /><shipment-package-dialog ref="packageRegister" @changed="changed" /><shipment-carrier-dialog ref="carrier" @changed="changed" /><shipment-dispatch-dialog ref="dispatch" @changed="changed" @open-detail="open($event)" /><shipment-virtual-outbound-dialog ref="virtualOutbound" @changed="changed" /><wms-logs ref="wmsLogs" />
   </el-drawer>
 </template>
 <script>
-import { shipmentDetail } from '@/api/order'
+import PlatformLogLink from '@/views/oms/channel/PlatformLogLink'
+import { shipmentDetail, continueShipmentDispatch } from '@/api/order'
 import { shipmentLabel, shipmentTone } from './shipmentLabels'
 import ShipmentCarrierDialog from './ShipmentCarrierDialog'
+import OrderCutoffDialog from './OrderCutoffDialog'
 import ShipmentDispatchDialog from './ShipmentDispatchDialog'
 import ShipmentDispatchStatus from './ShipmentDispatchStatus'
 import ShipmentVirtualOutboundDialog from './ShipmentVirtualOutboundDialog'
@@ -65,7 +67,7 @@ import ShipmentPackageDialog from './ShipmentPackageDialog'
 import PlatformShippingStatus from './PlatformShippingStatus'
 import PlatformShippingDialog from './PlatformShippingDialog'
 export default {
-  components: { PlatformShippingStatus, PlatformShippingDialog, ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory, ShipmentPackageCards, ShipmentPackageDialog },
+  components: { PlatformLogLink, OrderCutoffDialog, PlatformShippingStatus, PlatformShippingDialog, ShipmentCarrierDialog, ShipmentDispatchDialog, ShipmentDispatchStatus, ShipmentVirtualOutboundDialog, WmsLogs, ShipmentOutboundHistory, ShipmentPackageCards, ShipmentPackageDialog },
   data() { return { visible: false, loading: false, detail: null, requestId: 0, drawerReady: false, focusReviews: false } },
   computed: {
     nextAction() {
@@ -88,6 +90,7 @@ export default {
     }
   },
   methods: {
+    async continueDispatch() { await this.$confirm('确认执行这张发货单的原下发任务？商品、快递和仓库以已提交的快照为准。', '执行待下发任务', { type: 'warning' }); this.loading = true; try { await continueShipmentDispatch(this.detail.id, { control_version: this.detail.control_version }); await this.changed() } finally { this.loading = false } },
     label: shipmentLabel, tone: shipmentTone,
     changed() { this.$emit('changed'); this.open(this.detail.id) },
     showReviews() { this.$nextTick(() => { if (this.$refs.outboundHistory) this.$refs.outboundHistory.showReviews() }) },

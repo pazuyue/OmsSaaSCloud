@@ -3,6 +3,8 @@ from configure_order import column
 from local_db import execute
 
 def install_order(database):
+    from configure_order_updates import install as updates
+    updates(database)
     from configure_order_review import install as install_review
     install_review(database)
     from local_db import HERE
@@ -13,6 +15,8 @@ def install_order(database):
     install_issues(database)
     from configure_order_warehouse import install_order as install_warehouse_order
     install_warehouse_order(database)
+    from configure_order_cutoff import install_order as cutoff
+    cutoff(database)
     for name, definition in {
         'review_mode': "VARCHAR(12) NOT NULL DEFAULT 'AUTO' COMMENT '新业务订单审单方式 AUTO/MANUAL'",
         'manual_match_review': "TINYINT NOT NULL DEFAULT 1 COMMENT '人工匹配商品的新订单需要人工审单'",
@@ -43,8 +47,15 @@ def install_order(database):
     for table, name, fields in [('oms_order', 'idx_order_void', 'company_code,channel_id,status,id'), ('oms_order', 'idx_order_review', 'company_code,review_status,id'), ('oms_order', 'idx_business_stock', 'company_code,inventory_status,create_time'), ('oms_order_line', 'idx_business_sku', 'company_code,sku_sn,order_id')]:
         if execute(f"SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='{table}' AND index_name='{name}'", database).strip()=='0':
             execute(f'ALTER TABLE {table} ADD INDEX {name}({fields})', database)
+    from configure_exchanges import install_order as exchange
+    exchange(database)
+    from configure_refunds import install_order as refund
+    refund(database)
+
 
 def install_inventory(database):
+    from configure_order_cutoff import install_inventory as cutoff
+    cutoff(database)
     from configure_order_issues import install_inventory as install_issues
     install_issues(database)
     execute("ALTER TABLE oms_order_stock_source MODIFY reserved TINYINT NOT NULL DEFAULT 0 COMMENT '1当前已预占，0已释放；保留来源记录'", database)
@@ -52,6 +63,10 @@ def install_inventory(database):
     column(database, 'oms_order_stock_demand', 'reason_code', "VARCHAR(40) NOT NULL DEFAULT '' COMMENT '预占等待原因 PUBLIC_DISABLED/SHORTAGE/BALANCE_MISMATCH'")
 
 def install_permissions():
+    from configure_order_updates import permissions as update_permissions
+    update_permissions()
+    from configure_exchanges import permissions as exchange_permissions
+    exchange_permissions()
     from seed_business import ensure_menu
     parents=execute("SELECT menu_id FROM sys_menu WHERE path='business' AND component='oms/order/index' ORDER BY menu_id LIMIT 1").strip()
     if not parents: raise RuntimeError('Business order menu missing')

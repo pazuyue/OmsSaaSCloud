@@ -35,7 +35,24 @@ class SimulatorTest(unittest.TestCase):
         self.assertEqual(1,len(set(ids)))
     def test_entry_order_queries_work_without_receipts(self):
         body=self.create.replace('deliveryOrder','entryOrder').replace('XS_FIXTURE','CG_FIXTURE');query=self.query.replace('XS_FIXTURE','CG_FIXTURE');external=self.call('entryorder.create',body).findtext('entryOrderId');self.assertTrue(external.startswith('SIMIN_'));self.assertEqual(external,self.call('entryorder.query',query).findtext('entryOrderId'));self.assertEqual('ACCEPT',self.call('entryorder.query',query).findtext('status'))
+    def test_entry_query_uses_application_entry_fields_and_preserves_partial_state(self):
+        body=self.create.replace('deliveryOrder','entryOrder').replace('XS_FIXTURE','CG_FIXTURE');external=self.call('entryorder.create',body).findtext('entryOrderId')
+        query=self.query.replace('XS_FIXTURE','CG_FIXTURE').replace('orderCode','entryOrderCode').replace('</request>','<entryOrderId>'+external+'</entryOrderId></request>')
+        with closing(sqlite3.connect(self.db)) as db,db:db.execute("UPDATE documents SET status='PARTFULFILLED' WHERE kind='entry' AND sn='CG_FIXTURE'")
+        self.assertEqual('PARTFULFILLED',self.call('entryorder.query',query).findtext('status'));self.assertEqual(external,self.call('entryorder.query',query).findtext('entryOrderId'))
+        self.assertEqual('IDENTITY_MISMATCH',self.call('entryorder.query',query.replace(external,'WRONG')).findtext('code'))
     def test_invalid_quantities_and_entities_are_rejected(self):
         for body in [self.create.replace('<planQty>3','<planQty>0'),self.create.replace('<planQty>3','<planQty>1.5'),'<!DOCTYPE request [<!ENTITY x "test">]>'+self.create]:self.assertEqual('failure',self.call('deliveryorder.create',body).findtext('flag'))
+    def test_exchange_return_has_independent_identity_and_preserves_completed_query_status(self):
+        root=ET.fromstring(self.create.replace('deliveryOrder','returnOrder').replace('XS_FIXTURE','THX_FIXTURE'))
+        for line in root.findall('orderLines/orderLine'):
+            batch=line.find('batchCode')
+            if batch is not None:line.remove(batch)
+        external=self.call('returnorder.create',ET.tostring(root,encoding='unicode')).findtext('returnOrderId')
+        query=self.query.replace('XS_FIXTURE','THX_FIXTURE').replace('orderCode','returnOrderCode').replace('</request>','<returnOrderId>'+external+'</returnOrderId></request>')
+        self.assertEqual('ACCEPT',self.call('returnorder.query',query).findtext('status'))
+        with closing(sqlite3.connect(self.db)) as db,db:db.execute("UPDATE documents SET status='FULFILLED' WHERE kind='return' AND sn='THX_FIXTURE'")
+        self.assertEqual('FULFILLED',self.call('returnorder.query',query).findtext('status'))
+        self.assertEqual('IDENTITY_MISMATCH',self.call('returnorder.query',query.replace(external,'WRONG')).findtext('code'))
 
 if __name__=='__main__':unittest.main()

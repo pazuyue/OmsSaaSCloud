@@ -1,0 +1,4 @@
+{
+  "return_sn": "THXEC6F7EFE113D9F9743C1E6BFD1CCA5",
+  "body": "<request><returnOrder><returnOrderCode>THXEC6F7EFE113D9F9743C1E6BFD1CCA5</returnOrderCode><returnOrderId>SIMIN_1890b1b459644845866f</returnOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><outBizCode>TEST_RETURN_12</outBizCode><orderType>HHRK</orderType><confirmType>0</confirmType></returnOrder><orderLines><orderLine><orderLineNo>1</orderLineNo><itemCode>EXCH_NEGO_20261017092112_A</itemCode><ownerCode>VC00001</ownerCode><actualQty>2</actualQty><inventoryType>ZP</inventoryType><batchCode>TEST_RETURN_12</batchCode></orderLine></orderLines></request>"
+}

@@ -1,0 +1,79 @@
+{
+  "case_id": "20261017223725",
+  "created": "2026-10-17 22:37:25",
+  "sku": "EXCH_PLATFORM_20261017223725_A",
+  "target_sku": "EXCH_PLATFORM_20261017223725_B",
+  "channel_name": "[平台换货验收] 来源、转单与阻断 20261017223725",
+  "seller": "EXCH_PLATFORM_20261017223725",
+  "platform_tid": "99420261017223725",
+  "platform_oid": "9942026101722372501",
+  "warehouses": [
+    {
+      "code": "EXCH_PLATFORM_20261017223725_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 92
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 57,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_PLATFORM_20261017223725_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_PLATFORM_20261017223725_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_PLATFORM_20261017223725_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 137,
+        "store": "EXCH_PLATFORM_20261017223725_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 145,
+  "order_id": 61,
+  "order_sn": "SOb28157aa28b14d27a4041c4a3f065efd",
+  "prepared": true,
+  "authorized": true,
+  "source_task": 3708,
+  "manual_verified": true,
+  "update_verified": true,
+  "auto_verified": true
+}

@@ -1,0 +1,89 @@
+{
+  "case_id": "20261016215701",
+  "created": "2026-10-16 21:57:01",
+  "sku": "EXCH_BEFORE_20261016215701_A",
+  "target_sku": "EXCH_BEFORE_20261016215701_B",
+  "channel_name": "[换货归属验收] before 20261016215701",
+  "seller": "EXCH_BEFORE_20261016215701",
+  "platform_tid": "99420261016215701",
+  "platform_oid": "9942026101621570101",
+  "warehouses": [
+    {
+      "code": "EXCH_BEFORE_20261016215701_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 86
+    }
+  ],
+  "claims": [
+    {
+      "id": 8,
+      "source_line_id": 67,
+      "exchange_sn": "HHIb6f1b1a8179963d907b9e4bfd5c002b6",
+      "fulfillment_line_id": 68
+    },
+    {
+      "id": 9,
+      "source_line_id": 68,
+      "exchange_sn": "HHI958da0d7e8c7a19c4aba631aaeb922ae",
+      "fulfillment_line_id": 69
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 50,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_BEFORE_20261016215701_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_BEFORE_20261016215701_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_BEFORE_20261016215701_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 118,
+        "store": "EXCH_BEFORE_20261016215701_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 139,
+  "order_id": 55,
+  "order_sn": "SO509539ba579a4967a6a13c35912cbaf4",
+  "prepared": true,
+  "target_ready": true,
+  "completed": true
+}

@@ -34,5 +34,5 @@ public interface WmsProtocol {
         public int sourceLineCount;
         public List<Line> lines=new ArrayList<>();
     }
-    class Line { public String sku,batch,owner;public int good,bad; }
+    class Line { public String sku,batch,owner;public String lineNo="";public int good,bad; }
 }

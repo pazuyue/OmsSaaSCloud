@@ -1,0 +1,18 @@
+{
+  "exact_number_and_lazy_payload": true,
+  "summary_matches_query": true,
+  "order_number_search": true,
+  "platform_number_search": true,
+  "standalone_menu_page": true,
+  "ui_exact_search": true,
+  "cancel_action_has_chinese_label": true,
+  "chain_and_current_progress_separated": true,
+  "payload_on_demand_and_search": true,
+  "open_source_shipment": true,
+  "compact_layout_without_page_overflow": true,
+  "shipment_shortcut_uses_center": true,
+  "inbound_source_document_opens": true,
+  "purchase_shortcut_uses_center": true,
+  "no_browser_errors_or_business_writes": true,
+  "original_logs_unchanged": true
+}

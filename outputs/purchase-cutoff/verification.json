@@ -1,0 +1,43 @@
+{
+  "cases": [
+    {
+      "kind": "local",
+      "receipt_id": 38,
+      "receipt_sn": "NO60c5368c3e61407dae4e4835fc9f71df",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=38"
+    },
+    {
+      "kind": "partial",
+      "receipt_id": 40,
+      "receipt_sn": "NO2476fab56b9c4fa0ac294e98e2a11620",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=40"
+    },
+    {
+      "kind": "manual",
+      "receipt_id": 41,
+      "receipt_sn": "NO5c06f10239834860b5084549724de226",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=41"
+    },
+    {
+      "kind": "late-review",
+      "receipt_id": 42,
+      "receipt_sn": "NO0496312b46004a0586ebf8fa25966188",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=42"
+    },
+    {
+      "kind": "terminate",
+      "receipt_id": 43,
+      "receipt_sn": "NO76f6670867e84bccaeda234f9cb5f8c8",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=43"
+    }
+  ],
+  "test_simulator_only": true,
+  "partial_stock_preserved": true,
+  "booking_not_released_before_confirmation": true,
+  "manual_and_late_review_retained": true,
+  "no_scheduler_changes": true,
+  "ui_submit_and_reject_verified": true,
+  "arrival_and_purchase_log_filters_verified": true,
+  "mock_partial_state_matches_receipt": true,
+  "browser_errors": []
+}

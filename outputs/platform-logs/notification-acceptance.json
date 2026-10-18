@@ -1,0 +1,23 @@
+{
+  "exchange_id": 15,
+  "exchange_sn": "HH8d5efa5ac5d443f3b4d0c8af76fdda93",
+  "dispute_id": "9992026101717551401",
+  "order_id": 59,
+  "order_sn": "SOc8e9b2ffbb274fcdb63dfaa0ceee27e6",
+  "platform_tid": "99420261017175514",
+  "channel_id": 54,
+  "return_sn": "THXD963C612E03470E1E786D73EDF7BFE",
+  "shipment_id": 61,
+  "shipment_sn": "XS3e28369be54446c78ca2500281bbbf96",
+  "waybill": "TEST-SF-XS3e28369be54446c78ca2500281bbbf96",
+  "platform_status": "13",
+  "state": "COMPLETED",
+  "simulation": true,
+  "real_platform_calls": false,
+  "platform_notification_log_id": 3534,
+  "consignment_calls": 1,
+  "stock_unchanged_by_notification": true,
+  "outbound_unchanged_by_notification": true,
+  "one_original_SO": true,
+  "browser_errors": []
+}

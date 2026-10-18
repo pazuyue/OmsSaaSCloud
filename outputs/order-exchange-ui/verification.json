@@ -1,0 +1,10 @@
+{
+  "original_sales_shipped": 10,
+  "replacement_lines": 3,
+  "distinct_A_B_A_lineage": true,
+  "pending_application_visible": true,
+  "exchange_filters_match": true,
+  "terminated_history_collapsed": true,
+  "list_drillthrough": true,
+  "page_errors": []
+}

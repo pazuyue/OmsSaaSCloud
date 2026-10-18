@@ -1,0 +1,87 @@
+{
+  "case_id": "20261016143919",
+  "created": "2026-10-16 14:39:19",
+  "sku": "EXCH_A_20261016143919",
+  "target_sku": "EXCH_B_20261016143919",
+  "channel_name": "[换货验收] 普通换货 20261016143919",
+  "seller": "EXCH_20261016143919",
+  "platform_tid": "99720261016143919",
+  "platform_oid": "9972026101614391901",
+  "dispute_id": "9982026101614391901",
+  "warehouses": [
+    {
+      "code": "EXCH_V_20261016143919",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 83
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 47,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_A_20261016143919",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_A_20261016143919",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_V_20261016143919",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 108,
+        "store": "EXCH_V_20261016143919",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 134,
+  "order_id": 50,
+  "order_sn": "SOe6e84fd4bfb84ff48158b39ea4f6afd2",
+  "prepared": true,
+  "original_shipment_id": 40,
+  "original_shipment_sn": "XS0df090c25a04441fb1edaf8885d2ce5e",
+  "target_ready": true,
+  "authorized": true,
+  "exchange_id": 1,
+  "return_sn": "THX180A5F2F85C304097D083B29D3CB53",
+  "return_replay_unchanged": true,
+  "replacement_order_id": 51,
+  "replacement_shipment_sn": "XSdd54279a02e44ddfa0488666d4199266",
+  "completed": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/exchanges?exchangeId=1",
+  "pending_exchange_id": 3,
+  "pending_exchange_sn": "HH83d9b59c96824b0f968e559339d5a7fe"
+}

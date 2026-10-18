@@ -14,7 +14,7 @@ def main():
         execute(f'CREATE TABLE IF NOT EXISTS {DB}.{table} LIKE qm_oms_saas_commodity.{table}')
     cache = Path.home() / '.cache/oms-local'
     test = Path('oms-modules/oms-goods-administration/src/test/java/com/oms/goods/GoodsWorkspaceTest.java')
-    shutil.copy2(ROOT / test, cache / 'source' / test)
+    shutil.copytree(ROOT/'oms-modules/oms-goods-administration/src',cache/'source/oms-modules/oms-goods-administration/src',dirs_exist_ok=True)
     env = dict(os.environ, GOODS_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{DB}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai', INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'], JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     command = [str(ROOT / 'docker/local/tools/apache-maven-3.9.9/bin/mvn'), '-B', '-f', str(cache / 'source/pom.xml'), '-Plocal-docker', '-Dmaven.repo.local=' + str(cache / 'm2'), '-pl', 'oms-modules/oms-goods-administration', '-Dtest=GoodsWorkspaceTest', 'test']
     with (ROOT / 'docker/local/logs/goods-workspace-tests.log').open('w') as log:

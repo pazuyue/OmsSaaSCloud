@@ -1,0 +1,24 @@
+{
+  "order_id": 55,
+  "order_sn": "SO509539ba579a4967a6a13c35912cbaf4",
+  "one_so": true,
+  "effective_A_quantities": [
+    8,
+    2
+  ],
+  "warehouse_sent": false,
+  "exchanges": [
+    {
+      "id": 8,
+      "source_line_id": 67,
+      "exchange_sn": "HHIb6f1b1a8179963d907b9e4bfd5c002b6",
+      "fulfillment_line_id": 68
+    },
+    {
+      "id": 9,
+      "source_line_id": 68,
+      "exchange_sn": "HHI958da0d7e8c7a19c4aba631aaeb922ae",
+      "fulfillment_line_id": 69
+    }
+  ]
+}

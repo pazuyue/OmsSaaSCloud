@@ -1,0 +1,43 @@
+{
+  "parcel_sn": "RPK91e9be904a7a425890103d89fed9be31",
+  "waybill": "TEST_APPEND_20261018113002",
+  "refunds": [
+    {
+      "id": 10,
+      "refund_sn": "TKf2f2c6b2f0224e8da5353451a985e4c0",
+      "platform_id": 10,
+      "plan_id": 9
+    },
+    {
+      "id": 11,
+      "refund_sn": "TK4afa5fa80322437fa32e9abf58a28908",
+      "platform_id": 11,
+      "plan_id": 10
+    },
+    {
+      "id": 12,
+      "refund_sn": "TKd5eb74ade1764c6ca68666e107e0cea3",
+      "platform_id": 12,
+      "plan_id": 11
+    },
+    {
+      "id": 13,
+      "refund_sn": "TKfbc7f923e18e4d6fbd5467e1fbe273e4",
+      "platform_id": 13,
+      "plan_id": 12
+    }
+  ],
+  "total_thks": 3,
+  "newly_appended_thks": 2,
+  "ui_config_saved": true,
+  "original_thk_unchanged": true,
+  "duplicate_dispatches": 0,
+  "late_logistics_auto_linked": true,
+  "shop_append_disabled_blocked": true,
+  "warehouse_append_disabled_blocked": true,
+  "after_receipt_new_scope_blocked": true,
+  "ambiguous_receipt": "WAIT_ALLOCATION",
+  "stock_added": 0,
+  "real_platform_writes": false,
+  "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=12"
+}

@@ -1,0 +1,14 @@
+{
+  "pending_id": 11,
+  "pending_sn": "HHI1635ddcbbf6009bc30dbc92cf6ae338b",
+  "expected_return": 2,
+  "accepted_return": 1,
+  "posted_return": 1,
+  "return_qc": "ISSUE",
+  "completed_id": 12,
+  "completed_sn": "HHI8b77c591234a091a063894fa359bb51c",
+  "original_sales_shipped": 10,
+  "source_selection_verified": true,
+  "no_platform_exchange_write": true,
+  "browser_page_errors": []
+}

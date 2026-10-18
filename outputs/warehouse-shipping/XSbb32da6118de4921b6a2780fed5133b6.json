@@ -1,0 +1,34 @@
+{
+  "shipment_id": 47,
+  "shipment_sn": "XSbb32da6118de4921b6a2780fed5133b6",
+  "order_id": 54,
+  "external_order": "SIMOUT_dc36893499694c25ad57",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 2,
+  "message_id": "SIM_COMPLETE_XSbb32da6118de4921b6a2780fed5133b6",
+  "package_code": "SIMPKG_XSbb32da6118de4921b6a2780fed5133b6",
+  "express_code": "TEST-SF-XSbb32da6118de4921b6a2780fed5133b6",
+  "outbound_time": "2026-10-16 21:56:07",
+  "plans": [
+    {
+      "id": 50,
+      "sku_sn": "EXCH_AFTER_20261016215117_B",
+      "quantity": 2,
+      "platform_oid": "9952026101621511701",
+      "store_code": "EXCH_AFTER_20261016215117_V",
+      "batch_code": "TEST_RETURN_5"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSbb32da6118de4921b6a2780fed5133b6</deliveryOrderCode><deliveryOrderId>SIMOUT_dc36893499694c25ad57</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSbb32da6118de4921b6a2780fed5133b6</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-16 21:56:07</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>50</orderLineNo><itemCode>EXCH_AFTER_20261016215117_B</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST_RETURN_5</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSbb32da6118de4921b6a2780fed5133b6</packageCode><expressCode>TEST-SF-XSbb32da6118de4921b6a2780fed5133b6</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>EXCH_AFTER_20261016215117_B</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSbb32da6118de4921b6a2780fed5133b6",
+    "quantity": 2,
+    "status": "SHIPPED",
+    "shipped_quantity": 2,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSbb32da6118de4921b6a2780fed5133b6",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "case_id": "20261017113223",
+  "created": "2026-10-17 11:32:23",
+  "sku": "EXCH_CUT_20261017113223_A",
+  "target_sku": "EXCH_CUT_20261017113223_B",
+  "channel_name": "[换货归属验收] cut 20261017113223",
+  "seller": "EXCH_CUT_20261017113223",
+  "platform_tid": "99420261017113223",
+  "platform_oid": "9942026101711322301",
+  "warehouses": [
+    {
+      "code": "EXCH_CUT_20261017113223_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 89
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 53,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_CUT_20261017113223_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_CUT_20261017113223_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_CUT_20261017113223_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 127,
+        "store": "EXCH_CUT_20261017113223_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 142,
+  "order_id": 58,
+  "order_sn": "SO7fdc7ec1fe484f75aa01adcc1c154e1c",
+  "prepared": true,
+  "target_ready": true,
+  "complete_id": 13,
+  "partial_complete": true,
+  "lifecycle_verified": true,
+  "pending_id": 14,
+  "pending_partial": true,
+  "verified": true,
+  "closed_exchange_id": 13,
+  "closed_exchange_sn": "HHI706d95d3d2a136f106b4274bb887dbac",
+  "pending_exchange_id": 14,
+  "pending_exchange_sn": "HHI3ea381f08e468d089f3c94b6c5bc4f4f"
+}

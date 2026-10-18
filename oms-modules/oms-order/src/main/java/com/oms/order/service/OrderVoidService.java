@@ -16,6 +16,7 @@ import static com.oms.order.service.OrderValues.*;
 public class OrderVoidService {
     @Resource private OrderRepository repository;
     @Resource private OrderStockClient inventory;
+    @Resource private OrderCutoffService cutoff;
     private TransactionTemplate tx(){return new TransactionTemplate(new DataSourceTransactionManager(repository.db().getDataSource()));}
     public List<Map<String,Object>> request(String company,Map<String,Object> body,String actor){
         Object input=body.get("orders");require(input instanceof List&&!((List<?>)input).isEmpty()&&((List<?>)input).size()<=100,"每次请选择1至100张订单");
@@ -25,7 +26,10 @@ public class OrderVoidService {
         for(Object value:(List<?>)input){require(value instanceof Map,"订单参数无效");Map<String,Object> row=(Map<String,Object>)value;require(number(row,"id")>0&&row.containsKey("control_version")&&number(row,"control_version")>=0,"请刷新订单后操作");require(unique.add(number(row,"id")),"不能重复选择同一订单");requests.add(row);}
         List<Map<String,Object>> results=new ArrayList<>();
         for(Map<String,Object> request:requests){long id=number(request,"id");Map<String,Object> result=new LinkedHashMap<>();result.put("id",id);
-            try{tx().execute(transaction->{
+            try{
+                if(cutoff!=null){Map<String,Object> state=new OrderBusinessServiceSnapshot(repository).get(company,id);if(number(state,"shipped")>0)throw new IllegalArgumentException("已有实际出库，不能整单作废；请使用截单终止剩余履约");
+                    if(number(state,"warehouse_tasks")>0||OrderFulfillmentLines.revised(repository,company,id)){Map<String,Object> cutoffBody=new LinkedHashMap<>();cutoffBody.put("mode","TERMINATE");cutoffBody.put("reason",reason);cutoffBody.put("control_version",request.get("control_version"));cutoff.request(company,id,cutoffBody,actor);repository.db().update("UPDATE oms_order SET void_reason=?,void_by=?,void_requested_at=NOW() WHERE company_code=? AND id=?",reason,actor,company,id);result.put("submitted",true);result.put("status","CUTTING");result.put("message","已申请作废，先核实仓库截停，再确认库存释放");result.put("order_sn",state.get("order_sn"));results.add(result);continue;}}
+                tx().execute(transaction->{
                 List<Map<String,Object>> initial=repository.db().query("SELECT channel_id,platform_order_id FROM oms_order WHERE company_code=? AND id=?",ROW,company,id);require(initial.size()==1,"业务订单不存在或无权访问");
                 List<Map<String,Object>> configs=repository.db().query("SELECT lease_until FROM oms_order_pull_config WHERE company_code=? AND channel_id=? FOR UPDATE",ROW,company,initial.get(0).get("channel_id"));require(configs.size()==1,"店铺配置不存在");
                 require(configs.get(0).get("lease_until")==null||time(text(configs.get(0),"lease_until")).isBefore(LocalDateTime.now()),"店铺任务正在执行，请稍后刷新再作废");
@@ -55,7 +59,7 @@ public class OrderVoidService {
         Map<String,Object> order=tx().execute(transaction->{repository.fence(company,channel,lease);List<Map<String,Object>> found=repository.db().query("SELECT * FROM oms_order WHERE company_code=? AND channel_id=? AND id=? AND status='VOIDING' FOR UPDATE",ROW,company,channel,id);return found.isEmpty()?null:found.get(0);});
         if(order==null)return;
         try{
-            OrderStockCommand command=new OrderStockCommand();command.setChannelId(channel);command.setPlatformTid(text(order,"platform_tid"));
+            OrderStockCommand command=new OrderStockCommand();command.setChannelId(channel);command.setPlatformTid(stockReference(order));
             List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity FROM oms_order_line WHERE company_code=? AND order_id=? ORDER BY id",ROW,company,id);require(!lines.isEmpty(),"业务订单明细缺失，不能确认库存已释放");
             for(Map<String,Object> line:lines){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));command.getLines().add(item);}
             List<Map<String,Object>> released=data(inventory.execute("cancel",company,command,SecurityConstants.INNER));

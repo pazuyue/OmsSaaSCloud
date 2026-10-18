@@ -1,0 +1,49 @@
+{
+  "order_id": 54,
+  "order_sn": "SO0787e25a21694c7ea16087caa8f1a4ee",
+  "one_so": true,
+  "sale_outbound": 10,
+  "exchanges": [
+    {
+      "id": 4,
+      "target": "EXCH_AFTER_20261016215117_B",
+      "source_shipment_id": 44,
+      "source_shipment_line_id": 47,
+      "exchange_sn": "HHf93fcf742217480eb8f916681d31a892",
+      "shipment_id": 45,
+      "shipment_sn": "XS5355da54e9204d4eb6479383f42412f7",
+      "shipment_line_id": 48,
+      "fulfillment_line_id": 64,
+      "return_sn": "THX7610DF58F260D3DB57B668E7269F02",
+      "completed": true
+    },
+    {
+      "id": 5,
+      "target": "EXCH_AFTER_20261016215117_A",
+      "source_shipment_id": 45,
+      "source_shipment_line_id": 48,
+      "exchange_sn": "HHd74a87f5e4fb4ab08b58be8d8c7a3542",
+      "shipment_id": 46,
+      "shipment_sn": "XS0e8478cb98c145368467ff069a4af59d",
+      "shipment_line_id": 49,
+      "fulfillment_line_id": 65,
+      "return_sn": "THX1E800E4A6A197E404AD9C8EC69F1B6",
+      "completed": true
+    },
+    {
+      "id": 6,
+      "target": "EXCH_AFTER_20261016215117_B",
+      "source_shipment_id": 46,
+      "source_shipment_line_id": 49,
+      "exchange_sn": "HH38ecf937d20d4dad811df217a9cf68e7",
+      "shipment_id": 47,
+      "shipment_sn": "XSbb32da6118de4921b6a2780fed5133b6",
+      "shipment_line_id": 50,
+      "fulfillment_line_id": 66,
+      "return_sn": "THX05B1A31F11656A8F576364B86FFAA6",
+      "completed": true
+    }
+  ],
+  "A_source_identity_distinct": true,
+  "overclaim_rejected": true
+}

@@ -19,7 +19,7 @@ public class OrderShipmentReceiptReviewService {
     /** Batch projection only: a rejected callback never changes fulfillment or stock here. */
     public void attach(String company,List<Map<String,Object>> shipments){
         List<Map<String,Object>> applicable=new ArrayList<>();
-        for(Map<String,Object> row:shipments){row.put("receipt_review_pending_count",0L);row.put("receipt_review_lookup_failed",false);if(Boolean.TRUE.equals(row.get("can_reconcile_receipts")))applicable.add(row);}
+        for(Map<String,Object> row:shipments){row.put("receipt_review_pending_count",0L);row.put("receipt_review_lookup_failed",false);if(Boolean.TRUE.equals(row.get("can_reconcile_receipts"))||"CANCELED".equals(text(row,"wms_dispatch_state")))applicable.add(row);}
         for(int start=0;start<applicable.size();start+=100){
             List<Map<String,Object>> batch=applicable.subList(start,Math.min(start+100,applicable.size()));
             List<Long> ids=new ArrayList<>();for(Map<String,Object> row:batch)ids.add(number(row,"id"));
@@ -30,7 +30,7 @@ public class OrderShipmentReceiptReviewService {
     public void attachOrders(String company,List<Map<String,Object>> orders){
         if(orders.isEmpty())return;
         List<Object> args=new ArrayList<>();args.add(company);for(Map<String,Object> row:orders)args.add(row.get("id"));
-        List<Map<String,Object>> shipments=repository.db().query("SELECT s.id,s.order_id,s.shipment_sn FROM oms_order_shipment s JOIN oms_order_shipment_dispatch d ON d.company_code=s.company_code AND d.shipment_id=s.id WHERE s.company_code=? AND s.order_id IN ("+String.join(",",Collections.nCopies(orders.size(),"?"))+") AND d.state NOT IN ('NONE','CANCELED')",ROW,args.toArray());
+        List<Map<String,Object>> shipments=repository.db().query("SELECT s.id,s.order_id,s.shipment_sn FROM oms_order_shipment s JOIN oms_order_shipment_dispatch d ON d.company_code=s.company_code AND d.shipment_id=s.id WHERE s.company_code=? AND s.order_id IN ("+String.join(",",Collections.nCopies(orders.size(),"?"))+") AND d.state<>'NONE'",ROW,args.toArray());
         for(Map<String,Object> shipment:shipments)shipment.put("can_reconcile_receipts",true);
         attach(company,shipments);summarizeOrders(orders,shipments);
     }

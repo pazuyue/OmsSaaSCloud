@@ -1,0 +1,10 @@
+{
+  "single_hold_warning_and_required_reason": true,
+  "withdrawal_opens_replan_without_submitting": true,
+  "batch_per_order_withdrawal": true,
+  "compact_footer_visible": true,
+  "held_detail_notice_rendered_with_read_only_override": true,
+  "completion_notice_and_withdrawal_with_mocked_response": true,
+  "no_actual_business_mutations": true,
+  "existing_order_unchanged": true
+}

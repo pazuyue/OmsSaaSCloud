@@ -56,7 +56,7 @@ public class TmallOrderParser {
             ObjectNode semantic=JSON.createObjectNode();for(String key:Arrays.asList("tid","seller_nick","status","type","payment","refund_status","refund_id","receiver_name","receiver_mobile","receiver_phone","receiver_state","receiver_city","receiver_district","receiver_town","receiver_address","oaid","top_hold"))semantic.put(key,str(trade,key));
             com.fasterxml.jackson.databind.node.ArrayNode fingerprints=semantic.putArray("orders");
             items.sort(Comparator.comparing(row->str(row,"oid")));
-            for(JsonNode row:items){ObjectNode item=fingerprints.addObject();for(String key:Arrays.asList("oid","num_iid","sku_id","outer_sku_id","num","payment","divide_order_fee","status","refund_status","refund_id"))item.put(key,str(row,key));}
+            for(JsonNode row:items){ObjectNode item=fingerprints.addObject();for(String key:Arrays.asList("oid","num_iid","sku_id","outer_sku_id","outer_iid","num","payment","divide_order_fee","status","refund_status","refund_id"))item.put(key,str(row,key));}
             t.fingerprint=hash(semantic.toString());return t;
         } catch(IllegalArgumentException e){throw e;}catch(Exception e){throw new IllegalArgumentException("天猫订单报文无法解析，请核对原始数据",e);}
     }

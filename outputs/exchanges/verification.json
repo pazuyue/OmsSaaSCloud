@@ -1,0 +1,22 @@
+{
+  "exchange_sn": "HHcfbc5925ef1f4a60a3550f653093dda6",
+  "exchange_id": 1,
+  "order_sn": "SOe6e84fd4bfb84ff48158b39ea4f6afd2",
+  "replacement_order_sn": "SO491269b43d774577a0eb986ef52495f0",
+  "original_outbound_quantity": 10,
+  "return_quantity": 2,
+  "replacement_outbound_quantity": 2,
+  "duplicate_return_stock_unchanged": true,
+  "real_platform_writes": false,
+  "warehouse_logs_integrated": true,
+  "regression_tests": {
+    "order": 330,
+    "inventory": 84,
+    "supplychain": 146,
+    "channel": 52,
+    "warehouse_simulator": 9
+  },
+  "ui_verified": true,
+  "pending_quantity_case_id": 3,
+  "internal_case_id": 2
+}

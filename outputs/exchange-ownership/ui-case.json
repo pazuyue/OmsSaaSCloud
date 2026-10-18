@@ -1,0 +1,78 @@
+{
+  "case_id": "20261016230415",
+  "created": "2026-10-16 23:04:15",
+  "sku": "EXCH_UI_20261016230415_A",
+  "target_sku": "EXCH_UI_20261016230415_B",
+  "channel_name": "[换货归属验收] ui 20261016230415",
+  "seller": "EXCH_UI_20261016230415",
+  "platform_tid": "99420261016230415",
+  "platform_oid": "9942026101623041501",
+  "warehouses": [
+    {
+      "code": "EXCH_UI_20261016230415_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 87
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 51,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_UI_20261016230415_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_UI_20261016230415_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_UI_20261016230415_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 120,
+        "store": "EXCH_UI_20261016230415_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 140,
+  "order_id": 56,
+  "order_sn": "SO2482f988cb6f4c61a65cc0becb1f33a0",
+  "prepared": true,
+  "target_ready": true,
+  "authorized": true,
+  "original_shipment_id": 53,
+  "original_shipment_sn": "XS56413baa45354c36a619a65bd66be482"
+}

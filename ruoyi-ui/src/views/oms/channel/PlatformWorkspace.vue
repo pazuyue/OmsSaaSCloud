@@ -73,22 +73,7 @@
           </el-table>
           <el-empty v-if="!apps.length && !manageLoading" description="尚未配置平台应用，店铺基础资料仍可正常维护" :image-size="70" />
         </el-tab-pane>
-        <el-tab-pane label="交互日志" name="logs" v-if="allowed('channel:platform:log')">
-          <div class="toolbar"><el-input v-model="logQuery.channelId" placeholder="店铺 ID（可选）" clearable style="width:180px" /><el-select v-model="logQuery.result" clearable placeholder="全部结果"><el-option v-for="(label,key) in results" :key="key" :value="key" :label="label" /></el-select><el-button type="primary" @click="searchLogs">查询</el-button><el-button @click="logQuery.channelId = ''; logQuery.result = ''; searchLogs()">重置</el-button></div>
-          <el-table :data="logs" v-loading="manageLoading" @row-click="logDetail = $event">
-            <el-table-column label="时间" width="175"><template slot-scope="s">{{ date(s.row.create_time) }}</template></el-table-column>
-            <el-table-column label="店铺 ID" prop="channel_id" width="85" />
-            <el-table-column label="对接模式" width="110"><template slot-scope="s"><el-tag size="small" :type="isSimulationLog(s.row) ? 'warning' : 'info'">{{ isSimulationLog(s.row) ? '本地模拟' : '真实平台 / 配置' }}</el-tag></template></el-table-column>
-            <el-table-column label="操作 / 接口" prop="action" min-width="220"><template slot-scope="s">{{ actions[s.row.action] || s.row.action }}</template></el-table-column>
-            <el-table-column label="结果" width="100"><template slot-scope="s"><el-tag :type="s.row.result === 'SUCCESS' ? 'success' : s.row.result === 'RUNNING' ? '' : 'warning'">{{ results[s.row.result] }}</el-tag></template></el-table-column>
-            <el-table-column label="错误码" prop="error_code" min-width="160" show-overflow-tooltip />
-            <el-table-column label="耗时" width="100"><template slot-scope="s">{{ s.row.duration_ms }} ms</template></el-table-column>
-            <el-table-column label="操作人" prop="operator" width="100" />
-            <el-table-column label="详情" width="70"><template slot-scope="s"><el-button type="text" @click="logDetail = s.row">查看</el-button></template></el-table-column>
-          </el-table>
-          <pagination v-show="logTotal > 0" :total="logTotal" :page.sync="logQuery.pageNum" :limit.sync="logQuery.pageSize" @pagination="loadManagement" />
-          <p class="muted">请求与结果仅保留必要业务摘要，凭据和授权码不会写入日志。</p>
-        </el-tab-pane>
+
         <el-tab-pane label="到期提醒" name="reminders" v-if="allowed('channel:platform:query')">
           <el-table :data="reminders" v-loading="manageLoading"><el-table-column label="店铺" prop="channel_name" /><el-table-column label="服务状态" prop="service_label" /><el-table-column label="服务到期"><template slot-scope="s">{{ date(s.row.service_expires_at) }}</template></el-table-column><el-table-column label="授权状态" prop="auth_label" /><el-table-column label="授权到期"><template slot-scope="s">{{ date(s.row.token_expires_at) }}</template></el-table-column><el-table-column label="操作" width="100"><template slot-scope="s"><el-button type="text" @click="management = false; open(s.row.channel_id)">去处理</el-button></template></el-table-column></el-table>
           <p class="muted">按店铺设置的提前天数实时计算，已到期记录持续展示。未授权或未核验的店铺请在列表中查看。</p>
@@ -109,7 +94,7 @@
       </el-form>
       <div slot="footer"><el-button @click="appVisible = false">取消</el-button><el-button type="primary" :loading="busy" @click="saveApp">保存配置</el-button></div>
     </el-dialog>
-    <el-dialog title="交互摘要" :visible="!!logDetail" @close="logDetail = null" width="680px" append-to-body><template v-if="logDetail"><p>请求摘要</p><pre>{{ pretty(logDetail.request_summary) }}</pre><p>结果摘要</p><pre>{{ pretty(logDetail.response_summary) }}</pre><p>错误码：{{ logDetail.error_code || '—' }}</p></template><div slot="footer"><el-button @click="logDetail = null">关闭</el-button></div></el-dialog>
+
   </div>
 </template>
 <script>
@@ -129,7 +114,7 @@ export default {
       try { const [d, a] = await Promise.all([platformGet('/shops/' + id), platformGet('/apps')]); this.detail = d.data; this.apps = a.data; this.binding = { app_id: d.data.app_id, expected_shop_id: d.data.expected_shop_id || '' }; this.reminder = { days: d.data.reminder_days || 7, enabled: d.data.reminder_enabled !== 0 } } finally { this.loading = false }
     },
     async reload() { const r = await platformGet('/shops/' + this.detail.channel_id); this.detail = r.data; this.$emit('changed') },
-    async manage(tab, channelId) { this.tab = tab; this.management = true; this.logQuery.channelId = channelId || ''; this.logQuery.pageNum = 1; await this.loadManagement() },
+    async manage(tab, channelId) { if (tab === 'logs') { this.visible = false; this.management = false; return this.$router.push({ path: '/oms-channel/platformLogs', query: { channelId: channelId || undefined } }) }; this.tab = tab; this.management = true; this.logQuery.channelId = channelId || ''; this.logQuery.pageNum = 1; await this.loadManagement() },
     async loadManagement() {
       this.manageLoading = true
       try {

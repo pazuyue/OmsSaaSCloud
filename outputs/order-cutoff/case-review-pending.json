@@ -1,0 +1,107 @@
+{
+  "kind": "review-pending",
+  "case_id": "202610151644494",
+  "created": "2026-10-15 16:44:49",
+  "sku": "CF_202610151644494",
+  "channel_name": "[截单验收] review-pending 202610151644494",
+  "seller": "CUTOFF_202610151644494",
+  "platform_tid": "996202610151644494",
+  "platform_oid": "99620261015164449401",
+  "warehouses": [
+    {
+      "code": "CUTOFF_V1_202610151644494",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 75
+    },
+    {
+      "code": "CUTOFF_V2_202610151644494",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 76
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 44,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "CF_202610151644494",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "CF_202610151644494",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "CUTOFF_V1_202610151644494",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "CUTOFF_V2_202610151644494",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 100,
+        "store": "CUTOFF_V1_202610151644494",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 101,
+        "store": "CUTOFF_V2_202610151644494",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 131,
+  "order_id": 47,
+  "order_sn": "SO1cee9a0bb52a4d4d85a1df2ee8e048ec",
+  "seeded": true,
+  "allocated": true,
+  "dispatched": true,
+  "callback": {
+    "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS36cf77c2fda643c6ade31524a02fae9e</deliveryOrderCode><deliveryOrderId>SIMOUT_6882933bb1554ffe8a50</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>CF_REVIEW_XS36cf77c2fda643c6ade31524a02fae9e</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-15 16:46:07</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>37</orderLineNo><itemCode>CF_202610151644494</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-202610151644494-V1</batchCode><inventoryType>ZP</inventoryType><actualQty>6</actualQty></orderLine></orderLines><packages><package><packageCode>CFPKG_XS36cf77c2fda643c6ade31524a02fae9e_0</packageCode><expressCode>TEST-CF-SHARED-202610151644494</expressCode><logisticsCode>SF</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>CF_202610151644494</itemCode><quantity>3</quantity></item></items></package><package><packageCode>CFPKG_XS36cf77c2fda643c6ade31524a02fae9e_1</packageCode><expressCode>TEST-CF-SHARED-202610151644494</expressCode><logisticsCode>SF</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>CF_202610151644494</itemCode><quantity>3</quantity></item></items></package></packages></request>",
+    "external_owner": "VC00001",
+    "external_warehouse": "VC00001",
+    "shipment_sn": "XS36cf77c2fda643c6ade31524a02fae9e",
+    "external_order": "SIMOUT_6882933bb1554ffe8a50",
+    "quantity": 6
+  },
+  "pending_review_shipment": "XS36cf77c2fda643c6ade31524a02fae9e",
+  "completed": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=47"
+}

@@ -1,0 +1,128 @@
+package com.oms.order.service;
+
+import com.ruoyi.common.core.constant.SecurityConstants;
+import org.springframework.stereotype.Service;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import javax.annotation.Resource;
+import java.util.*;
+import static com.oms.order.service.OrderValues.*;
+
+/** Warehouse cancellation and source adjustment are separately durable and independently retryable. */
+@Service
+public class OrderCutoffService {
+    @Resource private OrderRepository repository;
+    @Resource private OrderShipmentWmsClient warehouse;
+    @Resource private OrderWarehouseClient inventory;
+    private static class Rejected extends IllegalArgumentException { Rejected(String message){super(message);} }
+    private TransactionTemplate tx(){TransactionTemplate tx=new TransactionTemplate(new DataSourceTransactionManager(repository.db().getDataSource()));tx.setTimeout(90);return tx;}
+    private Map<String,Object> lock(String company,long id){
+        List<Map<String,Object>> keys=repository.db().query("SELECT channel_id,platform_order_id FROM oms_order WHERE company_code=? AND id=?",ROW,company,id);require(keys.size()==1,"业务订单不存在或无权访问");Map<String,Object> k=keys.get(0);
+        repository.db().query("SELECT id FROM oms_order_pull_config WHERE company_code=? AND channel_id=? FOR UPDATE",ROW,company,k.get("channel_id"));
+        List<Map<String,Object>> platform=repository.db().query("SELECT business_order_id,conversion_status FROM oms_platform_order WHERE company_code=? AND id=? FOR UPDATE",ROW,company,k.get("platform_order_id"));require(platform.size()==1&&number(platform.get(0),"business_order_id")==id&&"SUCCESS".equals(text(platform.get(0),"conversion_status")),"来源订单关联不一致");
+        return repository.db().query("SELECT * FROM oms_order WHERE company_code=? AND id=? FOR UPDATE",ROW,company,id).get(0);
+    }
+    @SuppressWarnings("unchecked") public Map<String,Object> request(String company,long id,Map<String,Object> input,String actor){return tx().execute(s->{
+        Map<String,Object> order=lock(company,id);require(input.containsKey("control_version")&&number(input,"control_version")==number(order,"control_version"),"订单已变化，请刷新后操作");
+        String mode=text(input,"mode"),reason=text(input,"reason").trim();require(Arrays.asList("TERMINATE","REPLAN").contains(mode)&&!reason.isEmpty()&&reason.length()<=200,"请选择截单目的并填写1至200字原因");
+        require(!Arrays.asList("VOIDING","VOIDED","CLOSED","CUTTING").contains(text(order,"status")),"当前订单已停止履约");require(!"PROCESSING".equals(text(order,"cutoff_state")),"已有截单申请，请查看原处理结果");
+        require(!Arrays.asList("PROCESSING","UNCERTAIN").contains(text(order,"allocation_status")),"分仓结果未确认，请先核对原分仓回执");
+        Object raw=input.get("shipment_ids");boolean all=raw==null;Set<Long> selected=new HashSet<>();if(!all){require(raw instanceof List&&!((List<?>)raw).isEmpty()&&((List<?>)raw).size()<=100,"请选择1至100张发货单");for(Object v:(List<?>)raw)require(selected.add(Long.parseLong(v.toString())),"发货单不能重复");}
+        List<Map<String,Object>> shipments=repository.db().query("SELECT s.*,COALESCE((SELECT SUM(l.shipped_quantity) FROM oms_order_shipment_line l WHERE l.company_code=s.company_code AND l.shipment_id=s.id),0) shipped_quantity FROM oms_order_shipment s WHERE s.company_code=? AND s.order_id=? AND s.business_type='SALE' ORDER BY s.id FOR UPDATE",ROW,company,id);
+        Set<Long> found=new HashSet<>();List<Map<String,Object>> targets=new ArrayList<>();for(Map<String,Object> shipment:shipments){if(all||selected.contains(number(shipment,"id"))){found.add(number(shipment,"id"));if(number(shipment,"quantity")>number(shipment,"shipped_quantity")+number(shipment,"cancelled_quantity")&&!"VOIDED".equals(text(shipment,"status")))targets.add(shipment);}}
+        require(all||found.equals(selected),"选中发货单不属于当前业务订单");
+        long remaining=repository.db().queryForObject("SELECT COALESCE(SUM(quantity-cancelled_quantity),0) FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE'",Long.class,company,id)-shipments.stream().mapToLong(r->number(r,"shipped_quantity")).sum();require(remaining>0,"订单没有可截停的未发数量");require(all||!targets.isEmpty(),"所选发货单没有可截停余量");
+        for(Map<String,Object> shipment:targets)require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_shipment_virtual_outbound WHERE company_code=? AND shipment_id=? AND state<>'COMPLETED'",Long.class,company,shipment.get("id"))==0,"存在未确认的虚拟出库，请先核对原出库结果");
+        repository.db().update("INSERT INTO oms_order_cutoff(company_code,order_id,mode,scope_all,reason,operator_name) VALUES (?,?,?,?,?,?)",company,id,mode,all?1:0,reason,actor);
+        long op=repository.db().queryForObject("SELECT LAST_INSERT_ID()",Long.class);
+        for(Map<String,Object> shipment:targets){
+            repository.db().update("INSERT INTO oms_order_cutoff_item(company_code,cutoff_id,shipment_id,shipment_sn) VALUES (?,?,?,?)",company,op,shipment.get("id"),shipment.get("shipment_sn"));
+            shipmentLog(company,number(shipment,"id"),"CUTOFF_REQUEST","PENDING",op,"申请"+("REPLAN".equals(mode)?"撤回重新发货":"终止剩余履约")+"："+reason+"；等待仓库及库存核对",actor);
+        }
+        repository.db().update("UPDATE oms_order SET status='CUTTING',cutoff_state='PROCESSING',cutoff_mode=?,cutoff_id=?,control_version=control_version+1 WHERE company_code=? AND id=?",mode,op,company,id);
+        repository.log(company,number(order,"platform_order_id"),"CUTOFF_REQUEST","PENDING",("REPLAN".equals(mode)?"撤回重新发货":"终止剩余履约")+"："+reason,actor);return report(company,id);
+    });}
+    public Map<String,Object> report(String company,long order){
+        require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order WHERE company_code=? AND id=?",Long.class,company,order)==1,"业务订单不存在或无权访问");
+        List<Map<String,Object>> rows=repository.db().query("SELECT id,order_id,mode,scope_all,state,reason,operator_name,last_error,create_time,completed_at,check_version,checked_version,last_checked_at FROM oms_order_cutoff WHERE company_code=? AND order_id=? ORDER BY id DESC LIMIT 20",ROW,company,order);
+        for(Map<String,Object> row:rows)row.put("items",repository.db().query("SELECT shipment_id,shipment_sn,state,warehouse_state,last_error,update_time FROM oms_order_cutoff_item WHERE company_code=? AND cutoff_id=? ORDER BY id",ROW,company,row.get("id")));
+        Map<String,Object> result=new LinkedHashMap<>();result.put("order_id",order);result.put("operations",rows);return result;
+    }
+    public Map<String,Object> retry(String company,long id,long version,String actor){return tx().execute(s->{
+        Map<String,Object> order=lock(company,id);require(number(order,"control_version")==version&&"PROCESSING".equals(text(order,"cutoff_state")),"订单已变化或没有待处理截单");
+        long op=number(order,"cutoff_id");
+        repository.db().update("UPDATE oms_order_cutoff SET next_attempt=NOW(),last_error='',check_version=check_version+1 WHERE company_code=? AND id=? AND state<>'COMPLETED'",company,op);
+        for(Map<String,Object> item:repository.db().query("SELECT shipment_id,last_error FROM oms_order_cutoff_item WHERE company_code=? AND cutoff_id=? AND state<>'COMPLETED' ORDER BY id",ROW,company,op)){
+            String previous=text(item,"last_error");
+            shipmentLog(company,number(item,"shipment_id"),"CUTOFF_RETRY","PENDING",op,"已提交重新核对原截单，等待处理"+(previous.isEmpty()?"":"；上次原因："+previous),actor);
+        }
+        repository.log(company,number(order,"platform_order_id"),"CUTOFF_RETRY","PENDING","核对原截单，不重建申请",actor);
+        Map<String,Object> result=new LinkedHashMap<>();result.put("cutoff_id",op);result.put("check_version",repository.db().queryForObject("SELECT check_version FROM oms_order_cutoff WHERE company_code=? AND id=?",Long.class,company,op));return result;
+    });}
+    public void scan(String company){for(Long id:repository.db().queryForList("SELECT order_id FROM oms_order_cutoff WHERE company_code=? AND state<>'COMPLETED' AND next_attempt<=NOW() ORDER BY next_attempt,id LIMIT 5",Long.class,company))process(company,id);}
+    public void process(String company,long id){
+        Map<String,Object> op=tx().execute(s->{Map<String,Object> order=lock(company,id);if(!"PROCESSING".equals(text(order,"cutoff_state")))return null;return repository.db().query("SELECT * FROM oms_order_cutoff WHERE company_code=? AND id=? FOR UPDATE",ROW,company,order.get("cutoff_id")).get(0);});if(op==null)return;
+        List<Long> items=repository.db().queryForList("SELECT id FROM oms_order_cutoff_item WHERE company_code=? AND cutoff_id=? AND state<>'COMPLETED' ORDER BY id",Long.class,company,op.get("id"));
+        for(Long item:items)try{processItem(company,id,number(op,"id"),item);}catch(RuntimeException e){recordBlocked(company,id,number(op,"id"),item,e);}
+        try{finish(company,id,number(op,"id"));}catch(RuntimeException e){repository.db().update("UPDATE oms_order_cutoff SET last_error=?,next_attempt=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE company_code=? AND id=? AND state<>'COMPLETED'",message(e),company,op.get("id"));}
+        repository.db().update("UPDATE oms_order_cutoff SET checked_version=GREATEST(checked_version,?),last_checked_at=NOW() WHERE company_code=? AND id=?",number(op,"check_version"),company,op.get("id"));
+    }
+    private void shipmentLog(String company,long shipment,String action,String result,long op,String detail,String actor){
+        String message="[截单#"+op+"] "+detail;
+        repository.db().update("INSERT INTO oms_order_shipment_log(company_code,shipment_id,action,result,message,operator_name) VALUES (?,?,?,?,?,?)",company,shipment,action,result,message.substring(0,Math.min(500,message.length())),actor);
+    }
+    private void recordBlocked(String company,long orderId,long opId,long itemId,RuntimeException failure){tx().execute(s->{
+        Map<String,Object> order=lock(company,orderId);if(number(order,"cutoff_id")!=opId)return null;
+        Map<String,Object> item=repository.db().query("SELECT * FROM oms_order_cutoff_item WHERE company_code=? AND id=? FOR UPDATE",ROW,company,itemId).get(0);if("COMPLETED".equals(text(item,"state")))return null;
+        String error=message(failure),state=failure instanceof Rejected?"REJECTED":"UNKNOWN";
+        repository.db().update("UPDATE oms_platform_order p JOIN oms_order_update u ON u.company_code=p.company_code AND u.platform_order_id=p.id SET p.update_state='ERROR' WHERE u.company_code=? AND u.cutoff_id=? AND p.change_pending=1",company,opId);
+        List<String> last=repository.db().queryForList("SELECT action FROM oms_order_shipment_log WHERE company_code=? AND shipment_id=? AND action IN ('CUTOFF_RETRY','CUTOFF_BLOCKED','CUTOFF_COMPLETE') ORDER BY id DESC LIMIT 1",String.class,company,item.get("shipment_id"));
+        boolean changed=!state.equals(text(item,"state"))||!error.equals(text(item,"last_error"));
+        repository.db().update("UPDATE oms_order_cutoff_item SET state=?,last_error=? WHERE company_code=? AND id=?",state,error,company,itemId);
+        if(changed||(!last.isEmpty()&&"CUTOFF_RETRY".equals(last.get(0))))shipmentLog(company,number(item,"shipment_id"),"CUTOFF_BLOCKED","PENDING",opId,"本次核对未完成："+error+"；待确认部分继续保留库存占用","截单任务");
+        return null;
+    });}
+    private void guardReceipts(String company,Map<String,Object> shipment){
+        long id=number(shipment,"id");require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_shipment_outbound WHERE company_code=? AND shipment_id=? AND state<>'COMPLETED'",Long.class,company,id)==0,"本地出库记账未确认，请先核对原回执");
+        List<Map<String,Object>> reviews=data(warehouse.reviewSummaries(company,Collections.singletonList(id),SecurityConstants.INNER));require(reviews.stream().allMatch(r->number(r,"pending_count")==0),"存在待人工核对的出库回传，截单不能释放库存");
+        require(data(warehouse.receipts(company,text(shipment,"shipment_sn"),true,SecurityConstants.INNER)).isEmpty(),"存在待记账的仓库出库回传，请先核对");
+    }
+    @SuppressWarnings("unchecked") private void processItem(String company,long orderId,long opId,long itemId){
+        // Warehouse confirmation commits before an immutable stock request is sent. Retries use that exact request.
+        tx().execute(s->{Map<String,Object> order=lock(company,orderId);require(number(order,"cutoff_id")==opId&&"PROCESSING".equals(text(order,"cutoff_state")),"截单申请已变化");Map<String,Object> op=repository.db().query("SELECT * FROM oms_order_cutoff WHERE company_code=? AND id=? FOR UPDATE",ROW,company,opId).get(0),item=repository.db().query("SELECT * FROM oms_order_cutoff_item WHERE company_code=? AND id=? FOR UPDATE",ROW,company,itemId).get(0);if("COMPLETED".equals(text(item,"state")))return null;
+            Map<String,Object> shipment=repository.db().query("SELECT * FROM oms_order_shipment WHERE company_code=? AND id=? FOR UPDATE",ROW,company,item.get("shipment_id")).get(0);
+            long already=repository.db().queryForObject("SELECT COALESCE(SUM(shipped_quantity+cancelled_quantity),0) FROM oms_order_shipment_line WHERE company_code=? AND shipment_id=?",Long.class,company,shipment.get("id"));if(already>=number(shipment,"quantity")){repository.db().update("UPDATE oms_order_cutoff_item SET state='COMPLETED',warehouse_state='OUTBOUND',last_error='本单已全部实际出库或已截停，不再释放已消耗库存' WHERE company_code=? AND id=?",company,itemId);shipmentLog(company,number(shipment,"id"),"CUTOFF_COMPLETE","SUCCESS",opId,"核对完成：本单已全部实际出库或已截停，无需重复取消或释放库存","截单任务");return null;}
+            List<Map<String,Object>> dispatch=repository.db().query("SELECT * FROM oms_order_shipment_dispatch WHERE company_code=? AND shipment_id=? FOR UPDATE",ROW,company,shipment.get("id"));
+            if(!"CONFIRMED".equals(text(item,"warehouse_state"))){
+                boolean local=dispatch.isEmpty();
+                if(!local){guardReceipts(company,shipment);Map<String,Object> body=new LinkedHashMap<>();body.put("shipment_sn",shipment.get("shipment_sn"));body.put("reason",op.get("reason"));try{Map<String,Object> frozen=JSON.readValue(text(dispatch.get(0),"payload_json"),Map.class);require(hash(text(dispatch.get(0),"payload_json")).equals(text(dispatch.get(0),"payload_hash")),"原下发快照校验失败");body.put("payload",frozen);}catch(java.io.IOException e){throw new IllegalArgumentException("原下发快照损坏");}Map<String,Object> reply=data(warehouse.cancel(company,body,SecurityConstants.INNER));require(number(reply,"shipment_id")==number(shipment,"id")&&text(reply,"shipment_sn").equals(text(shipment,"shipment_sn"))&&text(reply,"payload_hash").equals(text(dispatch.get(0),"payload_hash")),"仓库取消结果身份不一致");if("REJECTED".equals(text(reply,"cancel_state")))throw new Rejected("仓库拒绝取消："+text(reply,"last_error"));require("CONFIRMED".equals(text(reply,"cancel_state")),"仓库取消尚未确认："+text(reply,"last_error"));guardReceipts(company,shipment);}
+                repository.db().update("UPDATE oms_order_cutoff_item SET warehouse_state='CONFIRMED',state='STOCK_PENDING',last_error='' WHERE company_code=? AND id=?",company,itemId);
+                shipmentLog(company,number(shipment,"id"),"CUTOFF_WAREHOUSE","SUCCESS",opId,local?"已确认本地取消，等待库存处理回执":"仓库已明确确认取消，等待库存处理回执","截单任务");
+                if(!dispatch.isEmpty())repository.db().update("UPDATE oms_order_shipment_dispatch SET state='CANCELED',lease_token=NULL,lease_until=NULL WHERE company_code=? AND shipment_id=?",company,shipment.get("id"));
+            }
+            if(item.get("stock_request")==null){Map<String,Object> command=command(order,op,"CF"+opId+"S"+item.get("shipment_id"));command.put("platform_tid",stockReference(shipment));List<Map<String,Object>> allocations=new ArrayList<>();
+                for(Map<String,Object> line:repository.db().query("SELECT * FROM oms_order_shipment_line WHERE company_code=? AND shipment_id=? ORDER BY id FOR UPDATE",ROW,company,shipment.get("id"))){long qty=number(line,"quantity")-number(line,"shipped_quantity")-number(line,"cancelled_quantity");if(qty>0){Map<String,Object> a=new LinkedHashMap<>();for(String key:Arrays.asList("sku_sn","stock_source_id","allocation_id"))a.put(key,line.get(key));a.put("quantity",qty);a.put("outbound_before",line.get("shipped_quantity"));allocations.add(a);}}
+                command.put("allocations",allocations);repository.db().update("UPDATE oms_order_cutoff_item SET stock_request=? WHERE company_code=? AND id=?",encode(command),company,itemId);
+            }return null;});
+        tx().execute(s->{Map<String,Object> order=lock(company,orderId);require(number(order,"cutoff_id")==opId,"截单申请已变化");Map<String,Object> item=repository.db().query("SELECT * FROM oms_order_cutoff_item WHERE company_code=? AND id=? FOR UPDATE",ROW,company,itemId).get(0);if("COMPLETED".equals(text(item,"state")))return null;Map<String,Object> command;try{command=JSON.readValue(text(item,"stock_request"),Map.class);}catch(Exception e){throw new IllegalArgumentException("截单库存快照损坏");}
+            if(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_shipment_dispatch WHERE company_code=? AND shipment_id=? AND attempts>0",Long.class,company,item.get("shipment_id"))>0)guardReceipts(company,repository.db().query("SELECT * FROM oms_order_shipment WHERE company_code=? AND id=?",ROW,company,item.get("shipment_id")).get(0));
+            Map<String,Object> reply=data(inventory.adjust(company,command,SecurityConstants.INNER));require("COMPLETED".equals(text(reply,"state"))&&text(command,"request_id").equals(text(reply,"request_id"))&&text(command,"mode").equals(text(reply,"mode")),"截单库存回执未确认");
+            repository.db().update("UPDATE oms_order_shipment_line SET cancelled_quantity=quantity-shipped_quantity WHERE company_code=? AND shipment_id=?",company,item.get("shipment_id"));
+            repository.db().update("UPDATE oms_order_shipment SET cancelled_quantity=(SELECT SUM(cancelled_quantity) FROM oms_order_shipment_line WHERE company_code=? AND shipment_id=?),status=IF((SELECT SUM(shipped_quantity) FROM oms_order_shipment_line WHERE company_code=? AND shipment_id=?)=0,'VOIDED','PART_SHIPPED'),cancelled_at=NOW(),control_version=control_version+1 WHERE company_code=? AND id=?",company,item.get("shipment_id"),company,item.get("shipment_id"),company,item.get("shipment_id"));
+            syncLines(company,order,reply,text(command,"platform_tid"));repository.db().update("UPDATE oms_order_cutoff_item SET state='COMPLETED',stock_receipt=?,last_error='' WHERE company_code=? AND id=?",encode(reply),company,itemId);shipmentLog(company,number(item,"shipment_id"),"CUTOFF_COMPLETE","SUCCESS",opId,"已确认截停剩余未发数量，库存处理回执已核对"+("REPLAN".equals(text(command,"mode"))?"；保留销售需求及逻辑预占，等待人工重新分仓":"；对应销售需求和库存占用已释放"),"截单任务");repository.shipmentChanged(company,number(item,"shipment_id"));repository.db().update("UPDATE oms_order SET control_version=control_version+1 WHERE company_code=? AND id=?",company,orderId);return null;});
+    }
+    private Map<String,Object> command(Map<String,Object> order,Map<String,Object> op,String request){Map<String,Object> c=new LinkedHashMap<>();c.put("request_id",request);c.put("mode",op.get("mode"));c.put("channel_id",order.get("channel_id"));c.put("platform_tid",stockReference(order));return c;}
+    @SuppressWarnings("unchecked") private void syncLines(String company,Map<String,Object> order,Map<String,Object> reply,String reference){
+        require(reply.get("lines") instanceof List,"截单回执缺少需求明细");List<Map<String,Object>> lines=(List<Map<String,Object>>)reply.get("lines");
+        long count=repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE' AND COALESCE(NULLIF(stock_reference,''),?)=?",Long.class,company,order.get("id"),order.get("platform_tid"),reference);require(lines.size()==count,"截单回执明细不完整");
+        Set<String> seen=new HashSet<>();for(Map<String,Object> line:lines){require(seen.add(text(line,"platform_oid")),"截单回执明细重复");require(repository.db().update("UPDATE oms_order_line SET reserved_quantity=LEAST(reserved_quantity,?),cancelled_quantity=GREATEST(cancelled_quantity,?) WHERE company_code=? AND order_id=? AND platform_oid=? AND sku_sn=? AND business_type='SALE' AND COALESCE(NULLIF(stock_reference,''),?)=?",line.get("reserved_quantity"),line.get("cancelled_quantity"),company,order.get("id"),line.get("platform_oid"),line.get("sku_sn"),order.get("platform_tid"),reference)==1,"截单回执不属于本次履约来源");}
+    }
+    private void finish(String company,long id,long opId){tx().execute(s->{Map<String,Object> order=lock(company,id);require(number(order,"cutoff_id")==opId,"截单申请已变化");Map<String,Object> op=repository.db().query("SELECT * FROM oms_order_cutoff WHERE company_code=? AND id=? FOR UPDATE",ROW,company,opId).get(0);if("COMPLETED".equals(text(op,"state")))return null;
+        long pending=repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_cutoff_item WHERE company_code=? AND cutoff_id=? AND state<>'COMPLETED'",Long.class,company,opId);if(pending>0){repository.db().update("UPDATE oms_order_cutoff SET state=IF(EXISTS(SELECT 1 FROM oms_order_cutoff_item i WHERE i.company_code=? AND i.cutoff_id=? AND i.state='COMPLETED'),'PARTIAL','PENDING'),next_attempt=IF(EXISTS(SELECT 1 FROM oms_order_cutoff_item j WHERE j.company_code=? AND j.cutoff_id=? AND j.state='REJECTED'),NULL,DATE_ADD(NOW(),INTERVAL 60 SECOND)) WHERE company_code=? AND id=?",company,opId,company,opId,company,opId);return null;}
+        if("TERMINATE".equals(text(op,"mode"))&&number(op,"scope_all")==1){for(String reference:OrderFulfillmentLines.groups(order,OrderFulfillmentLines.sale(repository,company,id)).keySet()){Map<String,Object> c=command(order,op,"CF"+opId+"FINAL"+hash(reference).substring(0,8));c.put("platform_tid",reference);c.put("allocations",Collections.emptyList());c.put("finish_order",true);Map<String,Object> reply=data(inventory.adjust(company,c,SecurityConstants.INNER));require("COMPLETED".equals(text(reply,"state"))&&text(c,"request_id").equals(text(reply,"request_id")),"剩余需求终止未确认");syncLines(company,order,reply,reference);}}
+        List<Map<String,Object>> receipts=new ArrayList<>();for(String reference:OrderFulfillmentLines.groups(order,OrderFulfillmentLines.sale(repository,company,id)).keySet())receipts.addAll(data(inventory.receipts(company,number(order,"channel_id"),reference,SecurityConstants.INNER)));long allocated=receipts.stream().mapToLong(r->number(r,"quantity")).sum();Map<String,Object> totals=repository.db().query("SELECT SUM(quantity) quantity,SUM(cancelled_quantity) cancelled,SUM(reserved_quantity) reserved FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE'",ROW,company,id).get(0);long shipped=repository.db().queryForObject("SELECT COALESCE(SUM(l.shipped_quantity),0) FROM oms_order_shipment_line l JOIN oms_order_shipment s ON s.company_code=l.company_code AND s.id=l.shipment_id WHERE s.company_code=? AND s.order_id=? AND s.business_type='SALE'",Long.class,company,id);boolean closed=number(totals,"quantity")==number(totals,"cancelled")+shipped;
+        String lifecycle=closed?(shipped==0?"VOIDED":number(totals,"cancelled")>0?"CLOSED":"WAIT_ALLOCATION"):"WAIT_ALLOCATION",state="REPLAN".equals(text(op,"mode"))&&!closed?"REPLAN_READY":"COMPLETED";
+        repository.db().update("UPDATE oms_order SET status=?,cutoff_state=?,allocation_quantity=?,allocation_receipts=?,allocation_status=?,inventory_status=?,control_version=control_version+1,void_at=IF(?='VOIDED',NOW(),void_at),void_reason=IF(?='VOIDED',?,void_reason),void_by=IF(?='VOIDED',?,void_by) WHERE company_code=? AND id=?",lifecycle,state,allocated,encode(receipts),allocated==number(totals,"quantity")-number(totals,"cancelled")?"FULL":allocated>0?"PART":"NONE",closed&&shipped==0?"RELEASED":number(totals,"reserved")==number(totals,"quantity")-number(totals,"cancelled")?"RESERVED":number(totals,"reserved")>0?"PART_RESERVED":"WAIT_RESERVE",lifecycle,lifecycle,op.get("reason"),lifecycle,op.get("operator_name"),company,id);
+        repository.db().update("UPDATE oms_order_cutoff SET state='COMPLETED',last_error='',next_attempt=NULL,completed_at=NOW() WHERE company_code=? AND id=?",company,opId);repository.db().update("UPDATE oms_platform_order p JOIN oms_order_update u ON u.company_code=p.company_code AND u.platform_order_id=p.id SET p.update_state='WAITING' WHERE u.company_code=? AND u.cutoff_id=? AND p.change_pending=1",company,opId);repository.log(company,number(order,"platform_order_id"),"CUTOFF_COMPLETE","SUCCESS","REPLAN".equals(text(op,"mode"))?"撤回确认完成，逻辑预占保留，请人工确认重新分仓":"终止数量和库存处理已确认，原出库记录保留",text(op,"operator_name"));return null;});}
+    private String message(RuntimeException e){String m=e instanceof IllegalArgumentException?e.getMessage():"处理结果未确认，保留占用并核对原请求";if(m==null)m="截单待核对";return m.substring(0,Math.min(500,m.length()));}
+}

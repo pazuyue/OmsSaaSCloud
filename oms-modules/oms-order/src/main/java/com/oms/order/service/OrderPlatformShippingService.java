@@ -41,6 +41,7 @@ public class OrderPlatformShippingService {
         });return configuration(company,channel);
     }
     @SuppressWarnings("unchecked") private Map<String,Object> payload(String company,Map<String,Object> ship,Map<String,Object> pack,Map<String,Object> config){
+        require(!"EXCHANGE".equals(text(ship,"business_type")),"换出商品请从换货单回传平台，不使用原交易发货接口");
         require("SIMULATION".equals(text(config,"mode")),"店铺平台回传未开启；当前可在发货单页面配置模拟模式");
         require(Arrays.asList("PART_SHIPPED","SHIPPED").contains(text(ship,"status"))&&!Arrays.asList("VOIDING","VOIDED").contains(text(ship,"order_status")),"须先完成实际出库，作废单不能回传");
         require(text(pack,"express_code").matches("TEST-[A-Za-z0-9_-]{1,95}"),"模拟模式仅接收TEST-测试运单，真实运单请等待正式接口启用");
@@ -51,10 +52,10 @@ public class OrderPlatformShippingService {
         long shipped=repository.db().queryForObject("SELECT COALESCE(SUM(shipped_quantity),0) FROM oms_order_shipment_line WHERE company_code=? AND shipment_id=?",Long.class,company,ship.get("id"));
         require(posted==shipped&&posted>0,"实际出库数量与入账记录不一致，请先核对出库");
         require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_order_shipment_outbound WHERE company_code=? AND shipment_id=? AND state IN ('PENDING','UNKNOWN','FAILED')",Long.class,company,ship.get("id"))==0,"出库仍有未确认记录，请先核对出库");
-        List<Map<String,Object>> source=repository.db().query("SELECT pl.shipment_line_id,pl.platform_oid,pl.sku_sn,pl.quantity,l.platform_oid source_oid,l.sku_sn source_sku,l.order_line_id,l.shipped_quantity,l.shipment_id,(SELECT COALESCE(SUM(x.quantity),0) FROM oms_order_shipment_package_line x WHERE x.company_code=l.company_code AND x.shipment_line_id=l.id) packed,o.quantity ordered_quantity,o.platform_oid order_oid,o.sku_sn order_sku FROM oms_order_shipment_package_line pl LEFT JOIN oms_order_shipment_line l ON l.company_code=pl.company_code AND l.id=pl.shipment_line_id LEFT JOIN oms_order_line o ON o.company_code=l.company_code AND o.id=l.order_line_id AND o.order_id=? WHERE pl.company_code=? AND pl.package_id=? ORDER BY pl.id",ROW,ship.get("order_id"),company,pack.get("id"));
+        List<Map<String,Object>> source=repository.db().query("SELECT pl.shipment_line_id,pl.platform_oid,pl.sku_sn,pl.quantity,l.platform_oid source_oid,l.sku_sn source_sku,l.order_line_id,l.shipped_quantity,l.shipment_id,(SELECT COALESCE(SUM(x.quantity),0) FROM oms_order_shipment_package_line x WHERE x.company_code=l.company_code AND x.shipment_line_id=l.id) packed,(SELECT SUM(ol.quantity-ol.cancelled_quantity) FROM oms_order_line ol WHERE ol.company_code=o.company_code AND ol.order_id=o.order_id AND ol.platform_oid=o.platform_oid AND ol.business_type='SALE') ordered_quantity,o.platform_oid order_oid,o.sku_sn order_sku FROM oms_order_shipment_package_line pl LEFT JOIN oms_order_shipment_line l ON l.company_code=pl.company_code AND l.id=pl.shipment_line_id LEFT JOIN oms_order_line o ON o.company_code=l.company_code AND o.id=l.order_line_id AND o.order_id=? WHERE pl.company_code=? AND pl.package_id=? ORDER BY pl.id",ROW,ship.get("order_id"),company,pack.get("id"));
         require(!source.isEmpty(),"包裹商品明细缺失");long total=0;Map<String,Long> goods=new TreeMap<>();
         for(Map<String,Object> line:source){String oid=text(line,"platform_oid"),sku=text(line,"sku_sn");long qty=number(line,"quantity");require(qty>0&&number(line,"shipment_id")==number(ship,"id")&&number(line,"ordered_quantity")>0&&oid.matches("[0-9]{1,30}")&&oid.equals(text(line,"source_oid"))&&oid.equals(text(line,"order_oid"))&&sku.equals(text(line,"source_sku"))&&sku.equals(text(line,"order_sku")),"包裹商品或平台子单与原单不一致");require(number(line,"packed")<=number(line,"shipped_quantity"),"包裹数量超过已入账出库数量");
-            long allPacked=repository.db().queryForObject("SELECT COALESCE(SUM(p.quantity),0) FROM oms_order_shipment_package_line p JOIN oms_order_shipment_package h ON h.company_code=p.company_code AND h.id=p.package_id JOIN oms_order_shipment s ON s.company_code=h.company_code AND s.id=h.shipment_id WHERE s.company_code=? AND s.order_id=? AND p.platform_oid=?",Long.class,company,ship.get("order_id"),oid);
+            long allPacked=repository.db().queryForObject("SELECT COALESCE(SUM(p.quantity),0) FROM oms_order_shipment_package_line p JOIN oms_order_shipment_package h ON h.company_code=p.company_code AND h.id=p.package_id JOIN oms_order_shipment s ON s.company_code=h.company_code AND s.id=h.shipment_id WHERE s.company_code=? AND s.order_id=? AND s.business_type='SALE' AND p.platform_oid=?",Long.class,company,ship.get("order_id"),oid);
             require(allPacked<=number(line,"ordered_quantity"),"累计包裹数量超过平台子单购买数量");total+=qty;goods.put(oid,Math.addExact(goods.getOrDefault(oid,0L),qty));
         }
         require(total==number(pack,"quantity"),"包裹总量与商品明细不一致");
@@ -106,6 +107,7 @@ public class OrderPlatformShippingService {
         });if(claimed==null)return;
         boolean query=Boolean.TRUE.equals(claimed.get("query_only"));Map<String,Object> reply;
         try{require(hash(text(claimed,"payload_json")).equals(text(claimed,"payload_hash")),"回传快照校验失败");reply=query?gateway.query(claimed):gateway.send(claimed);require(reply!=null&&Arrays.asList("SUCCESS","FAILED","RETRYABLE","UNKNOWN").contains(text(reply,"state")),"回传结果无法确认");}
+        catch(OrderPlatformInteractionRecorder.NotStarted e){reply=OrderPlatformShippingGateway.result(query?"UNKNOWN":"RETRYABLE",e.getMessage(),"");}
         catch(Exception e){reply=OrderPlatformShippingGateway.result("UNKNOWN","模拟回传结果未确认，请核对原回执","");}
         if("SUCCESS".equals(text(reply,"state"))&&!text(reply,"receipt").matches("SIMSHIP_[A-Za-z0-9_-]{1,80}"))reply=OrderPlatformShippingGateway.result("UNKNOWN","模拟平台成功结果缺少有效回执，请核对原回执","");
         Map<String,Object> outcome=reply;

@@ -1,0 +1,374 @@
+{
+  "stamp": "20261016113900",
+  "cases": [
+    {
+      "kind": "recipient",
+      "case_id": "202610161139001",
+      "created": "2026-10-16 11:39:00",
+      "sku": "UPD_202610161139001",
+      "channel_name": "[订单更新验收] recipient 202610161139001",
+      "seller": "UPDATE_202610161139001",
+      "platform_tid": "994202610161139001",
+      "platform_oid": "99420261016113900101",
+      "warehouses": [
+        {
+          "code": "UPD_V1_202610161139001",
+          "quantity": 6,
+          "package_count": 0,
+          "id": 79
+        },
+        {
+          "code": "UPD_V2_202610161139001",
+          "quantity": 4,
+          "package_count": 0,
+          "id": 80
+        }
+      ],
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 45,
+      "configured": true,
+      "received": true,
+      "initial_stock": {
+        "company": [
+          {
+            "sku": "UPD_202610161139001",
+            "total": 10,
+            "available": 10,
+            "allocated": 0,
+            "reserved": 0,
+            "version": 3
+          }
+        ],
+        "channel": [
+          {
+            "sku": "UPD_202610161139001",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "quota": 10,
+            "quota_reserved": 0,
+            "version": 1
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "UPD_V1_202610161139001",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "store": "UPD_V2_202610161139001",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "batch": [
+          {
+            "id": 104,
+            "store": "UPD_V1_202610161139001",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "id": 105,
+            "store": "UPD_V2_202610161139001",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "demand": [],
+        "source": [],
+        "allocation": []
+      },
+      "platform_id": 132,
+      "order_id": 48,
+      "order_sn": "SO68166c4cc786471594e0f9a3538b427d",
+      "seeded": true,
+      "source_bound": true,
+      "allocated": true,
+      "original_shipments": [
+        "XSebc8258c37624b898162e7d5f9319d08",
+        "XS3881e52664e44574af31591a22fca463"
+      ],
+      "stock_before_update": {
+        "company": [
+          {
+            "sku": "UPD_202610161139001",
+            "total": 10,
+            "available": 0,
+            "allocated": 0,
+            "reserved": 10,
+            "version": 4
+          }
+        ],
+        "channel": [
+          {
+            "sku": "UPD_202610161139001",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 10,
+            "quota": 10,
+            "quota_reserved": 10,
+            "version": 5
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "UPD_V1_202610161139001",
+            "actual": 6,
+            "available": 0,
+            "locked": 6,
+            "version": 3
+          },
+          {
+            "store": "UPD_V2_202610161139001",
+            "actual": 4,
+            "available": 0,
+            "locked": 4,
+            "version": 3
+          }
+        ],
+        "batch": [
+          {
+            "id": 104,
+            "store": "UPD_V1_202610161139001",
+            "actual": 6,
+            "available": 0,
+            "locked": 6,
+            "version": 3
+          },
+          {
+            "id": 105,
+            "store": "UPD_V2_202610161139001",
+            "actual": 4,
+            "available": 0,
+            "locked": 4,
+            "version": 3
+          }
+        ],
+        "demand": [
+          {
+            "id": 66,
+            "quantity": 10,
+            "reserved": 10,
+            "outbound": 0
+          }
+        ],
+        "source": [
+          {
+            "id": 43,
+            "quantity": 10,
+            "outbound": 0,
+            "reserved": 1
+          }
+        ],
+        "allocation": [
+          {
+            "id": 39,
+            "store": "UPD_V1_202610161139001",
+            "quantity": 6,
+            "outbound": 0,
+            "status": "OCCUPIED",
+            "method": "VIRTUAL"
+          },
+          {
+            "id": 40,
+            "store": "UPD_V2_202610161139001",
+            "quantity": 4,
+            "outbound": 0,
+            "status": "OCCUPIED",
+            "method": "VIRTUAL"
+          }
+        ]
+      },
+      "pull_task_id": 181,
+      "pulled": true,
+      "applied": true,
+      "reallocated": true,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=48"
+    },
+    {
+      "kind": "goods-refund",
+      "case_id": "202610161139002",
+      "created": "2026-10-16 11:39:00",
+      "sku": "UPD_202610161139002",
+      "channel_name": "[订单更新验收] goods-refund 202610161139002",
+      "seller": "UPDATE_202610161139002",
+      "platform_tid": "994202610161139002",
+      "platform_oid": "99420261016113900201",
+      "warehouses": [
+        {
+          "code": "UPD_V1_202610161139002",
+          "quantity": 6,
+          "package_count": 0,
+          "id": 81
+        },
+        {
+          "code": "UPD_V2_202610161139002",
+          "quantity": 4,
+          "package_count": 0,
+          "id": 82
+        }
+      ],
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 46,
+      "configured": true,
+      "received": true,
+      "initial_stock": {
+        "company": [
+          {
+            "sku": "UPD_202610161139002",
+            "total": 10,
+            "available": 10,
+            "allocated": 0,
+            "reserved": 0,
+            "version": 3
+          }
+        ],
+        "channel": [
+          {
+            "sku": "UPD_202610161139002",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 0,
+            "quota": 10,
+            "quota_reserved": 0,
+            "version": 1
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "UPD_V1_202610161139002",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "store": "UPD_V2_202610161139002",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "batch": [
+          {
+            "id": 106,
+            "store": "UPD_V1_202610161139002",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "id": 107,
+            "store": "UPD_V2_202610161139002",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "demand": [],
+        "source": [],
+        "allocation": []
+      },
+      "platform_id": 133,
+      "order_id": 49,
+      "order_sn": "SO09c6fcabf50342fdb768290ca8bea2fb",
+      "seeded": true,
+      "source_bound": true,
+      "stock_before_update": {
+        "company": [
+          {
+            "sku": "UPD_202610161139002",
+            "total": 10,
+            "available": 0,
+            "allocated": 0,
+            "reserved": 10,
+            "version": 4
+          }
+        ],
+        "channel": [
+          {
+            "sku": "UPD_202610161139002",
+            "available": 0,
+            "allocated": 0,
+            "reserved": 10,
+            "quota": 10,
+            "quota_reserved": 10,
+            "version": 4
+          }
+        ],
+        "warehouse": [
+          {
+            "store": "UPD_V1_202610161139002",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "store": "UPD_V2_202610161139002",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "batch": [
+          {
+            "id": 106,
+            "store": "UPD_V1_202610161139002",
+            "actual": 6,
+            "available": 6,
+            "locked": 0,
+            "version": 2
+          },
+          {
+            "id": 107,
+            "store": "UPD_V2_202610161139002",
+            "actual": 4,
+            "available": 4,
+            "locked": 0,
+            "version": 2
+          }
+        ],
+        "demand": [
+          {
+            "id": 67,
+            "quantity": 10,
+            "reserved": 10,
+            "outbound": 0
+          }
+        ],
+        "source": [
+          {
+            "id": 44,
+            "quantity": 10,
+            "outbound": 0,
+            "reserved": 1
+          }
+        ],
+        "allocation": []
+      },
+      "pull_task_id": 182,
+      "pulled": true,
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=49"
+    }
+  ],
+  "source_key": "PS2cf6cd4df73b4ac6b2efab7e7abcb106"
+}

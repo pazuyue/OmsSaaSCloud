@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Exact shared filters and bounded local relations across all three source types",
+    "Lazy first tab, common filters, cached type filters, related source detail and one visible menu",
+    "All three legacy links preserve type, original order, source ID and unmatched application filters",
+    "Refund TK associations, desktop layout, zero browser errors and zero platform writes"
+  ],
+  "read_only": true
+}

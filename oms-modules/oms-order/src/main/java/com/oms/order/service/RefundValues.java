@@ -1,0 +1,27 @@
+package com.oms.order.service;
+
+import java.math.*;
+import java.time.LocalDateTime;
+import java.util.*;
+import static com.oms.order.service.OrderValues.*;
+
+final class RefundValues {
+    private RefundValues() {}
+    static Map<String,Object> m(Object... pairs){Map<String,Object> r=new LinkedHashMap<>();for(int i=0;i<pairs.length;i+=2)r.put(String.valueOf(pairs[i]),pairs[i+1]);return r;}
+    @SuppressWarnings("unchecked") static Map<String,Object> obj(Object value){try{return value==null?new LinkedHashMap<>():value instanceof Map?new LinkedHashMap<>((Map<String,Object>)value):JSON.readValue(String.valueOf(value),LinkedHashMap.class);}catch(Exception e){throw new IllegalArgumentException("退款报文结构无法解析");}}
+    @SuppressWarnings("unchecked") static List<Map<String,Object>> list(Object value){require(value instanceof List,"退款明细结构无效");List<Map<String,Object>> r=new ArrayList<>();for(Object v:(List<?>)value){require(v instanceof Map,"退款明细结构无效");r.add(obj(v));}require(r.size()<=20,"每次最多20条退回明细");return r;}
+    static String required(Map<String,?> row,String key,int max){String v=text(row,key).trim();require(!v.isEmpty()&&v.length()<=max,"请填写"+key+"，最多"+max+"字");return v;}
+    static String numeric(String value){require(value.matches("[1-9][0-9]{0,19}"),"平台退款或订单编号格式无效");return value;}
+    static BigDecimal money(Object value){try{BigDecimal n=new BigDecimal(String.valueOf(value));require(n.signum()>=0&&n.scale()<=2&&n.compareTo(new BigDecimal("1000000000"))<0,"退款金额无效");return n.setScale(2);}catch(NumberFormatException e){throw new IllegalArgumentException("退款金额无效");}}
+    static List<String> ids(Object value){List<String> r=new ArrayList<>();Collection<?> values=value instanceof Collection?(Collection<?>)value:Arrays.asList(String.valueOf(value).trim().split("[\\s,，;；]+"));for(Object v:values){String id=numeric(String.valueOf(v));if(!r.contains(id))r.add(id);}require(!r.isEmpty()&&r.size()<=50,"每次请填写1至50个完整平台退款单号");return r;}
+    static String phase(String value){return Arrays.asList("onsale","on_sale","1").contains(value)?"DURING_SALE":Arrays.asList("aftersale","after_sale","2").contains(value)?"AFTER_SALE":"UNKNOWN";}
+    static Map<String,Object> parse(String raw){Map<String,Object> root=obj(raw);Map<String,Object> refund=obj(root.containsKey("refund_get_response")?obj(root.get("refund_get_response")).get("refund"):root.containsKey("special_refund_get_response")?obj(root.get("special_refund_get_response")).get("refund"):root.get("refund"));require(!refund.isEmpty(),"缺少平台退款详情");numeric(text(refund,"refund_id"));numeric(text(refund,"tid"));numeric(text(refund,"oid"));money(refund.get("refund_fee"));time(required(refund,"modified",19));String version=text(refund,"refund_version");require(version.isEmpty()||version.matches("[0-9]{1,30}"),"平台退款版本格式无效");required(refund,"status",64);long qty=number(refund,"num");require(qty>=0,"平台退款数量无效");String kind=text(refund,"dispute_type");if(kind.isEmpty()){require(refund.containsKey("has_good_return"),"缺少平台退款类型及是否退货标识");String back=text(refund,"has_good_return");require(Arrays.asList("true","false").contains(back),"是否退货标识无效");kind=Boolean.parseBoolean(back)?"REFUND_AND_RETURN":"REFUND";}if("REFUND".equals(kind)&&Boolean.parseBoolean(text(refund,"has_good_return")))throw new IllegalArgumentException("平台申请类型与是否退货标识冲突");if("REFUND_AND_RETURN".equals(kind)&&refund.containsKey("has_good_return"))require(Boolean.parseBoolean(text(refund,"has_good_return")),"平台退货退款类型与是否退货标识冲突");refund.put("dispute_type",kind);refund.put("refund_fee",money(refund.get("refund_fee")));return refund;}
+    static String special(Map<String,Object> p){String type=text(p,"special_refund_type");if(!type.isEmpty())return type;return p.get("price_protection") instanceof Map?"PRICE_PROTECTION":"";}
+    static int versionCompare(Map<String,Object> fresh,Map<String,Object> old){String a=text(fresh,"refund_version"),b=text(old,"refund_version");if(a.matches("[0-9]+")&&b.matches("[0-9]+")){int v=new BigInteger(a).compareTo(new BigInteger(b));if(v!=0)return v;}return text(fresh,"modified").compareTo(text(old,"source_modified"));}
+    static String fingerprint(Map<String,Object> p){Map<String,Object> r=new TreeMap<>();for(String key:Arrays.asList("refund_id","tid","oid","seller_nick","status","dispute_type","has_good_return","refund_fee","refund_version","num","reason","desc","special_refund_type","attribute","price_protection","company_name","sid","address","good_status","good_return_time"))r.put(key,p.get(key));return hash(canonical(r));}
+    static String planFingerprint(Map<String,Object> p){Map<String,Object> r=new TreeMap<>();for(String key:Arrays.asList("refund_id","tid","oid","seller_nick","dispute_type","has_good_return","refund_fee","num","reason","desc","refund_phase","special_refund_type","attribute","price_protection"))r.put(key,p.get(key));return hash(canonical(r));}
+    private static String canonical(Object value){return encode(sorted(value));}
+    private static Object sorted(Object value){if(value instanceof Map){Map<String,Object> out=new TreeMap<>();((Map<?,?>)value).forEach((k,v)->out.put(String.valueOf(k),sorted(v)));return out;}if(value instanceof List){List<Object> out=new ArrayList<>();for(Object item:(List<?>)value)out.add(sorted(item));return out;}return value;}
+    static String current(){return LocalDateTime.now().withNano(0).format(TIME);}
+    static boolean finalFunds(String status){return "SUCCESS".equals(status);}
+}

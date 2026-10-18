@@ -1,0 +1,85 @@
+{
+  "case_id": "20261016151957",
+  "created": "2026-10-16 15:19:57",
+  "sku": "EXCH_I_A_20261016151957",
+  "target_sku": "EXCH_I_B_20261016151957",
+  "channel_name": "[换货验收] 未发货协商换品 20261016151957",
+  "seller": "EXCH_I_20261016151957",
+  "platform_tid": "99620261016151957",
+  "platform_oid": "9962026101615195701",
+  "warehouses": [
+    {
+      "code": "EXCH_IV_20261016151957",
+      "quantity": 10,
+      "package_count": 0,
+      "id": 84
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 48,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_I_A_20261016151957",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_I_A_20261016151957",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_IV_20261016151957",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 111,
+        "store": "EXCH_IV_20261016151957",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 136,
+  "order_id": 52,
+  "order_sn": "SO653a58638a94423eb89dfbd10be913bf",
+  "prepared": true,
+  "old_shipments": [
+    "XSfb66c9bbbe934c66aaab4a925eaba4c0"
+  ],
+  "old_allocated": true,
+  "target_ready": true,
+  "pulled": true,
+  "exchange_id": 2,
+  "completed": true,
+  "replacement_order_id": 53,
+  "replacement_order_sn": "SOb07f238aba7d4431a117451f005eedad",
+  "exchange_sn": "HHIe1e1282ee141c9db33828e489463494b",
+  "business_url": "http://127.0.0.1:8088/oms-order/exchanges?exchangeId=2"
+}

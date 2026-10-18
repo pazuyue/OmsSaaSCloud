@@ -18,12 +18,14 @@ public class OrderShipmentDispatchWorker {
     @Resource private OrderVirtualOutboundService virtualOutbound;
     @Resource private OrderShipmentReceiptService receipts;
     @Resource private OrderSalesDocumentService salesDocuments;
+    @Resource private OrderCutoffService cutoff;
     public Map<String,Object> scan(String kind){
         require(Arrays.asList("dispatch","receipts","virtual","sales").contains(kind),"扫描类型无效");
         ScanReport report=new ScanReport();
         for(String company:(Arrays.asList("receipts","sales").contains(kind)?tenantRouting.continuingCompanies():tenantRouting.companies())){
             try(com.oms.common.tenant.TenantRouting.Binding ignored=(Arrays.asList("receipts","sales").contains(kind)?tenantRouting.openForContinuation(company):tenantRouting.open(company))){
                 JdbcTemplate db=jdbc;
+                if("dispatch".equals(kind))cutoff.scan(company);
                 if("receipts".equals(kind)){report.merge(receipts.pollCompany(company));continue;}
                 String table="dispatch".equals(kind)?"oms_order_shipment_dispatch":"virtual".equals(kind)?"oms_order_shipment_virtual_outbound":"oms_order_sales_document_sync";
                 if("sales".equals(kind))db.update("INSERT IGNORE INTO oms_order_sales_document_sync(company_code,shipment_id) SELECT company_code,id FROM oms_order_shipment WHERE company_code=? AND shipment_sn LIKE 'XS%'",company);

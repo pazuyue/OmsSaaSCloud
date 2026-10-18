@@ -1,0 +1,20 @@
+{
+  "shortage_preserves_full_quantity": true,
+  "exchange_id": 13,
+  "exchange_sn": "HHI706d95d3d2a136f106b4274bb887dbac",
+  "order_id": 58,
+  "fulfillment_round": 2,
+  "quantity": 2,
+  "shipment_id": 59,
+  "shipment_sn": "XS2239dd629a204f17b4d27cf894c9d490",
+  "stock_reference": "EXCHANGE:13:2",
+  "original_return_posted": 2,
+  "return_document_count": 2,
+  "original_sales_shipped": 10,
+  "status": "COMPLETED",
+  "new_so_created": false,
+  "new_hh_created": false,
+  "shipped_quantity": 2,
+  "package_count": 1,
+  "replay_idempotent": true
+}

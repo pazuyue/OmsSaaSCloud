@@ -1,0 +1,12 @@
+{
+  "original_quantity": 10,
+  "original_cancelled_quantity": 10,
+  "original_outbound_quantity": 0,
+  "replacement_reserved_quantity": 10,
+  "replacement_allocated_quantity": 10,
+  "exact_goods_difference_applied": true,
+  "raw_trade_preserved": true,
+  "warehouse_dispatch": false,
+  "real_platform_writes": false,
+  "exchange_sn": "HHIe1e1282ee141c9db33828e489463494b"
+}

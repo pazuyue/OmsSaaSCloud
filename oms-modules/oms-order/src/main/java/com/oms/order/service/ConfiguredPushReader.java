@@ -39,5 +39,14 @@ public class ConfiguredPushReader {
             String lower=text(task,"start_time").compareTo(text(task,"page_time"))>0?text(task,"start_time"):text(task,"page_time");
             return db.query("SELECT "+fields+" FROM jdp_tb_trade WHERE seller_nick=? AND jdp_modified>=? AND jdp_modified<? AND (jdp_modified>? OR (jdp_modified=? AND tid>?)) ORDER BY jdp_modified,tid LIMIT ?",ROW,seller,lower,preview?task.get("end_time"):OrderBackfillService.windowEnd(task),task.get("page_time"),task.get("page_time"),task.get("page_tid"),Math.max(1,Math.min(100,count)));}finally{pool.release();}
     }
+    /** Refund and trade reads share revisioned pools; refund cursors remain independent. */
+    public List<Map<String,Object>> readRefund(String company,String key,String seller,Map<String,Object> task,int count){
+        TmallPushReader.Source value=source(company,key);String identity=DynamicDataSourceContextHolder.peek()+"/"+company+"/"+key;
+        Pool pool=pools.compute(identity,(k,old)->{Pool next=old;if(old==null||old.revision<value.getRevision()){next=new Pool(value);if(old!=null)old.retire();}next.take();return next;});
+        try{JdbcTemplate db=new JdbcTemplate(pool.db);db.setQueryTimeout(12);String fields="CAST(refund_id AS CHAR) refund_id,CAST(tid AS CHAR) tid,CAST(oid AS CHAR) oid,status,seller_nick,created,modified,jdp_modified,jdp_response";
+            if("IDS".equals(text(task,"mode"))){List<String> ids=RefundValues.ids(task.get("selected_ids"));List<Object> args=new ArrayList<>();args.add(seller);args.addAll(ids);return db.query("SELECT "+fields+" FROM jdp_tb_refund WHERE seller_nick=? AND refund_id IN ("+String.join(",",Collections.nCopies(ids.size(),"CAST(? AS DECIMAL(20,0))"))+") ORDER BY jdp_tb_refund.refund_id",ROW,args.toArray());}
+            return db.query("SELECT "+fields+" FROM jdp_tb_refund WHERE seller_nick=? AND jdp_modified>=? AND jdp_modified<? AND (jdp_modified>? OR (jdp_modified=? AND refund_id>CAST(? AS DECIMAL(20,0)))) ORDER BY jdp_modified,jdp_tb_refund.refund_id LIMIT ?",ROW,seller,task.get("start_time"),task.get("end_time"),task.get("page_time"),task.get("page_time"),task.get("page_refund_id"),Math.max(1,Math.min(50,count)));
+        }finally{pool.release();}
+    }
     @PreDestroy public void close(){pools.values().forEach(Pool::retire);pools.clear();}
 }

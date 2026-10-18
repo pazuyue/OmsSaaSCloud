@@ -1,0 +1,23 @@
+{
+  "actual_tid_pull_verified": true,
+  "read_only_local_source": true,
+  "address_withdraw_and_apply_ui_verified": true,
+  "new_province_reallocation_verified": true,
+  "old_shipment_snapshots_preserved": true,
+  "goods_refund_stock_unchanged": true,
+  "no_scheduler_changes": true,
+  "no_warehouse_dispatch": true,
+  "browser_errors": [],
+  "cases": [
+    {
+      "order_sn": "SO68166c4cc786471594e0f9a3538b427d",
+      "kind": "recipient",
+      "url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=48"
+    },
+    {
+      "order_sn": "SO09c6fcabf50342fdb768290ca8bea2fb",
+      "kind": "goods-refund",
+      "url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=49"
+    }
+  ]
+}

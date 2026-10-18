@@ -19,6 +19,20 @@ class OrderWorkspaceServiceTest {
         workspace=new OrderWorkspaceService();ReflectionTestUtils.setField(workspace,"repository",repository);ReflectionTestUtils.setField(workspace,"catalog",catalog);ReflectionTestUtils.setField(workspace,"push",push);
     }
     Map<String,Object> input(){Map<String,Object> v=new HashMap<>();v.put("review_mode","AUTO");v.put("manual_match_review",1);v.put("channel_id",1);v.put("allowed_trade_types",Arrays.asList("fixed","guarantee_trade","tmall_i18n"));v.put("source_key","one");v.put("seller_nick","seller");v.put("enabled",0);v.put("auto_convert",0);v.put("allow_public_stock",0);v.put("interval_seconds",30);v.put("initial_time","2026-10-01 00:00:00");v.put("revision",0);return v;}
+    private void task(String company,long channel,String status){db.update("INSERT INTO oms_order_pull_task(company_code,channel_id,task_type,start_time,end_time,page_time,operator_name,status) VALUES (?,?,'MANUAL','2026-10-01 00:00:00','2026-10-02 00:00:00','2026-10-01 00:00:00','test',?)",company,channel,status);}
+    @SuppressWarnings("unchecked") @Test void taskListUsesTaskColumnsAndKeepsPaginationAndCompanyIsolation(){
+        workspace.save("VERIFY",input(),"test");task("VERIFY",1,"PENDING");task("VERIFY",1,"RUNNING");task("VERIFY",1,"SUCCESS");task("OTHER",1,"FAILED");
+        com.ruoyi.common.core.web.page.TableDataInfo first=workspace.list("VERIFY","tasks",null,"","",1,1,"","","","",0),second=workspace.list("VERIFY","tasks",null,"","",2,1,"","","","",0);
+        assertEquals(3,first.getTotal());assertEquals(3,second.getTotal());assertEquals(1,first.getRows().size());assertEquals(1,second.getRows().size());Map<String,Object> a=(Map<String,Object>)first.getRows().get(0),b=(Map<String,Object>)second.getRows().get(0);assertNotEquals(a.get("id"),b.get("id"));assertEquals("SUCCESS",a.get("status"));assertEquals("VERIFY",a.get("company_code"));assertEquals("shop",a.get("channel_name"));assertEquals(1,workspace.list("OTHER","tasks",null,"","",1,20).getTotal());assertEquals(0,workspace.list("MISSING","tasks",null,"","",1,20).getTotal());assertEquals(4,db.queryForObject("SELECT COUNT(*) FROM oms_order_pull_task",Integer.class));
+    }
+    @Test void taskListSupportsShopAndTaskStatusFilters(){
+        task("VERIFY",1,"FAILED");task("VERIFY",1,"SUCCESS");task("VERIFY",2,"FAILED");task("OTHER",1,"FAILED");
+        assertEquals(1,workspace.list("VERIFY","tasks",1L,"","FAILED",1,20).getTotal());assertEquals(2,workspace.list("VERIFY","tasks",null,"","FAILED",1,20).getTotal());assertEquals(0,workspace.list("VERIFY","tasks",2L,"","PENDING",1,20).getTotal());
+    }
+    @Test void platformListStillExcludesInternalSourceDocuments(){
+        for(String source:Arrays.asList("PLATFORM","INTERNAL"))db.update("INSERT INTO oms_platform_order(company_code,channel_id,platform_tid,seller_nick,source_modified,payload_hash,raw_payload,source_kind) VALUES ('VERIFY',1,?,'seller',NOW(),'test','{}',?)",source.equals("PLATFORM")?"998877":"998878",source);
+        assertEquals(1,workspace.list("VERIFY","platform",null,"","",1,20).getTotal());assertEquals(0,workspace.list("VERIFY","platform",null,"998878","",1,20).getTotal());
+    }
     @Test void pausedConfigurationSavesWithoutOwnerOrWarehouses(){workspace.save("VERIFY",input(),"test");Map<String,Object> row=db.query("SELECT * FROM oms_order_pull_config",OrderValues.ROW).get(0);assertNull(row.get("owner_code"));assertNull(row.get("store_codes"));assertFalse(workspace.configs("VERIFY").get(0).containsKey("owner_code"));assertFalse(workspace.configs("VERIFY").get(0).containsKey("store_codes"));}
     @Test void conversionSettingsUpdateOnlyBusinessFieldsEvenWithPullFieldsInPayload(){
         workspace.save("VERIFY",input(),"test");db.update("UPDATE oms_order_pull_config SET enabled=1,cursor_time='2026-10-03 00:00:00',last_error='pull issue',next_run_at='2026-10-12 00:00:00'");

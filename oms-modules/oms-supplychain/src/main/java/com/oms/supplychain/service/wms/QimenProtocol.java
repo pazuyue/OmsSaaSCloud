@@ -24,7 +24,7 @@ public class QimenProtocol implements WmsProtocol {
     public boolean outboundSupported(Map<String,Object> c){return "2.0".equals(text(c.get("api_version")));}
     public Wire outboundRequest(Map<String,Object> c,String secret,String action,Map<String,Object> task,Map<String,Object> payload){
         require(outboundSupported(c),"奇门发货单需要2.0协议");String body=WmsOutboundPayload.xml(WmsOutboundPayload.request(action,task,payload));
-        Map<String,String> p=new TreeMap<>();p.put("app_key",text(c.get("app_key")));p.put("customerId",text(c.get("customer_id")));p.put("method","taobao.qimen.deliveryorder."+("CREATE".equals(action)?"create":"query"));p.put("format","xml");p.put("sign_method","md5");p.put("v","2.0");p.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(TIME));p.put("sign",sign(p,body,secret));
+        Map<String,String> p=new TreeMap<>();p.put("app_key",text(c.get("app_key")));p.put("customerId",text(c.get("customer_id")));p.put("method","taobao.qimen."+("CANCEL".equals(action)?"order.cancel":"deliveryorder."+("CREATE".equals(action)?"create":"query")));p.put("format","xml");p.put("sign_method","md5");p.put("v","2.0");p.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(TIME));p.put("sign",sign(p,body,secret));
         return new Wire(text(c.get("endpoint"))+"?"+p.entrySet().stream().map(e->enc(e.getKey())+"="+enc(e.getValue())).collect(Collectors.joining("&")),body,contentType());
     }
     public Reply outboundReply(String action,String body){

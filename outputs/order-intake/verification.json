@@ -1,0 +1,91 @@
+{
+  "channel_id": 56,
+  "shop": "[接入汇总验收] 20261017215148",
+  "tasks": {
+    "ORDER": {
+      "kind": "ORDER",
+      "id": 189,
+      "channel_id": 56,
+      "mode": "MANUAL",
+      "state": "COMPLETED",
+      "original_state": "SUCCESS",
+      "start_time": "2026-10-17 20:51:48",
+      "end_time": "2026-10-17 21:51:54",
+      "create_time": "2026-10-17 21:51:54",
+      "attempts": 0,
+      "read_count": 0,
+      "new_count": 0,
+      "updated_count": 0,
+      "unchanged_count": 0,
+      "failed_count": 0,
+      "last_error": "",
+      "actor": "admin",
+      "task_key": "ORDER:189"
+    },
+    "REFUND": {
+      "kind": "REFUND",
+      "id": 3,
+      "channel_id": 56,
+      "mode": "IDS",
+      "state": "COMPLETED",
+      "original_state": "COMPLETED",
+      "start_time": "2026-10-17 21:51:54",
+      "end_time": "2026-10-17 21:51:54",
+      "create_time": "2026-10-17 21:51:54",
+      "attempts": 0,
+      "read_count": 0,
+      "new_count": 0,
+      "updated_count": 0,
+      "unchanged_count": 0,
+      "failed_count": 0,
+      "last_error": "",
+      "actor": "admin",
+      "task_key": "REFUND:3"
+    },
+    "EXCHANGE": {
+      "kind": "EXCHANGE",
+      "id": 3637,
+      "channel_id": 56,
+      "mode": "IDS",
+      "state": "COMPLETED",
+      "original_state": "COMPLETED",
+      "start_time": "2026-10-16 21:51:54",
+      "end_time": "2026-10-17 21:51:54",
+      "create_time": "2026-10-17 21:51:54",
+      "attempts": 0,
+      "read_count": 2,
+      "new_count": 2,
+      "updated_count": 0,
+      "unchanged_count": 0,
+      "failed_count": 0,
+      "last_error": "",
+      "actor": "admin",
+      "task_key": "EXCHANGE:3637"
+    }
+  },
+  "exchange_items": [
+    {
+      "dispute_id": "9992026101721514802",
+      "result": "NEW",
+      "message": "平台申请已保存；未自动同意或操作库存",
+      "exchange_id": 17,
+      "exchange_sn": "HH42b49c709b1d42058a7b381f7d640274",
+      "business_state": "NEEDS_REVIEW"
+    },
+    {
+      "dispute_id": "9992026101721514801",
+      "result": "NEW",
+      "message": "平台申请已保存；未自动同意或操作库存",
+      "exchange_id": 16,
+      "exchange_sn": "HHab21d36fbbb04ca19c082a270d0bf8ed",
+      "business_state": "NEEDS_REVIEW"
+    }
+  ],
+  "overview_ms": 46,
+  "all_manual_cursors_unchanged": true,
+  "retry_preserved_successful_item": true,
+  "no_business_orders_or_shipments_created": true,
+  "platform_write_enabled": false,
+  "browser_errors": [],
+  "url": "http://127.0.0.1:8088/oms-order/management"
+}

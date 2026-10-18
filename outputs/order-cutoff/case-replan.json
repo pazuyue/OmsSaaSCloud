@@ -1,0 +1,104 @@
+{
+  "kind": "replan",
+  "case_id": "202610151644491",
+  "created": "2026-10-15 16:44:49",
+  "sku": "CF_202610151644491",
+  "channel_name": "[截单验收] replan 202610151644491",
+  "seller": "CUTOFF_202610151644491",
+  "platform_tid": "996202610151644491",
+  "platform_oid": "99620261015164449101",
+  "warehouses": [
+    {
+      "code": "CUTOFF_V1_202610151644491",
+      "quantity": 6,
+      "package_count": 0,
+      "id": 69
+    },
+    {
+      "code": "CUTOFF_V2_202610151644491",
+      "quantity": 4,
+      "package_count": 0,
+      "id": 70
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 41,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "CF_202610151644491",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 3
+      }
+    ],
+    "channel": [
+      {
+        "sku": "CF_202610151644491",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "CUTOFF_V1_202610151644491",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "store": "CUTOFF_V2_202610151644491",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 94,
+        "store": "CUTOFF_V1_202610151644491",
+        "actual": 6,
+        "available": 6,
+        "locked": 0,
+        "version": 2
+      },
+      {
+        "id": 95,
+        "store": "CUTOFF_V2_202610151644491",
+        "actual": 4,
+        "available": 4,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 128,
+  "order_id": 44,
+  "order_sn": "SOcd5b7c906a0d43ffb9caad350fa87559",
+  "seeded": true,
+  "allocated": true,
+  "dispatched": true,
+  "original_xs": [
+    "XS7af0c3af976541028f77dae9a158b5c7",
+    "XS8c225741973449bfbcc84a0b7666ced9"
+  ],
+  "first_withdrawal_verified": true,
+  "new_xs_generated": true,
+  "completed": true,
+  "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=44"
+}

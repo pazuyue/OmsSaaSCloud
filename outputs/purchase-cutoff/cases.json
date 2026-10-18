@@ -1,0 +1,121 @@
+{
+  "stamp": "20261015193605",
+  "cases": [
+    {
+      "kind": "local",
+      "sku": "PCT_20261015193605_0",
+      "batch": "PCT_BATCH_20261015193605_0",
+      "product": 179,
+      "purchase_id": 24,
+      "purchase_sn": "POaead167a02864f778874059c0770e2aa",
+      "receipt_id": 38,
+      "receipt_sn": "NO60c5368c3e61407dae4e4835fc9f71df",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=38",
+      "cutoff_id": 1,
+      "new_receipt": 39,
+      "verified": true
+    },
+    {
+      "kind": "partial",
+      "sku": "PCT_20261015193605_1",
+      "batch": "PCT_BATCH_20261015193605_1",
+      "product": 180,
+      "purchase_id": 25,
+      "purchase_sn": "PO6810f6918d7c400ba0505f84031da358",
+      "receipt_id": 40,
+      "receipt_sn": "NO2476fab56b9c4fa0ac294e98e2a11620",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=40",
+      "ticket_id": 69,
+      "task": {
+        "ticket_sn": "CG23ed672a390e4a7f949c6b78806bd5e0",
+        "external_order": "SIMIN_f31756fb062b475abe61",
+        "external_owner": "PCT_OWNER_20261015193605",
+        "external_warehouse": "PCT_EXT_20261015193605",
+        "connection_id": 12
+      },
+      "callback_body": "<request><entryOrder><entryOrderCode>CG23ed672a390e4a7f949c6b78806bd5e0</entryOrderCode><entryOrderId>SIMIN_f31756fb062b475abe61</entryOrderId><warehouseCode>PCT_EXT_20261015193605</warehouseCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><status>PARTFULFILLED</status><confirmType>1</confirmType><outBizCode>PCT_PART_CG23ed672a390e4a7f949c6b78806bd5e0</outBizCode><totalOrderLines>1</totalOrderLines></entryOrder><orderLines><orderLine><itemCode>PCT_20261015193605_1</itemCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><actualQty>4</actualQty><batchCode>PCT_BATCH_20261015193605_1</batchCode><inventoryType>ZP</inventoryType></orderLine></orderLines></request>",
+      "received": true,
+      "cutoff_id": 2,
+      "verified": true
+    },
+    {
+      "kind": "manual",
+      "sku": "PCT_20261015193605_2",
+      "batch": "PCT_BATCH_20261015193605_2",
+      "product": 181,
+      "purchase_id": 26,
+      "purchase_sn": "POf83a8a75f60d4b34a6313098585d37b0",
+      "receipt_id": 41,
+      "receipt_sn": "NO5c06f10239834860b5084549724de226",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=41",
+      "ticket_id": 70,
+      "task": {
+        "ticket_sn": "CG8b4d8d69fc7c4a938dbf9b99e0fd802e",
+        "external_order": "SIMIN_cafc119066444486b94a",
+        "external_owner": "PCT_OWNER_20261015193605",
+        "external_warehouse": "PCT_EXT_20261015193605",
+        "connection_id": 11
+      },
+      "callback_body": "<request><entryOrder><entryOrderCode>CG8b4d8d69fc7c4a938dbf9b99e0fd802e</entryOrderCode><entryOrderId>SIMIN_cafc119066444486b94a</entryOrderId><warehouseCode>PCT_EXT_20261015193605</warehouseCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><status>PARTFULFILLED</status><confirmType>1</confirmType><outBizCode>PCT_PART_CG8b4d8d69fc7c4a938dbf9b99e0fd802e</outBizCode><totalOrderLines>1</totalOrderLines></entryOrder><orderLines><orderLine><itemCode>PCT_20261015193605_2</itemCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><actualQty>4</actualQty><batchCode>PCT_BATCH_20261015193605_2</batchCode><inventoryType>ZP</inventoryType></orderLine></orderLines></request>",
+      "received": true,
+      "cutoff_id": 3,
+      "verified": true
+    },
+    {
+      "kind": "late-review",
+      "sku": "PCT_20261015193605_3",
+      "batch": "PCT_BATCH_20261015193605_3",
+      "product": 182,
+      "purchase_id": 27,
+      "purchase_sn": "PO382fec65c5de4f1dba1731c02495531e",
+      "receipt_id": 42,
+      "receipt_sn": "NO0496312b46004a0586ebf8fa25966188",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=42",
+      "ticket_id": 71,
+      "task": {
+        "ticket_sn": "CG54a5fb787a324e0ea8c46ccb514f913f",
+        "external_order": "SIMIN_41ca49666a5a4d44a030",
+        "external_owner": "PCT_OWNER_20261015193605",
+        "external_warehouse": "PCT_EXT_20261015193605",
+        "connection_id": 12
+      },
+      "cutoff_id": 4,
+      "callback_body": "<request><entryOrder><entryOrderCode>CG54a5fb787a324e0ea8c46ccb514f913f</entryOrderCode><entryOrderId>SIMIN_41ca49666a5a4d44a030</entryOrderId><warehouseCode>PCT_EXT_20261015193605</warehouseCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><status>PARTFULFILLED</status><confirmType>1</confirmType><outBizCode>PCT_LATE_CG54a5fb787a324e0ea8c46ccb514f913f</outBizCode><totalOrderLines>1</totalOrderLines></entryOrder><orderLines><orderLine><itemCode>PCT_20261015193605_3</itemCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><actualQty>2</actualQty><batchCode>PCT_BATCH_20261015193605_3</batchCode><inventoryType>ZP</inventoryType></orderLine></orderLines></request>",
+      "late_sent": true,
+      "verified": true,
+      "ui_callback_body": "<request><entryOrder><entryOrderCode>CG54a5fb787a324e0ea8c46ccb514f913f</entryOrderCode><entryOrderId>SIMIN_41ca49666a5a4d44a030</entryOrderId><warehouseCode>PCT_EXT_20261015193605</warehouseCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><status>PARTFULFILLED</status><confirmType>1</confirmType><outBizCode>PCT_UI_REJECT_CG54a5fb787a324e0ea8c46ccb514f913f</outBizCode><totalOrderLines>1</totalOrderLines></entryOrder><orderLines><orderLine><itemCode>PCT_20261015193605_3</itemCode><ownerCode>PCT_OWNER_20261015193605</ownerCode><actualQty>1</actualQty><batchCode>PCT_BATCH_20261015193605_3</batchCode><inventoryType>ZP</inventoryType></orderLine></orderLines></request>"
+    },
+    {
+      "kind": "terminate",
+      "sku": "PCT_20261015193605_4",
+      "batch": "PCT_BATCH_20261015193605_4",
+      "product": 183,
+      "purchase_id": 28,
+      "purchase_sn": "PO181ed9cc78964dc18971b751af3d0253",
+      "receipt_id": 43,
+      "receipt_sn": "NO76f6670867e84bccaeda234f9cb5f8c8",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?receiptId=43",
+      "ticket_id": 72,
+      "task": {
+        "ticket_sn": "CG632d97cff9a94696add6454eddcc0a45",
+        "external_order": "SIMIN_531423f93f014dd9a1da",
+        "external_owner": "PCT_OWNER_20261015193605",
+        "external_warehouse": "PCT_EXT_20261015193605",
+        "connection_id": 12
+      },
+      "cutoff_id": 5,
+      "verified": true
+    }
+  ],
+  "owner": 35,
+  "warehouse": 35,
+  "relation": 45,
+  "connection_0": 11,
+  "virtual_0": "PCTV0_20261015193605",
+  "connection_1": 12,
+  "virtual_1": "PCTV1_20261015193605",
+  "supplier_id": 23,
+  "supplier_sn": "SUPe160f31b07494f7e9611ded6e051da66",
+  "ui_receipt_id": 44,
+  "ui_review_id": 2
+}

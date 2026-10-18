@@ -40,6 +40,10 @@ def apply(db='qm_oms_saas_commodity', backup=True):
         for name in names:
             if name in columns:
                 execute(f'ALTER TABLE {table} DROP COLUMN {name}', db)
+    from configure_purchase_cutoff import install as install_purchase_cutoff
+    install_purchase_cutoff(db)
+    from configure_wms_log_center import install as install_log_center
+    install_log_center(db)
     print('Virtual execution schema ready:', db)
 
 if __name__ == '__main__':

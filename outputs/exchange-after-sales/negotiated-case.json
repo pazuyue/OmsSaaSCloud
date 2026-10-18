@@ -1,0 +1,18 @@
+{
+  "case_id": "20261017092047",
+  "created": "2026-10-17 09:20:47",
+  "sku": "EXCH_NEGOTIATED_20261017092047_A",
+  "target_sku": "EXCH_NEGOTIATED_20261017092047_B",
+  "channel_name": "[换货归属验收] negotiated 20261017092047",
+  "seller": "EXCH_NEGOTIATED_20261017092047",
+  "platform_tid": "99420261017092047",
+  "platform_oid": "9942026101709204701",
+  "warehouses": [
+    {
+      "code": "EXCH_NEGOTIATED_20261017092047_V",
+      "quantity": 10,
+      "package_count": 1
+    }
+  ],
+  "claims": []
+}

@@ -1,0 +1,37 @@
+{
+  "exchange_id": 10,
+  "exchange_sn": "HH2aff77fc7c3b4ee6bd99e97d8c2f61f3",
+  "exchange_log_ids": [
+    3128,
+    3127,
+    3044,
+    3043,
+    3025,
+    3024,
+    2937,
+    2936,
+    2913,
+    2912
+  ],
+  "shipment_id": 56,
+  "shipment_sn": "XSa1ab99142a244e389dd7ac6dbaf7f664",
+  "simulated_shipping_logs": [
+    3028
+  ],
+  "failed_read_logs": [
+    3130,
+    3129,
+    3046,
+    3045,
+    3027,
+    3026,
+    2939,
+    2938,
+    2915,
+    2914
+  ],
+  "actual_outbound_unchanged": true,
+  "real_platform_requests": false,
+  "business_progress_batch_available": true,
+  "ui_verified": true
+}

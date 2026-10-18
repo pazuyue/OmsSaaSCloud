@@ -111,4 +111,11 @@ public class GoodsWorkspaceTest {
         try(org.apache.poi.ss.usermodel.Workbook book=new org.apache.poi.xssf.usermodel.XSSFWorkbook()){book.createSheet().createRow(0).createCell(0).setCellValue("SKU(系统唯一，必填)");java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();book.write(bytes);assertThrows(IllegalArgumentException.class,()->com.oms.goods.service.goods.GoodsImportReader.read(new java.io.ByteArrayInputStream(bytes.toByteArray())));}
     }
 
+    @Test @SuppressWarnings("unchecked") void exchangePickerSearchIsPagedLiteralAndReturnsSpecsWithoutCrossCompany(){
+        goods.saveGoods("QM",product("A"),"tester");goods.saveGoods("QM",product("B"),"tester");goods.saveGoods("QM",product("C"),"tester");db.update("UPDATE goods_sku_sn_info SET company_code='OTHER',sku_sn='A' WHERE sku_sn='C'");
+        com.oms.goods.controller.OrderGoodsCatalogController api=new com.oms.goods.controller.OrderGoodsCatalogController();org.springframework.test.util.ReflectionTestUtils.setField(api,"workspace",goods);org.springframework.test.util.ReflectionTestUtils.setField(api,"jdbc",db);
+        Map<String,Object> page=api.search("qm",data("field","goodsSn","keyword","STYLE-1","pageNum",1,"pageSize",1)).getData();assertEquals(2L,((Number)page.get("total")).longValue());Map<String,Object> row=((List<Map<String,Object>>)page.get("rows")).get(0);assertEquals("白色",row.get("colorName"));assertEquals("M",row.get("sizeName"));
+        Map<String,Object> exact=api.search("QM",data("field","skuSn","keyword","A")).getData();assertEquals(1L,((Number)exact.get("total")).longValue());assertEquals(0L,((Number)api.search("QM",data("field","goodsName","keyword","%")).getData().get("total")).longValue());
+        assertEquals("白色",api.goods("QM",Arrays.asList("A")).getData().get(0).get("color_name"));assertThrows(IllegalArgumentException.class,()->api.search("QM",data("field","company_code","keyword","OTHER")));
+    }
 }

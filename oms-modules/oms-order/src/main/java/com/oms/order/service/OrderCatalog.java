@@ -11,6 +11,7 @@ public class OrderCatalog {
     @Resource private OrderChannelClient channels;
     @Resource private OrderGoodsClient goods;
     @Resource private com.oms.common.api.OrderWarehouseClient warehouses;
+    public Map<String,Object> searchGoods(String company,Map<String,Object> query){return data(goods.search(company,query,SecurityConstants.INNER));}
     public List<Map<String,Object>> warehouses(String company){return data(warehouses.stores(company,SecurityConstants.INNER));}
     public List<Map<String,Object>> channels(String company){return data(channels.channels(company,SecurityConstants.INNER));}
     public Map<String,List<Map<String,Object>>> goods(String company,List<String> skus){Map<String,List<Map<String,Object>>> result=new HashMap<>();for(Map<String,Object> row:data(goods.goods(company,skus,SecurityConstants.INNER)))result.computeIfAbsent(text(row,"sku_sn"),k->new ArrayList<>()).add(row);return result;}

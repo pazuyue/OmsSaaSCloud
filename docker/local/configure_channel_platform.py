@@ -7,9 +7,14 @@ from local_db import HERE, execute
 from seed_business import ensure_menu
 
 def main():
+    from configure_exchanges import install_channel
+    install_channel('qm_oms_saas_channel')
     execute((HERE/'migrations/20261010_channel_platform.sql').read_text(encoding='utf-8'), 'qm_oms_saas_channel')
     if not execute("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='qm_oms_saas_channel' AND table_name='channel_platform_app' AND column_name='simulation_mode'").strip() == '1':
         execute("ALTER TABLE channel_platform_app ADD simulation_mode TINYINT NOT NULL DEFAULT 0 COMMENT '0真实平台，1本地模拟；模拟不得发送真实平台请求' AFTER enabled", 'qm_oms_saas_channel')
+    from configure_platform_log_center import install, menu
+    install('qm_oms_saas_channel')
+    menu()
     env=HERE/'.env'
     content=env.read_text(encoding='utf-8')
     match=re.search(r'^OMS_CHANNEL_ENCRYPTION_KEY=(.*)$',content,re.M)

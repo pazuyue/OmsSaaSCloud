@@ -1,0 +1,21 @@
+{
+  "api_company_scope": true,
+  "stock_query_read_only": true,
+  "zero_stock_selectable_and_approvable": true,
+  "platform_quantity_preserved": 2,
+  "no_platform_agreement": true,
+  "no_reservation": true,
+  "original_acceptance_orders_read_only": true,
+  "backend_tests": {
+    "local_order_pass": 333,
+    "external_connectivity_not_verified": 2,
+    "inventory_pass": 87,
+    "goods_pass": 26,
+    "exchange_after_final_fix_pass": 29
+  },
+  "frontend_behavior_pass": true,
+  "ui_scripts": [
+    "verify_exchange_workbench.py",
+    "verify_exchange_ownership_ui.py"
+  ]
+}

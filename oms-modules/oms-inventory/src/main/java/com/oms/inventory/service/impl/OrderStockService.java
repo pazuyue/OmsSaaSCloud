@@ -23,9 +23,9 @@ public class OrderStockService {
 
     /** Pure lookup: a missing demand must not create inventory rows or refresh balances. */
     public List<Map<String,Object>> demands(String company,long channel,String tid){
-        require(company!=null&&company.matches("[A-Za-z0-9_-]{1,50}")&&channel>0&&tid!=null&&tid.matches("[0-9]{1,64}"),"订单标识无效");
+        require(company!=null&&company.matches("[A-Za-z0-9_-]{1,50}")&&channel>0&&tid!=null&&com.oms.common.util.FulfillmentReference.valid(tid),"订单标识无效");
         String scope=company.toUpperCase(Locale.ROOT);
-        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,outbound_quantity,status,reason,reason_code,decision_snapshot FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
+        List<Map<String,Object>> rows=jdbc.queryForList("SELECT id,platform_oid,sku_sn,demand_quantity,reserved_quantity,outbound_quantity,cancelled_quantity,status,reason,reason_code,decision_snapshot FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",scope,channel,tid);
         Map<Long,List<Map<String,Object>>> sources=new HashMap<>();
         for(Map<String,Object> source:jdbc.queryForList("SELECT s.demand_id,s.source_type,s.store_code,s.quantity,s.outbound_quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE d.company_code=? AND d.channel_id=? AND d.platform_tid=? AND s.reserved=1 ORDER BY s.id",scope,channel,tid))sources.computeIfAbsent(n(source,"demand_id"),k->new ArrayList<>()).add(source);
         for(Map<String,Object> row:rows){row.put("sources",sources.getOrDefault(n(row,"id"),Collections.emptyList()));try{row.put("decision_snapshot",row.get("decision_snapshot")==null?Collections.emptyMap():JSON.readValue(s(row,"decision_snapshot"),Map.class));}catch(Exception e){row.put("snapshot_error","预占快照无法解析");row.put("decision_snapshot",Collections.emptyMap());}}return rows;
@@ -35,7 +35,7 @@ public class OrderStockService {
     public List<Map<String,Object>> execute(String company,String action,OrderStockCommand command){
         require(company!=null&&company.matches("[A-Za-z0-9_-]{1,50}"),"公司无效");company=company.toUpperCase(Locale.ROOT);
         require(Arrays.asList("register","reserve","query","cancel").contains(action),"库存动作无效");
-        require(command!=null&&command.getChannelId()>0&&command.getPlatformTid()!=null&&command.getPlatformTid().matches("[0-9]{1,64}"),"订单标识无效");
+        require(command!=null&&command.getChannelId()>0&&command.getPlatformTid()!=null&&com.oms.common.util.FulfillmentReference.valid(command.getPlatformTid()),"订单标识无效");
         require(command.getLines()!=null&&command.getLines().size()<=500,"订单明细超过500行");
         
         Set<String> seen=new HashSet<>();List<OrderStockCommand.Line> lines=new ArrayList<>(command.getLines());
@@ -58,9 +58,10 @@ public class OrderStockService {
                 Map<String,Object> demand=found.get(0);event(demand,"REGISTER","登记销售需求，等待转单逻辑预占");
             }
             Map<String,Object> demand=found.get(0);
+            // A canceled demand is immutable. A new replacement round uses a new reference.
             require("cancel".equals(action)||"query".equals(action)||!"CANCELLED".equals(s(demand,"status")),"订单需求已作废，不允许重新登记或预占");
             require(s(demand,"sku_sn").equals(line.getSkuSn())&&n(demand,"demand_quantity")==line.getQuantity(),"已登记需求与本次参数不同，订单更新不属于一期，请核对原单");
-            if(("register".equals(action)||"reserve".equals(action))&&n(demand,"reserved_quantity")==0){
+            if(("register".equals(action)||"reserve".equals(action))&&n(demand,"reserved_quantity")==0&&n(demand,"demand_quantity")>n(demand,"cancelled_quantity")){
                 jdbc.update("UPDATE oms_order_stock_demand SET allow_public_stock=? WHERE id=?",command.isAllowPublicStock()?1:0,demand.get("id"));
                 if("reserve".equals(action))pending.computeIfAbsent(line.getSkuSn(),k->new ArrayList<>()).add(demand);
             }
@@ -75,7 +76,7 @@ public class OrderStockService {
         for(int i=0;i<result.size();i++){
             Map<String,Object> latest=jdbc.queryForMap("SELECT * FROM oms_order_stock_demand WHERE id=?",result.get(i).get("id"));
             if(refreshed.add(s(latest,"sku_sn")))refresh(jdbc,company,s(latest,"sku_sn"),command.getChannelId());
-            latest.put("pending_quantity","CANCELLED".equals(s(latest,"status"))?0:n(latest,"demand_quantity")-n(latest,"reserved_quantity"));result.set(i,latest);
+            latest.put("pending_quantity","CANCELLED".equals(s(latest,"status"))?0:n(latest,"demand_quantity")-n(latest,"cancelled_quantity")-n(latest,"reserved_quantity"));result.set(i,latest);
         }
         return result;
     }
@@ -105,7 +106,7 @@ public class OrderStockService {
                 require(jdbc.update("UPDATE oms_channel_inventory SET reserved_stock=reserved_stock-?,allocated_stock=allocated_stock+?,version=version+1 WHERE company_code=? AND channel_id=? AND sku_sn=? AND reserved_stock>=?",reserved,locked,company,demand.get("channel_id"),sku,reserved)==1,"渠道预占余额不足，已回滚");
             }
             jdbc.update("UPDATE oms_order_stock_source SET reserved=0 WHERE company_code=? AND demand_id=? AND reserved=1",company,demand.get("id"));
-            jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=0,status='CANCELLED',reason='业务订单已作废',reason_code='ORDER_VOIDED' WHERE id=?",demand.get("id"));
+            jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=0,cancelled_quantity=demand_quantity,status='CANCELLED',reason='业务订单已作废',reason_code='ORDER_VOIDED' WHERE id=?",demand.get("id"));
             event(demand,"CANCEL","取消销售需求；释放渠道锁库预占 "+locked+" 件，公共预占 "+publicStock+" 件");
         }
         // A rule already being released must not retain newly returned channel locks.
@@ -122,7 +123,7 @@ public class OrderStockService {
     private void reserve(List<Map<String,Object>> demands,boolean allowPublic){
         Map<String,Object> demand=demands.get(0);
         String company=s(demand,"company_code"),sku=s(demand,"sku_sn");
-        long quantity=demands.stream().mapToLong(d->n(d,"demand_quantity")).sum();
+        long quantity=demands.stream().mapToLong(d->n(d,"demand_quantity")-n(d,"cancelled_quantity")).sum();
         List<Map<String,Object>> locks=jdbc.queryForList("SELECT s.*,b.store_code,r.id result_id FROM rule_stock_reservation s JOIN wms_inventory_batch b ON b.id=s.batch_id AND b.company_code=s.company_code AND b.sku_sn=s.sku_sn JOIN rule_stock_result r ON r.company_code=s.company_code AND r.rule_id=s.rule_id AND r.sku_sn=s.sku_sn JOIN rule_stock_info h ON h.company_code=s.company_code AND h.id=s.rule_id WHERE s.company_code=? AND s.channel_id=? AND s.sku_sn=? AND r.status='SUCCESS' AND r.release_status='NONE' AND h.run_action<>'RELEASE' AND s.original_quantity>s.occupied_quantity+s.consumed_quantity+s.released_quantity ORDER BY s.id",company,demand.get("channel_id"),sku);
         Map<Map<String,Object>,Long> takes=new LinkedHashMap<>();long remaining=quantity;
         for(Map<String,Object> lock:locks){long take=Math.min(remaining,n(lock,"original_quantity")-n(lock,"occupied_quantity")-n(lock,"consumed_quantity")-n(lock,"released_quantity"));if(take>0)takes.put(lock,take);remaining-=take;if(remaining==0)break;}
@@ -143,7 +144,7 @@ public class OrderStockService {
             require(jdbc.update("UPDATE rule_stock_result SET occupied_quantity=occupied_quantity+? WHERE id=? AND status='SUCCESS' AND release_status='NONE'",take,lock.get("result_id"))==1,"锁库单已开始释放，请重试");
         }
         for(Map<String,Object> line:demands){
-            long left=n(line,"demand_quantity"),locked=0;
+            long left=n(line,"demand_quantity")-n(line,"cancelled_quantity"),locked=0;
             for(Map.Entry<Map<String,Object>,Long> entry:takes.entrySet()){
                 long take=Math.min(left,entry.getValue());if(take==0)continue;
                 Map<String,Object> lock=entry.getKey();
@@ -151,7 +152,7 @@ public class OrderStockService {
                 entry.setValue(entry.getValue()-take);left-=take;locked+=take;
             }
             if(left>0)jdbc.update("INSERT INTO oms_order_stock_source(demand_id,company_code,sku_sn,store_code,source_type,source_id,quantity,reserved) VALUES (?,?,?,'','PUBLIC_EXTRA',0,?,1)",line.get("id"),company,sku,left);
-            jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=demand_quantity,status='RESERVED',reason='',reason_code='' WHERE id=?",line.get("id"));
+            jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=demand_quantity-cancelled_quantity,status='RESERVED',reason='',reason_code='' WHERE id=?",line.get("id"));
             event(line,"RESERVE","渠道锁库预占 "+locked+" 件，公共库存补占 "+left+" 件，尚未确定发货仓");
         }
     }
@@ -160,7 +161,7 @@ public class OrderStockService {
     public static long publicReserved(JdbcTemplate jdbc,String company,String sku){
         long total=jdbc.queryForObject("SELECT COALESCE(SUM(reserved_quantity-outbound_quantity),0) FROM oms_order_stock_demand WHERE company_code=? AND sku_sn=? FOR UPDATE",Long.class,company,sku);
         long locked=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_stock_source WHERE company_code=? AND sku_sn=? AND source_type='LOCK' AND reserved=1 FOR UPDATE",Long.class,company,sku);
-        long warehousePublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND sku_sn=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,sku);
+        long warehousePublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-released_quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND sku_sn=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,sku);
         require(total>=locked+warehousePublic,"订单预占与仓库来源记录不一致");return total-locked-warehousePublic;
     }
     /** Receipt refreshes pending summaries; the order retry queue attempts reservations. */
@@ -172,7 +173,7 @@ public class OrderStockService {
     private static void refresh(JdbcTemplate jdbc,String company,String sku,long channel,boolean allChannels){
         company=company.toUpperCase(Locale.ROOT);
         List<Object> pendingArgs=new ArrayList<>(Arrays.asList(company,sku));if(!allChannels)pendingArgs.add(channel);
-        jdbc.update("UPDATE oms_channel_inventory c SET pending_stock=(SELECT COALESCE(SUM(demand_quantity-reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=UPPER(c.company_code) AND d.sku_sn=c.sku_sn AND d.channel_id=c.channel_id AND d.status<>'CANCELLED'),version=version+1 WHERE c.company_code=? AND c.sku_sn=?"+(allChannels?"":" AND c.channel_id=?"),pendingArgs.toArray());
+        jdbc.update("UPDATE oms_channel_inventory c SET pending_stock=(SELECT COALESCE(SUM(demand_quantity-cancelled_quantity-reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=UPPER(c.company_code) AND d.sku_sn=c.sku_sn AND d.channel_id=c.channel_id AND d.status<>'CANCELLED'),version=version+1 WHERE c.company_code=? AND c.sku_sn=?"+(allChannels?"":" AND c.channel_id=?"),pendingArgs.toArray());
         jdbc.update("UPDATE oms_inventory SET pending_public_stock=(SELECT COALESCE(SUM(GREATEST(0,pending_stock-allocated_stock)),0) FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?) WHERE company_code=? AND sku_sn=?",company,sku,company,sku);
         // Public reservations consume the channel's quota even if made before allocation.
         // Rebuild the projection so retries, cancellation and reallocation cannot double count.

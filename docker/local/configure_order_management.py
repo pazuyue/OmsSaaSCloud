@@ -28,9 +28,9 @@ def main():
     existing=execute("SELECT menu_id FROM sys_menu WHERE parent_id="+parent+" AND path IN ('tasks','management')").strip()
     assert not existing or existing.isdigit(),'Duplicate management entries need review'
     if existing:
-        execute("UPDATE sys_menu SET menu_name='拉单管理',path='management',component='oms/order/management',query='',order_num=4 WHERE menu_id="+existing)
+        execute("UPDATE sys_menu SET menu_name='订单与售后接入',path='management',component='oms/order/management',query='',order_num=4 WHERE menu_id="+existing)
     else:
-        existing=str(ensure_menu('拉单管理',int(parent),'management','oms/order/management',permission='order:order:list',order=4))
+        existing=str(ensure_menu('订单与售后接入',int(parent),'management','oms/order/management',permission='order:order:list',order=4))
     execute(f'INSERT INTO sys_role_menu(role_id,menu_id) SELECT 1,{existing} WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu WHERE role_id=1 AND menu_id={existing})')
     permission=ensure_menu('管理推送库',int(platform),'',kind='F',permission='order:source:config',order=25)
     execute(f'INSERT INTO sys_role_menu(role_id,menu_id) SELECT 1,{permission} WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu WHERE role_id=1 AND menu_id={permission})')

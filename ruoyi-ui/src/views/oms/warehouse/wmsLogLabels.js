@@ -1,0 +1,5 @@
+export const actions = { REFUND_PARCEL_LINK_REVIEW:"合包追加归属核对", REFUND_PARCEL_RECEIPT:"合包实收回传",REFUND_PARCEL_REVIEW:"合包实收归属核对", REFUND_RETURN_CREATE:"创建退款退回单",REFUND_RETURN_QUERY:"查询退款退回单",REFUND_RETURN_RECEIPT:"退款退回实收",REFUND_RETURN_CANCEL:"退款退回单截单",REFUND_RETURN_REVIEW:"退款退回人工核对", RETURN_CANCEL:'截停退回入库单', RETURN_REVIEW:'核对截单后实收', RETURN_CREATE: '创建退回入库单', RETURN_QUERY: '查询退回入库单', RETURN_RECEIPT: '退回实收通知', CREATE: '下发入库单', QUERY: '查询入库单', CANCEL: '取消入库单', RECEIPT: '收货回传', OUTBOUND_CREATE: '下发发货单', OUTBOUND_QUERY: '查询发货单', OUTBOUND_CANCEL: '取消发货单', OUTBOUND_RECEIPT: '出库回传', OUTBOUND_REPAIR: '测试链路恢复' }
+export const results = { STARTED: '交互中', SUCCESS: '成功', FAILED: '失败', UNKNOWN: '结果待确认' }
+export const businesses = { REFUND_IN:"退款退回入库", PURCHASE_IN: '采购入库', SALE_OUT: '销售出库', SALE_RETURN: '换货退回', EXCHANGE_IN: '换货退回入库', EXCHANGE_OUT: '换货换出发货', OTHER: '其他交互' }
+export function resultTone(result) { return ({ SUCCESS: 'success', FAILED: 'danger', UNKNOWN: 'warning', STARTED: 'info' })[result] || 'info' }
+export function providerName(provider) { return ({ QIMEN: '奇门', JD_HUFU: '京东虎符' })[provider] || provider || '未知协议' }

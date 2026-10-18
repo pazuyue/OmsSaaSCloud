@@ -50,11 +50,12 @@ class Simulator:
             method=params.get('method','');prefix='taobao.qimen.'
             if not method.startswith(prefix):raise ValueError('不支持的模拟方法')
             method=method[len(prefix):]
-            if method not in ('deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','order.cancel'):raise ValueError('不支持的模拟方法')
-            cancel=method=='order.cancel';kind='entry' if method.startswith('entry') or cancel and root.findtext('orderType')=='CGRK' else 'delivery'
+            if method not in ('deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','returnorder.create','returnorder.query','order.cancel'):raise ValueError('不支持的模拟方法')
+            cancel=method=='order.cancel';kind='return' if method.startswith('return') or cancel and root.findtext('orderType') in ('HHRK','THRK') else 'entry' if method.startswith('entry') or cancel and root.findtext('orderType')=='CGRK' else 'delivery'
             create=method.endswith('.create');head=root.find(kind+'Order') if create else root
             if head is None:raise ValueError('模拟请求缺少单据头')
-            sn=head.findtext(kind+'OrderCode' if create else 'orderCode','');owner=head.findtext('ownerCode','');warehouse=head.findtext('warehouseCode','')
+            number_field=kind+'OrderCode' if create or kind in ('entry','return') and not cancel else 'orderCode'
+            sn=head.findtext(number_field,'') or head.findtext('orderCode','');owner=head.findtext('ownerCode','');warehouse=head.findtext('warehouseCode','')
             if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',sn) or not owner or not warehouse:raise ValueError('模拟请求缺少有效单号、货主或仓库')
             total=0
             if create:
@@ -63,7 +64,7 @@ class Simulator:
                 seen=set()
                 for line in lines:
                     number=line.findtext('orderLineNo','');quantity=int(line.findtext('planQty','0'))
-                    if not number or number in seen or not 0<quantity<=100000000 or not line.findtext('itemCode') or not line.findtext('batchCode'):raise ValueError('模拟商品明细行号、SKU、批次或数量无效')
+                    if not number or number in seen or not 0<quantity<=100000000 or not line.findtext('itemCode') or kind!='return' and not line.findtext('batchCode'):raise ValueError('模拟商品明细行号、SKU、批次或数量无效')
                     seen.add(number);total+=quantity
             digest=hashlib.sha256(body.encode('utf8')).hexdigest();customer=selected['customer_id'];key=(customer,kind,owner,warehouse,sn);now=datetime.now(timezone.utc).isoformat()
             with closing(sqlite3.connect(self.database,timeout=10)) as db, db:
@@ -76,7 +77,7 @@ class Simulator:
                     old=db.execute('SELECT * FROM documents WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',key).fetchone()
                 elif create and old['body_hash']!=digest:return reply(False,'DUPLICATE','模拟单号已存在且商品快照不同',{kind+'OrderId':old['external_id']})
                 if old is None:return reply(False,'ORDER_NOT_FOUND','本地模拟仓库查无此单')
-                provided=root.findtext('orderId','') if not create else ''
+                provided=(root.findtext(kind+'OrderId','') or root.findtext('orderId','')) if kind in ('entry','return') and not create and not cancel else root.findtext('orderId','') if not create else ''
                 if provided and provided!=old['external_id']:return reply(False,'IDENTITY_MISMATCH','模拟仓库单号不一致')
                 state='CANCELED' if cancel else old['status']
                 if cancel:db.execute('UPDATE documents SET status=? WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',(state,*key))

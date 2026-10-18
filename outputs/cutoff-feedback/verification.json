@@ -1,0 +1,55 @@
+{
+  "order_id": 47,
+  "shipment_id": 34,
+  "submitted": {
+    "cutoff_id": 5,
+    "check_version": 4
+  },
+  "checked_version": 4,
+  "last_checked_at": "2026-10-15 19:44:15",
+  "business_and_stock_unchanged": true,
+  "snapshot": {
+    "order": {
+      "id": 47,
+      "status": "CUTTING",
+      "cutoff_state": "PROCESSING",
+      "control_version": 9,
+      "shipped_quantity": 0,
+      "cancelled_quantity": 4,
+      "public_reserved_quantity": 6
+    },
+    "shipments": [
+      {
+        "id": 34,
+        "status": "WAREHOUSE_PROCESSING",
+        "quantity": 6,
+        "shipped_quantity": 0,
+        "cancelled_quantity": 0,
+        "control_version": 3
+      },
+      {
+        "id": 35,
+        "status": "VOIDED",
+        "quantity": 4,
+        "shipped_quantity": 0,
+        "cancelled_quantity": 4,
+        "control_version": 4
+      }
+    ],
+    "reviews": [
+      {
+        "id": 3,
+        "state": "WAIT_REVIEW",
+        "control_version": 0,
+        "event_id": null,
+        "decision": "",
+        "stock_state": "NOT_POSTED"
+      }
+    ],
+    "stock": "CF_202610151644494\t10\t4\t6",
+    "warehouses": "CUTOFF_V1_202610151644494\t6\t0\t6\nCUTOFF_V2_202610151644494\t4\t4\t0"
+  },
+  "shipment_cutoff_logs": "CUTOFF_RETRY\tPENDING\t[截单#5] 已提交重新核对原截单，等待处理；上次原因：存在待人工核对的出库回传，截单不能释放库存\tadmin\nCUTOFF_BLOCKED\tPENDING\t[截单#5] 本次核对未完成：存在待人工核对的出库回传，截单不能释放库存；待确认部分继续保留库存占用\t截单任务\nCUTOFF_RETRY\tPENDING\t[截单#5] 已提交重新核对原截单，等待处理；上次原因：存在待人工核对的出库回传，截单不能释放库存\tadmin\nCUTOFF_BLOCKED\tPENDING\t[截单#5] 本次核对未完成：存在待人工核对的出库回传，截单不能释放库存；待确认部分继续保留库存占用\t截单任务\nCUTOFF_RETRY\tPENDING\t[截单#5] 已提交重新核对原截单，等待处理；上次原因：存在待人工核对的出库回传，截单不能释放库存\tadmin\nCUTOFF_BLOCKED\tPENDING\t[截单#5] 本次核对未完成：存在待人工核对的出库回传，截单不能释放库存；待确认部分继续保留库存占用\t截单任务",
+  "browser_errors": [],
+  "verified_at": "2026-10-15 19:44:21"
+}

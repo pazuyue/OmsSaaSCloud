@@ -1,0 +1,59 @@
+{
+  "regression_tests": 243,
+  "simulation_and_ui": "PASSED",
+  "original_order": "SO7fdc7ec1fe484f75aa01adcc1c154e1c",
+  "pending": {
+    "id": 14,
+    "exchange_sn": "HHI3ea381f08e468d089f3c94b6c5bc4f4f",
+    "state": "PROCESSING",
+    "control_state": "HOLD",
+    "requested": 2,
+    "accepted": 1,
+    "posted": 1,
+    "documents": [
+      {
+        "return_sn": "THXFFF711FC2B004996B2F59917710FDC",
+        "generation": 2,
+        "quantity": 1,
+        "accepted": 0,
+        "cancel_state": "NONE",
+        "dispatch_state": "PENDING"
+      },
+      {
+        "return_sn": "THXA3AE9C2CF1440F1D8CA6D851FF85DA",
+        "generation": 1,
+        "quantity": 2,
+        "accepted": 1,
+        "cancel_state": "CONFIRMED",
+        "dispatch_state": "CANCELED"
+      }
+    ]
+  },
+  "closed": {
+    "id": 13,
+    "exchange_sn": "HHI706d95d3d2a136f106b4274bb887dbac",
+    "state": "CLOSED",
+    "control_state": "CLOSED",
+    "requested": 2,
+    "accepted": 2,
+    "posted": 2,
+    "documents": [
+      {
+        "return_sn": "THX200C3886A8D5680CE1B912E8494A53",
+        "generation": 2,
+        "quantity": 1,
+        "accepted": 0,
+        "cancel_state": "CONFIRMED",
+        "dispatch_state": "CANCELED"
+      },
+      {
+        "return_sn": "THXFF3BD651CA89B66F84525912EA45EB",
+        "generation": 1,
+        "quantity": 2,
+        "accepted": 2,
+        "cancel_state": "CONFIRMED",
+        "dispatch_state": "CANCELED"
+      }
+    ]
+  }
+}

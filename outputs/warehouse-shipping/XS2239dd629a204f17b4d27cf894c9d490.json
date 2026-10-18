@@ -1,0 +1,34 @@
+{
+  "shipment_id": 59,
+  "shipment_sn": "XS2239dd629a204f17b4d27cf894c9d490",
+  "order_id": 58,
+  "external_order": "SIMOUT_c40750728cae4e23a988",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 2,
+  "message_id": "SIM_COMPLETE_XS2239dd629a204f17b4d27cf894c9d490",
+  "package_code": "SIMPKG_XS2239dd629a204f17b4d27cf894c9d490",
+  "express_code": "TEST-SF-XS2239dd629a204f17b4d27cf894c9d490",
+  "outbound_time": "2026-10-17 13:23:18",
+  "plans": [
+    {
+      "id": 62,
+      "sku_sn": "EXCH_CUT_20261017113223_B",
+      "quantity": 2,
+      "platform_oid": "9942026101711322301",
+      "store_code": "EXCH_CUT_20261017113223_V",
+      "batch_code": "TEST-OWN-B-20261017113223"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS2239dd629a204f17b4d27cf894c9d490</deliveryOrderCode><deliveryOrderId>SIMOUT_c40750728cae4e23a988</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS2239dd629a204f17b4d27cf894c9d490</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-17 13:23:18</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>62</orderLineNo><itemCode>EXCH_CUT_20261017113223_B</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-OWN-B-20261017113223</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS2239dd629a204f17b4d27cf894c9d490</packageCode><expressCode>TEST-SF-XS2239dd629a204f17b4d27cf894c9d490</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>EXCH_CUT_20261017113223_B</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS2239dd629a204f17b4d27cf894c9d490",
+    "quantity": 2,
+    "status": "SHIPPED",
+    "shipped_quantity": 2,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS2239dd629a204f17b4d27cf894c9d490",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

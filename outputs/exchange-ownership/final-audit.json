@@ -1,0 +1,41 @@
+{
+  "one_so_after_A_B_A_B": true,
+  "one_so_before_A_B_A": true,
+  "root_sale_outbound": 10,
+  "before_effective_demand": 10,
+  "before_allocated": 10,
+  "before_active_skus": 1,
+  "stock": [
+    {
+      "sku": "EXCH_AFTER_20261016215117_A",
+      "total": 2,
+      "available": 2,
+      "reserved": 0
+    },
+    {
+      "sku": "EXCH_AFTER_20261016215117_B",
+      "total": 0,
+      "available": 0,
+      "reserved": 0
+    },
+    {
+      "sku": "EXCH_BEFORE_20261016215701_A",
+      "total": 10,
+      "available": 0,
+      "reserved": 10
+    },
+    {
+      "sku": "EXCH_BEFORE_20261016215701_B",
+      "total": 2,
+      "available": 2,
+      "reserved": 0
+    }
+  ],
+  "actual_shipment_lineage": "XS54d7893f4c0b40ae964a3e8456031628\t47\t63\tEXCH_AFTER_20261016215117_A\tNULL\nXS5355da54e9204d4eb6479383f42412f7\t48\t64\tEXCH_AFTER_20261016215117_B\t47\nXS0e8478cb98c145368467ff069a4af59d\t49\t65\tEXCH_AFTER_20261016215117_A\t48\nXSbb32da6118de4921b6a2780fed5133b6\t50\t66\tEXCH_AFTER_20261016215117_B\t49",
+  "tests": {
+    "order": 332,
+    "inventory": 86,
+    "supplychain": 147
+  },
+  "real_platform_writes": false
+}

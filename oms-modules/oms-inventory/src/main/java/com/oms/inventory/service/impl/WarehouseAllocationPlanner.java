@@ -38,8 +38,8 @@ public final class WarehouseAllocationPlanner {
         long available(String sku,String store){return totals.getOrDefault(key(sku,store),0L);}
     }
     private static final class Budget{
-        final Set<String> used=new HashSet<>(),pending=new HashSet<>();final long warehouses,slots;
-        Budget(List<Map<String,Object>> existing,Map<String,Object> policy,boolean multi){for(Map<String,Object> row:existing)used.add(s(row,"store_code"));long max=n(policy,"max_virtual_warehouses"),ship=n(policy,"max_shipments");require(max>=0&&max<=100&&ship>=0&&ship<=100,"分仓上限无效");warehouses=multi?(max==0?100:max):1;
+        final Set<String> used=new HashSet<>(),pending=new HashSet<>();final long warehouses,slots;final List<Map<String,Object>> inherited=new ArrayList<>();
+        @SuppressWarnings("unchecked") Budget(List<Map<String,Object>> existing,Map<String,Object> policy,boolean multi){if(policy.get("global_fulfillment") instanceof List){require(((List<?>)policy.get("global_fulfillment")).size()<=10000,"累计履约来源数量过多");for(Object row:(List<?>)policy.get("global_fulfillment")){require(row instanceof Map,"累计履约来源无效");inherited.add((Map<String,Object>)row);used.add(s((Map<String,Object>)row,"store_code"));}}for(Map<String,Object> row:existing)used.add(s(row,"store_code"));long max=n(policy,"max_virtual_warehouses"),ship=n(policy,"max_shipments");require(max>=0&&max<=100&&ship>=0&&ship<=100,"分仓上限无效");warehouses=multi?(max==0?100:max):1;
             if(ship>0)require(policy.containsKey("existing_shipment_count")&&policy.get("mapped_allocation_ids") instanceof Collection,"缺少累计发货单核对信息，请刷新后重试");
             Set<Long> mapped=new HashSet<>();if(policy.get("mapped_allocation_ids") instanceof Collection)for(Object id:(Collection<?>)policy.get("mapped_allocation_ids"))mapped.add(Long.parseLong(id.toString()));
             if(ship>0)for(Map<String,Object> row:existing)if(!mapped.contains(n(row,"id")))pending.add(s(row,"store_code"));
@@ -51,7 +51,7 @@ public final class WarehouseAllocationPlanner {
     private static List<Map<String,Object>> attempt(List<Map<String,Object>> sources,Index index,Map<String,Map<String,Object>> catalog,List<Map<String,Object>> existing,Set<String> allowed,boolean split,boolean partial,Budget budget){
         Map<String,List<Map<String,Object>>> bySku=new TreeMap<>();for(Map<String,Object> source:sources)bySku.computeIfAbsent(s(source,"sku_sn"),k->new ArrayList<>()).add(source);List<Map<String,Object>> out=new ArrayList<>();
         for(Map.Entry<String,List<Map<String,Object>>> group:bySku.entrySet()){
-            Map<Long,Long> free=index.free.getOrDefault(group.getKey(),Collections.emptyMap());Set<String> fixed=new HashSet<>(),selectedStores=new HashSet<>();for(Map<String,Object> row:out)selectedStores.add(s(row,"store_code"));for(Map<String,Object> row:existing)if(group.getKey().equals(s(row,"sku_sn")))fixed.add(s(row,"store_code"));for(Map<String,Object> source:group.getValue())if("LOCK".equals(s(source,"source_type")))fixed.add(s(source,"store_code"));
+            Map<Long,Long> free=index.free.getOrDefault(group.getKey(),Collections.emptyMap());Set<String> fixed=new HashSet<>(),selectedStores=new HashSet<>();for(Map<String,Object> row:out)selectedStores.add(s(row,"store_code"));for(Map<String,Object> row:existing)if(group.getKey().equals(s(row,"sku_sn")))fixed.add(s(row,"store_code"));for(Map<String,Object> row:budget.inherited)if(group.getKey().equals(s(row,"sku_sn")))fixed.add(s(row,"store_code"));for(Map<String,Object> source:group.getValue())if("LOCK".equals(s(source,"source_type")))fixed.add(s(source,"store_code"));
             List<Map<String,Object>> selected=null;Map<Long,Long> next=null;
             if(split){next=new HashMap<>(free);selected=allocate(group.getValue(),index,catalog,allowed,next,partial,budget,selectedStores);}
             else{

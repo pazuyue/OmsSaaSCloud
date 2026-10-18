@@ -10,7 +10,9 @@ public class WmsInteractionLog {
     @Resource private WmsStore db;
     public long start(String company,long connection,Long task,String sn,String direction,String action,String body){return db.insert("wms_interaction_log",map("company_code",company,"connection_id",connection,"task_id",task,"ticket_sn",sn,"direction",direction,"action",action,"request_id",UUID.randomUUID().toString(),"request_body",redact(body),"result","STARTED"));}
     public void finish(long key,String result,String response,String error,long elapsed){db.jdbc.update("UPDATE wms_interaction_log SET result=?,response_body=?,error_info=?,duration_ms=? WHERE id=?",result,redact(response),cut(error,1000),elapsed,key);}
-    private static final Set<String> ACTIONS=new HashSet<>(Arrays.asList("OUTBOUND_CREATE","OUTBOUND_QUERY","OUTBOUND_RECEIPT","OUTBOUND_REPAIR","CREATE","QUERY","CANCEL","RECEIPT"));
+    /** Immutable description of this interaction, independent of the document's later state. */
+    public void describe(long key,String summary){db.jdbc.update("UPDATE wms_interaction_log SET result_summary=? WHERE id=? AND result_summary=''",cut(summary,1000),key);}
+    private static final Set<String> ACTIONS=new HashSet<>(Arrays.asList("OUTBOUND_CREATE","OUTBOUND_QUERY","OUTBOUND_CANCEL","OUTBOUND_RECEIPT","OUTBOUND_REPAIR","RETURN_CREATE","RETURN_QUERY","RETURN_RECEIPT","RETURN_CANCEL","RETURN_REVIEW","REFUND_RETURN_CREATE","REFUND_RETURN_QUERY","REFUND_RETURN_RECEIPT","REFUND_RETURN_CANCEL","REFUND_RETURN_REVIEW","REFUND_PARCEL_RECEIPT","REFUND_PARCEL_REVIEW","REFUND_PARCEL_LINK_REVIEW","CREATE","QUERY","CANCEL","RECEIPT"));
     private static final Set<String> RESULTS=new HashSet<>(Arrays.asList("STARTED","SUCCESS","FAILED","UNKNOWN"));
     private static final String SELECT="SELECT l.id,l.connection_id,c.name connection_name,c.provider,l.ticket_sn,l.direction,l.action,l.request_id,l.result,l.error_info,l.duration_ms,l.create_time FROM wms_interaction_log l JOIN wms_connection c ON c.id=l.connection_id AND c.company_code=l.company_code";
     public List<Map<String,Object>> list(String company,String sn,int page){return list(company,sn,page,"","");}
@@ -24,7 +26,7 @@ public class WmsInteractionLog {
         require(sn.length()<=100,"执行单号过长");List<Map<String,Object>> counts=db.jdbc.queryForList("SELECT action,COUNT(*) log_count FROM wms_interaction_log WHERE company_code=? AND (?='' OR ticket_sn=?) GROUP BY action",company,sn,sn);
         Map<String,Object> result=map("counts",counts,"total",counts.stream().mapToLong(r->id(r.get("log_count"))).sum());
         if(!sn.isEmpty())for(boolean first:Arrays.asList(true,false)){
-            List<Map<String,Object>> records=db.jdbc.queryForList(SELECT+" WHERE l.company_code=? AND l.ticket_sn=? AND l.action IN ('OUTBOUND_CREATE','CREATE') ORDER BY l.id "+(first?"ASC":"DESC")+" LIMIT 1",company,sn);
+            List<Map<String,Object>> records=db.jdbc.queryForList(SELECT+" WHERE l.company_code=? AND l.ticket_sn=? AND l.action IN ('OUTBOUND_CREATE','CREATE','RETURN_CREATE') ORDER BY l.id "+(first?"ASC":"DESC")+" LIMIT 1",company,sn);
             result.put(first?"first_create":"latest_create",records.isEmpty()?null:records.get(0));
         }
         return result;

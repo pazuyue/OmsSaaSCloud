@@ -1,0 +1,10 @@
+{
+  "local_exchange": "HHI706d95d3d2a136f106b4274bb887dbac",
+  "platform_exchange": "HH2aff77fc7c3b4ee6bd99e97d8c2f61f3",
+  "automatic_number_lookup": true,
+  "shipment_to_exchange_context": true,
+  "chinese_action_filter": true,
+  "local_completion_not_platform_success": true,
+  "read_only_business_facts_unchanged": true,
+  "browser_errors": []
+}

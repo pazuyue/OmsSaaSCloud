@@ -20,6 +20,11 @@ public class WmsIntegrationController {
     @Resource private WmsInboundService inbound;
     @Resource private WmsOutboundReceiptService outboundReceipts;
     @Resource private WmsInteractionLog logs;
+    @Resource private WmsLogQuery logQuery;
+    @Resource private PurchaseCutoffService purchaseCutoff;
+    @Resource private WmsInboundWork inboundWork;
+    @Resource private ExchangeReturnService exchangeReturns;
+    @Resource private RefundReturnService refundReturns;
     @Resource private DataSource dataSource;
     @Resource private WmsTenantRoutes tenantRoutes;
     private String company(){return WarehouseCompany.current();}
@@ -30,18 +35,22 @@ public class WmsIntegrationController {
         switch(action){
             case "retry":AuthUtil.checkPermi("warehouse:tickets:retry");inbound.retry(company(),id);return AjaxResult.success(map("success",true,"message","已安排重试下发，请刷新进度"));
             case "query":AuthUtil.checkPermi("warehouse:tickets:queryWarehouse");return AjaxResult.success(inbound.query(company(),id));
-            case "cancel":AuthUtil.checkPermi("warehouse:tickets:remove");return AjaxResult.success(inbound.cancel(company(),id,body==null?"":text(body.get("reason")),com.ruoyi.common.security.utils.SecurityUtils.getUsername()));
+            case "cancel":AuthUtil.checkPermi("warehouse:poInfo:cutoff");Map<String,Object> task=inbound.task(company(),id);require(task!=null&&task.get("receipt_id")!=null,"请从到货单申请截单");Map<String,Object> report=purchaseCutoff.report(company(),"receipt",WmsStore.id(task.get("receipt_id")));Map<String,Object> input=map("reason",body==null?"":text(body.get("reason")),"cutoff_version",report.get("cutoff_version"));Map<String,Object> op=purchaseCutoff.request(company(),"receipt",WmsStore.id(task.get("receipt_id")),input,com.ruoyi.common.security.utils.SecurityUtils.getUsername());inboundWork.cutoffReady(company(),WmsStore.id(op.get("id")));return AjaxResult.success(map("success",true,"message","已提交到货单截单，请查看原申请进度"));
             default:throw new IllegalArgumentException("未知仓库操作");
         }
     }
     @GetMapping("/wmsIntegration/logs") public AjaxResult logs(@RequestParam(defaultValue="") String sn,@RequestParam(defaultValue="1") int page,@RequestParam(defaultValue="") String action,@RequestParam(defaultValue="") String result){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.list(company(),sn.trim(),page,action,result));}
     @GetMapping("/wmsIntegration/log-summary") public AjaxResult logSummary(@RequestParam(defaultValue="") String sn){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logs.summary(company(),sn.trim()));}
     @GetMapping("/wmsIntegration/logs/{id}") public AjaxResult log(@PathVariable long id){AuthUtil.checkPermi("warehouse:wms:payload");return AjaxResult.success(logs.detail(company(),id));}
+    @GetMapping("/wmsIntegration/log-center") public AjaxResult logCenter(@RequestParam Map<String,String> query){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logQuery.list(company(),query));}
+    @GetMapping("/wmsIntegration/log-center-summary") public AjaxResult logCenterSummary(@RequestParam Map<String,String> query){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logQuery.summary(company(),query));}
+    @GetMapping("/wmsIntegration/log-center-options") public AjaxResult logCenterOptions(){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logQuery.options(company()));}
+    @GetMapping("/wmsIntegration/log-center/{id}") public AjaxResult logCenterDetail(@PathVariable long id){AuthUtil.checkPermi("warehouse:wms:log");return AjaxResult.success(logQuery.detail(company(),id));}
     /** Only this exact public route bypasses user login. Provider signatures authenticate the body. */
     @PostMapping("/wmsCallback/{route}/{key}") public ResponseEntity<String> callback(@PathVariable String route,@PathVariable String key,@RequestBody String body,HttpServletRequest request){
         require(route.matches("[A-Za-z0-9_-]{1,64}")&&key.matches("[a-f0-9]{32}"),"无效回调地址");require(body.length()<=1024*1024,"回传报文超过1MB");
         Map<String,String> params=new TreeMap<>();request.getParameterMap().forEach((k,v)->{require(v.length==1,"回传参数不能重复");params.put(k,v[0]);});
-        return tenantRoutes.call(route,()->{String method=params.get("method");String result=Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);});
+        return tenantRoutes.call(route,()->{String method=params.get("method");String result="taobao.qimen.returnorder.confirm".equals(method)?(QimenReturnProtocol.refundDocument(body)?refundReturns:exchangeReturns).callback(route.toUpperCase(Locale.ROOT),key,params,body):Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);});
     }
     @ExceptionHandler(IllegalArgumentException.class) public AjaxResult invalid(IllegalArgumentException error){return AjaxResult.error(error.getMessage());}
 }

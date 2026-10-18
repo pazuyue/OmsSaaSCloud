@@ -35,12 +35,14 @@ public class OrderProcessor {
         try {
             Map<String,Object> order=repository.snapshot(company,id,lease);if(order==null)return;
             if(order.get("business_order_id")!=null){
-                OrderStockCommand command=new OrderStockCommand();command.setChannelId(number(order,"channel_id"));command.setPlatformTid(text(order,"platform_tid"));command.setAllowPublicStock(number(config,"allow_public_stock")==1);
-                for(Map<String,Object> line:repository.db().query("SELECT platform_oid,sku_sn,quantity FROM oms_order_line WHERE company_code=? AND order_id=? ORDER BY id",ROW,company,order.get("business_order_id"))){
-                    OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));command.getLines().add(item);
+                OrderExchangeGuard.requireReady(repository,company,number(order,"business_order_id"),false);
+                List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity,stock_reference,business_type FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE' ORDER BY id",ROW,company,order.get("business_order_id"));require(!lines.isEmpty(),"业务订单商品明细缺失");List<Map<String,Object>> receipts=new ArrayList<>();
+                for(Map.Entry<String,List<Map<String,Object>>> group:OrderFulfillmentLines.groups(order,lines).entrySet()){
+                    OrderStockCommand command=new OrderStockCommand();command.setChannelId(number(order,"channel_id"));command.setPlatformTid(group.getKey());command.setAllowPublicStock(number(config,"allow_public_stock")==1);
+                    for(Map<String,Object> line:group.getValue()){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));command.getLines().add(item);}
+                    for(Map<String,Object> row:data(inventory.execute("reserve",company,command,SecurityConstants.INNER))){Map<String,Object> copy=new LinkedHashMap<>(row);copy.put("stock_reference",group.getKey());receipts.add(copy);}
                 }
-                require(!command.getLines().isEmpty(),"业务订单商品明细缺失");
-                repository.complete(company,id,lease,config,data(inventory.execute("reserve",company,command,SecurityConstants.INNER)));return;
+                repository.complete(company,id,lease,config,receipts);return;
             }
             TmallOrderParser.Trade trade=parser.parse(text(order,"processing_payload"));
             require(trade.tid.equals(text(order,"platform_tid"))&&trade.seller.equals(text(config,"seller_nick")),"报文订单号或卖家与拉取范围不一致");

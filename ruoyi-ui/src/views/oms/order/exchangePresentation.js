@@ -1,0 +1,46 @@
+export const unshipped = e => e.fulfillment_mode === 'UNSHIPPED'
+export const phaseName = e => ({ DURING_SALE: '售中换货', AFTER_SALE: '售后换货' })[e.source_phase] || '阶段待核对'
+export const buckets = [{ key: 'ALL', label: '全部' }, { key: 'REVIEW', label: '待审核' }, { key: 'ISSUE', label: '待处理异常' }, { key: 'RETURN', label: '待退回 / 验收' }, { key: 'SHIP', label: '待换出发货' }, { key: 'PLATFORM', label: '待平台处理' }, { key: 'DONE', label: '已结束' }]
+export const ended = e => ['COMPLETED', 'CANCELED', 'CLOSED', 'REJECTED'].includes(e.state)
+export const quantity = (e, field) => Number(e[field] || 0)
+export function good(g = {}, sku = '') { return { sku: g.skuSn || g.sku_sn || sku, name: g.goodsName || g.goods_name || '', goodsSn: g.goodsSn || g.goods_sn || '', barcode: g.barcodeSn || g.barcode_sn || '', spec: [g.colorName || g.color_name, g.sizeName || g.size_name].filter(Boolean).join(' / ') } }
+export function progress(e) {
+  if(e.control_state === 'CONTINUE_REVIEW') return {title:'待继续换出审核',description:'复用原退回验收，待审核本轮剩余数量、收货地址及售后核对依据；尚未重新预占或下发。',step:2,action:null}
+  if (e.linked_exchange_id) return { title: '已关联协商换货', description: '实际履约沿用关联协商单；平台操作需人工在平台核对，OMS 不重复执行。', step: 0, action: null }
+
+  if (e.state === 'COMPLETED') return { title: '本次履约已完成', description: unshipped(e) ? '协商换品已完成或已由后续换品替代，实际销售发货保留在原订单。' : e.source_kind === 'INTERNAL' ? '退回验收及换出已完成；本次仅在 OMS 内履约，未调用平台换货接口。' : '退回、换出和本次平台物流处理已完成；平台交易状态单独保留。', step: 5, action: null }
+  if (e.state === 'CLOSED') return { title:'本次处理已结束', description:'已停止剩余履约，实际收货、出库及人工处理结论保留。平台申请状态另行核对。', step:0, action:null }
+  if (e.state === 'CANCELED' || e.state === 'REJECTED') return { title: e.state === 'REJECTED' ? '申请已拒绝' : '申请已关闭', description: '已执行的库存及单据记录保留，可在来源与关联中查看。', step: 0, action: null }
+  if (Number(e.fulfillment_hold)) return { title: ({CANCELING:'取消换货处理中',CANCEL_REVIEW:'剩余已停止，待确认结束',HOLD:'新增履约已暂停'})[e.control_state] || '履约已暂停', description:'请在履约控制中核对出入库截单结果。普通挂起不自动通知仓库截单，已实收实发不回滚。', step:0, action:null }
+  if (['UNKNOWN', 'SENDING'].includes(e.platform_operation)) return { title: '平台处理结果待确认', description: '先核对原操作结果，避免重复提交。', step: 1, action: 'reconcile', label: '核对平台处理结果' }
+  if (e.platform_operation === 'FAILED') return { title: '平台处理失败', description: e.last_error || '请刷新平台申请，核对失败原因和当前允许操作。', step: 1, action: 'refresh', label: '核对平台申请' }
+  if (Number(e.speed_exchange) === 1) return { title: '极速换货需在平台处理', description: '本流程暂不支持极速换货执行，请在平台核对。', step: 0, action: null }
+  if (e.state === 'BLOCKED') return { title: '处理暂时受阻', description: e.problem_message || e.last_error || '请先核对来源与已执行事实。', step: 0, action: e.source_kind === 'PLATFORM' ? 'refresh' : null, label: '核对平台申请' }
+  if (!e.approved_version) return { title: '待人工审核方案', description: '确认实际来源、换出商品与数量。保存方案不会同意平台申请或改变库存。', step: 0, action: 'review', label: '保存审核方案' }
+  if (e.platform_operation === 'STOCK_WAIT' || e.state === 'WAIT_STOCK') return { title: '等待换出库存', description: '申请数量保持不变；可重新检查库存并继续原任务。', step: 1, action: 'advance', label: '重新检查换出库存' }
+  if (unshipped(e)) return e.fulfillment_line_id ? { title: '换品已生效，原单继续发货', description: '旧需求已终止，新商品已追加到原订单，请在原单审核、分仓并发货。', step: 3, action: 'order', label: '前往原单处理发货' } : { title: '待撤回原发货并换品', description: '先确认原发货撤回，再终止所选旧需求并预占换出商品。其他挂起与阻断保留。', step: 1, action: 'advance', label: '执行撤回与换品' }
+  if (e.return_qc === 'ISSUE') return { title: '退回差异待处理', description: e.return_qc_reason || '先核对实收、差异和凭证，暂缓换出。', step: e.source_kind === 'INTERNAL' ? 1 : 2, action: 'returns', label: '处理退回差异' }
+  if (e.source_kind === 'INTERNAL') {
+    if (!e.return_sn) return { title: '待准备退回与换出库存', description: '审核后检查并预占换出库存，生成专用退回入库单；不调用平台接口。', step: 1, action: 'advance', label: '准备协商换货履约' }
+    if (quantity(e.return_result || {}, 'posted_quantity') < quantity(e, 'requested_quantity')) return { title: '等待退回入库', description: '按仓库实际回传跟踪实收与记账；登记寄回物流不增加库存。', step: 1, action: 'returns', label: '查看退回与验收' }
+    if (e.return_qc !== 'PASSED') return { title: '待退回验收', description: '核对实收明细、良品次品及差异后确认验收，不重复增加库存。', step: 1, action: 'returns', label: '处理退回验收' }
+    if (!e.fulfillment_line_id) return { title: '待准备换出履约', description: '退回已验收，在原 SO 下生成归本 HH 的独立换出明细。', step: 2, action: 'advance', label: '准备换出履约' }
+    if (e.allocation_status !== 'FULL') return { title: '待换出分仓', description: '按店铺允许仓分配本次换出商品。', step: 2, action: 'allocate', label: '分仓换出商品' }
+    return { title: '换出发货处理中', description: '换出商品实际出库并完整关联包裹后结束；无需平台换货物流回传。', step: 2, action: 'shipments', label: '处理换出发货' }
+  }
+  if (e.platform_operation === 'PENDING') return { title: '平台操作等待执行', description: '原操作请求已登记，可继续处理原任务。', step: 1, action: 'advance', label: '执行已登记任务' }
+  if (e.platform_status === '1') return { title: '方案已审核，待同意申请', description: '执行时重新预占库存；库存不足保留待办，不会减少平台申请数量。', step: 1, action: 'AGREE', label: '预占并同意平台申请' }
+  if (!e.return_sn) return { title: '待准备退回入库', description: '按已审核的退回来源和仓库生成本次退回入库单。', step: 2, action: 'advance', label: '准备退回入库' }
+  if (quantity(e.return_result || {}, 'posted_quantity') < quantity(e, 'requested_quantity')) return { title: '等待退回入库', description: `应退 ${quantity(e, 'requested_quantity')} 件，已入账 ${quantity(e.return_result || {}, 'posted_quantity')} 件；等待仓库实际收货回传。`, step: 2, action: null }
+  if (e.return_qc !== 'PASSED') return { title: '待退回验收', description: '仓库退回库存已入账，请核对实际商品和数量后确认验收；验收不会再次增加库存。', step: 2, action: 'qc', label: '确认退回验收' }
+  if (e.platform_status === '3') return { title: '待向平台确认收货', description: '实际入库和人工验收已完成，下一步向平台确认退回收货。', step: 2, action: 'RECEIVED', label: '向平台确认退回收货' }
+  if (e.platform_status !== '12') return { title: '等待平台状态更新', description: '退回已验收，平台当前尚未允许换出，请核对平台申请。', step: 2, action: 'refresh', label: '核对平台申请' }
+  if (!e.fulfillment_line_id) return { title: '待准备换出履约', description: '生成归属本换货单的换出商品明细，原 SO 保留交易关系。', step: 3, action: 'advance', label: '准备换出履约' }
+  if (e.allocation_status !== 'FULL') return { title: '待换出分仓', description: `应换出 ${e.requested_quantity} 件，已分仓 ${e.allocation_quantity || 0} 件。`, step: 3, action: 'allocate', label: '分仓换出商品' }
+  const ships = e.shipments || []; const shipped = ships.reduce((n, s) => n + quantity(s, 'shipped_quantity'), 0); const packed = ships.reduce((n, s) => n + quantity(s, 'packaged_quantity'), 0)
+  if (shipped < quantity(e, 'requested_quantity') || packed < shipped) return { title: shipped ? '换出商品出库处理中' : '待换出发货', description: `已出库 ${shipped} / ${e.requested_quantity} 件，已关联包裹 ${packed} 件；请在换出发货中处理仓库与运单。`, step: 3, action: 'shipments', label: '处理换出发货' }
+  if (e.platform_tracking_count !== undefined && Number(e.platform_tracking_count) !== 1) return { title: '换出运单需人工核对', description: '当前回传支持一组快递与运单，请核对多运单在平台的处理方式，暂不提交。', step: 4, action: 'shipments', label: '查看换出包裹' }
+  if (e.platform_write_enabled !== undefined && !Number(e.platform_write_enabled)) return { title: '待开启店铺换货写权限', description: '出库与运单已齐备，请在换货接入设置中核对写操作开关。', step: 4, action: null }
+  return { title: '待回传换出物流', description: '换出商品已出库并关联包裹，需人工提交本次换货物流，仓库发货完成不会自动回传。', step: 4, action: 'CONSIGN', label: '回传换出物流' }
+}
+export const eventNames = { HOLD:'挂起履约',RESUME:'恢复履约',CUTOFF_REQUEST:'申请出入库截单',CUTOFF_QUERY:'核对原截单',CUTOFF_RESULT:'单据截单结果',CANCEL_RESULT:'取消换货核对',CANCEL_CLOSE:'确认结束并保留事实',RETURN_DOCUMENT:'退回单处理', SYNC: '同步平台申请', REVIEW: '保存审核方案', PLATFORM_REQUEST: '提交平台操作', PLATFORM_CONFIRMED: '确认平台结果', PLATFORM_FAILED: '平台处理失败', RETURN_QC: '退回验收处理', RETURN_LOGISTICS: '登记寄回物流', RETURN_ACTION: '核对退回任务', LINK_PLATFORM: '关联平台申请', REPLACEMENT_CREATE: '换出方案生效', INTERNAL_COMPLETED: '协商换品结束', INTERNAL_CREATE: '创建协商换品', RELEASE: '释放换出占用' }

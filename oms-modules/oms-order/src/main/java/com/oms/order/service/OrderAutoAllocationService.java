@@ -26,13 +26,14 @@ public class OrderAutoAllocationService {
     static void guard(JdbcTemplate db,String company,Map<String,Object> order,String lease){
         List<Map<String,Object>> tasks=db.queryForList("SELECT * FROM oms_order_auto_allocation WHERE company_code=? AND order_id=? AND lease_token=? AND state='PROCESSING' AND paused=0 AND lease_until>NOW()",company,order.get("id"),lease);
         require(tasks.size()==1,"自动分仓已暂停或执行权已变化");
+        require(!"REPLAN_READY".equals(text(order,"cutoff_state")),"撤回后需人工确认重新分仓");
         List<Map<String,Object>> configs=db.queryForList("SELECT policy_json FROM oms_order_allocation_config WHERE company_code=? AND channel_id=?",company,order.get("channel_id"));
         Map<String,Object> policy=configs.isEmpty()?Collections.emptyMap():decode(configs.get(0).get("policy_json"));
         require("AUTO".equals(text(policy,"execution_mode"))&&number(policy,"enabled")==1,"店铺自动分仓已关闭");
         require(number(order,"allocation_quantity")==0||number(policy,"auto_replenish")==1||Arrays.asList("UNCERTAIN","PROCESSING").contains(text(order,"allocation_status")),"本单余量未开启自动补充分仓");
     }
     @SuppressWarnings("unchecked") private static Map<String,Object> decode(Object value){try{return JSON.readValue(String.valueOf(value),Map.class);}catch(Exception e){throw new IllegalArgumentException("分仓规则无效，请重新保存");}}
-    private Map<String,Object> order(String company,long id){List<Map<String,Object>> found=repository.db().queryForList("SELECT o.*,p.change_pending,p.platform_status,p.fulfillment_block_reason,p.conversion_status,p.business_order_id,ac.policy_json current_policy,COALESCE(JSON_UNQUOTE(JSON_EXTRACT(ac.policy_json,'$.execution_mode')),'MANUAL') auto_execution_mode,COALESCE(JSON_EXTRACT(ac.policy_json,'$.enabled'),0) auto_enabled,COALESCE(JSON_EXTRACT(ac.policy_json,'$.auto_replenish'),0) auto_replenish,(SELECT lease_until FROM oms_order_pull_config pc WHERE pc.company_code=o.company_code AND pc.channel_id=o.channel_id) shop_lease_until,COALESCE((SELECT SUM(l.reserved_quantity) FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id),0) reserved_total,COALESCE((SELECT SUM(l.quantity) FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id),0) required_total"+JOIN+" WHERE o.company_code=? AND o.id=?",company,id);require(found.size()==1,"业务订单不存在或无权访问");return found.get(0);}
+    private Map<String,Object> order(String company,long id){List<Map<String,Object>> found=repository.db().queryForList("SELECT o.*,p.change_pending,p.platform_status,p.fulfillment_block_reason,p.conversion_status,p.business_order_id,ac.policy_json current_policy,COALESCE(JSON_UNQUOTE(JSON_EXTRACT(ac.policy_json,'$.execution_mode')),'MANUAL') auto_execution_mode,COALESCE(JSON_EXTRACT(ac.policy_json,'$.enabled'),0) auto_enabled,COALESCE(JSON_EXTRACT(ac.policy_json,'$.auto_replenish'),0) auto_replenish,(SELECT lease_until FROM oms_order_pull_config pc WHERE pc.company_code=o.company_code AND pc.channel_id=o.channel_id) shop_lease_until,COALESCE((SELECT SUM(l.reserved_quantity) FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id AND l.business_type='SALE'),0) reserved_total,COALESCE((SELECT SUM(l.quantity-l.cancelled_quantity) FROM oms_order_line l WHERE l.company_code=o.company_code AND l.order_id=o.id AND l.business_type='SALE'),0) required_total"+JOIN+" WHERE o.company_code=? AND o.id=?",company,id);require(found.size()==1,"业务订单不存在或无权访问");return found.get(0);}
     public List<Map<String,Object>> due(String company){return repository.db().queryForList("SELECT t.order_id,o.order_sn FROM oms_order_auto_allocation t JOIN oms_order o ON o.company_code=t.company_code AND o.id=t.order_id WHERE t.company_code=? AND t.paused=0 AND t.state IN ('PENDING','WAIT_STOCK','WAIT_CONDITION','RETRY','UNCERTAIN','PROCESSING') AND t.next_attempt<=NOW() AND (t.lease_until IS NULL OR t.lease_until<NOW()) ORDER BY t.next_attempt,t.create_time,t.order_id LIMIT 10",company);}
     private void finish(String company,long id,String lease,String state,String reason,int seconds,int failures){
         if(reason==null)reason="自动分仓暂未完成";if(reason.length()>480)reason=reason.substring(0,480);
@@ -52,6 +53,7 @@ public class OrderAutoAllocationService {
         try{
             Map<String,Object> o=order(company,id),policy=decode(o.get("current_policy"));
             if(!"WAIT_ALLOCATION".equals(text(o,"status"))){finish(company,id,lease,"CANCELED","订单已停止履约",-1,0);return;}
+            if("REPLAN_READY".equals(text(o,"cutoff_state"))){finish(company,id,lease,"NEEDS_ACTION","撤回完成，需人工确认重新分仓",-1,0);return;}
             if("FULL".equals(text(o,"allocation_status"))){finish(company,id,lease,"DONE","订单已全部分仓",-1,0);return;}
             if(!"AUTO".equals(text(policy,"execution_mode"))||number(policy,"enabled")!=1){finish(company,id,lease,"DISABLED","店铺自动分仓已关闭",-1,0);return;}
             if(o.get("shop_lease_until")!=null&&time(text(o,"shop_lease_until")).isAfter(java.time.LocalDateTime.now())){finish(company,id,lease,"WAIT_CONDITION","店铺预占任务处理中，等待完成后检查",10,0);return;}
@@ -59,7 +61,8 @@ public class OrderAutoAllocationService {
             if(number(o,"manual_hold")==1||!"APPROVED".equals(text(o,"review_status"))||!block.isEmpty()||number(o,"business_order_id")!=id||!"SUCCESS".equals(text(o,"conversion_status"))){finish(company,id,lease,"WAIT_CONDITION",number(o,"manual_hold")==1?"订单已人工挂起":!"APPROVED".equals(text(o,"review_status"))?"等待审核通过":block.isEmpty()?"订单关联状态待确认":block,60,0);return;}
             if(Arrays.asList("UNCERTAIN","PROCESSING").contains(text(o,"allocation_status"))){
                 allocation.recoverAutomatic(company,id,lease);o=order(company,id);
-                if("FULL".equals(text(o,"allocation_status"))){finish(company,id,lease,"DONE","已核对原分仓回执并恢复完整发货单",-1,0);return;}
+                if("REPLAN_READY".equals(text(o,"cutoff_state"))){finish(company,id,lease,"NEEDS_ACTION","撤回完成，需人工确认重新分仓",-1,0);return;}
+            if("FULL".equals(text(o,"allocation_status"))){finish(company,id,lease,"DONE","已核对原分仓回执并恢复完整发货单",-1,0);return;}
             }
             if(number(o,"allocation_quantity")>0&&number(policy,"auto_replenish")!=1){finish(company,id,lease,"PARTIAL_PAUSED","已有部分分仓，未开启自动补充分仓；可人工预览余量",-1,0);return;}
             Map<String,Object> frozen=text(o,"allocation_policy").isEmpty()?policy:decode(o.get("allocation_policy"));

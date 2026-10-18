@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "kind": "replan",
+      "order_id": 44,
+      "order_sn": "SOcd5b7c906a0d43ffb9caad350fa87559",
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=44"
+    },
+    {
+      "kind": "partial-terminate",
+      "order_id": 45,
+      "order_sn": "SO6f9484fdcbcd4325882e24d2355e2cd2",
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=45"
+    },
+    {
+      "kind": "warehouse-void",
+      "order_id": 46,
+      "order_sn": "SO70ae7e38b1b34dc8b7eff289c2bc6508",
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=46"
+    },
+    {
+      "kind": "review-pending",
+      "order_id": 47,
+      "order_sn": "SO1cee9a0bb52a4d4d85a1df2ee8e048ec",
+      "business_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=47"
+    }
+  ],
+  "new_xs_reallocation_verified": true,
+  "warehouse_cancel_and_local_void_verified": true,
+  "posted_outbound_preserved": true,
+  "pending_receipt_retains_stock": true,
+  "quartz_switches_and_crons_unchanged": true,
+  "warehouse_environment": "local TEST simulator only"
+}

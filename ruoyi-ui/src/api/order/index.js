@@ -51,6 +51,7 @@ export const matchShipmentCarriers = data => request({ url: `${base}/shipments/m
 export const previewShipmentDispatch = data => request({ url: `${base}/shipments/dispatch-preview`, method: 'post', data, timeout: 120000 })
 export const dispatchShipments = data => request({ url: `${base}/shipments/dispatch`, method: 'post', data, timeout: 120000 })
 export const queryShipmentWarehouse = id => request({ url: `${base}/shipments/${id}/query-warehouse`, method: 'post', timeout: 120000 })
+export const continueShipmentDispatch = (id, data) => request({ url: `${base}/shipments/${id}/continue-dispatch`, method: 'post', data, timeout: 120000 })
 
 export const previewVirtualOutbound = data => request({ url: '/order/orders/shipments/virtual-outbound-preview', method: 'post', data, timeout: 120000 })
 export const submitVirtualOutbound = data => request({ url: '/order/orders/shipments/virtual-outbound', method: 'post', data, timeout: 120000 })
@@ -80,3 +81,13 @@ export const reviewConfig = channel => request({ url: `${base}/review-config/${c
 export const saveReviewConfig = data => request({ url: `${base}/review-config`, method: 'post', data })
 export const previewReview = id => request({ url: `${base}/business/${id}/review-preview` })
 export const recheckReview = (id, data) => request({ url: `${base}/business/${id}/review-recheck`, method: 'post', data })
+
+export const cutoffReport = id => request({ url: `${base}/business/${id}/cutoff` })
+export const requestCutoff = (id, data) => request({ url: `${base}/business/${id}/cutoff`, method: 'post', data })
+export const retryCutoff = (id, data) => request({ url: `${base}/business/${id}/cutoff/retry`, method: 'post', data })
+
+export const orderUpdates = id => request({ url: `${base}/platform/${id}/updates` })
+export const applyOrderRecipient = (id, data) => request({ url: `${base}/platform/${id}/updates/recipient`, method: 'post', data })
+export const withdrawOrderForUpdate = (id, data) => request({ url: `${base}/platform/${id}/updates/withdraw`, method: 'post', data, timeout: 60000 })
+
+export const orderUpdateEvent = (id, event) => request({ url: `${base}/platform/${id}/updates/events/${event}` })

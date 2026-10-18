@@ -21,6 +21,7 @@ public class ChannelPlatformService {
     @Resource private PlatformTransactionManager transactionManager;
     @Resource private PlatformSecrets secrets;
     @Resource private TmallClient client;
+    @Resource private PlatformInteractionLog interactionLog;
     @Value("${oms.channel.simulation-enabled:false}") private boolean simulationEnabled;
     private static final DateTimeFormatter DATE=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final String APP_PUBLIC="id,name,app_key,redirect_uri,article_code,item_code,renewal_url,enabled,simulation_mode,(secret_cipher IS NOT NULL) AS secret_configured";
@@ -135,14 +136,14 @@ public class ChannelPlatformService {
             require(number(b.get("app_id"))==number(s.get("app_id")),"应用已变更，请重新发起授权");
             require(!simulated(a),"模拟应用不接受真实平台授权回调");
             Map<String,String> args=credentials(a);args.put("grant_type","authorization_code");args.put("code",code);args.put("redirect_uri",str(a,"redirect_uri"));
-            JsonNode token=client.token(args);saveToken(company,id,b,a,token);return map("shop_id",b.get("expected_shop_id"),"authorization","verified");
+            JsonNode token=interactionLog.call("oauth.token.exchange",args,()->client.token(args));saveToken(company,id,b,a,token);return map("shop_id",b.get("expected_shop_id"),"authorization","verified");
         });return id;
     }
     private Map<String,String> credentials(Map<String,Object> app) {Map<String,String> p=new HashMap<>();p.put("client_id",str(app,"app_key"));p.put("client_secret",secrets.decrypt(str(app,"secret_cipher")));return p;}
     public void simulate(String company,long id,String user) {
         interact(company,id,"SIMULATED_AUTHORIZATION",user,(b,a)->{
             require(simulated(a)&&simulationEnabled,"此店铺不是本地模拟配置，不能模拟真实授权");
-            saveToken(company,id,b,a,simulationToken(company,id));
+            saveToken(company,id,b,a,interactionLog.call("oauth.token.simulate",Collections.emptyMap(),()->simulationToken(company,id)));
             require(db.update("UPDATE channel_platform_binding SET service_status='SUBSCRIBED',service_expires_at=?,service_checked_at=NOW() WHERE company_code=? AND channel_id=? AND operation_key=? AND operation_until>NOW()",Timestamp.from(Instant.now().plusSeconds(365L*86400)),company,id,b.get("operation_key"))==1,"模拟操作已超时，请重试");
             return map("shop_id",b.get("expected_shop_id"),"authorization","simulated","subscription","simulated");
         });
@@ -152,9 +153,9 @@ public class ChannelPlatformService {
     }
     public void refresh(String company,long id,String user) {interact(company,id,"TOKEN_REFRESH",user,(b,a)->{
         require(future(b.get("refresh_expires_at"))&&!str(b,"refresh_cipher").isEmpty(),"平台未提供有效刷新令牌，请重新授权");
-        if(simulated(a)){saveToken(company,id,b,a,simulationToken(company,id));return map("authorization","simulated_refresh");}
+        if(simulated(a)){saveToken(company,id,b,a,interactionLog.call("oauth.token.simulate",Collections.emptyMap(),()->simulationToken(company,id)));return map("authorization","simulated_refresh");}
         Map<String,String> args=credentials(a);args.put("grant_type","refresh_token");args.put("refresh_token",secrets.decrypt(str(b,"refresh_cipher")));
-        saveToken(company,id,b,a,client.token(args));return map("authorization","refreshed");
+        saveToken(company,id,b,a,interactionLog.call("oauth.token.refresh",args,()->client.token(args)));return map("authorization","refreshed");
     });}
     private void saveToken(String company,long id,Map<String,Object>b,Map<String,Object>a,JsonNode token) {
         String access=token.path("access_token").asText("");long expiry=token.path("expires_in").asLong(0);
@@ -170,8 +171,8 @@ public class ChannelPlatformService {
         require(changed==1,"交互已超时，请重新授权");
     }
     private JsonNode queryShop(Map<String,Object>a,String token,Map<String,Object>b) {
-        if(simulated(a)){require(simulationEnabled,"本地模拟功能未启用");return new ObjectMapper().valueToTree(map("sid",b.get("expected_shop_id"),"title",shop(str(b,"company_code"),number(b.get("channel_id"))).get("channel_name")));}
-        JsonNode response=client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),token,"taobao.shop.seller.get",Collections.singletonMap("fields","sid,title"));JsonNode shop=response.path("shop_seller_get_response").path("shop");require(shop.hasNonNull("sid"),"平台店铺查询响应不完整");return shop;
+        if(simulated(a)){require(simulationEnabled,"本地模拟功能未启用");return interactionLog.call("taobao.shop.seller.get",map("fields","sid,title"),()->new ObjectMapper().valueToTree(map("sid",b.get("expected_shop_id"),"title",shop(str(b,"company_code"),number(b.get("channel_id"))).get("channel_name"))));}
+        JsonNode response=interactionLog.call("taobao.shop.seller.get",map("fields","sid,title"),()->client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),token,"taobao.shop.seller.get",Collections.singletonMap("fields","sid,title")));JsonNode shop=response.path("shop_seller_get_response").path("shop");require(shop.hasNonNull("sid"),"平台店铺查询响应不完整");return shop;
     }
     public void query(String company,long id,String kind,String user) {
         require("shop".equals(kind)||"subscription".equals(kind),"不支持的查询类型");
@@ -187,8 +188,8 @@ public class ChannelPlatformService {
             if(simulated(a)) {
                 Object deadline=b.get("service_expires_at");
                 require(deadline!=null,"请先完成模拟授权");
-                response=new ObjectMapper().valueToTree(map("vas_subscribe_get_response",map("article_user_subscribes",map("article_user_subscribe",Collections.singletonList(map("item_code",a.get("item_code"),"deadline",LocalDateTime.ofInstant(instant(deadline),ZoneId.of("Asia/Shanghai")).format(DATE)))))));
-            } else response=client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),null,"taobao.vas.subscribe.get",args);
+                response=interactionLog.call("taobao.vas.subscribe.get",args,()->new ObjectMapper().valueToTree(map("vas_subscribe_get_response",map("article_user_subscribes",map("article_user_subscribe",Collections.singletonList(map("item_code",a.get("item_code"),"deadline",LocalDateTime.ofInstant(instant(deadline),ZoneId.of("Asia/Shanghai")).format(DATE))))))));
+            } else response=interactionLog.call("taobao.vas.subscribe.get",args,()->client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),null,"taobao.vas.subscribe.get",args));
             JsonNode root=response.get("vas_subscribe_get_response");require(root!=null&&root.isObject(),"平台订购查询响应不完整");
             JsonNode items=root.path("article_user_subscribes").path("article_user_subscribe");Timestamp deadline=null;
             if(!items.isMissingNode()&&!items.isNull())require(items.isArray(),"平台订购列表格式无效");
@@ -200,8 +201,20 @@ public class ChannelPlatformService {
         });
     }
     public void disable(String company,long id,String user) {tx().execute(status->{Map<String,Object>b=one("SELECT * FROM channel_platform_binding WHERE company_code=? AND channel_id=? FOR UPDATE",company,id);require(!future(b.get("operation_until")),"店铺正在交互，请稍后停用");db.update("UPDATE channel_platform_binding SET token_cipher=NULL,refresh_cipher=NULL,token_expires_at=NULL,refresh_expires_at=NULL,auth_status='LOCAL_DISABLED' WHERE company_code=? AND channel_id=?",company,id);db.update("DELETE FROM channel_oauth_state WHERE company_code=? AND channel_id=?",company,id);audit(company,id,number(b.get("app_id")),"LOCAL_DISABLE",user,map("result","本地凭据已清除，平台侧撤销需在淘宝操作"));return null;});}
+    /** Only bounded metadata enters the interaction log; credentials stay in this service. */
+    public Map<String,Object> exchange(String company,long id,String method,Map<String,String> args,String operation,boolean write,Map<String,Object> context) {
+        final java.util.concurrent.atomic.AtomicReference<Map<String,Object>> result=new java.util.concurrent.atomic.AtomicReference<>();
+        interact(company,id,method,"换货处理",context,(b,a)->{
+            require(future(b.get("token_expires_at"))&&"AUTHORIZED".equals(str(b,"auth_status")),"授权已失效，请重新授权");
+            if(simulated(a)){require(simulationEnabled,"本地模拟功能未启用");result.set(interactionLog.call(method,args,()->ExchangePlatformService.simulated(db,company,id,operation,args)));}
+            else result.set(interactionLog.call(method,args,()->ExchangePlatformService.normalize(client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),secrets.decrypt(str(b,"token_cipher")),method,args),method,operation)));
+            return map("operation",operation,"dispute_id",args.get("dispute_id"),"count",result.get().get("page_results"));
+        });
+        return result.get();
+    }
     private interface Action {Map<String,Object> run(Map<String,Object> binding,Map<String,Object> app);}
-    private void interact(String company,long id,String action,String user,Action call) {
+    private void interact(String company,long id,String action,String user,Action call) {interact(company,id,action,user,Collections.emptyMap(),call);}
+    private void interact(String company,long id,String action,String user,Map<String,Object> context,Action call) {
         Map<String,Object> b=tx().execute(status->{
             usableShop(shop(company,id));Map<String,Object> initial=binding(company,id);
             usableApp(one("SELECT * FROM channel_platform_app WHERE company_code=? AND id=? FOR UPDATE",company,initial.get("app_id")));
@@ -209,25 +222,23 @@ public class ChannelPlatformService {
             require(db.update("UPDATE channel_platform_binding SET operation_key=?,operation_until=DATE_ADD(NOW(),INTERVAL 90 SECOND) WHERE company_code=? AND channel_id=? AND app_id=? AND (operation_until IS NULL OR operation_until<NOW())",lease,company,id,initial.get("app_id"))==1,"店铺正在交互，请勿重复操作");
             return binding(company,id);
         });
-        long log=0,start=System.currentTimeMillis();
+        long log=0,start=System.currentTimeMillis();Map<String,Object> operationLog=null;PlatformInteractionLog.Scope scope=null;
         try {
-            log=insertLog(company,id,number(b.get("app_id")),action,"RUNNING",user,map("shop_id",b.get("expected_shop_id")));
+            Map<String,Object> metadata=new LinkedHashMap<>(context);metadata.put("interface_name",action);metadata.putIfAbsent("trigger_source","USER");operationLog=interactionLog.begin(company,id,number(b.get("app_id")),action,"OPERATION",simulated(app(company,number(b.get("app_id"))))?"SIMULATION":"REAL",interactionLog.category(action),user,metadata,map("shop_id",b.get("expected_shop_id")));log=((Number)operationLog.get("id")).longValue();scope=interactionLog.scope(operationLog);
             Map<String,Object> response=call.run(b,app(company,number(b.get("app_id"))));
             if(simulated(app(company,number(b.get("app_id")))))response.put("simulation",true);
-            db.update("UPDATE channel_interaction_log SET result='SUCCESS',response_summary=?,duration_ms=? WHERE id=? AND company_code=?",json(response),System.currentTimeMillis()-start,log,company);
+            interactionLog.finish(operationLog,"SUCCESS","",response,System.currentTimeMillis()-start,null,false);
         } catch(RuntimeException e) {
             String code=e instanceof TmallClient.Failure?((TmallClient.Failure)e).code:"VALIDATION_OR_PERSISTENCE_ERROR";
             boolean unknown=!(e instanceof IllegalArgumentException)&&(!(e instanceof TmallClient.Failure)||((TmallClient.Failure)e).unknown);
-            if(log!=0)db.update("UPDATE channel_interaction_log SET result=?,error_code=?,response_summary=?,duration_ms=? WHERE id=? AND company_code=?",unknown?"UNKNOWN":"FAILED",code,json(map("message",e instanceof IllegalArgumentException?e.getMessage():unknown?"平台响应未确认或结果未成功保存":"平台返回失败，请按错误码排查")),System.currentTimeMillis()-start,log,company);
+            if(log!=0)try{interactionLog.finish(operationLog,unknown?"UNKNOWN":"FAILED",code,map("error_code",code),System.currentTimeMillis()-start,null,false);}catch(RuntimeException ignored){/* Durable attempt remains unresolved. */}
             if(Arrays.asList("27","isv.session-expired","invalid_session").contains(code)||("TOKEN_REFRESH".equals(action)&&"invalid_grant".equals(code)))db.update("UPDATE channel_platform_binding SET auth_status='INVALID' WHERE company_code=? AND channel_id=? AND operation_key=?",company,id,b.get("operation_key"));
             if(e instanceof IllegalArgumentException||e instanceof TmallClient.Failure)throw e;
             throw new IllegalArgumentException("交互结果未确认，请查看日志后重试");
-        } finally {db.update("UPDATE channel_platform_binding SET operation_key=NULL,operation_until=NULL WHERE company_code=? AND channel_id=? AND operation_key=?",company,id,b.get("operation_key"));}
+        } finally {if(scope!=null)scope.close();db.update("UPDATE channel_platform_binding SET operation_key=NULL,operation_until=NULL WHERE company_code=? AND channel_id=? AND operation_key=?",company,id,b.get("operation_key"));}
     }
     private long insertLog(String company,Long channel,Long app,String action,String result,String user,Map<String,Object> request) {
-        Map<String,Object> summary=new LinkedHashMap<>(request);
-        if(app!=null&&simulated(app(company,app)))summary.put("simulation",true);
-        return tx().execute(status->{db.update("INSERT INTO channel_interaction_log(company_code,channel_id,app_id,action,result,request_summary,operator) VALUES(?,?,?,?,?,?,?)",company,channel,app,action,result,json(summary),user);return db.queryForObject("SELECT LAST_INSERT_ID()",Long.class);});
+        Map<String,Object> record=interactionLog.begin(company,channel,app,action,"CONFIG","LOCAL","CONFIG",user,map("trigger_source","USER"),request);interactionLog.finish(record,"SUCCESS","",Collections.emptyMap(),0,null,false);return ((Number)record.get("id")).longValue();
     }
     private void audit(String company,Long channel,Long app,String action,String user,Map<String,Object> request) {insertLog(company,channel,app,action,"SUCCESS",user,request);}
     public Map<String,Object> logs(String company,Long channel,String result,int page,int size) {

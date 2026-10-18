@@ -1,0 +1,15 @@
+{
+  "exchange_id": 10,
+  "exchange_sn": "HH2aff77fc7c3b4ee6bd99e97d8c2f61f3",
+  "order_id": 56,
+  "platform_tid": "99420261016230415",
+  "target_sku": "EXCH_UI_20261016230415_C",
+  "verified": true,
+  "inventory_unchanged": true,
+  "no_platform_write": true,
+  "quantity_preserved": 2,
+  "stock_reference_capacity": 0,
+  "A_B_A_distinct": true,
+  "search_requests": 4,
+  "page_errors": []
+}

@@ -25,4 +25,9 @@ class OrderInventoryStatusTest {
         OrderInventoryStatus.decorate(row);
         assertEquals("UNKNOWN",row.get("warehouse_inventory_status"));
     }
+    @Test void repeatedSwapDemandExcludesTerminatedVersionsFromProgress(){
+        Map<String,Object> row=new HashMap<>();row.put("status","WAIT_ALLOCATION");row.put("inventory_status","RESERVED");row.put("demand_quantity",14);row.put("cancelled_quantity",4);row.put("reserved_quantity",10);row.put("allocation_quantity",10);row.put("allocation_status","FULL");
+        OrderInventoryStatus.decorate(row);assertEquals(10L,row.get("effective_demand_quantity"));assertEquals(10L,row.get("warehouse_required_quantity"));assertEquals("OCCUPIED",row.get("warehouse_inventory_status"));
+        row.put("shipped_quantity",10);OrderInventoryStatus.decorate(row);assertEquals("OUTBOUND",row.get("warehouse_inventory_status"));assertEquals("CONSUMED",row.get("logical_inventory_status"));
+    }
 }

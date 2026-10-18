@@ -29,6 +29,9 @@ public class WmsInboundService {
     @Resource private List<WmsProtocol> protocols;
     @Resource @Lazy private PurchaseWorkspaceService purchase;
     @Resource private RemoteInventoryService inventory;
+    @Resource @Lazy private PurchaseCutoffService cutoff;
+    @Resource @Lazy private InboundReceiptReviewService reviews;
+    @org.springframework.beans.factory.annotation.Autowired(required=false) private WmsInboundWork immediate;
 
     public WmsProtocol protocol(String name){return protocols.stream().filter(p->p.provider().equals(name)).findFirst().orElseThrow(()->new IllegalArgumentException("该仓库协议尚未接入，不能下发"));}
     /** Called in the approval transaction, so approval and durable dispatch are atomic. */
@@ -40,26 +43,26 @@ public class WmsInboundService {
         Map<String,Object> c=connections.usable(company,warehouse.getConnectionId());protocol(text(c.get("provider")));
         require(!text(warehouse.getExternalWarehouse()).isEmpty()&&!text(warehouse.getExternalOwner()).isEmpty(),"请维护虚仓的外部仓库和货主编码");
         Map<String,Object> ticket=db.one("SELECT * FROM wms_tickets WHERE id=? AND UPPER(company_code)=?",ticketId,company);
-        db.insert("wms_inbound_task",map("company_code",company,"ticket_id",ticketId,"ticket_sn",ticket.get("sn"),"connection_id",warehouse.getConnectionId(),"external_warehouse",warehouse.getExternalWarehouse(),"external_owner",warehouse.getExternalOwner()));
+        long taskId=db.insert("wms_inbound_task",map("company_code",company,"ticket_id",ticketId,"ticket_sn",ticket.get("sn"),"connection_id",warehouse.getConnectionId(),"external_warehouse",warehouse.getExternalWarehouse(),"external_owner",warehouse.getExternalOwner()));if(immediate!=null)immediate.dispatchReady(company,taskId);
     }
-    public Map<String,Object> task(String company,long ticket){List<Map<String,Object>> rows=db.jdbc.queryForList("SELECT t.*,c.provider,c.name connection_name FROM wms_inbound_task t JOIN wms_connection c ON c.id=t.connection_id AND c.company_code=t.company_code WHERE t.company_code=? AND t.ticket_id=?",company,ticket);return rows.isEmpty()?null:rows.get(0);}
-    public void retry(String company,long ticket){db.tx().execute(s->{purchase.lockWmsTicket(company,ticket);Map<String,Object> t=task(company,ticket);require(t!=null,"该单据没有真实入库任务");require("FAILED".equals(t.get("dispatch_state")),"只有明确下发失败的单据可以重试，超时单据请先查询仓库结果");connections.usable(company,id(t.get("connection_id")));db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='PENDING',next_attempt=NOW(),last_error='' WHERE id=?",t.get("id"));return null;});}
+    public Map<String,Object> task(String company,long ticket){List<Map<String,Object>> rows=db.jdbc.queryForList("SELECT t.*,c.provider,c.name connection_name,n.id receipt_id,n.no_sn receipt_sn,n.cutoff_state,n.cutoff_id FROM wms_inbound_task t JOIN wms_connection c ON c.id=t.connection_id AND c.company_code=t.company_code LEFT JOIN wms_tickets w ON w.id=t.ticket_id AND UPPER(w.company_code)=t.company_code LEFT JOIN no_tickets n ON n.no_sn=w.relation_sn AND UPPER(n.company_code)=t.company_code WHERE t.company_code=? AND t.ticket_id=?",company,ticket);return rows.isEmpty()?null:rows.get(0);}
+    public void retry(String company,long ticket){db.tx().execute(s->{purchase.lockWmsTicket(company,ticket);Map<String,Object> t=task(company,ticket);require(t!=null,"该单据没有真实入库任务");require(text(t.get("cutoff_state")).isEmpty(),"到货单已申请截单，请核对原截单申请");require("FAILED".equals(t.get("dispatch_state")),"只有明确下发失败的单据可以重试，超时单据请先查询仓库结果");connections.usable(company,id(t.get("connection_id")));db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='PENDING',next_attempt=NOW(),last_error='' WHERE id=?",t.get("id"));return null;});}
     public void dispatch(String company,long taskId){
         if(!tenantRoutes.enabled(company))return;
-        int claimed=db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='SENDING',attempts=attempts+1,lease_until=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=? AND company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW()",taskId,company);
+        int claimed=db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='SENDING',attempts=attempts+1,lease_until=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=? AND company_code=? AND dispatch_state='PENDING' AND cancel_state='NONE' AND next_attempt<=NOW() AND NOT EXISTS(SELECT 1 FROM wms_tickets t WHERE t.id=wms_inbound_task.ticket_id AND UPPER(t.company_code)=wms_inbound_task.company_code AND t.cutoff_state<>'')",taskId,company);
         if(claimed!=1)return;
         Map<String,Object> task=db.one("SELECT * FROM wms_inbound_task WHERE id=? AND company_code=?",taskId,company);
         try{connections.usable(company,id(task.get("connection_id")));}catch(Exception e){db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='FAILED',last_error=?,lease_until=NULL WHERE id=? AND dispatch_state='SENDING'",text(e.getMessage()),taskId);return;}
         send(company,task,"CREATE");
     }
-    public Map<String,Object> query(String company,long ticket){Map<String,Object> t=task(company,ticket);require(t!=null,"没有真实入库任务");require(!Arrays.asList("PENDING","SENDING","CANCELED").contains(text(t.get("dispatch_state"))),"当前状态不能查询仓库");require(claimAction(company,id(t.get("id"))),"该单据正在与仓库交互，请稍后重试");return send(company,t,"QUERY");}
+    public Map<String,Object> query(String company,long ticket){Map<String,Object> t=task(company,ticket);require(t!=null,"没有真实入库任务");require(!Arrays.asList("SENDING","CANCELED").contains(text(t.get("dispatch_state")))&&(!"PENDING".equals(t.get("dispatch_state"))||id(t.get("attempts"))>0),"当前状态不能查询仓库");require(claimAction(company,id(t.get("id"))),"该单据正在与仓库交互，请稍后重试");return send(company,t,"QUERY");}
     private boolean claimAction(String company,long task){return db.jdbc.update("UPDATE wms_inbound_task SET lease_until=DATE_ADD(NOW(),INTERVAL 60 SECOND) WHERE id=? AND company_code=? AND (lease_until IS NULL OR lease_until<NOW())",task,company)==1;}
     public Map<String,Object> cancel(String company,long ticket,String reason,String user){
         require(!text(reason).isEmpty()&&text(reason).length()<=500,"请填写 1 至 500 字取消原因");
-        Map<String,Object> task=db.tx().execute(s->{Map<String,Object> document=purchase.lockWmsTicket(company,ticket);Map<String,Object> t=task(company,ticket);require(t!=null,"没有真实入库任务");require(db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_receipt_line WHERE task_id=?",Long.class,t.get("id"))==0,"已收货的入库单不能取消");require(id(document.get("statusTicket"))==1,"当前执行单不可取消");db.jdbc.update("UPDATE wms_inbound_task SET cancel_reason=? WHERE id=?",text(reason),t.get("id"));t.put("cancel_reason",text(reason));purchase.recordWmsEvent(company,text(t.get("ticket_sn")),"申请取消入库",user+"："+text(reason));if("PENDING".equals(t.get("dispatch_state"))){
+        Map<String,Object> task=db.tx().execute(s->{Map<String,Object> document=purchase.lockWmsTicket(company,ticket);Map<String,Object> t=task(company,ticket);require(t!=null,"没有真实入库任务");require(db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_receipt_line WHERE task_id=?",Long.class,t.get("id"))==0||db.jdbc.queryForObject("SELECT partial_inbound_cancel FROM wms_connection WHERE company_code=? AND id=?",Integer.class,company,t.get("connection_id"))==1,"仓库未确认支持部分收货后关闭余量，请人工核对");require("NONE".equals(t.get("cancel_state")),"原取消申请尚未核对或已拒绝，请处理原申请");require(id(document.get("statusTicket"))==1,"当前执行单不可取消");db.jdbc.update("UPDATE wms_inbound_task SET cancel_reason=? WHERE id=?",text(reason),t.get("id"));t.put("cancel_reason",text(reason));purchase.recordWmsEvent(company,text(t.get("ticket_sn")),"申请取消入库",user+"："+text(reason));if("PENDING".equals(t.get("dispatch_state"))){
             Map<String,Object> locked=db.one("SELECT * FROM wms_inbound_task WHERE id=? FOR UPDATE",t.get("id"));
-            require("PENDING".equals(locked.get("dispatch_state")),"下发任务已经开始，请查询仓库结果");confirmCancel(company,locked);return null;
-        }require("ACCEPTED".equals(t.get("dispatch_state")),"请先确认仓库受理结果，再申请取消");require(claimAction(company,id(t.get("id"))),"单据正在与仓库交互");db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='CANCEL_PENDING' WHERE id=?",t.get("id"));return t;});
+            require("PENDING".equals(locked.get("dispatch_state"))&&id(locked.get("attempts"))==0,"下发任务已经开始或有历史尝试，请查询仓库结果");confirmCancel(company,locked);return null;
+        }require("ACCEPTED".equals(t.get("dispatch_state")),"请先确认仓库受理结果，再申请取消");require(claimAction(company,id(t.get("id"))),"单据正在与仓库交互");db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='CANCEL_PENDING',cancel_state='PENDING' WHERE id=?",t.get("id"));return t;});
         return task!=null?send(company,task,"CANCEL"):map("success",true,"outcome","CANCELED","message","未下发入库单已取消");
     }
     private Map<String,Object> send(String company,Map<String,Object> task,String action){
@@ -78,7 +81,7 @@ public class WmsInboundService {
                 statusCode=connection.getResponseCode();body=readResponse(statusCode>=400?connection.getErrorStream():connection.getInputStream());responseBody=body;
             }finally{connection.disconnect();}
             require(statusCode>=200&&statusCode<300,"仓库 HTTP 响应 "+statusCode);
-            WmsProtocol.Reply reply=p.reply(action,body);
+            WmsProtocol.Reply reply=p.reply(action,body);if(!"CREATE".equals(action)&&!text(task.get("external_order")).isEmpty()&&!reply.externalOrder.isEmpty())require(text(task.get("external_order")).equals(reply.externalOrder),"仓库响应单号与原入库任务不一致");
             Map<String,Object> before=task(company,id(task.get("ticket_id")));updateReply(company,task,action,reply);
             Map<String,Object> after=task(company,id(task.get("ticket_id")));
             boolean known=Arrays.asList("NEW","ACCEPT","PARTFULFILLED","FULFILLED","CLOSED","CANCELED").contains(reply.status);
@@ -103,6 +106,7 @@ public class WmsInboundService {
             String error=e instanceof java.net.SocketTimeoutException?"仓库请求超时，执行结果待确认":e instanceof IllegalArgumentException?text(e.getMessage()):"仓库交互未确认："+e.getClass().getSimpleName();
             String outcome=e instanceof java.net.SocketTimeoutException?"TIMEOUT":e instanceof IllegalArgumentException?"FAILED":"UNKNOWN";
             result=map("success",false,"outcome",outcome,"warehouseStatus","","localUpdated",false,"message",error,"nextAction","稍后查询仓库状态或查看交互日志，不要重复下发");
+            if(action.equals("CANCEL"))db.jdbc.update("UPDATE wms_inbound_task SET cancel_state='UNKNOWN' WHERE company_code=? AND id=? AND cancel_state<>'CONFIRMED'",company,taskId);
             if(action.equals("QUERY"))db.jdbc.update("UPDATE wms_inbound_task SET last_query_result=?,last_query_time=NOW(),query_message=? WHERE id=? AND company_code=?",outcome,error,taskId,company);
             else db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state=CASE WHEN dispatch_state='SENDING' THEN 'UNKNOWN' ELSE dispatch_state END,last_error=?,lease_until=NULL WHERE id=? AND company_code=?",error,taskId,company);
             if(logId==0)logId=logs.start(company,id(task.get("connection_id")),taskId,text(task.get("ticket_sn")),"OUT",action,"");
@@ -130,16 +134,21 @@ public class WmsInboundService {
             // A successful cancel request is not proof of physical cancellation; query/callback confirms it.
             db.jdbc.update("UPDATE wms_inbound_task SET last_error=? WHERE id=?",reply.success?"取消申请已受理，等待仓库确认":reply.message,task.get("id"));
             if(reply.success&&reply.status.equals("CANCELED"))confirmCancel(company,current);
-            if(!reply.success&&state.equals("CANCEL_PENDING"))db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='ACCEPTED' WHERE id=?",task.get("id"));
+            if(!reply.success&&state.equals("CANCEL_PENDING"))db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='ACCEPTED',cancel_state='REJECTED' WHERE id=?",task.get("id"));
         }
         return null;
     });}
     private void confirmCancel(String company,Map<String,Object> task){
-        require(db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_receipt_line WHERE task_id=?",Long.class,task.get("id"))==0,"仓库取消与收货回传冲突，请核对仓库执行结果");
-        db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='CANCELED',last_error='' WHERE id=?",task.get("id"));
-        db.jdbc.update("UPDATE wms_tickets SET status_ticket=5,time_cancel=NOW() WHERE id=? AND UPPER(company_code)=?",task.get("ticket_id"),company);
-        db.jdbc.update("UPDATE no_tickets n JOIN wms_tickets t ON t.relation_sn=n.no_sn AND UPPER(t.company_code)=UPPER(n.company_code) SET n.no_state=-1 WHERE t.id=? AND UPPER(t.company_code)=?",task.get("ticket_id"),company);
-        purchase.recordWmsEvent(company,text(task.get("ticket_sn")),"仓库取消确认","仓库确认取消，已释放剩余可安排到货数量");
+        long received=db.jdbc.queryForObject("SELECT COALESCE(SUM(good_qty+bad_qty),0) FROM wms_receipt_line WHERE company_code=? AND task_id=?",Long.class,company,task.get("id"));
+        require(received==0||db.jdbc.queryForObject("SELECT partial_inbound_cancel FROM wms_connection WHERE company_code=? AND id=?",Integer.class,company,task.get("connection_id"))==1,"仓库取消与部分收货冲突，需人工核对最终实收");
+        db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='CANCELED',cancel_state='CONFIRMED',receipt_state='COMPLETE',last_error='' WHERE id=? AND company_code=?",task.get("id"),company);
+        Map<String,Object> ticket=db.one("SELECT cutoff_state FROM wms_tickets WHERE id=? AND UPPER(company_code)=?",task.get("ticket_id"),company);
+        if(text(ticket.get("cutoff_state")).isEmpty()){
+            require(received==0,"已有实收，请从到货单截单流程处理");
+            db.jdbc.update("UPDATE wms_tickets SET status_ticket=5,time_cancel=NOW() WHERE id=? AND UPPER(company_code)=?",task.get("ticket_id"),company);
+            db.jdbc.update("UPDATE no_tickets n JOIN wms_tickets t ON t.relation_sn=n.no_sn AND UPPER(t.company_code)=UPPER(n.company_code) SET n.no_state=-1 WHERE t.id=? AND UPPER(t.company_code)=?",task.get("ticket_id"),company);
+        }
+        purchase.recordWmsEvent(company,text(task.get("ticket_sn")),"仓库取消确认","仓库已确认截停；实收和记账核对完成后才释放到货安排额度");
     }
     public String callback(String company,String callbackKey,Map<String,String> params,String body){
         Map<String,Object> config=db.one("SELECT * FROM wms_connection WHERE company_code=? AND callback_key=?",company,callbackKey);
@@ -149,21 +158,26 @@ public class WmsInboundService {
             WmsProtocol.Receipt receipt=p.callback(config,connections.secret(config),params,body);
             Map<String,Object> task=db.one("SELECT * FROM wms_inbound_task WHERE company_code=? AND connection_id=? AND ticket_sn=?",company,config.get("id"),receipt.ticketSn);
             db.jdbc.update("UPDATE wms_interaction_log SET task_id=?,ticket_sn=? WHERE id=?",task.get("id"),receipt.ticketSn,logId);
-            accept(company,task,receipt);
+            acceptInternal(company,task,receipt,logId,false);if(immediate!=null)immediate.receiptReady(company,id(task.get("ticket_id")));
             String reply=p.acknowledgement(true,"回传已接收，入账异步处理");logs.finish(logId,"SUCCESS",reply,"",System.currentTimeMillis()-start);return reply;
         }catch(Exception e){String error=e instanceof IllegalArgumentException?text(e.getMessage()):"回传处理失败，请重试";String reply=p.acknowledgement(false,error);logs.finish(logId,"FAILED",reply,error,System.currentTimeMillis()-start);return reply;}
     }
-    public void accept(String company,Map<String,Object> task,WmsProtocol.Receipt receipt){db.tx().execute(s->{
+    public void accept(String company,Map<String,Object> task,WmsProtocol.Receipt receipt){acceptInternal(company,task,receipt,0,false);}
+    public void acceptReviewed(String company,Map<String,Object> task,WmsProtocol.Receipt receipt){acceptInternal(company,task,receipt,0,true);}
+    private void acceptInternal(String company,Map<String,Object> task,WmsProtocol.Receipt receipt,long sourceLog,boolean reviewed){Long review=db.tx().execute(s->{
         Map<String,Object> ticket=purchase.lockWmsTicket(company,id(task.get("ticket_id")));
         Map<String,Object> current=db.one("SELECT * FROM wms_inbound_task WHERE id=? AND company_code=? FOR UPDATE",task.get("id"),company);
         require(text(current.get("external_warehouse")).equals(receipt.warehouse)&&text(current.get("external_owner")).equals(receipt.owner),"回传仓库或货主与单据绑定不一致");
+        if(!text(current.get("external_order")).isEmpty()&&!text(receipt.externalOrder).isEmpty())require(text(current.get("external_order")).equals(text(receipt.externalOrder)),"仓库回传单号与原入库任务不一致");
         require(receipt.messageId!=null&&!receipt.messageId.isEmpty()&&receipt.messageId.length()<=128,"回传缺少有效消息ID");
         String hash=QimenProtocol.hash("SHA-256",db.encode(receipt));
         List<Map<String,Object>> previous=db.jdbc.queryForList("SELECT * FROM wms_receipt_event WHERE task_id=? AND message_id=?",task.get("id"),receipt.messageId);
-        if(!previous.isEmpty()){require(hash.equals(previous.get(0).get("payload_hash")),"相同消息ID的回传内容发生变化");return null;}
+        if(!previous.isEmpty()){require(hash.equals(previous.get(0).get("payload_hash")),"相同消息ID的回传内容发生变化");return 0L;}
         require(!text(current.get("dispatch_state")).equals("PENDING"),"单据尚未下发，不能接收仓库回传");
-        require(!text(current.get("dispatch_state")).equals("CANCELED"),"单据已取消，收货回传需核对");
-        if("CANCELED".equals(receipt.status)){require(receipt.lines.isEmpty(),"取消回传不能包含收货明细");confirmCancel(company,current);db.insert("wms_receipt_event",map("company_code",company,"task_id",task.get("id"),"message_id",receipt.messageId,"payload_hash",hash,"final_receipt",0));return null;}
+        boolean closed="CANCELED".equals(current.get("dispatch_state"))||"COMPLETED".equals(ticket.get("cutoffState"))&&id(ticket.get("cancelledQuantity"))>0;
+        if(closed&&!"CANCELED".equals(receipt.status)&&!reviewed)return reviews.retainLocked(company,current,receipt,sourceLog);
+        if(reviewed)require(closed&&receipt.lines.stream().anyMatch(l->l.good+l.bad>0),"仅核对取消后真实发生的收货明细");
+        if("CANCELED".equals(receipt.status)){require(receipt.lines.isEmpty(),"取消回传不能包含收货明细");if(!closed)confirmCancel(company,current);db.insert("wms_receipt_event",map("company_code",company,"task_id",task.get("id"),"message_id",receipt.messageId,"payload_hash",hash,"final_receipt",0));return 0L;}
         require(Arrays.asList("ACCEPT","NEW","PARTFULFILLED","FULFILLED","CLOSED").contains(receipt.status),"仓库回传状态不支持自动处理，请核对");
         boolean receiving=Arrays.asList("PARTFULFILLED","FULFILLED","CLOSED").contains(receipt.status);
         require(receiving||receipt.lines.isEmpty(),"接单状态不能包含实收数量");
@@ -172,9 +186,9 @@ public class WmsInboundService {
         Map<String,Map<String,Object>> bySku=new HashMap<>();for(Map<String,Object> line:planned)bySku.put(text(line.get("sku_sn")),line);
         Map<String,Long> added=new HashMap<>();
         for(WmsProtocol.Line l:receipt.lines){require(bySku.containsKey(l.sku),"回传包含未计划的SKU："+l.sku);require(text(l.owner).equals(receipt.owner),"商品明细货主不匹配");require(l.good>=0&&l.bad>=0,"实收数量不能为负数");require(text(l.batch).length()<=100,"收货批次编码过长");added.merge(l.sku,(long)l.good+l.bad,Math::addExact);}
-        for(Map.Entry<String,Long> item:added.entrySet()){Map<String,Object> plan=bySku.get(item.getKey());if("COMPLETE".equals(current.get("receipt_state"))){
+        for(Map.Entry<String,Long> item:added.entrySet()){Map<String,Object> plan=bySku.get(item.getKey());if(reviewed||"COMPLETE".equals(current.get("receipt_state"))){
             Map<String,Object> poLine=purchase.purchaseLines(company,text(ticket.get("originalSn"))).stream().filter(l->text(l.get("skuSn")).equals(item.getKey())).findFirst().orElseThrow(()->new IllegalArgumentException("采购明细不存在"));
-            require(id(poLine.get("scheduledQuantity"))+item.getValue()<=id(poLine.get("quantity")),"最终收货后的剩余采购已另行安排，迟到回传需核对");
+            require(id(poLine.get("scheduledQuantity"))+(!text(ticket.get("cutoffState")).isEmpty()&&!"COMPLETED".equals(ticket.get("cutoffState"))?0:item.getValue())<=id(poLine.get("quantity")),"最终收货后的剩余采购已另行安排，迟到回传需核对");
         }require(id(plan.get("number_actually"))+item.getValue()<=id(plan.get("number_expected")),"累计实收超过计划数量："+item.getKey());}
         long event=db.insert("wms_receipt_event",map("company_code",company,"task_id",task.get("id"),"message_id",receipt.messageId,"payload_hash",hash,"final_receipt",receipt.complete?1:0));
         for(WmsProtocol.Line l:receipt.lines){Map<String,Object> plan=bySku.get(l.sku);if(l.good+l.bad==0)continue;String batch=text(l.batch);if(batch.isEmpty())batch=text(plan.get("batch_code"));
@@ -183,11 +197,18 @@ public class WmsInboundService {
         }
         boolean complete=receiving&&(receipt.complete||text(current.get("receipt_state")).equals("COMPLETE"));
         String state=complete?"COMPLETE":receiving?"PARTIAL":text(current.get("receipt_state"));
-        db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='ACCEPTED',receipt_state=?,external_order=?,last_error='' WHERE id=?",state,text(receipt.externalOrder).isEmpty()?current.get("external_order"):receipt.externalOrder,task.get("id"));
-        db.jdbc.update("UPDATE wms_tickets SET status_notify=1,status_ticket=?,accept_callback_time=NOW(),inventory_status=CASE WHEN ? THEN 0 ELSE inventory_status END WHERE id=? AND UPPER(company_code)=?",state.equals("COMPLETE")?2:1,receiving,task.get("ticket_id"),company);
+        db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state=?,receipt_state=?,external_order=?,last_error='' WHERE id=?",closed?text(current.get("dispatch_state")):"ACCEPTED",closed?"COMPLETE":state,text(receipt.externalOrder).isEmpty()?current.get("external_order"):receipt.externalOrder,task.get("id"));
+        db.jdbc.update("UPDATE wms_tickets SET status_notify=1,status_ticket=?,accept_callback_time=NOW(),inventory_status=CASE WHEN ? THEN 0 ELSE inventory_status END WHERE id=? AND UPPER(company_code)=?",closed?7:state.equals("COMPLETE")?2:1,receiving,task.get("ticket_id"),company);
+        if(closed&&reviewed){
+            db.jdbc.update("UPDATE wms_tickets_goods SET cancelled_quantity=GREATEST(number_expected-number_actually,0) WHERE sn=? AND UPPER(company_code)=?",task.get("ticket_sn"),company);
+            db.jdbc.update("UPDATE no_tickets_goods n JOIN wms_tickets_goods g ON g.sku_sn=n.sku_sn AND UPPER(g.company_code)=UPPER(n.company_code) SET n.cancelled_quantity=GREATEST(n.zp_number_expected+n.cp_number_expected-g.number_actually,0) WHERE n.no_sn=? AND g.sn=? AND UPPER(n.company_code)=?",ticket.get("relationSn"),task.get("ticket_sn"),company);
+            db.jdbc.update("UPDATE no_tickets SET cancelled_quantity=(SELECT COALESCE(SUM(cancelled_quantity),0) FROM no_tickets_goods WHERE no_sn=? AND UPPER(company_code)=?) WHERE no_sn=? AND UPPER(company_code)=?",ticket.get("relationSn"),company,ticket.get("relationSn"),company);
+            db.jdbc.update("UPDATE wms_tickets SET cancelled_quantity=(SELECT COALESCE(SUM(cancelled_quantity),0) FROM wms_tickets_goods WHERE sn=? AND UPPER(company_code)=?) WHERE id=? AND UPPER(company_code)=?",task.get("ticket_sn"),company,task.get("ticket_id"),company);
+        }
         purchase.recordWmsEvent(company,receipt.ticketSn,receiving?"仓库收货回传":"仓库受理回传","消息 "+receipt.messageId+"，状态 "+receipt.status);
-        return null;
-    });}
+        return 0L;
+    });if(review!=null&&review>0)throw new IllegalArgumentException("单据已取消，回传已保留待人工核对，本次未入账");}
+
     public boolean post(String company,long ticketId){return db.tx().execute(s->{
         Map<String,Object> ticket=purchase.lockWmsTicket(company,ticketId);Map<String,Object> task=task(company,ticketId);require(task!=null,"没有真实入库任务");
         require(Arrays.asList("PARTIAL","COMPLETE").contains(text(task.get("receipt_state"))),"仓库尚未回传收货，不能入账");
@@ -214,12 +235,13 @@ public class WmsInboundService {
     public Map<String,Object> pollCompany(String company,boolean allowDispatch){
         com.oms.common.task.ScanReport report=new com.oms.common.task.ScanReport();
         db.jdbc.update("UPDATE wms_inbound_task SET dispatch_state='UNKNOWN',lease_until=NULL,last_error='下发进程中断，需查询仓库结果' WHERE company_code=? AND dispatch_state='SENDING' AND lease_until<NOW()",company);
-        if(allowDispatch)for(Map<String,Object> task:db.jdbc.queryForList("SELECT id,ticket_id,ticket_sn FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND next_attempt<=NOW() ORDER BY id LIMIT 10",company))try{
+        if(allowDispatch)for(Map<String,Object> task:db.jdbc.queryForList("SELECT id,ticket_id,ticket_sn FROM wms_inbound_task WHERE company_code=? AND dispatch_state='PENDING' AND cancel_state='NONE' AND next_attempt<=NOW() AND NOT EXISTS(SELECT 1 FROM wms_tickets t WHERE t.id=wms_inbound_task.ticket_id AND UPPER(t.company_code)=wms_inbound_task.company_code AND t.cutoff_state<>'') ORDER BY id LIMIT 10",company))try{
             dispatch(company,id(task.get("id")));String state=db.jdbc.queryForObject("SELECT dispatch_state FROM wms_inbound_task WHERE company_code=? AND id=?",String.class,company,task.get("id"));report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"ACCEPTED".equals(state)?"SUCCESS":Arrays.asList("FAILED","UNKNOWN").contains(state)?state:"PENDING","采购入库下发结果，请查看原入库单");
         }catch(RuntimeException e){report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"FAILED","采购入库下发未确认，请核对原任务");}
         for(Map<String,Object> task:db.jdbc.queryForList("SELECT t.ticket_id,t.ticket_sn FROM wms_inbound_task t JOIN wms_tickets w ON w.id=t.ticket_id AND UPPER(w.company_code)=t.company_code WHERE t.company_code=? AND (EXISTS(SELECT 1 FROM wms_receipt_line l WHERE l.task_id=t.id AND l.posted=0) OR (t.receipt_state='COMPLETE' AND w.inventory_status=0)) ORDER BY t.id LIMIT 20",company))try{
             boolean success=post(company,id(task.get("ticket_id")));report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),success?"SUCCESS":"FAILED","采购入库回传记账结果，请查看原入库单");
         }catch(RuntimeException e){report.record(company,id(task.get("ticket_id")),text(task.get("ticket_sn")),"FAILED","采购入库记账未确认，请核对原回传");}
+        cutoff.scan(company);
         return report;
     }
 }

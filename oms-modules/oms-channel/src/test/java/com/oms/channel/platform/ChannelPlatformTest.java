@@ -36,17 +36,18 @@ class ChannelPlatformTest {
     @BeforeEach void setup() {
         String url=System.getenv("CHANNEL_TEST_URL");assertNotNull(url);assertTrue(url.contains("/channel_platform_test?"));
         DriverManagerDataSource source=new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD"));db=new JdbcTemplate(source);
-        for(String table:Arrays.asList("channel_interaction_log","channel_oauth_state","channel_platform_binding","channel_platform_app","t_channel"))db.update("DELETE FROM "+table);
+        for(String table:Arrays.asList("channel_interaction_payload","channel_interaction_business_link","channel_interaction_log","channel_oauth_state","channel_platform_binding","channel_platform_app","t_channel"))db.update("DELETE FROM "+table);
         db.update("INSERT INTO t_channel(channel_id,channel_name,channel_type,enabled,to_channel_enabled,sync_enabled,m_model_type,company_code) VALUES(101,'店铺','TM',1,1,0,1,'QM'),(102,'外公司','TM',1,1,0,1,'OTHER'),(103,'同公司另一店铺','TM',1,1,0,1,'QM')");
         service=new ChannelPlatformService();secrets=new PlatformSecrets();client=new Fixture();
         ReflectionTestUtils.setField(secrets,"encryptionKey",Base64.getEncoder().encodeToString(new byte[32]));
         ReflectionTestUtils.setField(service,"db",db);ReflectionTestUtils.setField(service,"transactionManager",new DataSourceTransactionManager(source));ReflectionTestUtils.setField(service,"secrets",secrets);ReflectionTestUtils.setField(service,"client",client);
+        PlatformInteractionLog logs=new PlatformInteractionLog();logs.db=db;logs.transactionManager=new DataSourceTransactionManager(source);ReflectionTestUtils.setField(service,"interactionLog",logs);
         app=service.saveApp("QM",appBody(),"tester");service.bind("QM",101,map("app_id",app,"expected_shop_id","12345"),"tester");
     }
     Map<String,Object> appBody(){return map("name","应用","app_key","test-app","secret","PRIVATE_SECRET","redirect_uri","https://oms.example.com/channel-authorize","article_code","ts-test","item_code","ts-test-1","renewal_url","https://fuwu.taobao.com/ser/detail.htm?service_code=ts-test","enabled",1);}
     String state(){String url=service.authorize("QM",101,7,"tester");return url.substring(url.indexOf("&state=")+7);}
     void authorize(){service.complete("QM",7,state(),"PRIVATE_CODE","tester");}
-    int logs(String result){return db.queryForObject("SELECT COUNT(*) FROM channel_interaction_log WHERE result=?",Integer.class,result);}
+    int logs(String result){return db.queryForObject("SELECT COUNT(*) FROM channel_interaction_log WHERE entry_kind='OPERATION' AND result=?",Integer.class,result);}
     void simulation(boolean enabled) {
         ReflectionTestUtils.setField(service,"simulationEnabled",enabled);
         db.update("INSERT INTO channel_platform_app(company_code,name,enabled,simulation_mode,article_code,item_code) VALUES('QM','本地模拟',1,1,'SIMULATED_SERVICE','SIMULATED_ITEM')");
@@ -56,7 +57,7 @@ class ChannelPlatformTest {
 
     @Test void simulationUnavailableByDefaultOutsideLocalRuntime(){simulation(false);assertThrows(IllegalArgumentException.class,()->service.simulate("QM",101,"tester"));assertTrue(client.requests.isEmpty());assertEquals(false,service.detail("QM",101).get("can_simulate"));}
     @Test void simulationReturnsExplicitlyMarkedAuthorizedService(){simulation(true);service.simulate("QM",101,"tester");Map<String,Object>d=service.detail("QM",101);assertEquals(true,d.get("simulation"));assertEquals("模拟对接成功（授权与服务有效）",d.get("availability"));assertEquals("已授权",d.get("auth_label"));assertEquals("服务有效",d.get("service_label"));assertEquals(false,d.get("can_authorize"));assertTrue(client.requests.isEmpty());}
-    @Test void simulatedQueriesAndRefreshNeverCallRealClient(){simulation(true);service.simulate("QM",101,"tester");service.query("QM",101,"shop","tester");service.query("QM",101,"subscription","tester");service.refresh("QM",101,"tester");assertTrue(client.requests.isEmpty());assertEquals("店铺",service.detail("QM",101).get("shop_title"));assertEquals(4,db.queryForObject("SELECT COUNT(*) FROM channel_interaction_log WHERE channel_id=101 AND result='SUCCESS' AND JSON_EXTRACT(response_summary,'$.simulation')=true",Integer.class));}
+    @Test void simulatedQueriesAndRefreshNeverCallRealClient(){simulation(true);service.simulate("QM",101,"tester");service.query("QM",101,"shop","tester");service.query("QM",101,"subscription","tester");service.refresh("QM",101,"tester");assertTrue(client.requests.isEmpty());assertEquals("店铺",service.detail("QM",101).get("shop_title"));assertEquals(4,db.queryForObject("SELECT COUNT(*) FROM channel_interaction_log WHERE channel_id=101 AND entry_kind='OPERATION' AND result='SUCCESS' AND JSON_EXTRACT(response_summary,'$.simulation')=true",Integer.class));}
     @Test void realApplicationsCannotUseSimulationEndpoint(){assertThrows(IllegalArgumentException.class,()->service.simulate("QM",101,"tester"));assertTrue(client.requests.isEmpty());assertEquals("未授权",service.detail("QM",101).get("auth_label"));}
     @Test void simulatedAppsCannotStartRealOauthOrAcceptCredentialEdits(){simulation(true);assertThrows(IllegalArgumentException.class,()->service.authorize("QM",101,7,"tester"));long id=((Number)service.detail("QM",101).get("app_id")).longValue();Map<String,Object>b=appBody();b.put("id",id);assertThrows(IllegalArgumentException.class,()->service.saveApp("QM",b,"tester"));assertTrue(client.requests.isEmpty());}
     @Test void simulationRetainsTenantIsolation(){simulation(true);assertThrows(IllegalArgumentException.class,()->service.simulate("OTHER",101,"tester"));assertThrows(IllegalArgumentException.class,()->service.query("OTHER",101,"shop","tester"));assertTrue(client.requests.isEmpty());}

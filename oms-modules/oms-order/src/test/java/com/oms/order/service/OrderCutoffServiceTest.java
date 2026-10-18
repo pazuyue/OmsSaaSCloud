@@ -1,0 +1,65 @@
+package com.oms.order.service;
+import com.ruoyi.common.core.domain.R;
+import org.junit.jupiter.api.*;
+import org.springframework.test.util.ReflectionTestUtils;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static com.oms.order.service.OrderValues.*;
+
+class OrderCutoffServiceTest {
+    OrderShipmentServiceTest f=new OrderShipmentServiceTest();OrderCutoffService service;OrderWarehouseClient inventory;OrderShipmentWmsClient warehouse;long shipment;
+    @BeforeAll static void setup(){OrderShipmentServiceTest.setup();}
+    @BeforeEach void seed(){f.seed();f.db.update("DELETE FROM oms_order_cutoff_item");f.db.update("DELETE FROM oms_order_cutoff");f.mirror(Arrays.asList(f.receipt(1,10,"V1","R1")));shipment=number(f.generate(0).get(0),"id");service=new OrderCutoffService();inventory=mock(OrderWarehouseClient.class);warehouse=mock(OrderShipmentWmsClient.class);ReflectionTestUtils.setField(service,"repository",f.repository);ReflectionTestUtils.setField(service,"inventory",inventory);ReflectionTestUtils.setField(service,"warehouse",warehouse);when(inventory.receipts(anyString(),anyLong(),anyString(),anyString())).thenReturn(R.ok(Collections.emptyList()));when(warehouse.reviewSummaries(anyString(),anyList(),anyString())).thenReturn(R.ok(Collections.emptyList()));when(warehouse.receipts(anyString(),anyString(),anyBoolean(),anyString())).thenReturn(R.ok(Collections.emptyList()));when(inventory.adjust(anyString(),anyMap(),anyString())).thenAnswer(call->{Map<String,Object> command=call.getArgument(1);boolean term="TERMINATE".equals(text(command,"mode"));return R.ok(f.row("request_id",command.get("request_id"),"mode",command.get("mode"),"state","COMPLETED","lines",Arrays.asList(f.row("platform_oid","123450","sku_sn","A","reserved_quantity",term?0:10,"cancelled_quantity",term?10:0))));});}
+    long n(String sql){return f.db.queryForObject(sql,Long.class);}
+    Map<String,Object> input(String mode){return f.row("mode",mode,"reason","验收截单","control_version",n("SELECT control_version FROM oms_order"));}
+    String state(){return f.db.queryForObject("SELECT status FROM oms_order",String.class);}
+    void dispatched(){f.db.update("INSERT INTO oms_order_shipment_dispatch(company_code,shipment_id,shipment_sn,payload_json,payload_hash,state,external_order,created_by) SELECT company_code,id,shipment_sn,'{}',?,'ACCEPTED','WMS1','test' FROM oms_order_shipment WHERE id=?",hash("{}"),shipment);f.db.update("UPDATE oms_order_shipment SET status='WAREHOUSE_PROCESSING' WHERE id=?",shipment);}
+    @Test void localReplanKeepsHoldAndGeneratesNewXsAfterManualConfirmation(){f.db.update("UPDATE oms_order SET manual_hold=1,hold_reason='原人工挂起'");service.request("VERIFY",f.id,input("REPLAN"),"tester");assertEquals("CUTTING",state());assertFalse(f.summary().get("can_allocate").equals(true));service.process("VERIFY",f.id);assertEquals("WAIT_ALLOCATION",state());assertEquals("REPLAN_READY",f.db.queryForObject("SELECT cutoff_state FROM oms_order",String.class));assertEquals(1,n("SELECT manual_hold FROM oms_order"));assertEquals(10,n("SELECT reserved_quantity FROM oms_order_line"));assertEquals(10,n("SELECT cancelled_quantity FROM oms_order_shipment"));assertEquals(0,n("SELECT cancelled_quantity FROM oms_order_line"));f.db.update("UPDATE oms_order SET manual_hold=0");f.mirror(Arrays.asList(f.receipt(2,10,"V1","R1")));f.generate(n("SELECT control_version FROM oms_order"));assertEquals(2,n("SELECT COUNT(*) FROM oms_order_shipment"));assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment WHERE status='VOIDED'"));}
+    @Test void terminationCompletesOnlyAfterConfirmedStockReply(){service.request("VERIFY",f.id,input("TERMINATE"),"tester");when(inventory.adjust(anyString(),anyMap(),anyString())).thenThrow(new IllegalStateException("lost"));service.process("VERIFY",f.id);assertEquals("CUTTING",state());assertEquals(0,n("SELECT cancelled_quantity FROM oms_order_shipment"));assertEquals(10,n("SELECT reserved_quantity FROM oms_order_line"));assertEquals("UNKNOWN",f.db.queryForObject("SELECT state FROM oms_order_cutoff_item",String.class));}
+    @Test void localTerminationPreservesOriginalQuantityAndCompletesVoid(){service.request("VERIFY",f.id,input("TERMINATE"),"tester");service.process("VERIFY",f.id);service.process("VERIFY",f.id);assertEquals("VOIDED",state());assertEquals(10,n("SELECT quantity FROM oms_order_line"));assertEquals(10,n("SELECT cancelled_quantity FROM oms_order_line"));assertEquals(0,n("SELECT reserved_quantity FROM oms_order_line"));assertEquals("COMPLETED",f.db.queryForObject("SELECT state FROM oms_order_cutoff",String.class));verify(inventory,times(2)).adjust(anyString(),anyMap(),anyString());}
+    @Test void warehouseUnknownNeverReleasesInventory(){dispatched();when(warehouse.cancel(anyString(),anyMap(),anyString())).thenAnswer(call->R.ok(f.row("shipment_id",shipment,"shipment_sn",f.db.queryForObject("SELECT shipment_sn FROM oms_order_shipment",String.class),"payload_hash",hash("{}"),"cancel_state","UNKNOWN")));service.request("VERIFY",f.id,input("TERMINATE"),"tester");service.process("VERIFY",f.id);assertEquals("CUTTING",state());verify(inventory,never()).adjust(anyString(),anyMap(),anyString());assertEquals(0,n("SELECT cancelled_quantity FROM oms_order_shipment"));}
+    @Test void pendingHumanReceiptPreventsWarehouseCancelAndStockRelease(){dispatched();when(warehouse.reviewSummaries(anyString(),anyList(),anyString())).thenReturn(R.ok(Arrays.asList(f.row("shipment_id",shipment,"pending_count",1))));service.request("VERIFY",f.id,input("TERMINATE"),"tester");service.process("VERIFY",f.id);verify(warehouse,never()).cancel(anyString(),anyMap(),anyString());verify(inventory,never()).adjust(anyString(),anyMap(),anyString());assertEquals("CUTTING",state());}
+    @SuppressWarnings("unchecked") @Test void retryCompletionIsCorrelatedAndUnchangedAutomaticChecksDoNotSpamLogs(){
+        dispatched();when(warehouse.reviewSummaries(anyString(),anyList(),anyString())).thenReturn(R.ok(Arrays.asList(f.row("shipment_id",shipment,"pending_count",1))));
+        service.request("VERIFY",f.id,input("TERMINATE"),"requester");
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_REQUEST' AND operator_name='requester'"));
+        assertEquals(0,n("SELECT checked_version FROM oms_order_cutoff"));
+        service.process("VERIFY",f.id);service.process("VERIFY",f.id);
+        assertEquals(1,n("SELECT checked_version FROM oms_order_cutoff"));
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_BLOCKED'"));
+        Map<String,Object> retry=service.retry("VERIFY",f.id,n("SELECT control_version FROM oms_order"),"retryer");
+        assertEquals(2,number(retry,"check_version"));assertEquals(n("SELECT id FROM oms_order_cutoff"),number(retry,"cutoff_id"));
+        Map<String,Object> before=((List<Map<String,Object>>)service.report("VERIFY",f.id).get("operations")).get(0);
+        assertEquals(2,number(before,"check_version"));assertEquals(1,number(before,"checked_version"));assertNotNull(before.get("last_checked_at"));
+        service.process("VERIFY",f.id);service.process("VERIFY",f.id);
+        assertEquals(2,n("SELECT checked_version FROM oms_order_cutoff"));
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_RETRY' AND operator_name='retryer'"));
+        assertEquals(2,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_BLOCKED'"));
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_cutoff"));assertEquals(10,n("SELECT reserved_quantity FROM oms_order_line"));
+        verify(warehouse,never()).cancel(anyString(),anyMap(),anyString());verify(inventory,never()).adjust(anyString(),anyMap(),anyString());
+    }
+    @Test void successfulShipmentHistoryIsDurableAndNotDuplicatedByReplay(){
+        service.request("VERIFY",f.id,input("TERMINATE"),"tester");service.process("VERIFY",f.id);service.process("VERIFY",f.id);
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_WAREHOUSE'"));
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_COMPLETE'"));
+        assertEquals(1,n("SELECT checked_version FROM oms_order_cutoff"));
+        assertThrows(IllegalArgumentException.class,()->service.retry("OTHER",f.id,0,"other"));
+        assertEquals(0,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE company_code='OTHER'"));
+    }
+    @Test void confirmedWarehouseCancellationThenStockReleaseCompletes(){dispatched();when(warehouse.cancel(anyString(),anyMap(),anyString())).thenAnswer(call->R.ok(f.row("shipment_id",shipment,"shipment_sn",f.db.queryForObject("SELECT shipment_sn FROM oms_order_shipment",String.class),"payload_hash",hash("{}"),"cancel_state","CONFIRMED")));service.request("VERIFY",f.id,input("TERMINATE"),"tester");service.process("VERIFY",f.id);assertEquals("VOIDED",state());assertEquals("CANCELED",f.db.queryForObject("SELECT state FROM oms_order_shipment_dispatch",String.class));}
+    @Test void unconfirmedVirtualOutboundCannotBeCancelledLocally(){f.db.update("INSERT INTO oms_order_shipment_virtual_outbound(company_code,shipment_id,request_id,payload_json,payload_hash,quantity,state,created_by,shipment_sn) VALUES ('VERIFY',?,'VREQ_TEST','{}','hash',10,'UNKNOWN','test','XS_VREQ_TEST')",shipment);assertThrows(IllegalArgumentException.class,()->service.request("VERIFY",f.id,input("REPLAN"),"tester"));assertEquals("WAIT_ALLOCATION",state());}
+    @Test void staleVersionCrossCompanyAndOverlappingRequestDoNotWrite(){Map<String,Object> input=input("REPLAN");input.put("control_version",-1);assertThrows(IllegalArgumentException.class,()->service.request("VERIFY",f.id,input,"test"));assertThrows(IllegalArgumentException.class,()->service.request("OTHER",f.id,input("REPLAN"),"test"));service.request("VERIFY",f.id,input("REPLAN"),"test");assertThrows(IllegalArgumentException.class,()->service.request("VERIFY",f.id,input("REPLAN"),"test"));assertEquals(1,n("SELECT COUNT(*) FROM oms_order_cutoff"));}
+    @SuppressWarnings("unchecked") @Test void replayOfOlderItemReceiptCannotUndoLaterTerminalProgress(){
+        f.db.update("DELETE FROM oms_order_shipment_line");f.db.update("DELETE FROM oms_order_shipment");f.db.update("UPDATE oms_order SET control_version=0");f.mirror(Arrays.asList(f.receipt(10,6,"V1","R1"),f.receipt(11,4,"V2","R2")));List<Map<String,Object>> docs=f.generate(0);Map<String,Object> input=input("TERMINATE");input.put("shipment_ids",Arrays.asList(docs.get(0).get("id"),docs.get(1).get("id")));
+        Set<String> seen=new HashSet<>();when(inventory.adjust(anyString(),anyMap(),anyString())).thenAnswer(call->{Map<String,Object> c=call.getArgument(1);List<Map<String,Object>> rows=(List<Map<String,Object>>)c.get("allocations");long q=number(rows.get(0),"quantity");String key=text(c,"request_id");if(q==6&&seen.add(key))throw new IllegalStateException("committed receipt response lost");return R.ok(f.row("request_id",key,"mode","TERMINATE","state","COMPLETED","lines",Arrays.asList(f.row("platform_oid","123450","sku_sn","A","reserved_quantity",q==6?4:0,"cancelled_quantity",q==6?6:10))));});
+        service.request("VERIFY",f.id,input,"tester");service.process("VERIFY",f.id);assertEquals("CUTTING",state());assertEquals(10,n("SELECT cancelled_quantity FROM oms_order_line"));
+        service.retry("VERIFY",f.id,n("SELECT control_version FROM oms_order"),"retryer");
+        assertEquals(1,n("SELECT COUNT(*) FROM oms_order_shipment_log WHERE action='CUTOFF_RETRY'"));
+        assertEquals(number(docs.get(0),"id"),n("SELECT shipment_id FROM oms_order_shipment_log WHERE action='CUTOFF_RETRY'"));
+        service.process("VERIFY",f.id);assertEquals("VOIDED",state());assertEquals(10,n("SELECT cancelled_quantity FROM oms_order_line"));assertEquals(0,n("SELECT reserved_quantity FROM oms_order_line"));
+    }
+
+    @Test void outboundArrivingAfterRequestIsKeptAndNeverReleased(){service.request("VERIFY",f.id,input("TERMINATE"),"tester");f.db.update("UPDATE oms_order_shipment_line SET shipped_quantity=quantity");f.db.update("UPDATE oms_order_shipment SET status='SHIPPED'");when(inventory.adjust(anyString(),anyMap(),anyString())).thenAnswer(call->{Map<String,Object> c=call.getArgument(1);assertEquals(Boolean.TRUE,c.get("finish_order"));assertTrue(((List<?>)c.get("allocations")).isEmpty());return R.ok(f.row("request_id",c.get("request_id"),"mode","TERMINATE","state","COMPLETED","lines",Arrays.asList(f.row("platform_oid","123450","sku_sn","A","reserved_quantity",10,"cancelled_quantity",0))));});service.process("VERIFY",f.id);assertEquals(10,n("SELECT shipped_quantity FROM oms_order_shipment_line"));assertEquals(0,n("SELECT cancelled_quantity FROM oms_order_shipment_line"));assertEquals("OUTBOUND",f.db.queryForObject("SELECT warehouse_state FROM oms_order_cutoff_item",String.class));verify(warehouse,never()).cancel(anyString(),anyMap(),anyString());}
+
+}

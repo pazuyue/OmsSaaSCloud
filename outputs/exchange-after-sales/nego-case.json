@@ -1,0 +1,87 @@
+{
+  "case_id": "20261017092112",
+  "created": "2026-10-17 09:21:12",
+  "sku": "EXCH_NEGO_20261017092112_A",
+  "target_sku": "EXCH_NEGO_20261017092112_B",
+  "channel_name": "[换货归属验收] nego 20261017092112",
+  "seller": "EXCH_NEGO_20261017092112",
+  "platform_tid": "99420261017092112",
+  "platform_oid": "9942026101709211201",
+  "warehouses": [
+    {
+      "code": "EXCH_NEGO_20261017092112_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 88
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 52,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_NEGO_20261017092112_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_NEGO_20261017092112_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_NEGO_20261017092112_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 122,
+        "store": "EXCH_NEGO_20261017092112_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 141,
+  "order_id": 57,
+  "order_sn": "SO35251f966583463b9c0ab40547a2d503",
+  "prepared": true,
+  "target_ready": true,
+  "extra_stock": true,
+  "original_shipment_id": 54,
+  "pending_id": 11,
+  "pending_sn": "HHI1635ddcbbf6009bc30dbc92cf6ae338b",
+  "partial_received": true,
+  "complete_id": 12,
+  "complete_sn": "HHI8b77c591234a091a063894fa359bb51c",
+  "verified": true,
+  "pending_partial": true,
+  "original_sales_shipped": 10,
+  "completed_exchange": "HHI8b77c591234a091a063894fa359bb51c",
+  "no_platform_exchange_write": true
+}

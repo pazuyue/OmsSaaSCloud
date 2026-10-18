@@ -1,0 +1,85 @@
+{
+  "case_id": "20261017175514",
+  "created": "2026-10-17 17:55:14",
+  "sku": "EXCH_NOTIFY_20261017175514_A",
+  "target_sku": "EXCH_NOTIFY_20261017175514_B",
+  "channel_name": "[平台换货回传验收] 20261017175514",
+  "seller": "EXCH_NOTIFY_20261017175514",
+  "platform_tid": "99420261017175514",
+  "platform_oid": "9942026101717551401",
+  "warehouses": [
+    {
+      "code": "EXCH_NOTIFY_20261017175514_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 90
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 54,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXCH_NOTIFY_20261017175514_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXCH_NOTIFY_20261017175514_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXCH_NOTIFY_20261017175514_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 133,
+        "store": "EXCH_NOTIFY_20261017175514_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 143,
+  "order_id": 59,
+  "order_sn": "SOc8e9b2ffbb274fcdb63dfaa0ceee27e6",
+  "prepared": true,
+  "target_ready": true,
+  "authorized": true,
+  "original_shipment_id": 60,
+  "exchange_id": 15,
+  "exchange_sn": "HH8d5efa5ac5d443f3b4d0c8af76fdda93",
+  "dispute_id": "9992026101717551401",
+  "return_sn": "THXD963C612E03470E1E786D73EDF7BFE",
+  "shipment_id": 61,
+  "shipment_sn": "XS3e28369be54446c78ca2500281bbbf96",
+  "waybill": "TEST-SF-XS3e28369be54446c78ca2500281bbbf96",
+  "completed": true
+}

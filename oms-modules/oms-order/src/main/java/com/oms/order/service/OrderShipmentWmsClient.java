@@ -7,6 +7,7 @@ import java.util.*;
 
 @FeignClient(contextId="orderShipmentWmsClient",name="oms-supplychain",configuration=OrderShipmentWmsFeignConfig.class)
 public interface OrderShipmentWmsClient {
+    @PostMapping("/shipmentWms/internal/cancel") R<Map<String,Object>> cancel(@RequestParam("company_code") String company,@RequestBody Map<String,Object> body,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/shipmentWms/internal/review-summaries") R<List<Map<String,Object>>> reviewSummaries(@RequestParam("company_code") String company,@RequestBody List<Long> shipments,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/shipmentWms/internal/reviews") R<List<Map<String,Object>>> reviews(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/shipmentWms/internal/reviews/{review}") R<Map<String,Object>> review(@RequestParam("company_code") String company,@RequestParam("shipment_id") long shipment,@PathVariable("review") long review,@RequestBody Map<String,Object> body,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);

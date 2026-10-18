@@ -14,6 +14,10 @@ import java.util.*;
 /** Official TOP/OAuth protocol. Endpoints are fixed; credentials never enter URLs or logs. */
 @Component
 public class TmallClient {
+    static final class Transport {Integer httpStatus;Object response;boolean sent;Set<String> forbidden=new HashSet<>();}
+    private static final ThreadLocal<Transport> TRANSPORT=ThreadLocal.withInitial(Transport::new);
+    static Transport transport(){return TRANSPORT.get();}
+    static void clearTransport(){TRANSPORT.remove();}
     public static class Failure extends RuntimeException {
         public final String code; public final boolean unknown;
         public Failure(String code, boolean unknown) { super(unknown?"平台响应未确认，请查看交互日志后重试":"平台调用失败，请查看交互日志中的错误码");this.code=code;this.unknown=unknown; }
@@ -38,6 +42,7 @@ public class TmallClient {
     }
     public static String encode(String value) { try{return URLEncoder.encode(value,"UTF-8");}catch(Exception e){throw new IllegalStateException(e);} }
     protected JsonNode post(String url,Map<String,String> params) {
+        for(String field:Arrays.asList("session","client_secret","refresh_token","code","sign")){String value=params.get(field);if(value!=null&&value.length()>=4)transport().forbidden.add(value);}
         HttpURLConnection connection=null;
         try {
             connection=(HttpURLConnection)new URL(url).openConnection();connection.setInstanceFollowRedirects(false);
@@ -45,19 +50,19 @@ public class TmallClient {
             connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
             StringJoiner body=new StringJoiner("&");params.forEach((k,v)->body.add(encode(k)+"="+encode(v)));
             byte[] bytes=body.toString().getBytes(StandardCharsets.UTF_8);connection.setFixedLengthStreamingMode(bytes.length);
-            try(OutputStream out=connection.getOutputStream()){out.write(bytes);}
-            int status=connection.getResponseCode();
+            try(OutputStream out=connection.getOutputStream()){transport().sent=true;out.write(bytes);}
+            int status=connection.getResponseCode();transport().httpStatus=status;
             InputStream stream=status>=400?connection.getErrorStream():connection.getInputStream();
             if(stream==null)throw new Failure("HTTP_"+status,status>=500);
             ByteArrayOutputStream buffer=new ByteArrayOutputStream();
             try(InputStream in=stream){byte[] block=new byte[4096];int n;while((n=in.read(block))!=-1){if(buffer.size()+n>1048576)throw new Failure("RESPONSE_TOO_LARGE",true);buffer.write(block,0,n);}}
-            JsonNode result=new ObjectMapper().readTree(buffer.toByteArray());
+            JsonNode result=new ObjectMapper().readTree(buffer.toByteArray());transport().response=result;
             if(result==null||!result.isObject())throw new Failure("INVALID_RESPONSE",true);
             JsonNode error=result.has("error_response")?result.get("error_response"):result;
             if(result.has("error_response")||result.has("error")) {
                 String code=error.path("sub_code").asText(error.path("code").asText(error.path("error").asText("PLATFORM_ERROR")));
                 // Error descriptions may echo a credential. Persist only a bounded error identifier.
-                throw new Failure(code.matches("[A-Za-z0-9_.-]{1,100}")?code:"PLATFORM_ERROR",false);
+                throw new Failure(code.matches("[A-Za-z0-9_.-]{1,100}")?code:"PLATFORM_ERROR",status>=500||code.startsWith("isp."));
             }
             if(status<200||status>=300)throw new Failure("HTTP_"+status,status>=500);
             return result;

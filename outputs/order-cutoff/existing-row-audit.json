@@ -1,0 +1,32 @@
+{
+  "qm_oms_saas_order.oms_order": [
+    {
+      "column": "control_version",
+      "existing_rows_changed": 1
+    },
+    {
+      "column": "stock_attempt_at",
+      "existing_rows_changed": 3
+    }
+  ],
+  "qm_oms_saas_order.oms_order_line": [],
+  "qm_oms_saas_order.oms_order_shipment": [
+    {
+      "column": "status",
+      "existing_rows_changed": 1
+    },
+    {
+      "column": "control_version",
+      "existing_rows_changed": 1
+    }
+  ],
+  "qm_oms_saas_order.oms_order_shipment_line": [],
+  "qm_oms_saas_order.oms_order_shipment_dispatch": [],
+  "qm_oms_saas_inventory.oms_channel_inventory": [
+    {
+      "column": "version",
+      "existing_rows_changed": 6
+    }
+  ],
+  "qm_oms_saas_inventory.oms_order_stock_demand": []
+}

@@ -10,13 +10,20 @@
 </template>
 <script>
 const descriptions = {
+  '/oms-order/afterSaleRules/returns': ['按店铺维护退回包裹关联、仓库下发与实收分配规则。', 'el-icon-setting'],
+  '/oms-order/platformDocuments': ['集中查看平台订单、退款和换货，按原交易追溯来源及 OMS 业务单据。', 'el-icon-files'],
+  '/oms-order/platformExchanges': ['保存平台换货申请与来源版本，跟进原单关联、转单及业务处理。', 'el-icon-document'],
+  '/oms-order/platformRefunds': ['保存平台退款原文与版本，跟进同步、转单与来源问题。', 'el-icon-document'],
+  '/oms-order/businessRefunds': ['按原订单处理仅退款，分别跟踪资金结果与货物处理。', 'el-icon-tickets'],
+  '/oms-order/refundSettings': ['维护店铺退款接入、自动转单与独立同步游标。', 'el-icon-setting'],
   '/oms-order/shipments': ['按实体仓查看订单发货单，跟进分批履约与实际出库数量。', 'el-icon-truck'],
-  '/oms-order/management': ['维护订单接入、推送库连接与拉单任务。', 'el-icon-download'],
+  '/oms-order/management': ['统一维护订单、退款和换货接入，查询同步任务与异常。', 'el-icon-download'],
   '/oms-order/settings': ['维护店铺的转单、审单、逻辑预占与分仓策略。', 'el-icon-setting'],
   '/oms-order/business': ['查看转单后的业务订单，跟进库存预占进度与处理结果。', 'el-icon-document'],
   '/oms-goods': ['集中管理商品资料，让每一个 SKU 清晰有序。', 'el-icon-box'],
   '/oms-supplychain': ['连接采购、仓库与合作伙伴，协同处理日常业务。', 'el-icon-connection'],
   '/oms-inventory': ['查看库存明细，管理库存分配与业务规则。', 'el-icon-data-analysis'],
+  '/oms-channel/platformLogs': ['集中查询平台交互，区分接口结果、业务进度与模拟记录。', 'el-icon-connection'],
   '/oms-channel': ['统一维护渠道信息与业务配置。', 'el-icon-set-up'],
   '/oms-order': ['拉取天猫平台订单，处理转单异常与库存逻辑预占。', 'el-icon-document'],
   '/system': ['管理组织、账号与权限，维护业务基础配置。', 'el-icon-setting'],

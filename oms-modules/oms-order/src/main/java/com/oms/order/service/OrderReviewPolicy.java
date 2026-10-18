@@ -10,7 +10,7 @@ public final class OrderReviewPolicy {
     public static String businessStatus(Map<String,Object> row){
         String status=text(row,"status");
         if(!"WAIT_ALLOCATION".equals(status))return status;
-        if(number(row,"demand_quantity")>0&&number(row,"shipped_quantity")>=number(row,"demand_quantity"))return "SHIPPED";
+        if(number(row,"demand_quantity")>0&&number(row,"shipped_quantity")>=number(row,"demand_quantity")-number(row,"cancelled_quantity"))return "SHIPPED";
         if(number(row,"shipped_quantity")>0)return "PART_SHIPPED";
         if(!"APPROVED".equals(text(row,"review_status")))return "WAIT_REVIEW";
         if("FULL".equals(text(row,"allocation_status"))){
@@ -22,21 +22,23 @@ public final class OrderReviewPolicy {
         return number(row,"allocation_quantity")>0?"PART_ALLOCATED":status;
     }
     public static String businessStatusSql(){
-        String waiting="EXISTS(SELECT 1 FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.status='WAIT_CARRIER') OR (SELECT COALESCE(SUM(cs.quantity),0) FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.status<>'VOIDED')<o.allocation_quantity";
-        String sending="EXISTS(SELECT 1 FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.status='DISPATCHING')";
-        String accepted="(SELECT COALESCE(SUM(cs.quantity),0) FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.status IN ('WAREHOUSE_PROCESSING','PART_SHIPPED','SHIPPED'))";
-        String shipped="(SELECT COALESCE(SUM(sl.shipped_quantity),0) FROM oms_order_shipment_line sl JOIN oms_order_shipment ss ON ss.company_code=sl.company_code AND ss.id=sl.shipment_id WHERE ss.company_code=o.company_code AND ss.order_id=o.id)";
-        String demand="(SELECT COALESCE(SUM(ol.quantity),0) FROM oms_order_line ol WHERE ol.company_code=o.company_code AND ol.order_id=o.id)";
+        String waiting="EXISTS(SELECT 1 FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.business_type='SALE' AND cs.status='WAIT_CARRIER') OR (SELECT COALESCE(SUM(cs.quantity),0) FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.business_type='SALE' AND cs.status<>'VOIDED')<o.allocation_quantity";
+        String sending="EXISTS(SELECT 1 FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.business_type='SALE' AND cs.status='DISPATCHING')";
+        String accepted="(SELECT COALESCE(SUM(cs.quantity),0) FROM oms_order_shipment cs WHERE cs.company_code=o.company_code AND cs.order_id=o.id AND cs.business_type='SALE' AND cs.status IN ('WAREHOUSE_PROCESSING','PART_SHIPPED','SHIPPED'))";
+        String shipped="(SELECT COALESCE(SUM(sl.shipped_quantity),0) FROM oms_order_shipment_line sl JOIN oms_order_shipment ss ON ss.company_code=sl.company_code AND ss.id=sl.shipment_id WHERE ss.company_code=o.company_code AND ss.order_id=o.id AND ss.business_type='SALE')";
+        String demand="(SELECT COALESCE(SUM(ol.quantity-ol.cancelled_quantity),0) FROM oms_order_line ol WHERE ol.company_code=o.company_code AND ol.order_id=o.id AND ol.business_type='SALE')";
         return "CASE WHEN o.status<>'WAIT_ALLOCATION' THEN o.status WHEN "+shipped+">= "+demand+" AND "+demand+">0 THEN 'SHIPPED' WHEN "+shipped+">0 THEN 'PART_SHIPPED' WHEN COALESCE(o.review_status,'')<>'APPROVED' THEN 'WAIT_REVIEW' WHEN o.allocation_status='FULL' THEN CASE WHEN "+waiting+" THEN 'WAIT_CARRIER' WHEN "+sending+" THEN 'DISPATCHING' WHEN "+accepted+">=o.allocation_quantity AND o.allocation_quantity>0 THEN 'WAREHOUSE_PROCESSING' WHEN "+accepted+">0 THEN 'PART_DISPATCHED' ELSE 'WAIT_DISPATCH' END WHEN o.allocation_quantity>0 THEN 'PART_ALLOCATED' ELSE o.status END";
     }
     public static String systemBlock(Map<String,Object> row){
+        if(!text(row,"refund_block_reason").isEmpty())return text(row,"refund_block_reason");
+        if(!text(row,"exchange_block_reason").isEmpty())return text(row,"exchange_block_reason");
         if(number(row,"change_pending")!=0)return "平台关键交易信息已变化，等待订单更新处理";
         if(!text(row,"fulfillment_block_reason").isEmpty())return text(row,"fulfillment_block_reason");
         if(!"WAIT_SELLER_SEND_GOODS".equals(text(row,"platform_status")))return "平台交易状态不允许履约";
         return "";
     }
     public static List<String> releaseBlocks(Map<String,Object> row){
-        List<String> reasons=new ArrayList<>();if(Arrays.asList("VOIDING","VOIDED").contains(text(row,"status"))){reasons.add("VOIDED".equals(text(row,"status"))?"订单已作废":"订单作废处理中");return reasons;}String system=systemBlock(row);if(!system.isEmpty())reasons.add(system);
+        List<String> reasons=new ArrayList<>();if("CUTTING".equals(text(row,"status"))){reasons.add("截单处理中，已停止新增履约");return reasons;}if(Arrays.asList("VOIDING","VOIDED").contains(text(row,"status"))){reasons.add("VOIDED".equals(text(row,"status"))?"订单已作废":"订单作废处理中");return reasons;}String system=systemBlock(row);if(!system.isEmpty())reasons.add(system);
         if(number(row,"manual_hold")==1)reasons.add("人工挂起："+text(row,"hold_reason"));
         if(!"APPROVED".equals(text(row,"review_status")))reasons.add("尚未审核通过");
         if(!"RESERVED".equals(text(row,"inventory_status"))&&!(number(row,"allocation_allow_partial")==1&&number(row,"reserved_quantity")>number(row,"allocation_quantity")))reasons.add("逻辑预占尚未全部完成");

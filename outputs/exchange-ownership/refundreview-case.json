@@ -1,0 +1,127 @@
+{
+  "case_id": "20261018113002",
+  "created": "2026-10-18 11:30:02",
+  "sku": "RPK_20261018113002_A",
+  "target_sku": "RPK_20261018113002_B",
+  "channel_name": "[自动合包追加验收] 20261018113002",
+  "seller": "RPK_20261018113002",
+  "platform_tid": "99420261018113002",
+  "platform_oid": "9942026101811300201",
+  "warehouses": [
+    {
+      "code": "RPK_20261018113002_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 95
+    }
+  ],
+  "claims": [],
+  "sku_shortened": true,
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 60,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "RPK_20261018113002_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "RPK_20261018113002_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "RPK_20261018113002_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 143,
+        "store": "RPK_20261018113002_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 148,
+  "order_id": 64,
+  "order_sn": "SOb4c024977091449882c2301ddbfaf646",
+  "prepared": true,
+  "original_shipped": true,
+  "original_shipment_id": 65,
+  "parcel_connection": 15,
+  "parcel_policy_configured": true,
+  "seeded_refunds": [
+    "9982026101811300201",
+    "9982026101811300202",
+    "9982026101811300203",
+    "9982026101811300204"
+  ],
+  "refunds": [
+    {
+      "id": 10,
+      "refund_sn": "TKf2f2c6b2f0224e8da5353451a985e4c0",
+      "platform_id": 10,
+      "plan_id": 9
+    },
+    {
+      "id": 11,
+      "refund_sn": "TK4afa5fa80322437fa32e9abf58a28908",
+      "platform_id": 11,
+      "plan_id": 10
+    },
+    {
+      "id": 12,
+      "refund_sn": "TKd5eb74ade1764c6ca68666e107e0cea3",
+      "platform_id": 12,
+      "plan_id": 11
+    },
+    {
+      "id": 13,
+      "refund_sn": "TKfbc7f923e18e4d6fbd5467e1fbe273e4",
+      "platform_id": 13,
+      "plan_id": 12
+    }
+  ],
+  "parcel_id": 11,
+  "parcel_sn": "RPK91e9be904a7a425890103d89fed9be31",
+  "original_snapshot": {
+    "id": 9,
+    "return_sn": "THK42B32A0EF6DBA0AA8BC8D6AB4F4E38",
+    "quantity": 1,
+    "payload_hash": "F6C80A9CA95C29E6CCA7EF4DAADF8DC897BB312664311106728A0ACE8993B7E8",
+    "external_order": "SIMIN_1dacca072a3f40d5b813",
+    "attempts": 1
+  },
+  "logistics_wait_verified": true,
+  "late_logistics_verified": true,
+  "shop_block_verified": true,
+  "warehouse_block_verified": true,
+  "receipt_frozen": true,
+  "review_started": true
+}

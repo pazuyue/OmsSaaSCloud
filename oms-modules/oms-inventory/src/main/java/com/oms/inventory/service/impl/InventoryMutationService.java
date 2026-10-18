@@ -242,7 +242,9 @@ public class InventoryMutationService {
         Map<String,Object> batch=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE company_code=? AND sku_sn=? AND store_code=? AND batch_code=? FOR UPDATE",ROW,company,sku,store,input.getBatchCode());
         jdbc.update("UPDATE wms_inventory_batch SET zp_actual_number=zp_actual_number+?,zp_available_number=zp_available_number+?,cp_actual_number=cp_actual_number+?,cp_available_number=cp_available_number+?,version=version+1 WHERE id=?",zp,zp,cp,cp,batch.get("id"));
         jdbc.update("UPDATE wms_inventory SET zp_actual_number=zp_actual_number+?,zp_available_number=zp_available_number+?,cp_actual_number=cp_actual_number+?,cp_available_number=cp_available_number+?,version=version+1 WHERE id=?",zp,zp,cp,cp,inventory.get("id"));
-        jdbc.update("UPDATE oms_inventory SET total_stock=total_stock+?,available_stock=available_stock+?,version=version+1 WHERE id=?",Math.addExact(zp,cp),Math.addExact(zp,cp),oms.get("id"));
+        // Exchange returns may contain damaged goods. Keep those out of sellable logical stock.
+        boolean exchangeReturn=relation.startsWith("EXCHANGE_RETURN_");
+        jdbc.update("UPDATE oms_inventory SET total_stock=total_stock+?,available_stock=available_stock+?,frozen_stock=frozen_stock+?,version=version+1 WHERE id=?",Math.addExact(zp,cp),exchangeReturn?zp:Math.addExact(zp,cp),exchangeReturn?cp:0,oms.get("id"));
         journal(company,batch,"RECEIVE",relation,relation,"",Math.addExact(zp,cp),"入库回传");
         OrderStockService.replanPending(jdbc,company,sku);
         return true;

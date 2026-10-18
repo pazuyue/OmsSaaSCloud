@@ -1,0 +1,12 @@
+{
+  "user_refund": "TK811a9ed2dd6a492e80665e628464aff4",
+  "user_refund_unchanged": true,
+  "user_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=9",
+  "reviewed_refund": "TKfbc7f923e18e4d6fbd5467e1fbe273e4",
+  "reviewed_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=13",
+  "reviewed_parcel": "RPK91e9be904a7a425890103d89fed9be31",
+  "manual_dispatch_required": true,
+  "stock_added_once": 1,
+  "original_thks_received": 0,
+  "real_platform_writes": false
+}

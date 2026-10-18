@@ -7,3 +7,8 @@ export const inboundAction = (id, action, data) => request({ url: `${root}/ticke
 export const interactionLogs = params => request({ url: root + '/logs', params })
 export const interactionLogSummary = params => request({ url: root + '/log-summary', params })
 export const interactionLog = id => request({ url: root + '/logs/' + id })
+
+export const logCenter = params => request({ url: root + '/log-center', params })
+export const logCenterSummary = params => request({ url: root + '/log-center-summary', params })
+export const logCenterOptions = () => request({ url: root + '/log-center-options' })
+export const logCenterDetail = id => request({ url: root + '/log-center/' + id })

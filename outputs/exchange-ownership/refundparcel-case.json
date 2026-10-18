@@ -1,0 +1,105 @@
+{
+  "case_id": "20261018095428",
+  "created": "2026-10-18 09:54:28",
+  "sku": "RPK_20261018095428_A",
+  "target_sku": "RPK_20261018095428_B",
+  "channel_name": "[退货退款合包验收] 20261018095428",
+  "seller": "RPK_20261018095428",
+  "platform_tid": "99420261018095428",
+  "platform_oid": "9942026101809542801",
+  "warehouses": [
+    {
+      "code": "RPK_20261018095428_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 93
+    }
+  ],
+  "claims": [],
+  "sku_shortened": true,
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 58,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "RPK_20261018095428_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "RPK_20261018095428_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "RPK_20261018095428_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 139,
+        "store": "RPK_20261018095428_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 146,
+  "order_id": 62,
+  "order_sn": "SOccb4b6b386e1470d93a4a6bf71b61b01",
+  "prepared": true,
+  "original_shipped": true,
+  "original_shipment_id": 63,
+  "parcel_connection": 13,
+  "seeded_refunds": [
+    "9972026101809542801",
+    "9972026101809542802",
+    "9972026101809542803"
+  ],
+  "refunds": [
+    {
+      "id": 3,
+      "refund_sn": "TK592b07ae94014831b7eb1e83062dde29",
+      "plan_id": 2
+    },
+    {
+      "id": 4,
+      "refund_sn": "TKf44db7d8fc864c81a042fd01e00ad6fb",
+      "plan_id": 3
+    },
+    {
+      "id": 5,
+      "refund_sn": "TK105950380f714ccdb71321599acec54b",
+      "plan_id": 4
+    }
+  ],
+  "parcel_id": 1,
+  "parcel_sn": "RPKdf842b9dd3394a2b8abb0b29b6de7dad",
+  "stock_before": 0,
+  "allocated": true,
+  "pending_receipt": true
+}

@@ -1,0 +1,13 @@
+{
+  "stamp": "20261017215148",
+  "name": "[接入汇总验收] 20261017215148",
+  "seller": "INTAKE_TEST_20261017215148",
+  "initial": "2026-10-17 20:51:48",
+  "channel_id": 56,
+  "configured": true,
+  "tasks": {
+    "ORDER": 189,
+    "REFUND": 3,
+    "EXCHANGE": 3637
+  }
+}

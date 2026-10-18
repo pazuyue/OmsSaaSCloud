@@ -19,6 +19,10 @@ def main():
     for index,(title,permission) in enumerate([('维护仓库对接配置','warehouse:wms:config'),('查看仓库交互日志','warehouse:wms:log'),('查看仓库交互报文','warehouse:wms:payload'),('查询仓库状态','warehouse:tickets:queryWarehouse')]):
         menu=ensure_menu(title,parent,'',kind='F',permission=permission,order=20+index)
         execute(f'INSERT INTO sys_role_menu(role_id,menu_id) SELECT 1,{menu} WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu WHERE role_id=1 AND menu_id={menu})')
+    from configure_purchase_cutoff import permissions as install_cutoff_permissions
+    install_cutoff_permissions()
+    from configure_wms_log_center import menu as install_log_menu
+    install_log_menu()
     print('WMS encryption key ready (not displayed); configuration/log/payload permissions installed')
 
 if __name__=='__main__':main()

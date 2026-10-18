@@ -9,19 +9,22 @@ import static com.oms.order.service.OrderValues.*;
 @Component
 public class OrderPlatformShippingGateway {
     @Resource private OrderRepository repository;
+    @Resource private OrderPlatformInteractionRecorder interactions;
     public OrderPlatformShippingGateway(){}
     OrderPlatformShippingGateway(OrderRepository repository){this.repository=repository;}
     static Map<String,Object> result(String state,String message,String receipt){Map<String,Object> out=new LinkedHashMap<>();out.put("state",state);out.put("message",message);out.put("receipt",receipt);return out;}
-    @SuppressWarnings("unchecked") public Map<String,Object> send(Map<String,Object> task){
+    public Map<String,Object> send(Map<String,Object> task){return interactions.record(task,false,()->sendLocal(task));}
+    @SuppressWarnings("unchecked") private Map<String,Object> sendLocal(Map<String,Object> task){
         require("SIMULATION".equals(text(task,"mode")),"真实平台回传尚未启用");
         Map<String,Object> payload;
         try{payload=JSON.readValue(text(task,"payload_json"),Map.class);}catch(Exception e){throw new IllegalArgumentException("回传快照无法解析");}
         require(text(payload,"express_code").startsWith("TEST-"),"模拟回传只允许TEST-测试运单");
         String company=text(task,"company_code"),request=text(task,"request_id"),digest=text(task,"payload_hash"),receipt="SIMSHIP_"+hash(company+"/"+request).substring(0,24);
         repository.db().update("INSERT IGNORE INTO oms_order_platform_shipping_sim_receipt(company_code,request_id,payload_hash,receipt_code) VALUES (?,?,?,?)",company,request,digest,receipt);
-        return query(task);
+        return lookup(task);
     }
-    public Map<String,Object> query(Map<String,Object> task){
+    public Map<String,Object> query(Map<String,Object> task){return interactions.record(task,true,()->lookup(task));}
+    private Map<String,Object> lookup(Map<String,Object> task){
         require("SIMULATION".equals(text(task,"mode")),"真实平台回传尚未启用");
         List<Map<String,Object>> rows=repository.db().query("SELECT payload_hash,receipt_code FROM oms_order_platform_shipping_sim_receipt WHERE company_code=? AND request_id=?",ROW,task.get("company_code"),task.get("request_id"));
         if(rows.isEmpty())return result("UNKNOWN","模拟平台尚无确定回执，保留待确认，不重新提交","");

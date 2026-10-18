@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from local_db import execute, ENV, ROOT, HERE
+from local_db import execute, ENV, ROOT, HERE, test_jdbc_url
 
 DB='channel_platform_test'
 def main():
@@ -12,10 +12,14 @@ def main():
     execute(f'CREATE TABLE IF NOT EXISTS {DB}.t_channel LIKE qm_oms_saas_channel.t_channel')
     execute((HERE/'migrations/20261010_channel_platform.sql').read_text(encoding='utf-8'),DB)
     cache=Path.home()/'.cache/oms-local'
-    relative=Path('oms-modules/oms-channel/src/test')
+    from configure_exchanges import install_channel
+    install_channel(DB)
+    from configure_platform_log_center import install
+    install(DB)
+    relative=Path('oms-modules/oms-channel/src')
     shutil.copytree(ROOT/relative,cache/'source'/relative,dirs_exist_ok=True)
-    env=dict(os.environ,CHANNEL_TEST_URL=f'jdbc:mysql://127.0.0.1:13306/{DB}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai',INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64',TZ='Asia/Shanghai')
-    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-channel','-Dtest=ChannelPlatformTest,TmallClientTest','test']
+    env=dict(os.environ,CHANNEL_TEST_URL=test_jdbc_url(DB),INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64',TZ='Asia/Shanghai')
+    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-channel','-Dtest=ChannelPlatformTest,TmallClientTest,ExchangePlatformTest,PlatformLogTest','test']
     with (HERE/'logs/channel-platform-tests.log').open('w') as log: result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
     if result.returncode: raise SystemExit(result.returncode)
     count=0
