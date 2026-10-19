@@ -68,5 +68,8 @@
   "failed_event": "MEe38f931934ac459ab25dd2a093e50c88",
   "retry_event": "MEcbc1921f7f164e6d8c781ccca5e40186",
   "closed_dispute_id": "9820261019220834034",
-  "refresh_task": 3735
+  "refresh_task": 3735,
+  "final_counter_task": 3741,
+  "final_counter_failed_event": "MEe6e83504da704160acfd11fd03229888",
+  "final_counter_retry_event": "ME7320a20516f84c9fafe3fe9c3f1fbe26"
 }

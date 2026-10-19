@@ -7,7 +7,10 @@ OUT=Path(__file__).resolve().parents[2]/'outputs/exchange-messaging';DB='qm_oms_
 def main():
  case=json.loads((OUT/'case.json').read_text('utf-8'));token=login()
  def api(path):return request(path,token=token)['data']
- assert len(case['checks'])==8,case['checks'];ch=str(case['channel_id']);scope=' WHERE company_code=0x514d AND channel_id='+ch
+ assert len(case['checks'])==8,case['checks'];
+ if case.get('final_counter_task'):
+  counters=api('/order/exchanges/tasks/'+str(case['final_counter_task']));assert counters['state']=='COMPLETED' and int(counters['synced_count'])==2 and int(counters['unchanged_count'])==2 and int(counters['failed_count'])==0
+ ch=str(case['channel_id']);scope=' WHERE company_code=0x514d AND channel_id='+ch
  task=api('/order/exchanges/tasks/'+str(case['page_task']));assert task['state']=='COMPLETED' and int(task['synced_count'])==31
  refreshed=wait_for(lambda:api('/order/exchanges/tasks/'+str(case['refresh_task'])),lambda t:t['state']=='COMPLETED','Browser refresh source task did not finish',120);assert int(refreshed['synced_count'])==1 and int(refreshed['unchanged_count'])==1 and int(refreshed['failed_count'])==0
  assert sql('SELECT COUNT(*) FROM oms_platform_exchange'+scope,DB)=='34'
