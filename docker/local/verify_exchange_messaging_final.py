@@ -9,6 +9,7 @@ def main():
  def api(path):return request(path,token=token)['data']
  assert len(case['checks'])==8,case['checks'];ch=str(case['channel_id']);scope=' WHERE company_code=0x514d AND channel_id='+ch
  task=api('/order/exchanges/tasks/'+str(case['page_task']));assert task['state']=='COMPLETED' and int(task['synced_count'])==31
+ refreshed=wait_for(lambda:api('/order/exchanges/tasks/'+str(case['refresh_task'])),lambda t:t['state']=='COMPLETED','Browser refresh source task did not finish',120);assert int(refreshed['synced_count'])==1 and int(refreshed['unchanged_count'])==1 and int(refreshed['failed_count'])==0
  assert sql('SELECT COUNT(*) FROM oms_platform_exchange'+scope,DB)=='34'
  wait_for(lambda:sql('SELECT COUNT(*) FROM oms_exchange'+scope,DB),lambda x:x=='33','Remaining exchange conversions did not complete',120)
  assert sql('SELECT COUNT(*) FROM oms_order'+scope,DB)=='1'

@@ -14,6 +14,7 @@ def order(db):
  install(db)
  for table,name in [('oms_order_pull_task','work_version'),('oms_platform_order','intake_version'),('oms_refund_sync','work_version'),('oms_platform_refund','intake_version'),('oms_exchange_sync','work_version'),('oms_platform_exchange','intake_version')]:column(db,table,name,'BIGINT NOT NULL DEFAULT 1')
  for name,definition in [('phase',"VARCHAR(12) NOT NULL DEFAULT 'LIST'"),('page_complete','TINYINT NOT NULL DEFAULT 0')]:column(db,'oms_exchange_sync',name,definition)
+ if not execute("SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='oms_exchange_sync_item' AND index_name='pending_items' LIMIT 1",db).strip():execute('ALTER TABLE oms_exchange_sync_item ADD KEY pending_items(company_code,task_id,result,id)',db)
  column(db,'oms_platform_exchange','conversion_requested','TINYINT NOT NULL DEFAULT 0')
  column(db,'oms_platform_refund','conversion_requested','TINYINT NOT NULL DEFAULT 0')
  for name,definition in [('work_token','VARCHAR(40) NULL'),('work_until','DATETIME NULL')]:column(db,'oms_order_sales_document_sync',name,definition)

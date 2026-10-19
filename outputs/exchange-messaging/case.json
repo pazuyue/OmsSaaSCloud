@@ -2,7 +2,13 @@
   "stamp": "20261019220834",
   "checks": [
     "paused exchange pull retains durable task and performs no platform query",
-    "list page and per-detail checkpoints survive service restart; 31 platform requests saved with conversion separately paused"
+    "list page and per-detail checkpoints survive service restart; 31 platform requests saved with conversion separately paused",
+    "exchange arriving before original order waits without creating HH",
+    "independent platform exchange identities associate to the original SO without guessing SKU or starting execution",
+    "duplicate MQ and explicit ID re-pull do not duplicate HH",
+    "partial DETAIL failure retains successful item; repaired task resumes and retains message parent chain",
+    "platform withdrawal invalidates queued old conversion without HH",
+    "browser sync progress and platform exchange expose bidirectional message navigation"
   ],
   "seller": "EXCHANGE_QUEUE_20261019220834",
   "sku": "MQX20261019220834",
@@ -49,5 +55,18 @@
     "page_no": 1,
     "phase": "DETAIL",
     "synced_count": 0
-  }
+  },
+  "order_pull_task": 207,
+  "order_id": 121,
+  "order_sn": "SO89cd618e00154e5db50c99b7236fd19d",
+  "platform_id": 6,
+  "business_exchange_id": 33,
+  "exchange_sn": "HHaf8f84b94baf45d385453875ba72910e",
+  "convert_event": "ME3951395677bb4323922e599ab092d132",
+  "repeat_task": 3723,
+  "partial_task": 3728,
+  "failed_event": "MEe38f931934ac459ab25dd2a093e50c88",
+  "retry_event": "MEcbc1921f7f164e6d8c781ccca5e40186",
+  "closed_dispute_id": "9820261019220834034",
+  "refresh_task": 3735
 }
