@@ -1,0 +1,17 @@
+"""Browser acceptance for queue configuration, instance feedback, alert history and task links."""
+import json,re
+from pathlib import Path
+from playwright.sync_api import sync_playwright,expect
+from verify_goods_workspace_ui import login,BASE
+from local_db import ENV
+OUT=Path(__file__).resolve().parents[2]/'outputs/queue-management'
+def main():
+ case=json.loads((OUT/'case.json').read_text('utf-8'));token=login()
+ with sync_playwright() as p:
+  browser=p.chromium.launch(headless=True);ctx=browser.new_context(viewport={'width':1750,'height':1150});ctx.add_cookies([{'name':'Admin-Token','value':token,'url':BASE}]);page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(BASE+'/monitor/queues',wait_until='networkidle');expect(page.locator('.queues h2')).to_have_text('消息队列');expect(page.get_by_text('平台商品拉取',exact=True).first).to_be_visible();page.screenshot(path=str(OUT/'queues.png'),full_page=True,animations='disabled')
+  page.locator('.el-table__fixed-right').get_by_role('button',name='配置',exact=True).first.click();drawer=page.locator('.el-drawer:visible');drawer.get_by_placeholder('说明本次调参、暂停或恢复的原因').fill('[UI验收] 配置保存与版本回报');drawer.get_by_role('button',name='保存配置并下发',exact=True).click();expect(page.get_by_text('配置已保存，等待各实例回报生效状态',exact=True)).to_be_visible();page.screenshot(path=str(OUT/'configuration.png'),full_page=True,animations='disabled')
+  drawer.get_by_role('tab',name='消费实例',exact=True).click();expect(drawer.get_by_text('生效版本',exact=True)).to_be_visible();page.screenshot(path=str(OUT/'instances.png'),full_page=True,animations='disabled');drawer.get_by_role('tab',name='告警记录',exact=True).click();expect(drawer.get_by_text('RabbitMQ监控不可用，请核对代理和监控连接',exact=True).first).to_be_visible();expect(drawer.get_by_text('已恢复',exact=True).first).to_be_visible();page.screenshot(path=str(OUT/'alerts.png'),full_page=True,animations='disabled');drawer.get_by_role('tab',name='操作记录',exact=True).click();expect(drawer.get_by_text('[UI验收] 配置保存与版本回报',exact=True)).to_be_visible();drawer.get_by_role('button',name='查看消息任务',exact=True).click();expect(page).to_have_url(re.compile('/monitor/messages.*type=PRODUCT_PULL'));expect(page.get_by_placeholder('全部业务类型')).to_have_value('平台商品拉取')
+  page.go_back(wait_until='networkidle');expect(page.locator('.queues h2')).to_be_visible();page.locator('.el-table__fixed-right').get_by_role('button',name='消息任务',exact=True).nth(2).click();expect(page).to_have_url(re.compile('/monitor/messages.*type=SALES_DOCUMENT'));expect(page.get_by_placeholder('全部业务类型')).to_have_value('销售出库单同步');expect(page.get_by_role('tab',name='订单服务 · 订单、售后与出库',exact=True)).to_have_attribute('aria-selected','true');assert not errors,errors
+  grafana=browser.new_context(viewport={'width':1600,'height':1150});response=grafana.request.post('http://127.0.0.1:13000/login',data={'user':ENV['GRAFANA_ADMIN_USER'],'password':ENV['GRAFANA_ADMIN_PASSWORD']});assert response.status==200;dashboard=grafana.new_page();dashboard.goto('http://127.0.0.1:13000/d/oms-messaging/oms-messaging',wait_until='domcontentloaded');expect(dashboard.get_by_text('Ready messages',exact=True).first).to_be_visible(timeout=30000);dashboard.screenshot(path=str(OUT/'grafana.png'),full_page=True,animations='disabled');browser.close()
+ print('PASS queue UI: configuration save, instance feedback, alert recovery, audit, cached task links and Grafana')
+if __name__=='__main__':main()

@@ -1,0 +1,34 @@
+{
+  "shipment_id": 69,
+  "shipment_sn": "XSc8353fbfdd1644ad9a92021290623070",
+  "order_id": 67,
+  "external_order": "SIMOUT_b1f09925973c405988e2",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 1,
+  "message_id": "SIM_COMPLETE_XSc8353fbfdd1644ad9a92021290623070",
+  "package_code": "SIMPKG_XSc8353fbfdd1644ad9a92021290623070",
+  "express_code": "TEST-SF-XSc8353fbfdd1644ad9a92021290623070",
+  "outbound_time": "2026-10-18 23:14:00",
+  "plans": [
+    {
+      "id": 74,
+      "sku_sn": "P20261018225742S",
+      "quantity": 1,
+      "platform_oid": "9942026101823135001",
+      "store_code": "PROCESS_V_20261018225742",
+      "batch_code": "FIN_20261018225742"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSc8353fbfdd1644ad9a92021290623070</deliveryOrderCode><deliveryOrderId>SIMOUT_b1f09925973c405988e2</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSc8353fbfdd1644ad9a92021290623070</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-18 23:14:00</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>74</orderLineNo><itemCode>P20261018225742S</itemCode><ownerCode>VC00001</ownerCode><batchCode>FIN_20261018225742</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSc8353fbfdd1644ad9a92021290623070</packageCode><expressCode>TEST-SF-XSc8353fbfdd1644ad9a92021290623070</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>P20261018225742S</itemCode><quantity>1</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSc8353fbfdd1644ad9a92021290623070",
+    "quantity": 1,
+    "status": "SHIPPED",
+    "shipped_quantity": 1,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSc8353fbfdd1644ad9a92021290623070",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

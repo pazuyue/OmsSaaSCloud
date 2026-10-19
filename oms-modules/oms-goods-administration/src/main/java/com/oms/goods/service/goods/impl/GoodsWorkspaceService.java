@@ -209,7 +209,9 @@ public class GoodsWorkspaceService {
         lock(company);Map<String,Object> data=new HashMap<>(input);long id=number(data.get("id"));
         if(id<0)throw new IllegalArgumentException("商品 ID 无效");
         if(id>0){Map<String,Object> old=owned(GOODS,company,id);if(!text(old.get("skuSn")).equals(text(data.get("skuSn"))))throw new IllegalArgumentException("商品创建后不能修改 SKU");}
-        validateGoods(company,data,id);data.put("createUser",actor);List<String> fields=new ArrayList<>(Arrays.asList(FIELDS));if(id==0)fields.add("createUser");
+        validateGoods(company,data,id);
+        if(number(data.get("isPackage"))==1||number(data.get("isFd"))==1)if(jdbc.queryForObject("SELECT COUNT(*) FROM goods_bundle_component WHERE company_code=? AND component_sku=?",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("该SKU已是套装组件，不能改为套装或福袋");
+        if(number(data.get("isPackage"))==0&&jdbc.queryForObject("SELECT COUNT(*) FROM goods_bundle WHERE company_code=? AND sku_sn=?",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("已发布套装不能改为普通库存商品，请使用新的SKU");data.put("createUser",actor);List<String> fields=new ArrayList<>(Arrays.asList(FIELDS));if(id==0)fields.add("createUser");
         return write(GOODS,company,id,data,fields);
     }
     private String goodsWhere(String company,Map<String,Object> filter,List<Object> args) {
@@ -267,6 +269,7 @@ public class GoodsWorkspaceService {
     public int deleteGoods(String company,List<Long> ids) {
         lock(company);if(ids.isEmpty() || ids.size()>100)throw new IllegalArgumentException("每次请选择 1 至 100 个商品");
         List<String> skus=new ArrayList<>();for(long id:ids)skus.add(text(owned(GOODS,company,id).get("skuSn")));
+        for(String sku:skus)if(jdbc.queryForObject("SELECT (SELECT COUNT(*) FROM goods_bundle WHERE company_code=? AND sku_sn=?)+(SELECT COUNT(*) FROM goods_bundle_component WHERE company_code=? AND component_sku=?)",Long.class,company,sku,company,sku)>0)throw new IllegalArgumentException("商品已被套装定义引用，请停用规则并保留资料："+sku);
         R<List<String>> result;try{result=references.references(company,skus,SecurityConstants.INNER);}catch(Exception error){throw new IllegalArgumentException("库存引用检查暂时不可用，请稍后重试");}
         if(result==null || result.getCode()!=200 || result.getData()==null)throw new IllegalArgumentException("库存引用检查失败，请稍后重试");
         if(!result.getData().isEmpty())throw new IllegalArgumentException("商品已被库存或分货记录引用，不能删除："+String.join("、",result.getData()));

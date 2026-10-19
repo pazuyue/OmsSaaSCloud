@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-drawer title="平台对接信息" :visible.sync="visible" size="min(960px, 96vw)" append-to-body :wrapper-closable="false" custom-class="channel-platform-drawer">
+    <component :is="embedded ? 'section' : 'el-drawer'" v-show="!embedded || mode==='shop'" title="平台对接信息" :visible.sync="visible" size="min(960px, 96vw)" append-to-body :wrapper-closable="false" custom-class="channel-platform-drawer">
       <div class="platform-body" v-loading="loading">
         <template v-if="detail.channel_id">
           <h2>{{ detail.channel_name }} <el-tag size="small">天猫</el-tag> <el-tag v-if="detail.simulation" size="small" type="warning">模拟对接</el-tag></h2>
@@ -39,7 +39,7 @@
               <p class="muted">刷新按钮仅在平台返回有效刷新令牌时可用。请使用对应店铺主账号授权。</p>
             </section>
           </div>
-          <section v-if="detail.app_id">
+          <section v-if="detail.app_id && !embedded">
             <h3>到期提醒</h3>
             <el-switch v-model="reminder.enabled" active-text="站内提醒" />
             <span class="reminder-label">提前</span><el-input-number v-model="reminder.days" :min="1" :max="90" size="small" /><span> 天</span>
@@ -53,10 +53,10 @@
           </section>
         </template>
       </div>
-      <div class="platform-footer"><el-button @click="visible = false">关闭详情</el-button></div>
-    </el-drawer>
+      <div v-if="!embedded" class="platform-footer"><el-button @click="visible = false">关闭详情</el-button></div>
+    </component>
 
-    <el-dialog title="平台服务管理" :visible.sync="management" width="min(1180px, 96vw)" append-to-body :close-on-click-modal="false">
+    <component :is="embedded ? 'section' : 'el-dialog'" v-show="!embedded || mode==='apps'" title="平台服务管理" :visible.sync="management" width="min(1180px, 96vw)" append-to-body :close-on-click-modal="false">
       <el-tabs v-model="tab" @tab-click="loadManagement">
         <el-tab-pane label="平台应用" name="apps" v-if="allowed('channel:platform:query')">
           <el-alert title="首期接入天猫。没有平台应用时可以先保存草稿；配置完整并启用后才开放真实授权。" type="info" :closable="false" />
@@ -74,13 +74,13 @@
           <el-empty v-if="!apps.length && !manageLoading" description="尚未配置平台应用，店铺基础资料仍可正常维护" :image-size="70" />
         </el-tab-pane>
 
-        <el-tab-pane label="到期提醒" name="reminders" v-if="allowed('channel:platform:query')">
+        <el-tab-pane label="到期提醒" name="reminders" v-if="!embedded && allowed('channel:platform:query')">
           <el-table :data="reminders" v-loading="manageLoading"><el-table-column label="店铺" prop="channel_name" /><el-table-column label="服务状态" prop="service_label" /><el-table-column label="服务到期"><template slot-scope="s">{{ date(s.row.service_expires_at) }}</template></el-table-column><el-table-column label="授权状态" prop="auth_label" /><el-table-column label="授权到期"><template slot-scope="s">{{ date(s.row.token_expires_at) }}</template></el-table-column><el-table-column label="操作" width="100"><template slot-scope="s"><el-button type="text" @click="management = false; open(s.row.channel_id)">去处理</el-button></template></el-table-column></el-table>
           <p class="muted">按店铺设置的提前天数实时计算，已到期记录持续展示。未授权或未核验的店铺请在列表中查看。</p>
         </el-tab-pane>
       </el-tabs>
-      <div slot="footer"><el-button @click="management = false">关闭</el-button></div>
-    </el-dialog>
+      <div v-if="!embedded" slot="footer"><el-button @click="management = false">关闭</el-button></div>
+    </component>
 
     <el-dialog title="天猫平台应用配置" :visible.sync="appVisible" width="660px" append-to-body :close-on-click-modal="false" @closed="appForm.secret = ''">
       <el-form label-position="top" :model="appForm">
@@ -100,7 +100,7 @@
 <script>
 import { platformGet, platformPost } from '@/api/channel/platform'
 export default {
-  name: 'PlatformWorkspace',
+  name: 'PlatformWorkspace', props: { embedded: Boolean, mode: { type: String, default: 'shop' } },
   data: () => ({ visible: false, management: false, appVisible: false, loading: false, manageLoading: false, busy: false, tab: 'apps', detail: {}, binding: {}, apps: [], appForm: {}, reminders: [], reminder: { days: 7, enabled: true }, logs: [], logTotal: 0, logQuery: { pageNum: 1, pageSize: 20, channelId: '', result: '' }, logDetail: null,
     results: { SUCCESS: '成功', FAILED: '失败', UNKNOWN: '结果未确认', RUNNING: '处理中' }, actions: { APP_SAVE: '保存平台应用', BIND: '绑定店铺', AUTHORIZE_START: '发起授权', OAUTH_EXCHANGE: '授权换取令牌并核验店铺', SIMULATED_AUTHORIZATION: '模拟授权和服务订购成功', TOKEN_REFRESH: '刷新授权令牌', LOCAL_DISABLE: '停用本地授权', REMINDER_SAVE: '设置到期提醒' } }),
   methods: {
@@ -114,7 +114,7 @@ export default {
       try { const [d, a] = await Promise.all([platformGet('/shops/' + id), platformGet('/apps')]); this.detail = d.data; this.apps = a.data; this.binding = { app_id: d.data.app_id, expected_shop_id: d.data.expected_shop_id || '' }; this.reminder = { days: d.data.reminder_days || 7, enabled: d.data.reminder_enabled !== 0 } } finally { this.loading = false }
     },
     async reload() { const r = await platformGet('/shops/' + this.detail.channel_id); this.detail = r.data; this.$emit('changed') },
-    async manage(tab, channelId) { if (tab === 'logs') { this.visible = false; this.management = false; return this.$router.push({ path: '/oms-channel/platformLogs', query: { channelId: channelId || undefined } }) }; this.tab = tab; this.management = true; this.logQuery.channelId = channelId || ''; this.logQuery.pageNum = 1; await this.loadManagement() },
+    async manage(tab, channelId) { if(this.embedded && tab==='apps' && this.mode!=='apps'){this.$emit('navigate','apps');return}; if (tab === 'logs') { this.visible = false; this.management = false; return this.$router.push({ path: '/oms-channel/platformLogs', query: { channelId: channelId || undefined } }) }; this.tab = tab; this.management = true; this.logQuery.channelId = channelId || ''; this.logQuery.pageNum = 1; await this.loadManagement() },
     async loadManagement() {
       this.manageLoading = true
       try {

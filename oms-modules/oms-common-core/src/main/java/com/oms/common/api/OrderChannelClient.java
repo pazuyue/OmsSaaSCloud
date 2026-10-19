@@ -8,4 +8,6 @@ import java.util.*;
 public interface OrderChannelClient {
     @GetMapping("/orderCatalog/internal/channels")
     R<List<Map<String,Object>>> channels(@RequestParam("company_code") String company,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderCatalog/internal/product-bindings")
+    R<List<Map<String,Object>>> productBindings(@RequestParam("company_code")String company,@RequestParam("channel_id")long channel,@RequestBody List<Map<String,Object>> identities,@RequestHeader(SecurityConstants.FROM_SOURCE)String source);
 }

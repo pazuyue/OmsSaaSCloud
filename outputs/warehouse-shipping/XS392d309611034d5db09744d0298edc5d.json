@@ -1,0 +1,42 @@
+{
+  "shipment_id": 68,
+  "shipment_sn": "XS392d309611034d5db09744d0298edc5d",
+  "order_id": 66,
+  "external_order": "SIMOUT_fcad97f6d6524e14863d",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 3,
+  "message_id": "SIM_COMPLETE_XS392d309611034d5db09744d0298edc5d",
+  "package_code": "SIMPKG_XS392d309611034d5db09744d0298edc5d",
+  "express_code": "TEST-SF-XS392d309611034d5db09744d0298edc5d",
+  "outbound_time": "2026-10-18 21:25:00",
+  "plans": [
+    {
+      "id": 72,
+      "sku_sn": "K20261018212405B",
+      "quantity": 1,
+      "platform_oid": "9942026101821240501",
+      "store_code": "KIT_V2_20261018212405",
+      "batch_code": "KIT-20261018212405-K20261018212405B"
+    },
+    {
+      "id": 73,
+      "sku_sn": "K20261018212405A",
+      "quantity": 2,
+      "platform_oid": "9942026101821240501",
+      "store_code": "KIT_V2_20261018212405",
+      "batch_code": "KIT-20261018212405-K20261018212405A"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS392d309611034d5db09744d0298edc5d</deliveryOrderCode><deliveryOrderId>SIMOUT_fcad97f6d6524e14863d</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS392d309611034d5db09744d0298edc5d</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-18 21:25:00</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>72</orderLineNo><itemCode>K20261018212405B</itemCode><ownerCode>VC00001</ownerCode><batchCode>KIT-20261018212405-K20261018212405B</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>73</orderLineNo><itemCode>K20261018212405A</itemCode><ownerCode>VC00001</ownerCode><batchCode>KIT-20261018212405-K20261018212405A</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS392d309611034d5db09744d0298edc5d</packageCode><expressCode>TEST-SF-XS392d309611034d5db09744d0298edc5d</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>K20261018212405B</itemCode><quantity>1</quantity></item><item><itemCode>K20261018212405A</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS392d309611034d5db09744d0298edc5d",
+    "quantity": 3,
+    "status": "SHIPPED",
+    "shipped_quantity": 3,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS392d309611034d5db09744d0298edc5d",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

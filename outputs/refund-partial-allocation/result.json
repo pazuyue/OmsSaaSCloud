@@ -1,0 +1,34 @@
+{
+  "parcel_sn": "RPK128b4a12e6d749aeb37abb2403f44345",
+  "thk": "THKb74ef34390da42e7af6e5e16d364dc41",
+  "rule_revision": 1,
+  "refunds": [
+    {
+      "id": 14,
+      "refund_sn": "TK698d3800c8ee4b06b8c16fb2ea3256cb",
+      "plan_id": 13,
+      "allocated": 2,
+      "posted": 2,
+      "remaining": 0
+    },
+    {
+      "id": 15,
+      "refund_sn": "TKbb16668149e549c681d9b8bd0fd2ed34",
+      "plan_id": 14,
+      "allocated": 1,
+      "posted": 1,
+      "remaining": 0
+    },
+    {
+      "id": 16,
+      "refund_sn": "TK601bf0d9294c4965bdcbcc4114a231fa",
+      "plan_id": 15,
+      "allocated": 0,
+      "posted": 0,
+      "remaining": 1
+    }
+  ],
+  "stock_added": 3,
+  "duplicate_callback_no_extra_stock": true,
+  "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=16"
+}

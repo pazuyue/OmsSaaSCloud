@@ -1,0 +1,3 @@
+const assert=require('assert/strict'),fs=require('fs'),path=require('path'),compiler=require('vue-template-compiler'),babel=require('@babel/core')
+for(const file of ['order/index.vue','order/management.vue','order/IntakeTasks.vue','order/OrderBackfillTask.vue','messaging/MessageProgress.vue','messaging/MessageTasks.vue']){const s=compiler.parseComponent(fs.readFileSync(path.join(__dirname,'../src/views/oms',file),'utf8'));assert.deepEqual(compiler.compile(s.template.content).errors,[],file);babel.transformSync(s.script.content,{configFile:false,babelrc:false,plugins:[require.resolve('@babel/plugin-transform-modules-commonjs')]})}
+console.log('PASS order intake messaging page templates and scripts')

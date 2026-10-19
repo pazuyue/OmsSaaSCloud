@@ -56,7 +56,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             if(inner&&"POST".equals(req.getMethod())&&"/tenantRouting/internal/probe".equals(path)){chain.doFilter(req,resp);return;}
             if(inner&&"POST".equals(req.getMethod())&&Arrays.asList(
                 "/allocation/internal/daily-scan-all","/orders/internal/scan-all","/exchanges/internal/scan-all","/refunds/internal/scan-all",
-                "/platform/log-maintenance/internal/purge-all",
+                "/messages/internal/compensate","/platform/log-maintenance/internal/purge-all","/stockSync/internal/scan-all","/platformProducts/internal/scan-all",
                 "/orders/internal/schedule/dispatch","/orders/internal/schedule/receipts",
                 "/orders/internal/schedule/virtual","/orders/internal/schedule/sales",
                 "/orders/internal/schedule/platform","/orders/internal/schedule/issues","/orders/internal/schedule/allocation",
@@ -67,7 +67,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             try {
                 String[] supplied=req.getParameterValues("company_code");
                 if(supplied!=null&&supplied.length!=1)throw new IllegalArgumentException("公司参数不能重复");
-                boolean internalPath=path.matches("^/(orders|orderCatalog|orderStock|shipmentWms|allocation|exchangePlatform|exchangeReturns|refundReturns|platformLogBusiness)/internal(/.*)?$")
+                boolean internalPath=path.matches("^/(orders|orderCatalog|orderStock|stockProcess|platformStock|stockSync|platformProducts|shipmentWms|allocation|exchangePlatform|exchangeReturns|refundReturns|platformLogBusiness)/internal(/.*)?$")
                     ||path.matches("^/platform/log-center/internal/(simulation|refund-sync)/(start|finish)$")
                     ||Arrays.asList("/goodsReferences/internal","/warehouseReferences/internal","/api/goods/purchaseLookup","/api/WmsInventory/addInventory").contains(path);
                 if(inner&&internalPath)company=com.oms.common.tenant.TenantRouting.company(req.getParameter("company_code"));
@@ -80,7 +80,7 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             com.oms.common.tenant.TenantRouting.Binding scope;
             boolean continuation="GET".equals(req.getMethod())
                 ||("POST".equals(req.getMethod())&&"/platform/log-center/business-states".equals(path))
-                ||(inner&&!Arrays.asList("/shipmentWms/internal/submit","/shipmentWms/internal/resolve","/orderStock/internal/virtual-outbound").contains(path)&&!path.matches("^/orderStock/internal/(register|reserve|release|cancel|allocate|warehouse-allocate)$"))
+                ||(inner&&!Arrays.asList("/shipmentWms/internal/submit","/shipmentWms/internal/resolve","/orderStock/internal/virtual-outbound","/stockProcess/internal/reserve").contains(path)&&!path.matches("^/orderStock/internal/(register|reserve|release|cancel|allocate|warehouse-allocate)$"))
                 ||path.matches("^/orders/shipments/[0-9]+/(receipt-reviews/[0-9]+|reconcile-receipts|query-warehouse)$");
             try{scope=continuation?tenantRouting.openForContinuation(company):tenantRouting.open(company);}catch(IllegalArgumentException e){reject(resp,503,e.getMessage());return;}catch(IllegalStateException e){reject(resp,503,"公司执行开关暂时无法核实，请稍后重试");return;}
             try(com.oms.common.tenant.TenantRouting.Binding ignored=scope){chain.doFilter(wrapper,resp);}

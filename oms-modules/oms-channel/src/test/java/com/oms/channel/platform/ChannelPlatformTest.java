@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static com.oms.channel.platform.ChannelPlatformService.map;
 
 class ChannelPlatformTest {
+    com.alibaba.druid.pool.DruidDataSource pool;
+    @AfterEach void closePool(){if(pool!=null)pool.close();}
     JdbcTemplate db; ChannelPlatformService service; PlatformSecrets secrets; Fixture client; long app;
     static class Fixture extends TmallClient {
         List<Map<String,String>> requests=new CopyOnWriteArrayList<>();
@@ -35,7 +37,7 @@ class ChannelPlatformTest {
     }
     @BeforeEach void setup() {
         String url=System.getenv("CHANNEL_TEST_URL");assertNotNull(url);assertTrue(url.contains("/channel_platform_test?"));
-        DriverManagerDataSource source=new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD"));db=new JdbcTemplate(source);
+        pool=new com.alibaba.druid.pool.DruidDataSource();pool.setUrl(url);pool.setUsername("root");pool.setPassword(System.getenv("INVENTORY_TEST_PASSWORD"));pool.setMaxActive(8);pool.setMaxWait(10000);javax.sql.DataSource source=pool;db=new JdbcTemplate(source);
         for(String table:Arrays.asList("channel_interaction_payload","channel_interaction_business_link","channel_interaction_log","channel_oauth_state","channel_platform_binding","channel_platform_app","t_channel"))db.update("DELETE FROM "+table);
         db.update("INSERT INTO t_channel(channel_id,channel_name,channel_type,enabled,to_channel_enabled,sync_enabled,m_model_type,company_code) VALUES(101,'店铺','TM',1,1,0,1,'QM'),(102,'外公司','TM',1,1,0,1,'OTHER'),(103,'同公司另一店铺','TM',1,1,0,1,'QM')");
         service=new ChannelPlatformService();secrets=new PlatformSecrets();client=new Fixture();

@@ -1,0 +1,15 @@
+{
+  "stamp": "20261019004627",
+  "sku": "SYNC20261019004627",
+  "channel_id": 65,
+  "app_id": 6,
+  "received": true,
+  "group_id": 1,
+  "quantities": [
+    54,
+    27,
+    9
+  ],
+  "physical_stock_unchanged": 100,
+  "final_state": "SUCCESS"
+}

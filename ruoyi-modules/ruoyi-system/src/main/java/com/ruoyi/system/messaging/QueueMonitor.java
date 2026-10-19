@@ -1,0 +1,36 @@
+package com.ruoyi.system.messaging;
+import com.ruoyi.common.core.messaging.QueueKind;
+import com.fasterxml.jackson.databind.*;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import io.micrometer.core.instrument.*;
+import javax.annotation.*;import java.net.*;import java.nio.charset.StandardCharsets;import java.util.*;import java.util.concurrent.*;
+import static com.ruoyi.system.messaging.QueueControlStore.*;
+/** Central cached sampling. Browser requests never call the broker. */
+@Component public class QueueMonitor {
+ @Resource QueueControlStore store;@Resource MeterRegistry meters;
+ @Value("${oms.messaging.monitor.url:}") String url;@Value("${oms.messaging.monitor.username:}") String username;@Value("${oms.messaging.monitor.password:}") String password;
+ @Value("${oms.messaging.monitor.vhost:oms}") String vhost;
+ final ScheduledExecutorService worker=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"mq-monitor");t.setDaemon(true);return t;});
+ final Map<String,Map<String,Object>> current=new ConcurrentHashMap<>();volatile long lastSample;volatile boolean brokerUp;
+ private final ObjectMapper json=new ObjectMapper();
+ @PostConstruct public void start(){if(url.isEmpty())return;URI endpoint=URI.create(url);require(Arrays.asList("http","https").contains(endpoint.getScheme())&&endpoint.getHost()!=null&&endpoint.getUserInfo()==null&&endpoint.getQuery()==null&&endpoint.getFragment()==null,"RabbitMQ监控地址无效");meters.gauge("oms.mq.broker.up",this,v->v.brokerUp&&System.currentTimeMillis()-v.lastSample<45000?1:0);for(QueueKind k:QueueKind.values())for(String field:Arrays.asList("ready","unacked","consumers","dead","due","oldest_due_sec","pending_publish","failed","node_alarm","running","alarm_backlog","alarm_due_sec","metrics_fresh","quarantine_pending"))Gauge.builder("oms.mq."+field,this,v->n(v.current.getOrDefault(k.name(),Collections.emptyMap()),field)).tag("business_type",k.name()).register(meters);worker.scheduleWithFixedDelay(()->{try{sample();}catch(Exception e){org.slf4j.LoggerFactory.getLogger(getClass()).warn("Queue monitoring sample unavailable");}},10,15,TimeUnit.SECONDS);}
+ JsonNode get(String path)throws Exception{HttpURLConnection c=(HttpURLConnection)new URL(url+path).openConnection();c.setConnectTimeout(1500);c.setReadTimeout(2000);c.setRequestProperty("Authorization","Basic "+Base64.getEncoder().encodeToString((username+":"+password).getBytes(StandardCharsets.UTF_8)));try{if(c.getResponseCode()!=200)throw new IllegalStateException("monitor unavailable");try(java.io.InputStream stream=c.getInputStream()){return json.readTree(stream);}}finally{c.disconnect();}}
+ public void sample(){int alarm=0;try{get("/api/overview");for(JsonNode node:get("/api/nodes"))if(node.path("mem_alarm").asBoolean()||node.path("disk_free_alarm").asBoolean())alarm++;brokerUp=true;lastSample=System.currentTimeMillis();}catch(Exception e){brokerUp=false;for(QueueKind k:QueueKind.values())store.db.update("UPDATE sys_mq_queue_snapshot SET last_error='代理监控不可用，保留上次采集结果' WHERE business_type=?",k.name());}
+  alert("*","BROKER_UNAVAILABLE",!brokerUp,"RabbitMQ监控不可用，请核对代理和监控连接",60);
+  alert("*","NODE_RESOURCE",brokerUp&&alarm>0,"RabbitMQ节点存在内存或磁盘资源告警",0);
+  for(QueueKind k:QueueKind.values()){
+   if(brokerUp)try{String prefix="/api/queues/"+URLEncoder.encode(vhost,"UTF-8")+"/";JsonNode q=get(prefix+URLEncoder.encode(k.queue,"UTF-8")),dead=get(prefix+URLEncoder.encode(k.dead(),"UTF-8"));Map<String,Object> data=new LinkedHashMap<>();data.put("ready",q.path("messages_ready").asLong());data.put("unacked",q.path("messages_unacknowledged").asLong());data.put("consumers",q.path("consumers").asLong());data.put("dead",dead.path("messages_ready").asLong());data.put("publish_rate",q.path("message_stats").path("publish_details").path("rate").asDouble());data.put("ack_rate",q.path("message_stats").path("ack_details").path("rate").asDouble());data.put("node_alarm",alarm);store.db.update("INSERT INTO sys_mq_queue_snapshot(business_type,payload_json,sampled_at,last_error) VALUES (?,?,NOW(3),'') ON DUPLICATE KEY UPDATE payload_json=VALUES(payload_json),sampled_at=NOW(3),last_error=''",k.name(),json(data));}catch(Exception e){store.db.update("UPDATE sys_mq_queue_snapshot SET last_error='队列未声明或采集失败，保留上次结果' WHERE business_type=?",k.name());}
+   Map<String,Object> detail=store.detail(k.name(),false),business=cast(detail.get("business")),snapshot=cast(detail.get("broker")),data=cast(snapshot.get("data"));boolean running="RUNNING".equals(s(detail,"desired_mode")),fresh=Boolean.TRUE.equals(snapshot.get("fresh")),statsFresh=n(business,"sampled_ms")>System.currentTimeMillis()-65000;
+   Map<String,Object> values=new LinkedHashMap<>(data);values.putAll(business);values.put("failed",n(business,"recent_failed"));values.put("quarantine_pending",n(detail,"quarantine_pending"));values.put("running",running?1:0);values.put("alarm_backlog",n(detail,"alarm_backlog"));values.put("alarm_due_sec",n(detail,"alarm_due_sec"));values.put("metrics_fresh",fresh&&statsFresh?1:0);current.put(k.name(),values);
+   if(fresh){alert(k.name(),"NO_CONSUMERS",running&&n(data,"ready")>0&&n(data,"consumers")==0,"队列有待消费消息，但没有在线消费者",60);alert(k.name(),"BACKLOG",running&&n(data,"ready")>=n(detail,"alarm_backlog"),"待消费消息达到配置阈值",60);}
+   alert(k.name(),"DEAD_LETTER",(fresh&&n(data,"dead")>0)||n(detail,"quarantine_pending")>0,"存在待处理死信，请在死信核查台账核对业务结果与拒收原因",0);
+   alert(k.name(),"CONFIG_UNAPPLIED",!"RUNNING".equals(s(detail,"effective_state"))&&!"PAUSED".equals(s(detail,"effective_state")),"配置尚未全部生效或存在离线消费实例",60);
+   alert(k.name(),"BUSINESS_METRICS_STALE",running&&!statsFresh,"业务任务指标采集过期，请核对消费服务",60);
+   if(statsFresh){alert(k.name(),"OVERDUE",running&&n(business,"oldest_due_sec")>=n(detail,"alarm_due_sec"),"已到期任务超过配置的等待时长",30);alert(k.name(),"FAILURE_RATE",running&&n(business,"recent_completed")>=10&&n(business,"recent_failed")*100>=n(detail,"alarm_failure_pct")*n(business,"recent_completed"),"最近5分钟业务失败比例达到配置阈值",30);}
+  }
+ }
+ @SuppressWarnings("unchecked") Map<String,Object> cast(Object r){return r instanceof Map?(Map<String,Object>)r:Collections.emptyMap();}
+ void alert(String type,String rule,boolean condition,String message,int holdSeconds){store.tx(()->{store.db.update("INSERT IGNORE INTO sys_mq_alert(business_type,rule_code,state,message,first_seen,last_seen) VALUES (?,?,'RECOVERED',?,NOW(3),NOW(3))",type,rule,message);Map<String,Object> old=store.db.queryForMap("SELECT *,TIMESTAMPDIFF(SECOND,first_seen,NOW(3)) age FROM sys_mq_alert WHERE business_type=? AND rule_code=? FOR UPDATE",type,rule);String previous=s(old,"state"),next=!condition?"RECOVERED":holdSeconds==0||(!previous.equals("RECOVERED")&&n(old,"age")>=holdSeconds)?"FIRING":"PENDING";store.db.update("UPDATE sys_mq_alert SET first_seen=IF(?,NOW(3),first_seen),state=?,message=?,last_seen=NOW(3) WHERE business_type=? AND rule_code=?",condition&&previous.equals("RECOVERED"),next,message,type,rule);if(!previous.equals(next))store.db.update("INSERT INTO sys_mq_alert_event(business_type,rule_code,state,message) VALUES (?,?,?,?)",type,rule,next,message);return null;});}
+ @PreDestroy public void close(){worker.shutdownNow();}
+}

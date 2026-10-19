@@ -1,0 +1,16 @@
+{
+  "stamp": "20261018225742",
+  "a": "P20261018225742A",
+  "b": "P20261018225742B",
+  "sku": "P20261018225742S",
+  "store": "PROCESS_V_20261018225742",
+  "connection_id": 18,
+  "owner": "SAASQM01",
+  "goods_id": 214,
+  "stock_received": true,
+  "assembly_id": 1,
+  "disassembly_id": 2,
+  "sales_shipped": true,
+  "order_id": 67,
+  "order_sn": "SOad4e711be8654dfc8e4396265fed131e"
+}

@@ -1,0 +1,23 @@
+{
+  "group_id": 2,
+  "sku": "BIND20261019083301",
+  "quantities": [
+    54,
+    27,
+    9
+  ],
+  "stock_before": 100,
+  "stock_after": 100,
+  "state": "SUCCESS",
+  "checks": [
+    "catalog sale + warehouse",
+    "explicit binding",
+    "shared identity + revision",
+    "60/30/10",
+    "paused exposure",
+    "zero exit",
+    "stale intake blocks increases",
+    "simulation only",
+    "UI preview"
+  ]
+}

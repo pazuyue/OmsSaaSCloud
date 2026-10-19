@@ -1,0 +1,35 @@
+# Merge into the channel/order service configuration; each uses its own business database.
+oms:
+  messaging:
+    enabled: true
+    service: channel # order in the order service
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: oms
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    connection-timeout: 2000
+    listener:
+      simple:
+        prefetch: 5
+        missing-queues-fatal: false
+        default-requeue-rejected: false
+management:
+  health:
+    rabbit:
+      enabled: false # Broker availability must not stop DB-backed business operations.
+
+# Queue policies are managed in the platform database (sys_mq_*), not Nacos overrides.
+# Apply configure_messaging.py to platform and business schemas before enabling.
+# ruoyi-system monitoring configuration uses a read-only RabbitMQ monitoring user:
+# oms.messaging.monitor.url: https://rabbitmq-management.internal
+# oms.messaging.monitor.username: ${RABBITMQ_MONITOR_USER}
+# oms.messaging.monitor.password: ${RABBITMQ_MONITOR_PASSWORD}
+# oms.messaging.monitor.vhost: oms
+# management.endpoints.web.exposure.include: health,info,prometheus

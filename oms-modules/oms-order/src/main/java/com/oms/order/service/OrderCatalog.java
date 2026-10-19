@@ -15,6 +15,12 @@ public class OrderCatalog {
     public List<Map<String,Object>> warehouses(String company){return data(warehouses.stores(company,SecurityConstants.INNER));}
     public List<Map<String,Object>> channels(String company){return data(channels.channels(company,SecurityConstants.INNER));}
     public Map<String,List<Map<String,Object>>> goods(String company,List<String> skus){Map<String,List<Map<String,Object>>> result=new HashMap<>();for(Map<String,Object> row:data(goods.goods(company,skus,SecurityConstants.INNER)))result.computeIfAbsent(text(row,"sku_sn"),k->new ArrayList<>()).add(row);return result;}
+    static String bindingKey(TmallOrderParser.Line l){return l.itemId+"/"+(l.skuId.isEmpty()?"0":l.skuId);}
+    public Map<String,Map<String,Object>> productBindings(String company,long channel,List<TmallOrderParser.Line> lines){
+        List<Map<String,Object>> identities=new ArrayList<>();for(TmallOrderParser.Line l:lines)if(l.itemId.matches("[1-9][0-9]{0,18}")&&(l.skuId.isEmpty()||l.skuId.matches("0|[1-9][0-9]{0,18}"))){Map<String,Object> i=new LinkedHashMap<>();i.put("item_id",l.itemId);i.put("sku_id",l.skuId.isEmpty()?"0":l.skuId);identities.add(i);}
+        Map<String,Map<String,Object>> result=new HashMap<>();if(identities.isEmpty())return result;
+        for(Map<String,Object> row:data(channels.productBindings(company,channel,identities,SecurityConstants.INNER)))result.put(text(row,"item_id")+"/"+text(row,"sku_id"),row);return result;
+    }
     public Map<String,Object> validateShop(String company,long channel){
         Map<String,Object> selected=channels(company).stream().filter(c->number(c,"channel_id")==channel).findFirst().orElseThrow(()->new IllegalArgumentException("店铺不存在或不属于当前公司"));
         require(number(selected,"enabled")==1,"店铺已停用");require("TM".equals(text(selected,"channel_type")),"一期仅支持天猫店铺");return selected;

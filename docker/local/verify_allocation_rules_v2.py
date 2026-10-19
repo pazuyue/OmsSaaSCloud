@@ -19,12 +19,12 @@ def api(path,credential,payload=None,post=False):
         assert result.returncode==0,'Local test receive API unavailable';reply=json.loads(result.stdout);assert reply['code']==200,reply.get('msg');return reply
     return business_api(path,credential,payload,post)
 
-def prepare_case(case, credential, approve=True, before_conversion=None, order_quantity=10, require_reserved=True):
+def prepare_case(case, credential, approve=True, before_conversion=None, order_quantity=10, require_reserved=True, template_code="VC0001"):
     goods_db, channel_db, order_db = 'qm_oms_saas_commodity', 'qm_oms_saas_channel', 'qm_oms_saas_order'
     if not sql('SELECT id FROM goods_sku_sn_info WHERE UPPER(company_code)=\'QM\' AND sku_sn=' + quote(case['sku']), goods_db):
         sample = api('/goods/info/list?pageNum=1&pageSize=1', credential, {}, post=True)['rows'][0]
         api('/goods/info', credential, {'skuSn': case['sku'], 'goodsSn': case['sku'], 'goodsName': '[验收测试] 分仓策略、上限与预览', 'categoryCode': sample['categoryCode'], 'colorCode': sample['colorCode'], 'sizeCode': sample['sizeCode'], 'marketPrice': 1, 'validity': 30})
-    template = next(w for w in api('/supplychain/simulationStore/list?pageSize=100', credential)['rows'] if w['wmsSimulationCode'] == 'VC0001')
+    template = next(w for w in api('/supplychain/simulationStore/list?pageSize=100', credential)['rows'] if w['wmsSimulationCode'] == template_code)
     connection = next(c for c in api('/supplychain/wmsIntegration/connections', credential)['data'] if c['id'] == template['connectionId'])
     assert connection['environment'] == 'TEST' and connection['endpoint'] == 'http://wms-simulator:8080/qimen/gateway'
     case.update(owner_code=template['ownerCode'], real_store_code=template['realStoreCode'], connection_id=connection['id'])

@@ -112,6 +112,9 @@ def install_order(db):
     goods(db)
 
 
+    from configure_bundles import install_order as bundles
+    bundles(db)
+
 def install_channel(db):
     execute("""CREATE TABLE IF NOT EXISTS channel_refund_access (
       company_code VARCHAR(50) NOT NULL, channel_id BIGINT NOT NULL, read_enabled TINYINT NOT NULL DEFAULT 0,

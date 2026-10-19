@@ -1,0 +1,1 @@
+export const stateNames={RUNNING:'运行中',PAUSED:'已暂停',PAUSING:'暂停中',APPLYING:'等待生效',NO_INSTANCES:'尚无实例',STOPPED:'已停止',STARTING:'启动中',CONNECTING:'连接代理中',DRAINING:'等待在途结束',ERROR:'配置异常',PENDING:'待触发',FIRING:'告警中',RECOVERED:'已恢复'}

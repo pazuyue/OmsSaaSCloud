@@ -17,7 +17,7 @@
         <el-form-item label="应用密钥" prop="secret" :rules="form.id ? [] : required"><el-input v-model="form.secret" type="password" show-password autocomplete="new-password" :placeholder="form.id ? '留空保留现有密钥' : '输入平台应用密钥'" /></el-form-item>
         <el-form-item label="customerId" prop="customer_id" :rules="required"><el-input v-model.trim="form.customer_id" placeholder="平台分配的商家 / 客户标识" /></el-form-item>
         <el-form-item label="退款合包入库"><el-tag>一包共用一张THK</el-tag><div class="hint">仓库按THK及明细回传。当前适配不支持已下发THK追加范围；不得通过新增独立THK模拟改单。</div></el-form-item>
-        <el-form-item label="采购截单能力"><el-checkbox v-model="form.partial_inbound_cancel" :true-label="1" :false-label="0">仓库已确认支持部分收货后关闭未收余量</el-checkbox><div class="hint">默认关闭。仅在仓库明确支持并完成验收后开启；关闭时部分收货截单转人工核对，不直接发送取消。</div></el-form-item>
+        <el-form-item v-if="form.provider==='QIMEN'" label="仓内加工能力"><el-checkbox v-model="form.storeprocess_enabled" :true-label="1" :false-label="0" @change="v=>{if(!v)form.storeprocess_cancel=0}">仓库已支持组装／拆卸加工接口</el-checkbox><el-checkbox v-model="form.storeprocess_cancel" :true-label="1" :false-label="0" :disabled="!form.storeprocess_enabled">已验收加工剩余停止能力</el-checkbox><div class="hint">按实际仓库能力开启。关闭时不允许下发加工单；停止能力未开通时保留原占用，需联系仓库核实。</div></el-form-item><el-form-item label="采购截单能力"><el-checkbox v-model="form.partial_inbound_cancel" :true-label="1" :false-label="0">仓库已确认支持部分收货后关闭未收余量</el-checkbox><div class="hint">默认关闭。仅在仓库明确支持并完成验收后开启；关闭时部分收货截单转人工核对，不直接发送取消。</div></el-form-item>
         <el-form-item label="对接配置状态">
           <el-radio-group v-model="form.enabled"><el-radio :label="1">启用</el-radio><el-radio :label="0">停用</el-radio></el-radio-group>
           <div class="hint">停用后，关联虚仓暂停新的真实入库业务；已下发单据继续接收仓库回传并入账。</div>
@@ -35,7 +35,7 @@ export default {
   methods: {
     open() { this.visible = true },
     async load() { this.loading = true; try { this.rows = (await connections()).data } finally { this.loading = false } },
-    edit(row) { this.form = row ? { ...row, secret: '' } : { name: '', provider: 'QIMEN', api_version: '2.0', environment: 'TEST', endpoint: '', app_key: '', secret: '', customer_id: '', enabled: 0, partial_inbound_cancel: 0, shared_return_waybill: 0, shared_return_append: 0, shared_return_late_append: 0 }; this.editing = true; this.$nextTick(() => this.$refs.form.clearValidate()) },
+    edit(row) { this.form = row ? { ...row, secret: '' } : { name: '', provider: 'QIMEN', api_version: '2.0', environment: 'TEST', endpoint: '', app_key: '', secret: '', customer_id: '', enabled: 0, storeprocess_enabled:0,storeprocess_cancel:0,partial_inbound_cancel: 0, shared_return_waybill: 0, shared_return_append: 0, shared_return_late_append: 0 }; this.editing = true; this.$nextTick(() => this.$refs.form.clearValidate()) },
     save() { this.$refs.form.validate(async ok => { if (!ok || this.saving) return; this.saving = true; try { await saveConnection(this.form); this.editing = false; this.$modal.msgSuccess('配置已保存'); await this.load(); this.$emit('changed') } finally { this.saving = false } }) },
     callback(row) { return '/supplychain/wmsCallback/' + row.company_code.toLowerCase() + '/' + row.callback_key },
     async copy(value) { try { await navigator.clipboard.writeText(value); this.$modal.msgSuccess('已复制，请拼接实际公网网关域名') } catch (_) { this.$modal.msgError('复制失败，请手动复制路径') } }

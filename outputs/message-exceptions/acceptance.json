@@ -1,0 +1,39 @@
+{
+  "regression_tests_distinct": 306,
+  "focused_final_tests": 51,
+  "live_checks": [
+    "rate wait is visible, consumes no failure budget and resumes automatically",
+    "configuration error exhausts safely, repair retries pending business and retains parent/latest chain",
+    "business failure repair preserves original audit and creates a new work version",
+    "real broker TTL dead letter retained, compensation result reconciles to success without replay",
+    "browser configuration entry, quarantine result, review history and scoped task link",
+    "historical notice shows latest success without retry advice",
+    "alert history drills into quarantine and scoped business task"
+  ],
+  "queues": [
+    {
+      "business_type": "PRODUCT_PULL",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2,
+      "quarantine_pending": 0
+    },
+    {
+      "business_type": "PRODUCT_BIND",
+      "effective_state": "RUNNING",
+      "actual_consumers": 1,
+      "quarantine_pending": 0
+    },
+    {
+      "business_type": "SALES_DOCUMENT",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2,
+      "quarantine_pending": 0
+    }
+  ],
+  "valid_grafana_queries": 10,
+  "monitoring_targets": 4,
+  "retained_tasks": {
+    "configuration_repair": "PRODUCTPULL125",
+    "dead_letter_compensation": "PRODUCTPULL127"
+  }
+}

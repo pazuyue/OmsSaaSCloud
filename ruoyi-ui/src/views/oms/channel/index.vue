@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="channel-platform-toolbar">
       <div><h2>店铺管理</h2><p>维护店铺资料，查看平台服务订购、授权及交互情况。</p></div>
-      <div><el-button v-hasPermi="['channel:platform:query']" @click="$refs.platform.manage('apps')">平台应用</el-button><el-button v-hasPermi="['channel:platform:query']" @click="$refs.platform.manage('reminders')">到期提醒</el-button><el-button v-hasPermi="['channel:platform:log']" @click="$refs.platform.manage('logs')">交互日志</el-button></div>
+      <div><el-button v-hasPermi="['channel:platform:query']" @click="$router.push('/oms-channel/settings')">渠道设置</el-button><el-button v-hasPermi="['channel:platform:log']" @click="$refs.platform.manage('logs')">交互日志</el-button></div>
     </div>
     <platform-workspace ref="platform" @changed="getList" />
     <filter-panel :model="queryParams" :primary-fields="['channelName', 'outCorrelationCode', 'channelType']" v-show="showSearch">
@@ -160,7 +160,7 @@
       </el-table-column>
       <el-table-column width="280" :fixed="$store.state.app.device === 'mobile' ? false : 'right'" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.channelType === 'TM'" v-hasPermi="['channel:platform:query']" size="mini" type="text" @click="$refs.platform.open(scope.row.channelId)">平台对接</el-button>
+          <el-button v-if="scope.row.channelType === 'TM'" v-hasPermi="['channel:platform:query']" size="mini" type="text" @click="$router.push({path:'/oms-channel/settings',query:{tab:'shop',channelId:scope.row.channelId}})">平台对接</el-button>
           <el-button v-hasPermi="['channelInventory:inventory:list']" size="mini" type="text" @click="$router.push({ path: '/oms-inventory/channelInventory', query: { channelId: scope.row.channelId }})">库存</el-button>
           <el-button
             size="mini"
@@ -217,8 +217,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否对接平台" prop="toChannelEnabled">
-          <el-select v-model="form.toChannelEnabled" placeholder="请选择是否对接平台">
+        <el-form-item label="平台对接（渠道设置维护）" prop="toChannelEnabled">
+          <el-select v-model="form.toChannelEnabled" disabled placeholder="请选择是否对接平台">
             <el-option
               v-for="dict in dict.type.oms_switch"
               :key="dict.value"
@@ -227,8 +227,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否同步库存" prop="syncEnabled">
-          <el-select v-model="form.syncEnabled" placeholder="请选择是否同步库存">
+        <el-form-item label="库存同步（渠道设置维护）" prop="syncEnabled">
+          <el-select v-model="form.syncEnabled" disabled placeholder="请选择是否同步库存">
             <el-option
               v-for="dict in dict.type.oms_switch"
               :key="dict.value"
@@ -362,8 +362,8 @@ export default {
         outCorrelationCode: null,
         channelType: null,
         enabled: null,
-        toChannelEnabled: null,
-        syncEnabled: null,
+        toChannelEnabled: 0,
+        syncEnabled: 0,
         mmodelType: null,
         companyCode: null
       };

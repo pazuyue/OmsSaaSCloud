@@ -37,13 +37,13 @@ public final class WarehouseAllocationPlanner {
         Index(List<Map<String,Object>> batches){for(Map<String,Object> batch:batches){free.computeIfAbsent(s(batch,"sku_sn"),k->new HashMap<>()).put(n(batch,"id"),n(batch,"available"));String key=key(s(batch,"sku_sn"),s(batch,"store_code"));rows.computeIfAbsent(key,k->new ArrayList<>()).add(batch);totals.merge(key,n(batch,"available"),Long::sum);}}
         long available(String sku,String store){return totals.getOrDefault(key(sku,store),0L);}
     }
-    private static final class Budget{
+    static final class Budget{
         final Set<String> used=new HashSet<>(),pending=new HashSet<>();final long warehouses,slots;final List<Map<String,Object>> inherited=new ArrayList<>();
         @SuppressWarnings("unchecked") Budget(List<Map<String,Object>> existing,Map<String,Object> policy,boolean multi){if(policy.get("global_fulfillment") instanceof List){require(((List<?>)policy.get("global_fulfillment")).size()<=10000,"累计履约来源数量过多");for(Object row:(List<?>)policy.get("global_fulfillment")){require(row instanceof Map,"累计履约来源无效");inherited.add((Map<String,Object>)row);used.add(s((Map<String,Object>)row,"store_code"));}}for(Map<String,Object> row:existing)used.add(s(row,"store_code"));long max=n(policy,"max_virtual_warehouses"),ship=n(policy,"max_shipments");require(max>=0&&max<=100&&ship>=0&&ship<=100,"分仓上限无效");warehouses=multi?(max==0?100:max):1;
             if(ship>0)require(policy.containsKey("existing_shipment_count")&&policy.get("mapped_allocation_ids") instanceof Collection,"缺少累计发货单核对信息，请刷新后重试");
             Set<Long> mapped=new HashSet<>();if(policy.get("mapped_allocation_ids") instanceof Collection)for(Object id:(Collection<?>)policy.get("mapped_allocation_ids"))mapped.add(Long.parseLong(id.toString()));
             if(ship>0)for(Map<String,Object> row:existing)if(!mapped.contains(n(row,"id")))pending.add(s(row,"store_code"));
-            slots=ship==0?Integer.MAX_VALUE:ship-n(policy,"existing_shipment_count");
+            slots=ship==0?Integer.MAX_VALUE:ship-n(policy,"existing_shipment_count");if(policy.get("planned_stores") instanceof Collection)for(Object code:(Collection<?>)policy.get("planned_stores"))pending.add(code.toString());
         }
         boolean allows(String code,Set<String> selected){Set<String> all=new HashSet<>(used);all.addAll(selected);all.add(code);Set<String> wave=new HashSet<>(pending);wave.addAll(selected);wave.add(code);return all.size()<=warehouses&&wave.size()<=slots;}
         void check(List<Map<String,Object>> rows){Set<String> all=new HashSet<>(used),wave=new HashSet<>(pending);for(Map<String,Object> row:rows){all.add(s(row,"store_code"));wave.add(s(row,"store_code"));}require(all.size()<=warehouses,"已使用虚拟仓数量超过本单规则上限");require(wave.size()<=slots,"累计发货单数量已达到本单上限，请核对剩余需求");}

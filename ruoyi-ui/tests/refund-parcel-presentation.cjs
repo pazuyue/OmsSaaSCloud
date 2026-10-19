@@ -43,3 +43,10 @@ for (const file of ['RefundDetail.vue', 'RefundGoods.vue', 'RefundParcels.vue', 
   assert.deepEqual(compiler.compile(c.template.content).errors, [], file)
 }
 console.log('PASS separate TK/parcel quantities, ambiguous and exact source receipts, conservation and THK scope')
+
+const ruleEvent = { id: 5, state: 'ALLOCATED', allocation_metadata: JSON.stringify({ method: 'RULE_PARTIAL', policy_revision: 3, rows: [{ plan_id: 23, assigned: 0, remaining: 1 }] }) }
+assert.match(h.allocationOutcome({ ...parcel, receipts: [ruleEvent] }, 23), /分配 0 件（本次未分配到实收）.*待退回 1 件.*版本 3/)
+assert.equal(h.scopePending({ ...parcel, receipts: [ruleEvent] }, 16), false)
+assert.match(h.allocationReason(parcel, { ...receipt, allocation_metadata: { reason: '成本不同，需人工核对' } }), /成本不同/)
+assert.deepEqual(Object.keys(h.allocationMetadata({ allocation_metadata: '{bad' })), [])
+console.log('PASS explicit zero allocation and persisted manual reason')

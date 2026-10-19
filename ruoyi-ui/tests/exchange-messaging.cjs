@@ -1,0 +1,6 @@
+const assert=require('assert/strict'),fs=require('fs'),path=require('path'),compiler=require('vue-template-compiler'),babel=require('@babel/core')
+for(const file of ['order/PlatformExchanges.vue','order/PlatformExchangeDetail.vue','order/IntakeTasks.vue','messaging/MessageTasks.vue','messaging/QueueManagement.vue']){const s=compiler.parseComponent(fs.readFileSync(path.join(__dirname,'../src/views/oms',file),'utf8'));assert.deepEqual(compiler.compile(s.template.content).errors,[],file);babel.transformSync(s.script.content,{configFile:false,babelrc:false,plugins:[require.resolve('@babel/plugin-transform-modules-commonjs')]})}
+const code=babel.transformSync(fs.readFileSync(path.join(__dirname,'../src/views/oms/messaging/messagePresentation.js'),'utf8'),{configFile:false,babelrc:false,plugins:[require.resolve('@babel/plugin-transform-modules-commonjs')]}).code,mod={exports:{}}
+new Function('exports','module',code)(mod.exports,mod)
+for(const business_type of ['EXCHANGE_PULL','EXCHANGE_CONVERT']){const t=mod.exports.alertTarget({business_type,rule_code:'FAILURE_RATE'});assert.equal(t.query.service,'order');assert.equal(t.query.type,business_type)}
+console.log('PASS exchange messaging templates, scripts and alert navigation')

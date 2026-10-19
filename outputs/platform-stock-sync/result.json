@@ -1,0 +1,20 @@
+{
+  "group_id": 1,
+  "sku": "SYNC20261019004627",
+  "quantities": [
+    54,
+    27,
+    9
+  ],
+  "stock_before": 100,
+  "stock_after": 100,
+  "state": "SUCCESS",
+  "checks": [
+    "60/30/10",
+    "paused exposure",
+    "zero exit",
+    "stale intake blocks increases",
+    "simulation only",
+    "UI preview"
+  ]
+}

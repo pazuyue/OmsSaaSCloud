@@ -1,6 +1,7 @@
 <template>
   <div class="line-identity">
     <div class="identity-heading"><strong>{{ line.oms_goods_name || line.goods_name || '商品资料暂未加载' }}</strong><el-tag size="mini" :type="identityTone">{{ identity }}</el-tag></div>
+    <div v-if="line.bundle_id" class="muted">套装明细 #{{ line.bundle_id }} · 每套 {{ line.component_quantity }} 件</div>
     <div class="sku">{{ line.sku_sn || 'SKU 待匹配' }}</div>
     <div v-if="spec" class="muted">{{ spec }}<span> · 当前商品资料</span></div>
     <div class="muted">OMS 履约明细 #{{ line.id }}<span v-if="Number(line.exchange_generation)"> · 第 {{ line.exchange_generation }} 次换货后发出</span></div>
@@ -34,7 +35,7 @@ export default {
   data() { return { visible: false } },
   computed: {
     terminated() { return Number(this.line.quantity) <= Number(this.line.cancelled_quantity || 0) },
-    identity() { if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
+    identity() { if(this.line.stocked_bundle_snapshot&&!this.terminated)return '实物套装 · 成品履约'; if (this.line.bundle_id&&!this.terminated) return '套装组件'; if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
     identityTone() { return this.terminated ? 'info' : this.line.business_type === 'EXCHANGE' ? 'warning' : this.line.exchange_id ? '' : 'info' },
     exchangeLink() { return { path: '/oms-order/exchanges', query: { exchangeId: this.line.exchange_id } } },
     spec() { return good(this.line.current_goods || {}).spec }

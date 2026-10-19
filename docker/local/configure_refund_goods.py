@@ -91,13 +91,18 @@ def install_supplychain(db):
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",db)
     column(db,'wms_refund_parcel_document','generation','INT NOT NULL DEFAULT 1')
     column(db,'wms_refund_parcel_receipt','document_id','BIGINT NULL')
+    column(db,'wms_refund_parcel_receipt','allocation_metadata','JSON NULL')
+    column(db,'wms_refund_parcel_receipt','auto_after','DATETIME NULL')
     if execute("SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='wms_refund_parcel_document' AND index_name='parcel_scope' LIMIT 1",db).strip():
         execute('ALTER TABLE wms_refund_parcel_document DROP INDEX parcel_scope, ADD UNIQUE KEY parcel_generation(company_code,parcel_id,generation)',db)
-    for name,fields in [('document_pending','company_code,document_id,state,id'),('source_log','company_code,source_log_id,state')]:
+    for name,fields in [('auto_pending','company_code,state,auto_after,id'),('document_pending','company_code,document_id,state,id'),('source_log','company_code,source_log_id,state')]:
         if not execute(f"SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='wms_refund_parcel_receipt' AND index_name='{name}' LIMIT 1",db).strip():execute(f'ALTER TABLE wms_refund_parcel_receipt ADD KEY {name}({fields})',db)
     for name,definition in [('progress_revision','BIGINT NOT NULL DEFAULT 0'),('progress_ack','BIGINT NOT NULL DEFAULT 0'),('notify_pending','TINYINT NOT NULL DEFAULT 0')]:column(db,'wms_refund_return',name,definition)
     for name,fields in [('notify_due','company_code,notify_pending,id'),('ticket_lookup','company_code,ticket_id')]:
         if not execute(f"SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='wms_refund_return' AND index_name='{name}' LIMIT 1",db).strip():execute(f'ALTER TABLE wms_refund_return ADD KEY {name}({fields})',db)
+
+    from configure_process import install_supplychain as process_schema
+    process_schema(db)
 
 
 def permissions():

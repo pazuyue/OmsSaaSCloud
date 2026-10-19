@@ -1,0 +1,47 @@
+{
+  "case_id": "20261018212405",
+  "created": "2026-10-18 21:24:05",
+  "sku": "K20261018212405S",
+  "target_sku": "EXCH_FIXEDBUNDLE_20261018212405_B",
+  "channel_name": "[套装验收] 20261018212405",
+  "seller": "KIT_20261018212405",
+  "platform_tid": "99420261018212405",
+  "platform_oid": "9942026101821240501",
+  "warehouses": [
+    {
+      "code": "KIT_V1_20261018212405",
+      "quantity": 3,
+      "package_count": 1,
+      "id": 97
+    },
+    {
+      "code": "KIT_V2_20261018212405",
+      "quantity": 3,
+      "package_count": 1,
+      "id": 98
+    }
+  ],
+  "claims": [],
+  "a": "K20261018212405A",
+  "b": "K20261018212405B",
+  "received": true,
+  "goods_id": 211,
+  "kit_initialized": true,
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 62,
+  "configured": true,
+  "components_ready": true,
+  "platform_id": 150,
+  "order_id": 66,
+  "order_sn": "SOe418275b49514e8b9a1593fd40b0f671",
+  "prepared": true,
+  "version_checked": true,
+  "refund_id": 17,
+  "refund_sn": "TK666be17ad67249a39425e825090321f2",
+  "return_connection": 17,
+  "parcel_id": 21,
+  "return_sn": "THKf4cbf320cfdd470094db11ef2183a0af",
+  "returned_a": true
+}

@@ -51,6 +51,8 @@ def install_order(database):
     exchange(database)
     from configure_refunds import install_order as refund
     refund(database)
+    from configure_bundles import install_order as bundles
+    bundles(database)
 
 
 def install_inventory(database):

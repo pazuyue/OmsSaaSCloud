@@ -1,0 +1,43 @@
+{
+  "data_id": "oms-channel-dev.yml",
+  "registry_validation": [
+    {
+      "alias": "master",
+      "state": "PUBLISHED",
+      "release_id": "0a573cf26ff52513c52ce53a423e44ac",
+      "company_code": "ONBOARD_TEST_20261014"
+    },
+    {
+      "alias": "master",
+      "state": null,
+      "release_id": "",
+      "company_code": "QM"
+    }
+  ],
+  "changes": {
+    "spring.datasource.dynamic.strict": {
+      "before": null,
+      "after": true
+    },
+    "management.endpoints.web.exposure.include": {
+      "before": "health,info,prometheus",
+      "after": "health,info,prometheus"
+    },
+    "oms.tenant.routes.ONBOARD_TEST_20261014": {
+      "before": null,
+      "after": "master"
+    },
+    "oms.tenant.versions.ONBOARD_TEST_20261014": {
+      "before": null,
+      "after": "0a573cf26ff52513c52ce53a423e44ac"
+    },
+    "oms.tenant.managed.ONBOARD_TEST_20261014": {
+      "before": null,
+      "after": true
+    },
+    "oms.tenant.routes.QM": {
+      "before": null,
+      "after": "master"
+    }
+  }
+}

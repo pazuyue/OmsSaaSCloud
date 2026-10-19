@@ -1,0 +1,20 @@
+{
+  "stamp": "20261019185450",
+  "channel_id": 67,
+  "sku": "AUTO20261019122654",
+  "checks": [
+    "both instances apply concurrency and prefetch; six actual consumers",
+    "pause prevents both MQ and direct compensation on both instances",
+    "service restart preserves paused configuration and durable pending task",
+    "resume completes original event once with two competing consumers",
+    "broker outage keeps services healthy, preserves cached metrics and raises sustained alert",
+    "broker recovery refreshes metrics and records alert recovery",
+    "Prometheus discovers all service replicas",
+    "business processing timer collected",
+    "nine-panel Grafana dashboard provisioned"
+  ],
+  "task_id": 122,
+  "event_id": "ME7ce54fa217104e239679c0cf22520642",
+  "business_number": "PRODUCTPULL122",
+  "monitor_task_id": 123
+}

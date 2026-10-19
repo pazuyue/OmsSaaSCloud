@@ -32,7 +32,7 @@ public class ChannelPlatformService {
     private static String field(Map<String,Object> m,String key,int length,boolean required) {String s=str(m,key);if(s.length()>length||(required&&s.isEmpty()))throw new IllegalArgumentException(key+" 不能为空或超出长度限制");return s;}
     private static void require(boolean ok,String message) {if(!ok)throw new IllegalArgumentException(message);}
     private TransactionTemplate tx() {return new TransactionTemplate(transactionManager);}
-    private Map<String,Object> shop(String company,long id) {return one("SELECT * FROM t_channel WHERE company_code=? AND channel_id=?",company,id);}
+    private Map<String,Object> shop(String company,long id) {return one("SELECT * FROM t_channel WHERE UPPER(company_code)=UPPER(?) AND channel_id=?",company,id);}
     private Map<String,Object> app(String company,long id) {return one("SELECT * FROM channel_platform_app WHERE company_code=? AND id=?",company,id);}
     private Map<String,Object> binding(String company,long id) {return one("SELECT * FROM channel_platform_binding WHERE company_code=? AND channel_id=?",company,id);}
     private void usableShop(Map<String,Object> shop) {require("TM".equals(str(shop,"channel_type")),"首期仅支持天猫平台授权");require(number(shop.get("enabled"))==1&&number(shop.get("to_channel_enabled"))==1,"请先启用店铺及平台对接");}
@@ -72,7 +72,7 @@ public class ChannelPlatformService {
         long appId=number(body.get("app_id"));String expected=field(body,"expected_shop_id",64,true);require(expected.matches("[0-9]{1,32}"),"请输入平台店铺的数字 sid，不是卖家用户 ID");
         tx().execute(status->{
             one("SELECT id FROM channel_platform_app WHERE company_code=? AND id=? FOR UPDATE",company,appId);
-            Map<String,Object> s=one("SELECT * FROM t_channel WHERE company_code=? AND channel_id=? FOR UPDATE",company,id);usableShop(s);
+            Map<String,Object> s=one("SELECT * FROM t_channel WHERE UPPER(company_code)=UPPER(?) AND channel_id=? FOR UPDATE",company,id);usableShop(s);
             List<Map<String,Object>> old=db.queryForList("SELECT * FROM channel_platform_binding WHERE company_code=? AND channel_id=? FOR UPDATE",company,id);
             if(!old.isEmpty()) {require(!future(old.get(0).get("operation_until")),"店铺正在交互，请稍后修改");require(str(old.get(0),"token_cipher").isEmpty(),"请先停用本地授权，再更换应用或店铺绑定");}
             if(old.isEmpty()) db.update("INSERT INTO channel_platform_binding(channel_id,company_code,app_id,expected_shop_id) VALUES(?,?,?,?)",id,company,appId,expected);
@@ -212,6 +212,17 @@ public class ChannelPlatformService {
         });
         return result.get();
     }
+    public JsonNode stockCall(String company,long id,String method,Map<String,String> args,boolean write,Map<String,Object> context) {
+        require(Arrays.asList("taobao.items.onsale.get","taobao.items.inventory.get","taobao.item.seller.get","taobao.inventory.mode.query","taobao.trades.sold.get","tmall.item.quantity.update").contains(method),"不支持的库存接口");
+        require(write=="tmall.item.quantity.update".equals(method),"库存接口读写标识无效");
+        java.util.concurrent.atomic.AtomicReference<JsonNode> result=new java.util.concurrent.atomic.AtomicReference<>();
+        interact(company,id,method,context.containsKey("operator_name")?str(context,"operator_name"):"PRODUCT".equals(str(context,"category"))?"平台商品拉取":"库存同步",context,(b,a)->{
+            require(future(b.get("token_expires_at"))&&"AUTHORIZED".equals(str(b,"auth_status")),"授权已失效，请重新授权");
+            if(write){require(number(shop(company,id).get("sync_enabled"))==1,"店铺尚未开启库存同步");require("SUBSCRIBED".equals(str(b,"service_status"))&&future(b.get("service_expires_at"))&&b.get("service_checked_at")!=null&&instant(b.get("service_checked_at")).isAfter(Instant.now().minusSeconds(86400)),"请先核验有效的平台服务订购");}
+            result.set(interactionLog.call(method,args,()->{JsonNode reply=simulated(a)?(PlatformProductProtocol.handles(db,company,id,method,args)?PlatformProductProtocol.simulated(db,company,id,method,args):StockSyncPlatform.simulate(db,company,id,method,args)):client.api(str(a,"app_key"),secrets.decrypt(str(a,"secret_cipher")),secrets.decrypt(str(b,"token_cipher")),method,args);String envelope=(method.startsWith("taobao.")?method.substring(7):method).replace('.','_')+"_response";if(!reply.path(envelope).isObject())throw new TmallClient.Failure("STOCK_RESPONSE_UNKNOWN",true);if(write&&!args.get("item_id").equals(reply.path(envelope).path("quantity_update_result").asText()))throw new TmallClient.Failure("STOCK_WRITE_RESULT_UNKNOWN",true);return reply;}));
+            return map("method",method,"inventory_write",write);
+        });return result.get();
+    }
     private interface Action {Map<String,Object> run(Map<String,Object> binding,Map<String,Object> app);}
     private void interact(String company,long id,String action,String user,Action call) {interact(company,id,action,user,Collections.emptyMap(),call);}
     private void interact(String company,long id,String action,String user,Map<String,Object> context,Action call) {
@@ -224,7 +235,7 @@ public class ChannelPlatformService {
         });
         long log=0,start=System.currentTimeMillis();Map<String,Object> operationLog=null;PlatformInteractionLog.Scope scope=null;
         try {
-            Map<String,Object> metadata=new LinkedHashMap<>(context);metadata.put("interface_name",action);metadata.putIfAbsent("trigger_source","USER");operationLog=interactionLog.begin(company,id,number(b.get("app_id")),action,"OPERATION",simulated(app(company,number(b.get("app_id"))))?"SIMULATION":"REAL",interactionLog.category(action),user,metadata,map("shop_id",b.get("expected_shop_id")));log=((Number)operationLog.get("id")).longValue();scope=interactionLog.scope(operationLog);
+            Map<String,Object> metadata=new LinkedHashMap<>(context);metadata.put("interface_name",action);metadata.putIfAbsent("trigger_source","USER");operationLog=interactionLog.begin(company,id,number(b.get("app_id")),action,"OPERATION",simulated(app(company,number(b.get("app_id"))))?"SIMULATION":"REAL",str(metadata,"category").isEmpty()?interactionLog.category(action):str(metadata,"category"),user,metadata,map("shop_id",b.get("expected_shop_id")));log=((Number)operationLog.get("id")).longValue();scope=interactionLog.scope(operationLog);
             Map<String,Object> response=call.run(b,app(company,number(b.get("app_id"))));
             if(simulated(app(company,number(b.get("app_id")))))response.put("simulation",true);
             interactionLog.finish(operationLog,"SUCCESS","",response,System.currentTimeMillis()-start,null,false);

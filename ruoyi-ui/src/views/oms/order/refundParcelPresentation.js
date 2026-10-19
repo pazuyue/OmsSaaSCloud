@@ -37,6 +37,8 @@ export function receiptText(accepted, pending) {
   return `已确认 ${number(accepted)} 件`
 }
 export function allocationReason(parcel, receipt) {
+  const audit = allocationMetadata(receipt)
+  if (audit.reason) return audit.reason
   const raw = receiptPayload(receipt)
   const doc = parcel.warehouse_document || {}
   if (doc.cancel_state && doc.cancel_state !== 'NONE') return '涉及截单或迟到回传，请先核对原THK、实物与后续安排，再确认实收分配。'
@@ -67,6 +69,19 @@ export function allocationError(parcel, receipt, allocations) {
       if (total > number(source.quantity) - number(source.accepted_quantity)) return '分配数量超过所选退款来源的剩余待收数量'
       used.set(String(row.task_id), total)
     }
+  }
+  return ''
+}
+
+export function allocationMetadata(receipt) {
+  try { return typeof receipt.allocation_metadata === 'string' ? JSON.parse(receipt.allocation_metadata) || {} : receipt.allocation_metadata || {} } catch (_) { return {} }
+}
+export function allocationOutcome(parcel, planId) {
+  const events = (parcel.receipts || []).filter(e => e.state === 'ALLOCATED' && allocationMetadata(e).method === 'RULE_PARTIAL').slice().sort((a,b) => number(b.id)-number(a.id))
+  for (const event of events) {
+    const audit = allocationMetadata(event)
+    const row = (audit.rows || []).find(row => String(row.plan_id) === String(planId))
+    if (row) return `最近一次按规则分配 ${number(row.assigned)} 件${number(row.assigned) === 0 ? '（本次未分配到实收）' : ''} · 分配后待退回 ${number(row.remaining)} 件 · 规则版本 ${audit.policy_revision}`
   }
   return ''
 }

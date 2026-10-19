@@ -1,0 +1,15 @@
+package com.oms.inventory.controller.wms.api;
+import com.oms.inventory.service.impl.StockProcessService;
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.security.annotation.InnerAuth;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.*;
+@RestController @RequestMapping("/stockProcess/internal") public class StockProcessController {
+ @Resource StockProcessService service;
+ private String company(String c){if(c==null||!c.matches("[A-Za-z0-9_-]{1,50}"))throw new IllegalArgumentException("公司无效");return c.toUpperCase(Locale.ROOT);}
+ @InnerAuth @PostMapping("/{action}") public R<Map<String,Object>> execute(@RequestParam("company_code") String c,@PathVariable String action,@RequestBody Map<String,Object> cmd){return R.ok(service.execute(company(c),action,cmd));}
+ @InnerAuth @GetMapping("/report") public R<Map<String,Object>> report(@RequestParam("company_code") String c,@RequestParam String sn){return R.ok(service.report(company(c),sn));}
+ @InnerAuth @GetMapping("/origin") public R<Map<String,Object>> origin(@RequestParam("company_code") String c,@RequestParam long batch){return R.ok(service.origin(company(c),batch));}
+ @InnerAuth @GetMapping("/batches") public R<List<Map<String,Object>>> batches(@RequestParam("company_code") String c,@RequestParam String sku,@RequestParam String store){return R.ok(service.batches(company(c),sku,store));}
+}

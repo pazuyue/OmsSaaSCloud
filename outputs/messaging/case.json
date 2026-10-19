@@ -1,0 +1,31 @@
+{
+  "stamp": "20261019164654",
+  "channel_id": 67,
+  "sku": "AUTO20261019122654",
+  "normal_task": 97,
+  "normal_event": "ME17ca0108e84542f799036ca06ee86966",
+  "failed_task": 98,
+  "retry_event": "MEc0fd7c5ee7d845c8811d5aaf2893dc51",
+  "outage_task": 111,
+  "outage_event": "ME649ad66443454a5faae9c7b0828759ae",
+  "outage_done": true,
+  "restart_task": 100,
+  "restart_event": "ME4db497b4aade49a4815c434affb2618d",
+  "restart_done": true,
+  "sales_document": "XS8d3a281fc4234540bb343c553fb69b24",
+  "checks": [
+    "publisher confirms",
+    "manual ack",
+    "atomic outbox rollback (unit)",
+    "manual retry audit",
+    "outage compensation",
+    "business services stay healthy",
+    "persistent quorum queue restart",
+    "service restart",
+    "duplicate message no duplicate platform call",
+    "sales projection no stock mutation"
+  ],
+  "prior_outage_events": [
+    "ME8021b7df423c4b8cb318ff798cc12cd3"
+  ]
+}

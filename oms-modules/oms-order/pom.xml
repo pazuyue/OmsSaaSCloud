@@ -5,6 +5,7 @@
   <artifactId>oms-order</artifactId>
   <description>独立订单管理微服务：天猫推送库拉单与转单</description>
   <dependencies>
+        <dependency><groupId>com.ruoyi</groupId><artifactId>oms-messaging</artifactId><version>${project.version}</version></dependency>
     <dependency><groupId>com.ruoyi</groupId><artifactId>oms-common-core</artifactId><version>3.6.4</version></dependency>
     <dependency><groupId>com.alibaba.cloud</groupId><artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId></dependency>
     <dependency><groupId>com.alibaba.cloud</groupId><artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId></dependency>

@@ -29,7 +29,7 @@ public class OrderProductMatchService {
         try{
             Map<String,Object> order=repository.raw(company,id);validateOrder(order,expected);
             Map<String,List<Map<String,Object>>> goods=catalog.goods(company,new ArrayList<>(new LinkedHashSet<>(selections.values())));
-            for(String sku:selections.values()){List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());require(found.size()==1,"所选OMS SKU不存在或不唯一："+sku);require(number(found.get(0),"is_fd")==0&&number(found.get(0),"is_package")==0,"一期不能匹配套装或福袋："+sku);}
+            for(String sku:selections.values()){List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());require(found.size()==1,"所选OMS SKU不存在或不唯一："+sku);require(number(found.get(0),"is_fd")==0,"暂不支持福袋："+sku);if(number(found.get(0),"is_package")==1)OrderBundles.snapshot(sku,text(found.get(0),"goods_name"),found.get(0));}
             Set<String> registered=new HashSet<>();for(Map<String,Object> demand:data(inventory.demands(company,channel,text(order,"platform_tid"),SecurityConstants.INNER)))registered.add(text(demand,"platform_oid"));
             for(String oid:selections.keySet())require(!registered.contains(oid),"子订单 "+oid+" 已登记库存需求，不能直接换SKU");
             TransactionTemplate tx=new TransactionTemplate(new DataSourceTransactionManager(repository.db().getDataSource()));
@@ -46,7 +46,7 @@ public class OrderProductMatchService {
                     repository.log(company,id,"MATCH_PRODUCT","SUCCESS","子订单 "+oid+"；平台编码："+text(line,"outer_sku_id")+"；原人工SKU："+text(line,"manual_sku_sn")+"；选择OMS SKU："+sku+"；原因："+reason,actor);
                 }
                 repository.db().update("UPDATE oms_platform_order SET conversion_status='PENDING',force_convert=1,retry_count=retry_count+1,system_failures=0,next_retry_at=NOW() WHERE company_code=? AND id=?",company,id);
-                repository.log(company,id,"RETRY","PENDING","人工匹配已保存，已提交原订单转单重试",actor);return null;
+                repository.conversionChanged(company,id,true);repository.log(company,id,"RETRY","PENDING","人工匹配已保存，已提交原订单转单重试",actor);return null;
             });
         }finally{repository.release(company,channel,lease);}
     }

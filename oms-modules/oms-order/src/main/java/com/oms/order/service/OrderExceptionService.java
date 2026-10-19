@@ -28,7 +28,7 @@ public class OrderExceptionService {
                     require(Arrays.asList("EXCEPTION","WAITING").contains(text(row,"conversion_status")),"已在处理队列中，请勿重复提交");
                     require("WAIT_SELLER_SEND_GOODS".equals(text(row,"platform_status")),"平台状态不满足已付款待发货条件");
                     repository.db().update("UPDATE oms_platform_order SET conversion_status='PENDING',force_convert=1,retry_count=retry_count+1,system_failures=0,next_retry_at=NOW() WHERE company_code=? AND id=?",company,id);
-                    repository.log(company,id,"RETRY","PENDING","已提交人工转单重试",actor);item.put("platform_tid",row.get("platform_tid"));return null;
+                    repository.conversionChanged(company,id,true);repository.log(company,id,"RETRY","PENDING","已提交人工转单重试",actor);item.put("platform_tid",row.get("platform_tid"));return null;
                 });
                 item.put("submitted",true);item.put("message","已提交");
             }catch(IllegalArgumentException e){item.put("submitted",false);item.put("message",e.getMessage());}

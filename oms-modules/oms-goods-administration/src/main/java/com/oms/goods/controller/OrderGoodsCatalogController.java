@@ -8,6 +8,7 @@ import java.util.*;
 @RestController @RequestMapping("/orderCatalog/internal")
 public class OrderGoodsCatalogController {
     @Resource private JdbcTemplate jdbc;
+    @Resource private com.oms.goods.service.goods.impl.GoodsBundleService bundles;
     @Resource private com.oms.goods.service.goods.impl.GoodsWorkspaceService workspace;
     @InnerAuth @PostMapping("/search") public R<Map<String,Object>> search(@RequestParam("company_code") String company,@RequestBody Map<String,Object> query){
         String field=String.valueOf(query.getOrDefault("field","skuSn")),term=String.valueOf(query.getOrDefault("keyword","")).trim();
@@ -21,6 +22,6 @@ public class OrderGoodsCatalogController {
         if(skus==null||skus.size()>500)throw new IllegalArgumentException("单次商品查询最多500个SKU");
         if(skus.isEmpty())return R.ok(Collections.emptyList());
         List<Object> args=new ArrayList<>();args.add(company);args.addAll(skus);
-        return R.ok(jdbc.queryForList("SELECT g.id,g.sku_sn,g.goods_sn,g.barcode_sn,g.goods_name,g.is_fd,g.is_package,g.is_gift,c.color_name,z.size_name FROM goods_sku_sn_info g LEFT JOIN goods_color c ON c.id=g.color_code AND UPPER(c.company_code)=UPPER(g.company_code) LEFT JOIN goods_size z ON z.id=g.size_code AND UPPER(z.company_code)=UPPER(g.company_code) WHERE UPPER(g.company_code)=UPPER(?) AND g.sku_sn IN ("+String.join(",",Collections.nCopies(skus.size(),"?"))+")",args.toArray()));
+        List<Map<String,Object>> found=jdbc.queryForList("SELECT g.id,g.sku_sn,g.goods_sn,g.barcode_sn,g.goods_name,g.is_fd,g.is_package,g.is_gift,c.color_name,z.size_name FROM goods_sku_sn_info g LEFT JOIN goods_color c ON c.id=g.color_code AND UPPER(c.company_code)=UPPER(g.company_code) LEFT JOIN goods_size z ON z.id=g.size_code AND UPPER(z.company_code)=UPPER(g.company_code) WHERE UPPER(g.company_code)=UPPER(?) AND g.sku_sn IN ("+String.join(",",Collections.nCopies(skus.size(),"?"))+")",args.toArray());bundles.attach(company.trim().toUpperCase(Locale.ROOT),found);return R.ok(found);
     }
 }

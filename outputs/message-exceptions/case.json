@@ -1,0 +1,21 @@
+{
+  "stamp": "20261019195012",
+  "checks": [
+    "rate wait is visible, consumes no failure budget and resumes automatically",
+    "configuration error exhausts safely, repair retries pending business and retains parent/latest chain",
+    "business failure repair preserves original audit and creates a new work version",
+    "real broker TTL dead letter retained, compensation result reconciles to success without replay",
+    "browser configuration entry, quarantine result, review history and scoped task link"
+  ],
+  "sku": "AUTO20261019122654",
+  "channel_id": 69,
+  "rate_task": 124,
+  "rate_event": "ME9f3721f86ba846278ae146d450c228f7",
+  "config_task": 125,
+  "config_event": "ME60849c85d90d42159dbb59e5fec92323",
+  "config_retry_event": "MEbfe8697460b5416d8b6e388189ea0a34",
+  "business_failure_event": "MEddfb1a1cf44d4d68b1c67e924dba7df4",
+  "dead_task": 127,
+  "dead_event": "MEd1da798c202341d698f1f8b8046b77aa",
+  "dead_id": 1
+}

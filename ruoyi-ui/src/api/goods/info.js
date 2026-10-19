@@ -73,3 +73,6 @@ export function delInfo(id) {
   })
 }
 
+
+export const getBundle=id=>request({url:`/goods/info/${id}/bundle`,method:'get'})
+export const saveBundle=(id,data)=>request({url:`/goods/info/${id}/bundle`,method:'post',data})

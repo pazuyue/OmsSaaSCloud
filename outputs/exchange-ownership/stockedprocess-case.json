@@ -1,0 +1,29 @@
+{
+  "case_id": "20261018231350",
+  "created": "2026-10-18 23:13:50",
+  "sku": "P20261018225742S",
+  "target_sku": "EXCH_STOCKEDPROCESS_20261018231350_B",
+  "channel_name": "[实物套装验收] 20261018225742",
+  "seller": "PROCESS_20261018225742",
+  "platform_tid": "99420261018231350",
+  "platform_oid": "9942026101823135001",
+  "warehouses": [
+    {
+      "code": "PROCESS_V_20261018225742",
+      "quantity": 1,
+      "package_count": 1,
+      "id": 99
+    }
+  ],
+  "claims": [],
+  "received": true,
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 18,
+  "channel_id": 63,
+  "configured": true,
+  "platform_id": 151,
+  "order_id": 67,
+  "order_sn": "SOad4e711be8654dfc8e4396265fed131e",
+  "prepared": true
+}

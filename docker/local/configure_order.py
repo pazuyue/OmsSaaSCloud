@@ -28,6 +28,8 @@ def install_inventory(database):
     install_business_inventory(database)
     from configure_order_virtual_outbound import install_inventory as install_virtual_outbound
     install_virtual_outbound(database)
+    from configure_bundles import install_inventory as bundles
+    bundles(database)
     column(database, 'oms_inventory', 'pending_public_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '已销售但尚未逻辑预占的公共库存需求，不属于实物库存'")
     added = column(database, 'oms_channel_inventory', 'quota_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '普通分货额度基数，与最终可售分开维护'")
     column(database, 'oms_channel_inventory', 'quota_reserved_stock', "BIGINT NOT NULL DEFAULT 0 COMMENT '已逻辑预占中使用普通额度的数量'")

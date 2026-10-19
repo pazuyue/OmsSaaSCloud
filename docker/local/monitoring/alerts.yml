@@ -1,0 +1,32 @@
+groups:
+  - name: oms-messaging
+    rules:
+      - alert: RabbitMQUnavailable
+        expr: oms_mq_broker_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'RabbitMQ monitoring unavailable'}
+      - alert: OMSQueueBacklog
+        expr: (oms_mq_ready >= on(business_type) oms_mq_alarm_backlog) and on(business_type) (oms_mq_running == 1) and on(business_type) (oms_mq_metrics_fresh == 1)
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: 'Business queue backlog exceeds configured limit'}
+      - alert: OMSQueueNoConsumer
+        expr: (oms_mq_ready > 0) and on(business_type) (oms_mq_consumers == 0) and on(business_type) (oms_mq_running == 1) and on(business_type) (oms_mq_metrics_fresh == 1)
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'Business queue has no consumers'}
+      - alert: OMSWorkOverdue
+        expr: (oms_mq_oldest_due_sec >= on(business_type) oms_mq_alarm_due_sec) and on(business_type) (oms_mq_running == 1) and on(business_type) (oms_mq_metrics_fresh == 1)
+        for: 30s
+        labels: {severity: warning}
+        annotations: {summary: 'Due business work is not advancing'}
+      - alert: OMSDeadLetter
+        expr: (oms_mq_dead > 0) or (oms_mq_quarantine_pending > 0)
+        labels: {severity: warning}
+        annotations: {summary: 'Dead letters require business verification'}
+      - alert: MessagingMetricsTargetDown
+        expr: up{job=~"rabbitmq|oms-messaging"} == 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: 'Messaging metrics target is unavailable'}

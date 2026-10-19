@@ -1,0 +1,21 @@
+{
+  "assembly_sn": "JG847f8b9147684b20bbfef86accba9026",
+  "assembly_url": "http://127.0.0.1:8088/oms-inventory/kitProcess?id=1",
+  "planned_sets": 4,
+  "assembled_sets": 2,
+  "stopped_sets": 2,
+  "disassembly_sn": "JGa1f1115c489b4822a491fa47284b6b2b",
+  "disassembly_url": "http://127.0.0.1:8088/oms-inventory/kitProcess?id=2",
+  "disassembled_sets": 1,
+  "stock": {
+    "A": 18,
+    "B": 9,
+    "S": 0
+  },
+  "order_sn": "SOad4e711be8654dfc8e4396265fed131e",
+  "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=67",
+  "voucher_count": 4,
+  "callback_replay_no_extra_stock": true,
+  "warehouse_log_classification": true,
+  "environment": "TEST"
+}

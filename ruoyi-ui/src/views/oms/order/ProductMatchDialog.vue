@@ -17,7 +17,7 @@
       <el-form inline size="small" @submit.native.prevent="search"><el-form-item label="SKU"><el-input v-model.trim="query.skuSn" clearable placeholder="输入完整 SKU" @keyup.enter.native="search" /></el-form-item><el-form-item label="商品名称"><el-input v-model.trim="query.goodsName" clearable placeholder="输入商品名称" @keyup.enter.native="search" /></el-form-item><el-form-item label="货号"><el-input v-model.trim="query.goodsSn" clearable placeholder="输入完整货号" @keyup.enter.native="search" /></el-form-item><el-form-item><el-button type="primary" @click="search">查询</el-button></el-form-item></el-form>
       <el-alert v-if="error" :title="error" type="error" :closable="false" />
       <el-table v-loading="loading" :data="goods" max-height="420" border empty-text="未找到符合条件的普通商品，请调整查询条件">
-        <el-table-column label="商品名称" prop="goodsName" min-width="200" /><el-table-column label="SKU" prop="skuSn" min-width="150" /><el-table-column label="货号" prop="goodsSn" min-width="130" /><el-table-column label="颜色" prop="colorName" width="95" /><el-table-column label="尺码" prop="sizeName" width="95" /><el-table-column label="操作" width="90"><template slot-scope="s"><el-button type="text" :disabled="!!Number(s.row.isFd) || !!Number(s.row.isPackage)" @click="select(s.row)">选择</el-button></template></el-table-column>
+        <el-table-column label="商品名称" prop="goodsName" min-width="200" /><el-table-column label="SKU" prop="skuSn" min-width="150" /><el-table-column label="货号" prop="goodsSn" min-width="130" /><el-table-column label="颜色" prop="colorName" width="95" /><el-table-column label="尺码" prop="sizeName" width="95" /><el-table-column label="操作" width="90"><template slot-scope="s"><el-button type="text" :disabled="!!Number(s.row.isFd)" @click="select(s.row)">选择</el-button></template></el-table-column>
       </el-table>
       <pagination v-show="total" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="load" />
       <span slot="footer"><el-button @click="pickerVisible=false">关闭</el-button></span>
@@ -28,7 +28,7 @@
 <script>
 import { listInfo } from '@/api/goods/info'
 import { matchOrderProducts } from '@/api/order'
-const queryDefaults = () => ({ skuSn: '', goodsName: '', goodsSn: '', pageNum: 1, pageSize: 10, isFd: 0, isPackage: 0 })
+const queryDefaults = () => ({ skuSn: '', goodsName: '', goodsSn: '', pageNum: 1, pageSize: 10, isFd: 0 })
 export default {
   name: 'OrderProductMatchDialog',
   props: { visible: Boolean, order: Object },
@@ -40,7 +40,7 @@ export default {
     openPicker(line) { this.activeOid = line.platform_oid; this.query = queryDefaults(); this.goods = []; this.pickerVisible = true; this.load() },
     search() { this.query.pageNum = 1; this.load() },
     async load() { const id = ++this.requestId; this.loading = true; this.error = ''; try { const result = await listInfo({ ...this.query }); if (id !== this.requestId) return; this.goods = result.rows; this.total = result.total } catch (_) { if (id === this.requestId) { this.goods = []; this.total = 0; this.error = '商品加载失败，请重试' } } finally { if (id === this.requestId) this.loading = false } },
-    select(goods) { const line = this.lines.find(line => line.platform_oid === this.activeOid); if (line && !Number(goods.isFd) && !Number(goods.isPackage)) { line.target = goods; this.pickerVisible = false } },
+    select(goods) { const line = this.lines.find(line => line.platform_oid === this.activeOid); if (line && !Number(goods.isFd)) { line.target = goods; this.pickerVisible = false } },
     async submit() { if (this.saving || !this.selected.length || !this.reason) return; this.saving = true; try { await matchOrderProducts(this.order.id, { processing_hash: this.order.processing_hash, reason: this.reason, lines: this.selected.map(line => ({ platform_oid: line.platform_oid, sku_sn: line.target.skuSn })) }); this.$emit('matched', { id: this.order.id, platform_tid: this.order.platform_tid, submitted: true, conversion_status: 'PENDING' }); this.$emit('update:visible', false) } finally { this.saving = false } }
   }
 }

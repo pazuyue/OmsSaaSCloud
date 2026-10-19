@@ -152,3 +152,12 @@
 部署先安装既有换货及统一接入表，再运行 `docker/local/configure_platform_exchanges.py`，更新 order 和前端。`configure_order_intake.install` 也会安装来源表及配置字段。回归为 `docker/local/test_order_intake.py` 与前端 `node tests/order-intake.cjs`；浏览器验收为 `docker/local/verify_platform_exchanges.py`，仅使用独立测试店铺、商品和可信模拟授权，证据在 `outputs/platform-exchanges`。
 
 同公司扫描执行期间再次收到同步或配置唤醒，会在当前扫描结束后追加一轮，继续使用原有有界执行器。没有新增定时器或 MQ；数据库来源、转单状态与重试时间仍是可恢复依据。
+
+### 换货接入队列
+
+- `EXCHANGE_PULL` 每次最多调用一次平台接口。时间任务先提交本页申请ID与DETAIL阶段，再逐单提交来源快照、逐单结果和转单通知；全部详情完成后才推进下一页及自动游标。指定ID任务直接进入DETAIL阶段。部分失败保留成功项，重试从失败项继续，不重拉已保存详情。
+- `EXCHANGE_CONVERT` 按公司、店铺、平台申请建立唯一HH关联；等待原订单和子单时不消耗失败预算。来源新版本使旧通知失效，平台撤销/结束时保留来源并跳过新建HH。目标SKU和数量继续由业务审核确认，沿用原订单及换货轮次，不自动同意或执行库存操作。
+- 自动扫描只发现任务并入本地事务消息；原业务换货后续执行扫描保持原职责。人工转单进入同一消息链；“更新平台资料”提交指定ID拉取任务并返回任务编号，详情提供同步进度链接。
+- 平台限流身份仅由渠道服务按绑定生成哈希。商品与换货拉取跨服务共享应用和店铺槽位，采用两类队列配置中较低上限；真实应用以app_key识别，未配置app_key的模拟应用以明确公司及应用ID识别。限流失败保留断点，不占用线程等待。该额度控制接入读取队列。
+- 现有同步任务显示当前页与列表/详情阶段；平台换货列表、详情显示后台转单进度、错误和消息链。队列管理、死信、告警和监控复用公共组件。默认新增两类消费者各1个、预取1，订单服务并发总上限仍为12。
+- `configure_messaging.py` 添加任务work_version/phase/page_complete及来源intake_version/conversion_requested，只安装新方案所需结构与策略。回归：`test_stock_sync.py --exchange-messaging`、`ruoyi-ui/tests/exchange-messaging.cjs`。本地真实MQ验收：`verify_exchange_messaging.py` 与 `verify_exchange_messaging_final.py`；只使用模拟平台，不执行换货审核或仓库动作。

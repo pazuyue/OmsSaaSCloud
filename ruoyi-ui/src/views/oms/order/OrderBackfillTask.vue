@@ -6,6 +6,7 @@
       <template v-if="task">
         <el-descriptions border :column="2" size="small"><el-descriptions-item label="店铺">{{ task.channel_name }}</el-descriptions-item><el-descriptions-item label="状态"><el-tag size="small" :type="task.status === 'SUCCESS' ? 'success' : ['PARTIAL','FAILED'].includes(task.status) ? 'warning' : ''">{{ taskStates[task.status] || task.status }}</el-tag></el-descriptions-item><el-descriptions-item label="补拉方式">{{ task.pull_mode === 'TID' ? '按平台单号 · ' + requestedCount + ' 个' : '按时间 · 后台按天分页' }}</el-descriptions-item><el-descriptions-item label="操作人">{{ task.operator_name }}</el-descriptions-item><el-descriptions-item v-if="task.pull_mode !== 'TID'" label="实际范围" :span="2">{{ task.start_time }} 至 {{ task.end_time }}（不含）<div class="muted">已读取至 {{ task.page_time }}</div></el-descriptions-item></el-descriptions>
         <el-alert v-if="task.error_message" :title="task.error_message" type="warning" show-icon :closable="false" />
+        <message-progress v-if="task.message" :message="task.message" type="ORDER_PULL"/>
         <p class="muted">补拉结果表示源库查询和平台数据保存结果；转单状态单独展示。源库未找到不代表平台订单不存在。</p>
         <div class="toolbar"><el-select v-model="result" clearable size="small" placeholder="全部补拉结果" @change="search"><el-option v-for="(label, code) in results" :key="code" :label="label + '（' + (counts[code] || 0) + '）'" :value="code" /></el-select><el-button v-if="counts.FAILED" v-hasPermi="['order:pull:execute']" size="small" type="primary" :loading="retrying" :disabled="['PENDING','RUNNING'].includes(task.status) || (!selected.length && counts.FAILED > 100)" @click="retryFailures">{{ selected.length ? '重试选中失败项（' + selected.length + '）' : '重试失败项（' + counts.FAILED + '）' }}</el-button><el-button v-if="task.status === 'FAILED' && task.pull_mode !== 'TID'" v-hasPermi="['order:pull:execute']" size="small" :loading="retrying" @click="resume">继续未完成范围</el-button><el-button v-if="rows.some(r => r.result === 'FAILED')" size="small" @click="copyFailures">复制当前页失败单号</el-button></div>
         <p v-if="counts.FAILED > 100" class="muted">每次最多重试100条，请筛选失败结果后勾选要重试的明细。</p>
@@ -23,8 +24,10 @@
   </el-drawer>
 </template>
 <script>
+import MessageProgress from '@/views/oms/messaging/MessageProgress'
 import { pullTaskDetail, pullTaskItems, retryPullItems, retryPullTask } from '@/api/order'
 export default {
+  components: { MessageProgress },
   data() { return { visible: false, taskIds: [], taskId: null, task: null, rows: [], total: 0, page: 1, size: 20, result: '', loading: false, retrying: false, error: false, selected: [], sequence: 0, timer: null, results: { PENDING: '等待查询', NEW: '新增成功', SKIPPED: '已存在跳过', UPDATED: '平台数据已更新', CHANGE_PENDING: '待处理变更', NOT_FOUND: '源库未找到', FAILED: '补拉失败' }, taskStates: { PENDING: '等待执行', RUNNING: '执行中', SUCCESS: '已完成', PARTIAL: '部分失败', FAILED: '执行失败' }, conversion: { PENDING: '待转单处理', PROCESSING: '转单处理中', SUCCESS: '已转业务订单', WAITING: '等待转单', EXCEPTION: '转单异常' } } },
   computed: { counts() { return Object.fromEntries((this.task && this.task.results || []).map(r => [r.result, Number(r.count)])) }, requestedCount() { try { return JSON.parse(this.task.requested_tids || '[]').length } catch (_) { return 0 } } },
   beforeDestroy() { this.stop() },

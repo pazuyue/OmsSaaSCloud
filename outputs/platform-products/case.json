@@ -1,0 +1,18 @@
+{
+  "stamp": "20261019083301",
+  "sku": "BIND20261019083301",
+  "channel_id": 66,
+  "app_id": 7,
+  "received": true,
+  "catalog_seeded": true,
+  "catalog_pulled": true,
+  "group_id": 2,
+  "quantities": [
+    54,
+    27,
+    9
+  ],
+  "physical_stock_unchanged": 100,
+  "final_state": "SUCCESS",
+  "specified_pull_verified": true
+}

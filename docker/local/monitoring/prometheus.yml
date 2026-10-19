@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+rule_files:
+  - /etc/prometheus/alerts.yml
+scrape_configs:
+  - job_name: rabbitmq
+    static_configs:
+      - targets: ['rabbitmq:15692']
+  - job_name: oms-messaging
+    metrics_path: /actuator/prometheus
+    http_sd_configs:
+      - url: http://system:9201/mqQueues/internal/prometheus-targets
+        refresh_interval: 15s
+        http_headers:
+          from-source:
+            values: ['inner']

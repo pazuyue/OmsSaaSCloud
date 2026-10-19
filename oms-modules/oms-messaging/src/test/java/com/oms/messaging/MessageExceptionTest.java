@@ -1,0 +1,17 @@
+package com.oms.messaging;
+
+import org.junit.jupiter.api.*;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static com.oms.messaging.MessageOutbox.*;
+
+class MessageExceptionTest {
+ MessageDeliveryTest base;MessageOutbox out;MessageRuntime runtime;
+ @BeforeEach void setup(){base=new MessageDeliveryTest();base.setup();out=base.out;runtime=base.runtime;}
+ @Test void throttlingPreservesRetryBudgetAndIsNotManualRetryable(){String event=base.event();out.db.update("UPDATE oms_message_outbox SET business_attempts=3");assertTrue(out.claimWork("QM",event,"rate","MQ"));out.finish("QM",event,"rate",MessageHandler.Outcome.throttled("等待调用额度",5),"MQ",0);Map<String,Object> row=out.row("QM",event);assertEquals(3,n(row,"business_attempts"));assertEquals("RATE_LIMIT",s(row,"problem_code"));assertEquals(false,MessageProblem.view(row).get("retryable"));assertThrows(IllegalArgumentException.class,()->runtime.retry("QM",event,"test","rate"));}
+ @Test void exhaustionKeepsLastFailureInsteadOfReplacingItsReason(){String event=base.event();out.db.update("UPDATE oms_message_outbox SET business_attempts=7");when(base.handler.handle(anyString(),anyMap())).thenReturn(MessageHandler.Outcome.retry("测试同步依赖尚未就绪",5));runtime.execute("QM",out.row("QM",event),"MQ");Map<String,Object> row=out.row("QM",event);assertEquals("RETRY_EXHAUSTED",s(row,"problem_code"));assertTrue(s(row,"last_error").contains("测试同步依赖尚未就绪"));}
+ @Test void retryChainIsScopedAndRetainsParentAndLatestResult(){String first=base.event();out.db.update("UPDATE oms_message_outbox SET process_state='FAILED'");doAnswer(i->{out.enqueue("QM","PRODUCT_PULL",1,2,"PRODUCTPULL1","retry-case",0);return null;}).when(base.handler).replay(anyString(),anyMap(),anyString(),anyString());runtime.retry("QM",first,"test","已修复");List<Map<String,Object>> chain=out.chain("QM",out.row("QM",first));assertEquals(2,chain.size());assertEquals(first,s(chain.get(0),"parent_event_id"));assertNull(out.retryParent.get());out.enqueue("OTHER","PRODUCT_PULL",1,3,"PRODUCTPULL1","other",0);assertEquals(2,out.chain("QM",out.row("QM",first)).size());assertThrows(IllegalArgumentException.class,()->runtime.retry("QM",first,"test","again"));}
+ @Test void exceptionFiltersAndOverdueFocusNeverLeakAnotherCompany(){String event=base.event();out.db.update("UPDATE oms_message_outbox SET problem_code='CONFIGURATION',process_state='FAILED'");out.enqueue("OTHER","PRODUCT_PULL",1,1,"PRODUCTPULL1","other",0);Map<String,Object> result=out.list("QM","PRODUCT_PULL","","","","CONFIGURATION","FAILED",1,20);assertEquals(1L,result.get("total"));assertEquals(0L,out.list("OTHER","PRODUCT_PULL","","","","CONFIGURATION","FAILED",1,20).get("total"));assertEquals(0L,out.list("QM","PRODUCT_PULL","","","","","OVERDUE",1,20).get("total"));assertThrows(IllegalArgumentException.class,()->out.list("QM","","","","","arbitrary","",1,20));}
+ @Test void completionClearsProblemEvenAfterAnEarlierDeliveryFailure(){Map<String,Object> row=new HashMap<>();row.put("process_state","SUCCESS");row.put("problem_code","NETWORK");row.put("last_publish_error","older failure");assertEquals("NONE",MessageProblem.view(row).get("code"));row.put("process_state","PENDING");row.put("problem_code","NONE");assertEquals("DELIVERY",MessageProblem.view(row).get("code"));assertEquals("NETWORK",MessageProblem.exception(new RuntimeException(new java.net.ConnectException())));assertEquals("CONFIGURATION",MessageProblem.exception(new org.springframework.dao.EmptyResultDataAccessException(1)));}
+}

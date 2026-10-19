@@ -1,0 +1,271 @@
+{
+  "uid": "oms-messaging",
+  "title": "OMS Messaging",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "RabbitMQ monitoring availability",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max(oms_mq_broker_up)",
+          "legendFormat": "RabbitMQ monitor"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Ready messages",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_ready and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "title": "Unacknowledged messages",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_unacked and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "Actual consumers",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_consumers and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "title": "Due business tasks",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_due and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "title": "Oldest due work (seconds)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_oldest_due_sec and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "title": "Business processing rate",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (business_type,result) (rate(oms_message_process_total[5m]))",
+          "legendFormat": "{{business_type}} {{result}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "title": "Dead letters and pending review",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (business_type) (oms_mq_dead and on(instance,business_type) (oms_mq_metrics_fresh == 1))",
+          "legendFormat": "{{business_type}} broker"
+        },
+        {
+          "refId": "B",
+          "expr": "max by (business_type) (oms_mq_quarantine_pending and on(instance) (up{job=\"oms-messaging\"} == 1))",
+          "legendFormat": "{{business_type}} review"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "Business processing P95 (seconds)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oms-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (le,business_type) (rate(oms_message_processing_seconds_bucket[5m])))",
+          "legendFormat": "{{business_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "s"
+        },
+        "overrides": []
+      }
+    }
+  ]
+}

@@ -35,8 +35,9 @@
       <el-table-column v-if="columns[5].visible" label="市场价" width="110" align="right"><template slot-scope="s">{{ money(s.row.marketPrice) }}</template></el-table-column>
       <el-table-column v-if="columns[6].visible" label="保质期（天）" prop="validity" width="120" />
       <el-table-column v-if="columns[8].visible" label="修改时间" min-width="160"><template slot-scope="s">{{ parseTime(s.row.modifyTime) || '—' }}</template></el-table-column>
-      <el-table-column label="操作" width="150" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['goods:info:query']" type="text" @click="openDetail(s.row)">详情</el-button><el-button v-hasPermi="['goods:info:edit']" type="text" @click="edit(s.row)">修改</el-button><el-button v-hasPermi="['goods:info:remove']" type="text" @click="remove(s.row)">删除</el-button></template></el-table-column>
+      <el-table-column label="操作" width="230" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button v-hasPermi="['goods:info:query']" type="text" @click="openDetail(s.row)">详情</el-button><el-button v-if="Number(s.row.isPackage)===1" v-hasPermi="['goods:info:query']" type="text" @click="$refs.bundle.open(s.row)">套装组成</el-button><el-button v-hasPermi="['goods:info:edit']" type="text" @click="edit(s.row)">修改</el-button><el-button v-hasPermi="['goods:info:remove']" type="text" @click="remove(s.row)">删除</el-button></template></el-table-column>
     </el-table>
+    <goods-bundle ref="bundle"/>
     <pagination v-show="total > 0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="navigateQuery" />
 
     <el-dialog :title="form.id ? '修改商品资料' : '新增商品资料'" :visible.sync="dialog" width="760px" custom-class="workspace-form-dialog" append-to-body :close-on-click-modal="false" :before-close="closeForm">
@@ -62,7 +63,7 @@
     </el-dialog>
 
     <el-drawer title="商品资料详情" :visible.sync="drawer" :size="mobile ? '100%' : '680px'" append-to-body custom-class="goods-detail-drawer">
-      <div v-loading="detailLoading" class="goods-detail"><el-alert v-if="detailError" title="详情加载失败，请关闭后重试" type="error" :closable="false" /><template v-else-if="detail"><h2>{{ detail.goodsName }}</h2><p class="muted">{{ detail.skuSn }}</p><el-descriptions :column="1" border><el-descriptions-item v-for="field in detailFields" :key="field.key" :label="field.label">{{ detail[field.key] === null || detail[field.key] === undefined || detail[field.key] === '' ? '—' : detail[field.key] }}</el-descriptions-item><el-descriptions-item v-for="flag in flags" :key="flag.key" :label="flag.label">{{ Number(detail[flag.key]) === 1 ? '是' : '否' }}</el-descriptions-item></el-descriptions><div class="detail-actions"><el-button v-hasPermi="['wmsInventory:inventory:list']" size="small" @click="stock(false)">商品库存</el-button><el-button v-hasPermi="['channelInventory:inventory:list']" size="small" @click="stock(true)">渠道库存</el-button></div></template></div>
+      <div v-loading="detailLoading" class="goods-detail"><el-alert v-if="detailError" title="详情加载失败，请关闭后重试" type="error" :closable="false" /><template v-else-if="detail"><h2>{{ detail.goodsName }}</h2><p class="muted">{{ detail.skuSn }}</p><el-descriptions :column="1" border><el-descriptions-item v-for="field in detailFields" :key="field.key" :label="field.label">{{ detail[field.key] === null || detail[field.key] === undefined || detail[field.key] === '' ? '—' : detail[field.key] }}</el-descriptions-item><el-descriptions-item v-for="flag in flags" :key="flag.key" :label="flag.label">{{ Number(detail[flag.key]) === 1 ? '是' : '否' }}</el-descriptions-item></el-descriptions><el-alert v-if="Number(detail.isPackage)===1" title="请到套装组成查看库存模式：虚拟套装使用组件库存，实物套装使用成品库存。" type="info" :closable="false"/><div class="detail-actions"><el-button v-if="Number(detail.isPackage)===1" size="small" @click="$refs.bundle.open(detail)">套装组成</el-button><el-button v-hasPermi="['wmsInventory:inventory:list']" size="small" @click="stock(false)">商品库存</el-button><el-button v-hasPermi="['channelInventory:inventory:list']" size="small" @click="stock(true)">渠道库存</el-button></div></template></div>
     </el-drawer>
 
     <el-dialog title="导入商品" :visible.sync="upload.open" width="560px" custom-class="workspace-form-dialog" append-to-body :close-on-click-modal="false" :before-close="closeUpload">
@@ -86,12 +87,13 @@
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import GoodsNav from './GoodsNav'
+import GoodsBundle from './GoodsBundle'
 import { listInfo, getInfo, addInfo, updateInfo, delInfo, goodsOptions, exportListInfo, importBatch, toExamine } from '@/api/goods/info'
 import { getToken } from '@/utils/auth'
 import { checkPermi } from '@/utils/permission'
 const defaults = () => ({ pageNum: 1, pageSize: 10, goodsName: '', skuSn: '', goodsSn: '', barcodeSn: '', categoryCode: null, colorCode: null, sizeCode: null, isFd: null, isGift: null, isPackage: null })
 export default {
-  components: { GoodsNav, Treeselect },
+  components: { GoodsNav, Treeselect, GoodsBundle },
   data: () => ({
     query: defaults(), rows: [], total: 0, selected: [], loading: false, listError: false, seq: 0, showSearch: true,
     choices: { category: [], color: [], size: [] }, optionsError: false, dialog: false, form: {}, saving: false,
@@ -121,7 +123,7 @@ export default {
     save() { if (this.saving) return; this.$refs.form.validate(async valid => { if (!valid) return; this.saving = true; try { await (this.form.id ? updateInfo(this.form) : addInfo(this.form)); this.$modal.msgSuccess('商品保存成功'); this.dialog = false; this.load() } catch (_) { /* Preserve input. */ } finally { this.saving = false } }) },
     async remove(row) { const items = row ? [row] : this.selected; if (!items.length) return; try { await this.$modal.confirm(`确认删除 ${items.map(r => `${r.goodsName}（${r.skuSn}）`).join('、')}？有关联库存、分货或出入库记录的商品不能删除。`); await delInfo(items.map(r => r.id).join(',')); this.$modal.msgSuccess('删除成功'); this.load() } catch (_) { /* Cancel or reference guard. */ } },
     async openDetail(row) { const seq = ++this.detailSeq; this.drawer = true; this.detail = null; this.detailError = false; this.detailLoading = true; try { const r = await getInfo(row.id); if (seq === this.detailSeq) this.detail = r.data } catch (_) { if (seq === this.detailSeq) this.detailError = true } finally { if (seq === this.detailSeq) this.detailLoading = false } },
-    stock(channel) { this.drawer = false; this.$router.push({ path: channel ? '/oms-inventory/channelInventory' : '/oms-inventory/productInventory', query: { skuSn: this.detail.skuSn } }) },
+    async stock(channel) { if(Number(this.detail.isPackage)===1){const r=await import('@/api/goods/info').then(api=>api.getBundle(this.detail.id));if(r.data.inventory_mode!=='STOCKED'){this.$refs.bundle.open(this.detail);return}}this.drawer = false; this.$router.push({ path: channel ? '/oms-inventory/channelInventory' : '/oms-inventory/productInventory', query: { skuSn: this.detail.skuSn } }) },
     exportRows() { this.download('goods/info/export', { ...this.query }, `goods_${Date.now()}.xlsx`) },
     startImport() { this.upload.headers = { Authorization: 'Bearer ' + getToken() }; this.upload.hasFile = false; this.upload.open = true; this.$nextTick(() => this.$refs.upload.clearFiles()) },
     fileChanged(file, files) { this.upload.hasFile = files.length > 0 },

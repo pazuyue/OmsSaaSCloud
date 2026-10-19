@@ -81,7 +81,7 @@ export default {
       drawer: false, detail: null, detailLoading: false, detailError: false, tab: 'warehouses',
       tabRows: [], tabTotal: 0, tabLoading: false, tabError: false, tabQuery: { pageNum: 1, pageSize: 20 }, historyOperation: '',
       checkNames: { CONSISTENT: '一致', DIFFERENT: '存在差异', INCOMPLETE: '明细不完整' },
-      operationNames: { RECEIVE: '入库', ADJUST: '库存调整', LOCK: '锁库', UNLOCK: '释放', CONSUME: '出库' },
+      operationNames: { PROCESS_OUT:'加工消耗出库',PROCESS_IN:'加工产出入库',PROCESS_LOCK:'加工投入占用',PROCESS_RELEASE:'加工余量释放',RECEIVE: '入库', ADJUST: '库存调整', LOCK: '锁库', UNLOCK: '释放', CONSUME: '出库' },
       releaseNames: { NONE: '未释放', PENDING: '释放中', PARTIAL: '部分释放', RELEASED: '释放完成', FAILED: '释放失败' },
       stockColumns: [{ key: 'ActualNumber', label: '实际' }, { key: 'AvailableNumber', label: '可用' }, { key: 'LockNumber', label: '锁定' }],
       summaryColumns: [{ key: 'totalStock', label: '总库存' }, { key: 'availableStock', label: '公司可用（含次品）' }, { key: 'allocatedStock', label: '未占用锁库' }, { key: 'reservedStock', label: '订单逻辑预占' }],

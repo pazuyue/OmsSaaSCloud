@@ -22,4 +22,16 @@ class OrderSalesDocumentServiceTest {
         doReturn(R.ok(true)).when(warehouse).salesDocument(anyString(),anyMap(),anyString());sync.sync("VERIFY",shipment);row=fixture.db.queryForMap("SELECT * FROM oms_order_sales_document_sync");assertEquals(number(row,"dirty_version"),number(row,"synced_dirty_version"));assertNull(row.get("next_attempt"));verify(warehouse,times(1)).salesDocument(anyString(),anyMap(),anyString());
     }
 
+    @Test void dirtyVersionAndOutboxCommitOrRollbackTogether(){
+        fixture.db.update("DELETE FROM oms_message_attempt");fixture.db.update("DELETE FROM oms_message_outbox");
+        com.oms.messaging.MessageOutbox out=new com.oms.messaging.MessageOutbox();out.db=fixture.db;
+        org.springframework.test.util.ReflectionTestUtils.setField(out,"transactionManager",new org.springframework.jdbc.datasource.DataSourceTransactionManager(fixture.db.getDataSource()));
+        org.springframework.test.util.ReflectionTestUtils.setField(out,"service","order");
+        org.springframework.beans.factory.ObjectProvider<com.oms.messaging.MessageOutbox> provider=mock(org.springframework.beans.factory.ObjectProvider.class);when(provider.getIfAvailable()).thenReturn(out);org.springframework.test.util.ReflectionTestUtils.setField(fixture.repository,"messages",provider);
+        org.springframework.transaction.support.TransactionTemplate tx=new org.springframework.transaction.support.TransactionTemplate(new org.springframework.jdbc.datasource.DataSourceTransactionManager(fixture.db.getDataSource()));
+        long before=fixture.db.queryForObject("SELECT dirty_version FROM oms_order_sales_document_sync WHERE shipment_id=?",Long.class,shipment);
+        tx.execute(status->{fixture.repository.shipmentChanged("VERIFY",shipment);status.setRollbackOnly();return null;});
+        assertEquals(before,fixture.db.queryForObject("SELECT dirty_version FROM oms_order_sales_document_sync WHERE shipment_id=?",Long.class,shipment));assertEquals(0,fixture.db.queryForObject("SELECT COUNT(*) FROM oms_message_outbox",Integer.class));
+        tx.execute(status->{fixture.repository.shipmentChanged("VERIFY",shipment);return null;});assertEquals(before+1,fixture.db.queryForObject("SELECT business_version FROM oms_message_outbox",Long.class));assertEquals("order",fixture.db.queryForObject("SELECT service_code FROM oms_message_outbox",String.class));
+    }
 }

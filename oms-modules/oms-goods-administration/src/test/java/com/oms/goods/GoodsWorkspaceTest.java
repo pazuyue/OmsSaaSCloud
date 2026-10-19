@@ -29,13 +29,14 @@ public class GoodsWorkspaceTest {
         @Bean DataSource dataSource(){String url=System.getenv("GOODS_TEST_URL");if(url==null || !url.contains("/goods_workspace_test?"))throw new IllegalStateException("Disposable schema required");return new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD"));}
         @Bean JdbcTemplate jdbcTemplate(DataSource ds){return new JdbcTemplate(ds);}
         @Bean PlatformTransactionManager transactionManager(DataSource ds){return new DataSourceTransactionManager(ds);}
+        @Bean com.oms.goods.service.goods.impl.GoodsBundleService bundles(){return new com.oms.goods.service.goods.impl.GoodsBundleService();}
         @Bean GoodsWorkspaceService goods(){return new GoodsWorkspaceService();}
         @Bean GoodsReferenceClient references(){return (company,skus,source)->{if(unavailable.get())throw new IllegalStateException("offline");return R.ok(referenced.get()?skus:Collections.emptyList());};}
     }
     @BeforeAll static void init(){context=new AnnotationConfigApplicationContext(Config.class);db=context.getBean(JdbcTemplate.class);goods=context.getBean(GoodsWorkspaceService.class);}
     @AfterAll static void close(){context.close();}
     @BeforeEach void seed(){
-        for(String table:Arrays.asList("goods_import_row","goods_import_batch","goods_sku_sn_info","goods_category","goods_color","goods_size","goods_master_lock"))db.update("DELETE FROM "+table);
+        for(String table:Arrays.asList("goods_bundle_component","goods_bundle_version","goods_bundle","goods_import_row","goods_import_batch","goods_sku_sn_info","goods_category","goods_color","goods_size","goods_master_lock"))db.update("DELETE FROM "+table);
         referenced.set(false);unavailable.set(false);
         long root=goods.saveMaster("QM","category",data("name","服装","pid",0));long second=goods.saveMaster("QM","category",data("name","上装","pid",root));category=goods.saveMaster("QM","category",data("name","衬衫","pid",second));
         color=goods.saveMaster("QM","color",data("colorName","白色","outColorCode","WHITE"));size=goods.saveMaster("QM","size",data("sizeName","M","outSizeCode","MEDIUM","sortOrder",20));
@@ -113,7 +114,7 @@ public class GoodsWorkspaceTest {
 
     @Test @SuppressWarnings("unchecked") void exchangePickerSearchIsPagedLiteralAndReturnsSpecsWithoutCrossCompany(){
         goods.saveGoods("QM",product("A"),"tester");goods.saveGoods("QM",product("B"),"tester");goods.saveGoods("QM",product("C"),"tester");db.update("UPDATE goods_sku_sn_info SET company_code='OTHER',sku_sn='A' WHERE sku_sn='C'");
-        com.oms.goods.controller.OrderGoodsCatalogController api=new com.oms.goods.controller.OrderGoodsCatalogController();org.springframework.test.util.ReflectionTestUtils.setField(api,"workspace",goods);org.springframework.test.util.ReflectionTestUtils.setField(api,"jdbc",db);
+        com.oms.goods.controller.OrderGoodsCatalogController api=new com.oms.goods.controller.OrderGoodsCatalogController();org.springframework.test.util.ReflectionTestUtils.setField(api,"workspace",goods);org.springframework.test.util.ReflectionTestUtils.setField(api,"jdbc",db);org.springframework.test.util.ReflectionTestUtils.setField(api,"bundles",context.getBean(com.oms.goods.service.goods.impl.GoodsBundleService.class));
         Map<String,Object> page=api.search("qm",data("field","goodsSn","keyword","STYLE-1","pageNum",1,"pageSize",1)).getData();assertEquals(2L,((Number)page.get("total")).longValue());Map<String,Object> row=((List<Map<String,Object>>)page.get("rows")).get(0);assertEquals("白色",row.get("colorName"));assertEquals("M",row.get("sizeName"));
         Map<String,Object> exact=api.search("QM",data("field","skuSn","keyword","A")).getData();assertEquals(1L,((Number)exact.get("total")).longValue());assertEquals(0L,((Number)api.search("QM",data("field","goodsName","keyword","%")).getData().get("total")).longValue());
         assertEquals("白色",api.goods("QM",Arrays.asList("A")).getData().get(0).get("color_name"));assertThrows(IllegalArgumentException.class,()->api.search("QM",data("field","company_code","keyword","OTHER")));

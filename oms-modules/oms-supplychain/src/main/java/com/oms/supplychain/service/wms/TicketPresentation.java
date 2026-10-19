@@ -6,7 +6,7 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 /** One read model for list, related documents, detail and export. Never advances workflow. */
 public final class TicketPresentation {
     private TicketPresentation() {}
-    public static String typeLabel(String code){Map<String,String> types=new java.util.LinkedHashMap<>();types.put("PURCHASE_IN","采购入库");types.put("SALE_OUT","销售出库");types.put("REFUND_IN","退款退回入库");types.put("EXCHANGE_IN","换货退回入库");types.put("EXCHANGE_OUT","换货换出出库");types.put("SALE_RETURN_IN","销售退货入库");types.put("PURCHASE_RETURN_OUT","采购退货出库");types.put("TRANSFER_IN","调拨入库");types.put("TRANSFER_OUT","调拨出库");types.put("ADJUST_IN","其他入库");types.put("ADJUST_OUT","其他出库");types.put("OTHER_IN","其他入库");types.put("OTHER_OUT","其他出库");return types.getOrDefault(code,code);}
+    public static String typeLabel(String code){Map<String,String> types=new java.util.LinkedHashMap<>();types.put("ASSEMBLY_OUT","组装耗料出库");types.put("ASSEMBLY_IN","组装成品入库");types.put("DISASSEMBLY_OUT","拆卸成品出库");types.put("DISASSEMBLY_IN","拆卸组件入库");types.put("PURCHASE_IN","采购入库");types.put("SALE_OUT","销售出库");types.put("REFUND_IN","退款退回入库");types.put("EXCHANGE_IN","换货退回入库");types.put("EXCHANGE_OUT","换货换出出库");types.put("SALE_RETURN_IN","销售退货入库");types.put("PURCHASE_RETURN_OUT","采购退货出库");types.put("TRANSFER_IN","调拨入库");types.put("TRANSFER_OUT","调拨出库");types.put("ADJUST_IN","其他入库");types.put("ADJUST_OUT","其他出库");types.put("OTHER_IN","其他入库");types.put("OTHER_OUT","其他出库");return types.getOrDefault(code,code);}
     public static String enrich(String source) {
         String totals = "SELECT b.*,GREATEST(number_actually-number_posted,0) number_pending,"
             + "CASE WHEN cutoff_state='COMPLETED' AND cancelled_quantity>0 AND number_actually>0 THEN 'CLOSED' WHEN status_ticket=5 THEN 'CANCELED' WHEN shared_pending_count>0 OR inventory_status=3 OR dispatch_state IN('FAILED','UNKNOWN') OR (warehouse_status IN('FULFILLED','CLOSED') AND receipt_final=0) THEN 'ATTENTION' "
@@ -23,6 +23,7 @@ public final class TicketPresentation {
         r.put("documentType",type);r.put("documentTypeLabel",typeLabel(type));r.put("directionLabel",outbound?"出库":"入库");
         r.put("modeLabel",real?"真实"+(outbound?"出库":"入库"):"虚拟"+(outbound?"出库":"入库"));
         r.put("sourceLabel",typeLabel(type));
+        if(type.startsWith("ASSEMBLY_")||type.startsWith("DISASSEMBLY_")){r.put("modeLabel","加工记账凭证");r.put("executionLabel","加工结果已确认");r.put("postingLabel","已成组记账");r.put("progressLabel","已完成");r.put("nextAction","请从来源套装加工单查看投入与产出；本凭证不重复通知仓库或记账。");r.put("cancelBlockedReason","请从套装加工单停止剩余作业。");return r;}
         r.put("providerLabel","QIMEN".equals(r.get("provider"))?"奇门":"JD_HUFU".equals(r.get("provider"))?"京东虎符":text(r.get("provider")));
         if(outbound)return outbound(r,real,ended,received,posted,progress,dispatch);
         String execution=ended?"收货结束":received>0?"部分收货":real?"等待收货回传":"待自动收货";

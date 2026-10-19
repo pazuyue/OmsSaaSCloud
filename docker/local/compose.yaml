@@ -250,7 +250,14 @@
         "SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR": "nacos:8848",
         "SPRING_CLOUD_SENTINEL_ENABLED": "false",
         "SPRING_CLOUD_SENTINEL_EAGER": "false",
-        "SPRING_REDIS_HOST": "redis"
+        "SPRING_REDIS_HOST": "redis",
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "health,info,prometheus",
+        "OMS_MESSAGING_MONITOR_URL": "http://rabbitmq:15672",
+        "OMS_MESSAGING_MONITOR_USERNAME": "${RABBITMQ_MONITOR_USER}",
+        "OMS_MESSAGING_MONITOR_PASSWORD": "${RABBITMQ_MONITOR_PASSWORD}",
+        "OMS_MESSAGING_MONITOR_VHOST": "oms",
+        "OMS_MESSAGING_MONITOR_GRAFANA_URL": "http://localhost:13000/d/oms-messaging",
+        "OMS_MESSAGING_MONITOR_PROMETHEUS_URL": "http://localhost:19090/alerts"
       },
       "volumes": [
         "./artifacts/ruoyi-modules-system.jar:/app/app.jar:ro"
@@ -284,7 +291,8 @@
           "max-size": "10m",
           "max-file": "3"
         }
-      }
+      },
+      "stop_grace_period": "60s"
     },
     "gen": {
       "image": "${JAVA_RUNTIME_IMAGE:-docker_ruoyi-auth:latest}",
@@ -690,7 +698,23 @@
         "SPRING_CLOUD_SENTINEL_EAGER": "false",
         "SPRING_REDIS_HOST": "redis",
         "OMS_CHANNEL_ENCRYPTION_KEY": "${OMS_CHANNEL_ENCRYPTION_KEY}",
-        "OMS_CHANNEL_SIMULATION_ENABLED": "true"
+        "OMS_CHANNEL_SIMULATION_ENABLED": "true",
+        "OMS_MESSAGING_ENABLED": "true",
+        "OMS_MESSAGING_SERVICE": "channel",
+        "SPRING_RABBITMQ_HOST": "rabbitmq",
+        "SPRING_RABBITMQ_PORT": "5672",
+        "SPRING_RABBITMQ_USERNAME": "${RABBITMQ_USER}",
+        "SPRING_RABBITMQ_PASSWORD": "${RABBITMQ_PASSWORD}",
+        "SPRING_RABBITMQ_VIRTUAL_HOST": "oms",
+        "SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE": "correlated",
+        "SPRING_RABBITMQ_PUBLISHER_RETURNS": "true",
+        "SPRING_RABBITMQ_TEMPLATE_MANDATORY": "true",
+        "SPRING_RABBITMQ_CONNECTION_TIMEOUT": "2000",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_PREFETCH": "5",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_DEFAULT_REQUEUE_REJECTED": "false",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_MISSING_QUEUES_FATAL": "false",
+        "MANAGEMENT_HEALTH_RABBIT_ENABLED": "false",
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "health,info,prometheus"
       },
       "volumes": [
         "./artifacts/oms-channel.jar:/app/app.jar:ro"
@@ -724,7 +748,8 @@
           "max-size": "10m",
           "max-file": "3"
         }
-      }
+      },
+      "stop_grace_period": "60s"
     },
     "nginx": {
       "image": "nginx:latest",
@@ -779,7 +804,23 @@
         "SPRING_CLOUD_SENTINEL_ENABLED": "false",
         "SPRING_CLOUD_SENTINEL_EAGER": "false",
         "SPRING_REDIS_HOST": "redis",
-        "OMS_ORDER_ENCRYPTION_KEY": "${OMS_ORDER_ENCRYPTION_KEY:-}"
+        "OMS_ORDER_ENCRYPTION_KEY": "${OMS_ORDER_ENCRYPTION_KEY:-}",
+        "OMS_MESSAGING_ENABLED": "true",
+        "OMS_MESSAGING_SERVICE": "order",
+        "SPRING_RABBITMQ_HOST": "rabbitmq",
+        "SPRING_RABBITMQ_PORT": "5672",
+        "SPRING_RABBITMQ_USERNAME": "${RABBITMQ_USER}",
+        "SPRING_RABBITMQ_PASSWORD": "${RABBITMQ_PASSWORD}",
+        "SPRING_RABBITMQ_VIRTUAL_HOST": "oms",
+        "SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE": "correlated",
+        "SPRING_RABBITMQ_PUBLISHER_RETURNS": "true",
+        "SPRING_RABBITMQ_TEMPLATE_MANDATORY": "true",
+        "SPRING_RABBITMQ_CONNECTION_TIMEOUT": "2000",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_PREFETCH": "5",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_DEFAULT_REQUEUE_REJECTED": "false",
+        "SPRING_RABBITMQ_LISTENER_SIMPLE_MISSING_QUEUES_FATAL": "false",
+        "MANAGEMENT_HEALTH_RABBIT_ENABLED": "false",
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "health,info,prometheus"
       },
       "volumes": [
         "./artifacts/oms-order.jar:/app/app.jar:ro"
@@ -813,7 +854,8 @@
           "max-size": "10m",
           "max-file": "3"
         }
-      }
+      },
+      "stop_grace_period": "60s"
     },
     "wms-simulator": {
       "image": "python:3.10-slim-bookworm",
@@ -851,12 +893,130 @@
           "max-file": "2"
         }
       }
+    },
+    "rabbitmq": {
+      "image": "rabbitmq:4.3.6-management@sha256:54cb013d76cd1fd6c0a0708f34062ad61c452bb6f016b434c6c33f1a765d2b58",
+      "container_name": "oms-local-rabbitmq",
+      "hostname": "oms-local-rabbitmq",
+      "restart": "unless-stopped",
+      "environment": {
+        "TZ": "Asia/Shanghai",
+        "RABBITMQ_DEFAULT_USER": "${RABBITMQ_USER}",
+        "RABBITMQ_DEFAULT_PASS": "${RABBITMQ_PASSWORD}",
+        "RABBITMQ_DEFAULT_VHOST": "oms"
+      },
+      "ports": [
+        "127.0.0.1:15672:15672",
+        "127.0.0.1:15673:5672"
+      ],
+      "volumes": [
+        "rabbitmq-data:/var/lib/rabbitmq",
+        "./monitoring/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "rabbitmq-diagnostics",
+          "-q",
+          "ping"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 20,
+        "start_period": "30s"
+      },
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "prometheus": {
+      "image": "prom/prometheus@sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e",
+      "container_name": "oms-local-prometheus",
+      "restart": "unless-stopped",
+      "ports": [
+        "127.0.0.1:19090:9090"
+      ],
+      "volumes": [
+        "./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro",
+        "./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro",
+        "prometheus-data:/prometheus"
+      ],
+      "command": [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.retention.time=15d"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "wget",
+          "-q",
+          "-O",
+          "-",
+          "http://127.0.0.1:9090/-/ready"
+        ],
+        "interval": "15s",
+        "timeout": "5s",
+        "retries": 10
+      },
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+    },
+    "grafana": {
+      "image": "grafana/grafana@sha256:dbbc38ea21103cefb50396340cd88afec779c7e070b0a7bf5a75b4ce46651d3f",
+      "container_name": "oms-local-grafana",
+      "restart": "unless-stopped",
+      "ports": [
+        "127.0.0.1:13000:3000"
+      ],
+      "environment": {
+        "GF_SECURITY_ADMIN_USER": "${GRAFANA_ADMIN_USER}",
+        "GF_SECURITY_ADMIN_PASSWORD": "${GRAFANA_ADMIN_PASSWORD}",
+        "GF_USERS_ALLOW_SIGN_UP": "false",
+        "GF_AUTH_ANONYMOUS_ENABLED": "false"
+      },
+      "volumes": [
+        "./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro",
+        "./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro",
+        "grafana-data:/var/lib/grafana"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "wget",
+          "-q",
+          "-O",
+          "-",
+          "http://127.0.0.1:3000/api/health"
+        ],
+        "interval": "15s",
+        "timeout": "5s",
+        "retries": 10
+      },
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
     }
   },
   "volumes": {
     "mysql-data": {},
     "redis-data": {},
     "uploads": {},
-    "wms-simulator-data": {}
+    "wms-simulator-data": {},
+    "rabbitmq-data": {},
+    "prometheus-data": {},
+    "grafana-data": {}
   }
 }

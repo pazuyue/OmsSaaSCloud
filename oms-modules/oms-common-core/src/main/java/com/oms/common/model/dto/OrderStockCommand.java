@@ -3,7 +3,7 @@ package com.oms.common.model.dto;
 import lombok.Data;
 import java.util.*;
 
-/** Immutable business identity is the platform order line, not a retry UUID. */
+/** Demand identity is the platform line plus physical SKU; virtual kit parents hold no stock. */
 @Data
 public class OrderStockCommand {
     private long channelId;
@@ -14,5 +14,6 @@ public class OrderStockCommand {
         private String platformOid;
         private String skuSn;
         private int quantity;
+        private int componentQuantity;
     }
 }

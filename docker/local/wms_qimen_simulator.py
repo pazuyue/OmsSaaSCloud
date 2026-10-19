@@ -50,15 +50,24 @@ class Simulator:
             method=params.get('method','');prefix='taobao.qimen.'
             if not method.startswith(prefix):raise ValueError('不支持的模拟方法')
             method=method[len(prefix):]
-            if method not in ('deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','returnorder.create','returnorder.query','order.cancel'):raise ValueError('不支持的模拟方法')
-            cancel=method=='order.cancel';kind='return' if method.startswith('return') or cancel and root.findtext('orderType') in ('HHRK','THRK') else 'entry' if method.startswith('entry') or cancel and root.findtext('orderType')=='CGRK' else 'delivery'
-            create=method.endswith('.create');head=root.find(kind+'Order') if create else root
+            if method not in ('deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','returnorder.create','returnorder.query','order.cancel','storeprocess.create'):raise ValueError('不支持的模拟方法')
+            cancel=method=='order.cancel';process=method=='storeprocess.create' or cancel and root.findtext('orderType')=='CNJG';kind='process' if process else 'return' if method.startswith('return') or cancel and root.findtext('orderType') in ('HHRK','THRK') else 'entry' if method.startswith('entry') or cancel and root.findtext('orderType')=='CGRK' else 'delivery'
+            create=method.endswith('.create');head=root if process else root.find(kind+'Order') if create else root
             if head is None:raise ValueError('模拟请求缺少单据头')
             number_field=kind+'OrderCode' if create or kind in ('entry','return') and not cancel else 'orderCode'
             sn=head.findtext(number_field,'') or head.findtext('orderCode','');owner=head.findtext('ownerCode','');warehouse=head.findtext('warehouseCode','')
             if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',sn) or not owner or not warehouse:raise ValueError('模拟请求缺少有效单号、货主或仓库')
             total=0
-            if create:
+            if create and process:
+                if root.findtext('serviceType') not in ('1','2') or root.findtext('orderType')!='CNJG':raise ValueError('加工类型无效')
+                for group in ['materialitems','productitems']:
+                    items=root.findall(group+'/item')
+                    if not 1<=len(items)<=500:raise ValueError('加工投入产出明细缺失')
+                    for item in items:
+                        if not item.findtext('itemCode') or not 0<int(item.findtext('quantity','0'))<=100000000:raise ValueError('加工SKU或数量无效')
+                total=int(root.findtext('planQty','0'))
+                if total<=0:raise ValueError('加工计划数量无效')
+            if create and not process:
                 lines=root.findall('orderLines/orderLine')
                 if not 1<=len(lines)<=500:raise ValueError('模拟请求商品明细须为1至500行')
                 seen=set()
@@ -72,7 +81,7 @@ class Simulator:
                 old=db.execute('SELECT * FROM documents WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',key).fetchone()
                 db.execute('INSERT INTO events(customer,kind,sn,action,body_hash,created_at) VALUES (?,?,?,?,?,?)',(customer,kind,sn,'CANCEL' if cancel else 'CREATE' if create else 'QUERY',digest,now))
                 if create and old is None:
-                    external='SIMOUT' if kind=='delivery' else 'SIMIN';external+='_'+uuid.uuid4().hex[:20]
+                    external='SIMPROC' if process else 'SIMOUT' if kind=='delivery' else 'SIMIN';external+='_'+uuid.uuid4().hex[:20]
                     db.execute('INSERT INTO documents VALUES (?,?,?,?,?,?,?,?,?,?)',(*key,external,digest,total,'ACCEPT',now))
                     old=db.execute('SELECT * FROM documents WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',key).fetchone()
                 elif create and old['body_hash']!=digest:return reply(False,'DUPLICATE','模拟单号已存在且商品快照不同',{kind+'OrderId':old['external_id']})

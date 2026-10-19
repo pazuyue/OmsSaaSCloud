@@ -1,0 +1,23 @@
+{
+  "stamp": "20261019122654",
+  "sku": "AUTO20261019122654",
+  "channel_id": 67,
+  "checks": [
+    "default automatic pull",
+    "exact automatic binding",
+    "multiple links share OMS SKU",
+    "unmatched reason",
+    "grouped items + lazy SKU pages",
+    "unchanged binding no-op",
+    "precise redacted platform payload",
+    "centralized settings",
+    "binding comparison UI"
+  ],
+  "summary": {
+    "total": 3,
+    "bound": 2,
+    "unbound": 1,
+    "review": 0,
+    "auto_bound": 2
+  }
+}

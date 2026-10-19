@@ -39,7 +39,7 @@ public class OrderStockService {
         require(command.getLines()!=null&&command.getLines().size()<=500,"订单明细超过500行");
         
         Set<String> seen=new HashSet<>();List<OrderStockCommand.Line> lines=new ArrayList<>(command.getLines());
-        for(OrderStockCommand.Line line:lines){require(line.getPlatformOid()!=null&&line.getPlatformOid().matches("[0-9]{1,64}")&&seen.add(line.getPlatformOid()),"子订单号无效或重复");require(line.getSkuSn()!=null&&!line.getSkuSn().trim().isEmpty()&&line.getSkuSn().length()<=128&&line.getSkuSn().equals(line.getSkuSn().trim()),"SKU无效");require(line.getQuantity()>0&&line.getQuantity()<=100000000,"需求数量无效");}
+        for(OrderStockCommand.Line line:lines){require(line.getPlatformOid()!=null&&line.getPlatformOid().matches("[0-9]{1,64}")&&seen.add(com.oms.common.util.FulfillmentLineKey.of(line.getPlatformOid(),line.getSkuSn())),"子订单号无效或重复");require(line.getSkuSn()!=null&&!line.getSkuSn().trim().isEmpty()&&line.getSkuSn().length()<=128&&line.getSkuSn().equals(line.getSkuSn().trim()),"SKU无效");require(line.getQuantity()>0&&line.getQuantity()<=100000000,"需求数量无效");require(line.getComponentQuantity()>=0&&line.getComponentQuantity()<=100000&&(line.getComponentQuantity()==0||line.getQuantity()%line.getComponentQuantity()==0),"套装组件配比无效");}
         lines.sort(Comparator.comparing(OrderStockCommand.Line::getSkuSn).thenComparing(OrderStockCommand.Line::getPlatformOid));
         // All writers (allocation, receiving, adjustment, demand) share the company/SKU mutex.
         for(String sku:new TreeSet<String>(){{for(OrderStockCommand.Line line:lines)add(line.getSkuSn());}}){
@@ -50,18 +50,19 @@ public class OrderStockService {
         List<Map<String,Object>> result=new ArrayList<>();
         Map<String,List<Map<String,Object>>> pending=new LinkedHashMap<>();
         for(OrderStockCommand.Line line:lines){
-            List<Map<String,Object>> found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? FOR UPDATE",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid());
+            List<Map<String,Object>> found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? AND sku_sn=? FOR UPDATE",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn());
             if(found.isEmpty()){
                 require("register".equals(action),"尚未登记订单需求");
-                jdbc.update("INSERT INTO oms_order_stock_demand(company_code,channel_id,platform_tid,platform_oid,sku_sn,demand_quantity) VALUES (?,?,?,?,?,?)",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn(),line.getQuantity());
-                found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=?",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid());
+                jdbc.update("INSERT INTO oms_order_stock_demand(company_code,channel_id,platform_tid,platform_oid,sku_sn,demand_quantity,component_quantity) VALUES (?,?,?,?,?,?,?)",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn(),line.getQuantity(),line.getComponentQuantity());
+                found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? AND sku_sn=?",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn());
                 Map<String,Object> demand=found.get(0);event(demand,"REGISTER","登记销售需求，等待转单逻辑预占");
             }
             Map<String,Object> demand=found.get(0);
             // A canceled demand is immutable. A new replacement round uses a new reference.
             require("cancel".equals(action)||"query".equals(action)||!"CANCELLED".equals(s(demand,"status")),"订单需求已作废，不允许重新登记或预占");
+            if("register".equals(action)||"reserve".equals(action))require(n(demand,"component_quantity")==line.getComponentQuantity(),"套装组件配比与原需求不同");
             require(s(demand,"sku_sn").equals(line.getSkuSn())&&n(demand,"demand_quantity")==line.getQuantity(),"已登记需求与本次参数不同，订单更新不属于一期，请核对原单");
-            if(("register".equals(action)||"reserve".equals(action))&&n(demand,"reserved_quantity")==0&&n(demand,"demand_quantity")>n(demand,"cancelled_quantity")){
+            if(("register".equals(action)||"reserve".equals(action))&&n(demand,"demand_quantity")-n(demand,"cancelled_quantity")>n(demand,"reserved_quantity")){
                 jdbc.update("UPDATE oms_order_stock_demand SET allow_public_stock=? WHERE id=?",command.isAllowPublicStock()?1:0,demand.get("id"));
                 if("reserve".equals(action))pending.computeIfAbsent(line.getSkuSn(),k->new ArrayList<>()).add(demand);
             }
@@ -118,13 +119,22 @@ public class OrderStockService {
         }
     }
 
-    private void event(Map<String,Object> demand,String action,String message){jdbc.update("INSERT INTO oms_order_stock_event(company_code,demand_id,action,quantity,message) VALUES (?,?,?,?,?)",demand.get("company_code"),demand.get("id"),action,demand.get("demand_quantity"),message);}
+    private void event(Map<String,Object> demand,String action,String message){event(demand,action,message,n(demand,"demand_quantity"));}
+    private void event(Map<String,Object> demand,String action,String message,long quantity){jdbc.update("INSERT INTO oms_order_stock_event(company_code,demand_id,action,quantity,message) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity),message=VALUES(message)",demand.get("company_code"),demand.get("id"),action,quantity,message);}
     /** All-or-none per order/SKU; keep platform-line demand and source traceability. */
     private void reserve(List<Map<String,Object>> demands,boolean allowPublic){
         Map<String,Object> demand=demands.get(0);
         String company=s(demand,"company_code"),sku=s(demand,"sku_sn");
-        long quantity=demands.stream().mapToLong(d->n(d,"demand_quantity")-n(d,"cancelled_quantity")).sum();
+        long quantity=demands.stream().mapToLong(d->n(d,"demand_quantity")-n(d,"cancelled_quantity")-n(d,"reserved_quantity")).sum();
         List<Map<String,Object>> locks=jdbc.queryForList("SELECT s.*,b.store_code,r.id result_id FROM rule_stock_reservation s JOIN wms_inventory_batch b ON b.id=s.batch_id AND b.company_code=s.company_code AND b.sku_sn=s.sku_sn JOIN rule_stock_result r ON r.company_code=s.company_code AND r.rule_id=s.rule_id AND r.sku_sn=s.sku_sn JOIN rule_stock_info h ON h.company_code=s.company_code AND h.id=s.rule_id WHERE s.company_code=? AND s.channel_id=? AND s.sku_sn=? AND r.status='SUCCESS' AND r.release_status='NONE' AND h.run_action<>'RELEASE' AND s.original_quantity>s.occupied_quantity+s.consumed_quantity+s.released_quantity ORDER BY s.id",company,demand.get("channel_id"),sku);
+        for(Map<String,Object> line:demands)line.put("attempt_quantity",n(line,"demand_quantity")-n(line,"cancelled_quantity")-n(line,"reserved_quantity"));
+        if(demands.stream().allMatch(d->n(d,"component_quantity")>0)){
+            long lockFree=locks.stream().mapToLong(l->n(l,"original_quantity")-n(l,"occupied_quantity")-n(l,"consumed_quantity")-n(l,"released_quantity")).sum();
+            long physicalFree=scalar("SELECT COALESCE(SUM(zp_available_number),0) FROM wms_inventory WHERE company_code=? AND sku_sn=?",company,sku)-publicReserved(jdbc,company,sku);
+            long companyFree=scalar("SELECT available_stock FROM oms_inventory WHERE company_code=? AND sku_sn=?",company,sku);
+            long capacity=lockFree+(allowPublic?Math.max(0,Math.min(physicalFree,companyFree)):0);
+            if(capacity<quantity){quantity=0;for(Map<String,Object> line:demands){long take=Math.min(n(line,"attempt_quantity"),Math.max(0,capacity));line.put("attempt_quantity",take);capacity-=take;quantity+=take;if(take==0)waitForStock(Collections.singletonList(line),allowPublic?"SHORTAGE":"PUBLIC_DISABLED","套装组件库存不足，保留剩余需求等待组件预占");}if(quantity==0)return;}
+        }
         Map<Map<String,Object>,Long> takes=new LinkedHashMap<>();long remaining=quantity;
         for(Map<String,Object> lock:locks){long take=Math.min(remaining,n(lock,"original_quantity")-n(lock,"occupied_quantity")-n(lock,"consumed_quantity")-n(lock,"released_quantity"));if(take>0)takes.put(lock,take);remaining-=take;if(remaining==0)break;}
         long publicQuantity=remaining,lockedQuantity=quantity-remaining;
@@ -144,7 +154,7 @@ public class OrderStockService {
             require(jdbc.update("UPDATE rule_stock_result SET occupied_quantity=occupied_quantity+? WHERE id=? AND status='SUCCESS' AND release_status='NONE'",take,lock.get("result_id"))==1,"锁库单已开始释放，请重试");
         }
         for(Map<String,Object> line:demands){
-            long left=n(line,"demand_quantity")-n(line,"cancelled_quantity"),locked=0;
+            long left=n(line,"attempt_quantity"),locked=0;if(left==0)continue;long attempt=left;
             for(Map.Entry<Map<String,Object>,Long> entry:takes.entrySet()){
                 long take=Math.min(left,entry.getValue());if(take==0)continue;
                 Map<String,Object> lock=entry.getKey();
@@ -152,8 +162,8 @@ public class OrderStockService {
                 entry.setValue(entry.getValue()-take);left-=take;locked+=take;
             }
             if(left>0)jdbc.update("INSERT INTO oms_order_stock_source(demand_id,company_code,sku_sn,store_code,source_type,source_id,quantity,reserved) VALUES (?,?,?,'','PUBLIC_EXTRA',0,?,1)",line.get("id"),company,sku,left);
-            jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=demand_quantity-cancelled_quantity,status='RESERVED',reason='',reason_code='' WHERE id=?",line.get("id"));
-            event(line,"RESERVE","渠道锁库预占 "+locked+" 件，公共库存补占 "+left+" 件，尚未确定发货仓");
+            long next=n(line,"reserved_quantity")+attempt;boolean full=next==n(line,"demand_quantity")-n(line,"cancelled_quantity");jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=?,status=?,reason=?,reason_code=? WHERE id=?",next,full?"RESERVED":"PART_RESERVED",full?"":"套装组件部分逻辑预占，等待余量库存",full?"":"SHORTAGE",line.get("id"));
+            event(line,"RESERVE","渠道锁库预占 "+locked+" 件，公共库存补占 "+left+" 件，尚未确定发货仓",attempt);
         }
     }
     private void waitForStock(List<Map<String,Object>> demands,String code,String reason){for(Map<String,Object> demand:demands)jdbc.update("UPDATE oms_order_stock_demand SET reason=?,reason_code=?,status='WAIT_RESERVE' WHERE id=?",reason,code,demand.get("id"));}

@@ -46,3 +46,9 @@ export const reviewRefundParcel=(id,plan,data)=>request({url:`${root}/business/$
 export const refundParcelDocument = (id,parcel,action,data) => request({url:`/order/refunds/business/${id}/parcels/${parcel}/document/${action}`,method:'post',data})
 
 export const refundReturnRuleShops=()=>request({url:`${root}/parcel-configs/catalog`})
+
+export const refundReturnRules=params=>request({url:`${root}/parcel-configs`,params})
+
+export const evaluateRefundReceipt=(id,parcel,event,data)=>request({url:`${root}/business/${id}/parcels/${parcel}/receipts/${event}/automatic`,method:"post",data})
+
+export const createRefundBundleReturn=(id,data)=>request({url:`${root}/business/${id}/goods/bundle-plans`,method:'post',data})

@@ -14,8 +14,13 @@ public class OrderSalesDocumentService {
     @Resource private OrderRepository repository;
     @Resource private OrderShipmentWmsClient warehouse;
 
-    @SuppressWarnings("unchecked")
     public void sync(String company,long shipmentId) {
+        String lease=java.util.UUID.randomUUID().toString();
+        if(repository.db().update("UPDATE oms_order_sales_document_sync SET work_token=?,work_until=DATE_ADD(NOW(),INTERVAL 180 SECOND) WHERE company_code=? AND shipment_id=? AND (work_until IS NULL OR work_until<NOW())",lease,company,shipmentId)!=1)return;
+        try{perform(company,shipmentId);}finally{repository.db().update("UPDATE oms_order_sales_document_sync SET work_token=NULL,work_until=NULL WHERE company_code=? AND shipment_id=? AND work_token=?",company,shipmentId,lease);}
+    }
+    @SuppressWarnings("unchecked")
+    private void perform(String company,long shipmentId) {
         final long[] dirty={0};
         Map<String,Object> delivery=new TransactionTemplate(new DataSourceTransactionManager(repository.db().getDataSource())).execute(tx->{
             // Match business mutation lock order: shop, platform, order, shipment, then projection cursor.

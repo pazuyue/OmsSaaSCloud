@@ -1,0 +1,66 @@
+{
+  "verified_at": "2026-10-19T19:18:14.223803",
+  "distinct_regression_tests": 291,
+  "test_batches": [
+    {
+      "suite": "stock-sync and affected workflows",
+      "passed": 286
+    },
+    {
+      "suite": "QueueSupervisorTest",
+      "passed": 7,
+      "additional_distinct": 1
+    },
+    {
+      "suite": "MessageDeliveryTest",
+      "passed": 15,
+      "additional_distinct": 1
+    },
+    {
+      "suite": "QueueMetricsDiscoveryTest",
+      "passed": 3,
+      "additional_distinct": 3
+    }
+  ],
+  "live_checks": [
+    "both instances apply concurrency and prefetch; six actual consumers",
+    "pause prevents both MQ and direct compensation on both instances",
+    "service restart preserves paused configuration and durable pending task",
+    "resume completes original event once with two competing consumers",
+    "broker outage keeps services healthy, preserves cached metrics and raises sustained alert",
+    "broker recovery refreshes metrics and records alert recovery",
+    "Prometheus discovers all service replicas",
+    "business processing timer collected",
+    "nine-panel Grafana dashboard provisioned",
+    "browser configuration save and audit",
+    "browser alert recovery and task navigation",
+    "public gateway denies spoofed internal metrics access",
+    "all nine Grafana queries valid"
+  ],
+  "queues": [
+    {
+      "type": "PRODUCT_PULL",
+      "state": "RUNNING",
+      "revision": 7,
+      "consumers": 2,
+      "broker_data_fresh": true
+    },
+    {
+      "type": "PRODUCT_BIND",
+      "state": "RUNNING",
+      "revision": 3,
+      "consumers": 1,
+      "broker_data_fresh": true
+    },
+    {
+      "type": "SALES_DOCUMENT",
+      "state": "RUNNING",
+      "revision": 3,
+      "consumers": 2,
+      "broker_data_fresh": true
+    }
+  ],
+  "monitoring_targets": 4,
+  "retained_task": "PRODUCTPULL122",
+  "monitor_task_id": 123
+}

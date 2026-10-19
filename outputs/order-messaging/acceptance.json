@@ -1,0 +1,49 @@
+{
+  "existing_regression_batch": 306,
+  "focused_final_batch": 132,
+  "new_intake_cases": 12,
+  "live_checks": [
+    "paused pull retains durable task without reading source",
+    "51 source rows resume from committed page cursor after service restart; conversion remains separately paused",
+    "duplicate conversion notification does not create another business order or repeat conversion stock work",
+    "specified TID re-pull preserves platform identity and existing business order",
+    "source success and conversion failure remain distinct; repaired SKU retries original platform order with parent chain",
+    "browser task filter, message progress, business return links and current conversion result",
+    "final active-company pull after tenant-boundary deployment preserves existing identities"
+  ],
+  "final_smoke_task": 203,
+  "platform_orders": 52,
+  "business_orders": 52,
+  "queues": [
+    {
+      "business_type": "PRODUCT_PULL",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2
+    },
+    {
+      "business_type": "PRODUCT_BIND",
+      "effective_state": "RUNNING",
+      "actual_consumers": 1
+    },
+    {
+      "business_type": "SALES_DOCUMENT",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2
+    },
+    {
+      "business_type": "ORDER_PULL",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2
+    },
+    {
+      "business_type": "ORDER_CONVERT",
+      "effective_state": "RUNNING",
+      "actual_consumers": 2
+    }
+  ],
+  "monitoring_targets": 4,
+  "valid_dashboard_queries": 10,
+  "retained_pagination_task": 198,
+  "retained_repaired_tid": "952026101920380852",
+  "representative_business_order": "SO736437d1a9d147d78daef7a8004e6eab"
+}

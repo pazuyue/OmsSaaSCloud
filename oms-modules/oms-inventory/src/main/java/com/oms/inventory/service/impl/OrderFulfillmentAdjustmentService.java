@@ -44,8 +44,8 @@ public class OrderFulfillmentAdjustmentService {
             require(lines.isEmpty()&&!finish&&command.get("demands") instanceof List,"换品需求调整参数无效");
             Set<String> oids=new HashSet<>();
             for(Map<String,Object> reduction:(List<Map<String,Object>>)command.get("demands")){
-                String oid=s(reduction,"platform_oid");long qty=n(reduction,"quantity");require(qty>0&&oids.add(oid),"换品终止数量无效或重复");
-                Map<String,Object> d=demands.stream().filter(v->oid.equals(s(v,"platform_oid"))).findFirst().orElseThrow(()->new IllegalArgumentException("原换品需求不存在"));
+                String oid=s(reduction,"platform_oid");long qty=n(reduction,"quantity");require(qty>0&&oids.add(com.oms.common.util.FulfillmentLineKey.of(oid,s(reduction,"sku_sn"))),"换品终止数量无效或重复");
+                List<Map<String,Object>> matching=new ArrayList<>();for(Map<String,Object> v:demands)if(oid.equals(s(v,"platform_oid"))&&(s(reduction,"sku_sn").isEmpty()||s(reduction,"sku_sn").equals(s(v,"sku_sn"))))matching.add(v);require(matching.size()==1,"原需求不存在或含多个组件，请明确组件SKU");Map<String,Object> d=matching.get(0);
                 require(qty<=n(d,"demand_quantity")-n(d,"cancelled_quantity")-n(d,"outbound_quantity"),"换品数量超过未发需求");
                 require(jdbc.queryForObject("SELECT COUNT(*) FROM oms_order_warehouse_allocation WHERE company_code=? AND demand_id=? AND status='OCCUPIED' AND quantity-released_quantity-outbound_quantity>0",Long.class,company,d.get("id"))==0,"原商品仍有分仓占用，请先完成仓库撤回与核对");
                 long remaining=Math.min(qty,n(d,"reserved_quantity")-n(d,"outbound_quantity"));
