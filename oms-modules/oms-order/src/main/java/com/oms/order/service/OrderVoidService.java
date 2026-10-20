@@ -60,8 +60,8 @@ public class OrderVoidService {
         if(order==null)return;
         try{
             OrderStockCommand command=new OrderStockCommand();command.setChannelId(channel);command.setPlatformTid(stockReference(order));
-            List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity FROM oms_order_line WHERE company_code=? AND order_id=? ORDER BY id",ROW,company,id);require(!lines.isEmpty(),"业务订单明细缺失，不能确认库存已释放");
-            for(Map<String,Object> line:lines){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));command.getLines().add(item);}
+            List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity,gift_plan_id FROM oms_order_line WHERE company_code=? AND order_id=? ORDER BY id",ROW,company,id);require(!lines.isEmpty(),"业务订单明细缺失，不能确认库存已释放");
+            for(Map<String,Object> line:lines){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setGift(line.get("gift_plan_id")!=null);item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));command.getLines().add(item);}
             List<Map<String,Object>> released=data(inventory.execute("cancel",company,command,SecurityConstants.INNER));
             require(released!=null&&released.size()==lines.size(),"库存释放返回明细不完整");Map<String,Map<String,Object>> byOid=new HashMap<>();for(Map<String,Object> row:released)require(byOid.put(com.oms.common.util.FulfillmentLineKey.of(row),row)==null,"库存释放返回重复明细");
             for(Map<String,Object> line:lines){Map<String,Object> row=byOid.get(com.oms.common.util.FulfillmentLineKey.of(line));require(row!=null&&"CANCELLED".equals(text(row,"status"))&&number(row,"reserved_quantity")==0&&text(row,"sku_sn").equals(text(line,"sku_sn"))&&number(row,"demand_quantity")==number(line,"quantity"),"库存释放结果未确认");}

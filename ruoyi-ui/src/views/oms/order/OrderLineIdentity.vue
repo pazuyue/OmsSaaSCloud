@@ -35,7 +35,7 @@ export default {
   data() { return { visible: false } },
   computed: {
     terminated() { return Number(this.line.quantity) <= Number(this.line.cancelled_quantity || 0) },
-    identity() { if(this.line.stocked_bundle_snapshot&&!this.terminated)return '实物套装 · 成品履约'; if (this.line.bundle_id&&!this.terminated) return '套装组件'; if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
+    identity() { if(this.line.gift_plan_id)return this.terminated?'OMS 策略赠品 · 已取消':'OMS 策略赠品'; if(this.line.stocked_bundle_snapshot&&!this.terminated)return '实物套装 · 成品履约'; if (this.line.bundle_id&&!this.terminated) return '套装组件'; if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
     identityTone() { return this.terminated ? 'info' : this.line.business_type === 'EXCHANGE' ? 'warning' : this.line.exchange_id ? '' : 'info' },
     exchangeLink() { return { path: '/oms-order/exchanges', query: { exchangeId: this.line.exchange_id } } },
     spec() { return good(this.line.current_goods || {}).spec }

@@ -10,6 +10,7 @@ import java.util.*;
 
 @RestController @RequestMapping("/refunds") public class RefundController {
     @Resource RefundService refunds;
+    @Resource GiftService gifts;
     @Resource RefundSync sync;
     @Resource RefundWorkspace workspace;
     @Resource RefundGoodsService goods;
@@ -49,7 +50,7 @@ import java.util.*;
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/bundle-plans") public AjaxResult bundlePlan(@PathVariable long id,@RequestBody Map<String,Object> body){String c=company();Object result=bundleReturns.create(c,id,body,actor());parcelAutomation.process(c,id);return AjaxResult.success(result);}
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/plans") public AjaxResult plan(@PathVariable long id,@RequestBody Map<String,Object> body){String c=company();Object result=goods.create(c,id,body,actor());parcelAutomation.process(c,id);return AjaxResult.success(result);}
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/refresh") public AjaxResult refreshGoods(@PathVariable long id){goods.refresh(company(),id);return AjaxResult.success(goods.report(company(),id));}
-    @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/plans/{plan}/documents/{document}/{action}") public AjaxResult goodsAction(@PathVariable long id,@PathVariable long plan,@PathVariable long document,@PathVariable String action,@RequestBody Map<String,Object> body){if("waive".equals(action))com.ruoyi.common.security.auth.AuthUtil.checkPermi("order:refund:close");return AjaxResult.success(goods.action(company(),id,plan,document,action,body,actor()));}
+    @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/plans/{plan}/documents/{document}/{action}") public AjaxResult goodsAction(@PathVariable long id,@PathVariable long plan,@PathVariable long document,@PathVariable String action,@RequestBody Map<String,Object> body){if("waive".equals(action)){com.ruoyi.common.security.auth.AuthUtil.checkPermi("order:refund:close");if(gifts.isGiftPlan(company(),id,plan))com.ruoyi.common.security.auth.AuthUtil.checkPermi("order:gift:waive");}return AjaxResult.success(goods.action(company(),id,plan,document,action,body,actor()));}
     @RequiresPermissions("order:refund:close") @PostMapping("/business/{id}/goods/close-withdrawn") public AjaxResult closeWithdrawn(@PathVariable long id,@RequestBody Map<String,Object> body){return AjaxResult.success(goods.closeWithdrawn(company(),id,body,actor()));}
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/finish") public AjaxResult finishGoods(@PathVariable long id,@RequestBody Map<String,Object> body){return AjaxResult.success(goods.finish(company(),id,body,actor()));}
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/cancel-unshipped") public AjaxResult cancelUnshipped(@PathVariable long id,@RequestBody Map<String,Object> body){return AjaxResult.success(goods.cancelUnshipped(company(),id,body,actor()));}

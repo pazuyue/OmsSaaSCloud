@@ -17,6 +17,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Real transactions against the disposable order_inventory_test schema only. */
 public class OrderStockTest {
+    @Test void omsGiftHasNoPlatformOidAndSameSkuPurchaseRemainsSeparate(){
+        seed(10,0);OrderStockCommand request=command("1700",3,true);OrderStockCommand.Line gift=new OrderStockCommand.Line();gift.setGift(true);gift.setPlatformOid("");gift.setSkuSn("A");gift.setQuantity(2);request.getLines().add(gift);
+        execute("register",request);execute("reserve",request);execute("reserve",request);
+        assertEquals(2,n("SELECT COUNT(*) FROM oms_order_stock_demand"));assertEquals(5,n("SELECT reserved_stock FROM oms_inventory"));assertEquals(2,n("SELECT reserved_quantity FROM oms_order_stock_demand WHERE platform_oid='' AND line_kind='GIFT'"));assertEquals(3,n("SELECT reserved_quantity FROM oms_order_stock_demand WHERE line_kind='SALE'"));
+        execute("cancel",request);assertEquals(0,n("SELECT reserved_stock FROM oms_inventory"));
+    }
+    @Test void emptyPlatformOidRequiresExplicitGiftIdentityAndCannotChangeType(){
+        seed(10,0);OrderStockCommand request=command("1700",2,true);request.getLines().get(0).setPlatformOid("");assertThrows(IllegalArgumentException.class,()->execute("register",request));request.getLines().get(0).setGift(true);execute("register",request);request.getLines().get(0).setGift(false);assertThrows(IllegalArgumentException.class,()->execute("reserve",request));assertEquals(0,n("SELECT reserved_stock FROM oms_inventory"));
+    }
+    @Test void fullyCanceledGiftCanBeIncludedInRetryWithoutReopeningItsDemand(){
+        seed(10,0);OrderStockCommand request=command("1700",3,true);OrderStockCommand.Line gift=new OrderStockCommand.Line();gift.setGift(true);gift.setPlatformOid("");gift.setSkuSn("A");gift.setQuantity(2);request.getLines().add(gift);execute("register",request);execute("reserve",request);
+        Map<String,Object> reduction=new LinkedHashMap<>();reduction.put("request_id","CFGIFT-CANCELLED");reduction.put("mode","REDUCE");reduction.put("channel_id",1);reduction.put("platform_tid",request.getPlatformTid());reduction.put("allocations",Collections.emptyList());Map<String,Object> item=new LinkedHashMap<>();item.put("platform_oid","");item.put("sku_sn","A");item.put("quantity",2);reduction.put("demands",Collections.singletonList(item));context.getBean(com.oms.inventory.service.impl.OrderFulfillmentAdjustmentService.class).apply("VERIFY",reduction);
+        execute("reserve",request);assertEquals(0,n("SELECT reserved_quantity FROM oms_order_stock_demand WHERE line_kind='GIFT'"));assertEquals(2,n("SELECT cancelled_quantity FROM oms_order_stock_demand WHERE line_kind='GIFT'"));assertEquals("CANCELLED",db.queryForObject("SELECT status FROM oms_order_stock_demand WHERE line_kind='GIFT'",String.class));
+    }
     @Test void replacementRoundHasIndependentDemandAndDoesNotReopenCanceledRound(){
         seed(10,0);OrderStockCommand old=command("1700",2,true);old.setPlatformTid("EXCHANGE:17");execute("register",old);execute("reserve",old);execute("cancel",old);
         OrderStockCommand next=command("1700",2,true);next.setPlatformTid("EXCHANGE:17:2");execute("register",next);execute("reserve",next);execute("reserve",next);

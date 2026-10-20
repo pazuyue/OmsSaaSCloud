@@ -39,7 +39,7 @@ public class OrderStockService {
         require(command.getLines()!=null&&command.getLines().size()<=500,"订单明细超过500行");
         
         Set<String> seen=new HashSet<>();List<OrderStockCommand.Line> lines=new ArrayList<>(command.getLines());
-        for(OrderStockCommand.Line line:lines){require(line.getPlatformOid()!=null&&line.getPlatformOid().matches("[0-9]{1,64}")&&seen.add(com.oms.common.util.FulfillmentLineKey.of(line.getPlatformOid(),line.getSkuSn())),"子订单号无效或重复");require(line.getSkuSn()!=null&&!line.getSkuSn().trim().isEmpty()&&line.getSkuSn().length()<=128&&line.getSkuSn().equals(line.getSkuSn().trim()),"SKU无效");require(line.getQuantity()>0&&line.getQuantity()<=100000000,"需求数量无效");require(line.getComponentQuantity()>=0&&line.getComponentQuantity()<=100000&&(line.getComponentQuantity()==0||line.getQuantity()%line.getComponentQuantity()==0),"套装组件配比无效");}
+        for(OrderStockCommand.Line line:lines){require(line.getPlatformOid()!=null&&(line.isGift()?line.getPlatformOid().isEmpty():line.getPlatformOid().matches("[0-9]{1,64}"))&&seen.add(com.oms.common.util.FulfillmentLineKey.of(line.getPlatformOid(),line.getSkuSn())),"子订单号无效或重复");require(line.getSkuSn()!=null&&!line.getSkuSn().trim().isEmpty()&&line.getSkuSn().length()<=128&&line.getSkuSn().equals(line.getSkuSn().trim()),"SKU无效");require(line.getQuantity()>0&&line.getQuantity()<=100000000,"需求数量无效");require(line.getComponentQuantity()>=0&&line.getComponentQuantity()<=100000&&(line.getComponentQuantity()==0||line.getQuantity()%line.getComponentQuantity()==0),"套装组件配比无效");}
         lines.sort(Comparator.comparing(OrderStockCommand.Line::getSkuSn).thenComparing(OrderStockCommand.Line::getPlatformOid));
         // All writers (allocation, receiving, adjustment, demand) share the company/SKU mutex.
         for(String sku:new TreeSet<String>(){{for(OrderStockCommand.Line line:lines)add(line.getSkuSn());}}){
@@ -53,13 +53,14 @@ public class OrderStockService {
             List<Map<String,Object>> found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? AND sku_sn=? FOR UPDATE",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn());
             if(found.isEmpty()){
                 require("register".equals(action),"尚未登记订单需求");
-                jdbc.update("INSERT INTO oms_order_stock_demand(company_code,channel_id,platform_tid,platform_oid,sku_sn,demand_quantity,component_quantity) VALUES (?,?,?,?,?,?,?)",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn(),line.getQuantity(),line.getComponentQuantity());
+                jdbc.update("INSERT INTO oms_order_stock_demand(company_code,channel_id,platform_tid,platform_oid,sku_sn,demand_quantity,component_quantity,line_kind) VALUES (?,?,?,?,?,?,?,?)",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn(),line.getQuantity(),line.getComponentQuantity(),line.isGift()?"GIFT":"SALE");
                 found=jdbc.queryForList("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? AND sku_sn=?",company,command.getChannelId(),command.getPlatformTid(),line.getPlatformOid(),line.getSkuSn());
                 Map<String,Object> demand=found.get(0);event(demand,"REGISTER","登记销售需求，等待转单逻辑预占");
             }
             Map<String,Object> demand=found.get(0);
+            require((line.isGift()?"GIFT":"SALE").equals(s(demand,"line_kind")),"需求类型与原库存身份不一致");
             // A canceled demand is immutable. A new replacement round uses a new reference.
-            require("cancel".equals(action)||"query".equals(action)||!"CANCELLED".equals(s(demand,"status")),"订单需求已作废，不允许重新登记或预占");
+            require("cancel".equals(action)||"query".equals(action)||!"CANCELLED".equals(s(demand,"status"))||line.isGift()&&"reserve".equals(action)&&n(demand,"cancelled_quantity")==n(demand,"demand_quantity"),"订单需求已作废，不允许重新登记或预占");
             if("register".equals(action)||"reserve".equals(action))require(n(demand,"component_quantity")==line.getComponentQuantity(),"套装组件配比与原需求不同");
             require(s(demand,"sku_sn").equals(line.getSkuSn())&&n(demand,"demand_quantity")==line.getQuantity(),"已登记需求与本次参数不同，订单更新不属于一期，请核对原单");
             if(("register".equals(action)||"reserve".equals(action))&&n(demand,"demand_quantity")-n(demand,"cancelled_quantity")>n(demand,"reserved_quantity")){

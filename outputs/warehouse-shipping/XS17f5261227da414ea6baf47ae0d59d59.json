@@ -1,0 +1,42 @@
+{
+  "shipment_id": 70,
+  "shipment_sn": "XS17f5261227da414ea6baf47ae0d59d59",
+  "order_id": 124,
+  "external_order": "SIMOUT_c71f60d827464cca9d28",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 7,
+  "message_id": "SIM_COMPLETE_XS17f5261227da414ea6baf47ae0d59d59",
+  "package_code": "SIMPKG_XS17f5261227da414ea6baf47ae0d59d59",
+  "express_code": "TEST-SF-XS17f5261227da414ea6baf47ae0d59d59",
+  "outbound_time": "2026-10-20 00:04:51",
+  "plans": [
+    {
+      "id": 75,
+      "sku_sn": "GIFT_A_20261019234013",
+      "quantity": 5,
+      "platform_oid": "9620261019234013031",
+      "store_code": "GIFT_V_20261019234013",
+      "batch_code": "TEST-GIFT-20261019234013"
+    },
+    {
+      "id": 76,
+      "sku_sn": "GIFT_G_20261019234013",
+      "quantity": 2,
+      "platform_oid": "",
+      "store_code": "GIFT_V_20261019234013",
+      "batch_code": "TEST-GIFT-20261019234013"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS17f5261227da414ea6baf47ae0d59d59</deliveryOrderCode><deliveryOrderId>SIMOUT_c71f60d827464cca9d28</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS17f5261227da414ea6baf47ae0d59d59</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-20 00:04:51</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>75</orderLineNo><itemCode>GIFT_A_20261019234013</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-GIFT-20261019234013</batchCode><inventoryType>ZP</inventoryType><actualQty>5</actualQty></orderLine><orderLine><orderLineNo>76</orderLineNo><itemCode>GIFT_G_20261019234013</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-GIFT-20261019234013</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS17f5261227da414ea6baf47ae0d59d59</packageCode><expressCode>TEST-SF-XS17f5261227da414ea6baf47ae0d59d59</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>GIFT_A_20261019234013</itemCode><quantity>5</quantity></item><item><itemCode>GIFT_G_20261019234013</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS17f5261227da414ea6baf47ae0d59d59",
+    "quantity": 7,
+    "status": "SHIPPED",
+    "shipped_quantity": 7,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS17f5261227da414ea6baf47ae0d59d59",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

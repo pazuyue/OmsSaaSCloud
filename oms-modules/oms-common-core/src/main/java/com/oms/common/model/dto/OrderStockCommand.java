@@ -15,5 +15,7 @@ public class OrderStockCommand {
         private String skuSn;
         private int quantity;
         private int componentQuantity;
+        /** OMS-owned physical gift: no platform OID exists. */
+        private boolean gift;
     }
 }

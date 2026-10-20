@@ -30,6 +30,7 @@ public final class OrderReviewPolicy {
         return "CASE WHEN o.status<>'WAIT_ALLOCATION' THEN o.status WHEN "+shipped+">= "+demand+" AND "+demand+">0 THEN 'SHIPPED' WHEN "+shipped+">0 THEN 'PART_SHIPPED' WHEN COALESCE(o.review_status,'')<>'APPROVED' THEN 'WAIT_REVIEW' WHEN o.allocation_status='FULL' THEN CASE WHEN "+waiting+" THEN 'WAIT_CARRIER' WHEN "+sending+" THEN 'DISPATCHING' WHEN "+accepted+">=o.allocation_quantity AND o.allocation_quantity>0 THEN 'WAREHOUSE_PROCESSING' WHEN "+accepted+">0 THEN 'PART_DISPATCHED' ELSE 'WAIT_DISPATCH' END WHEN o.allocation_quantity>0 THEN 'PART_ALLOCATED' ELSE o.status END";
     }
     public static String systemBlock(Map<String,Object> row){
+        if(!text(row,"gift_block_reason").isEmpty())return text(row,"gift_block_reason");
         if(!text(row,"refund_block_reason").isEmpty())return text(row,"refund_block_reason");
         if(!text(row,"exchange_block_reason").isEmpty())return text(row,"exchange_block_reason");
         if(number(row,"change_pending")!=0)return "平台关键交易信息已变化，等待订单更新处理";

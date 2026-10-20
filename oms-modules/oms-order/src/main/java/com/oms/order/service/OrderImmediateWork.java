@@ -10,6 +10,8 @@ public class OrderImmediateWork {
     @Resource private OrderShipmentReceiptService receipts;
     @Resource private OrderSalesDocumentService sales;
     @Resource private OrderCutoffService cutoff;
+    @Resource private GiftService gifts;
+    public void giftsChanged(String company,long order){if(!work.submit(tenantRouting.captureForContinuation(company),()->gifts.process(company,order)))org.slf4j.LoggerFactory.getLogger(getClass()).warn("Gift immediate executor full; durable plan retained company={} order={}",company,order);}
     public boolean cutoffReady(String company,long order){return work.submit(tenantRouting.captureForContinuation(company),()->cutoff.process(company,order));}
     private final ScopedWorkExecutor work=new ScopedWorkExecutor("order-immediate");
     public void salesChanged(String company,long shipment){if(!work.submit(tenantRouting.captureForContinuation(company),()->sales.sync(company,shipment)))org.slf4j.LoggerFactory.getLogger(getClass()).warn("Sales immediate queue full; durable change retained company={} shipment={}",company,shipment);}

@@ -38,10 +38,10 @@ public class OrderProcessor {
             Map<String,Object> order=repository.snapshot(company,id,lease);if(order==null)return;
             if(order.get("business_order_id")!=null){
                 OrderExchangeGuard.requireReady(repository,company,number(order,"business_order_id"),false);
-                List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity,stock_reference,business_type,component_quantity FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE' ORDER BY id",ROW,company,order.get("business_order_id"));require(!lines.isEmpty(),"业务订单商品明细缺失");List<Map<String,Object>> receipts=new ArrayList<>();
+                List<Map<String,Object>> lines=repository.db().query("SELECT platform_oid,sku_sn,quantity,stock_reference,business_type,component_quantity,gift_plan_id FROM oms_order_line WHERE company_code=? AND order_id=? AND business_type='SALE' ORDER BY id",ROW,company,order.get("business_order_id"));require(!lines.isEmpty(),"业务订单商品明细缺失");List<Map<String,Object>> receipts=new ArrayList<>();
                 for(Map.Entry<String,List<Map<String,Object>>> group:OrderFulfillmentLines.groups(order,lines).entrySet()){
                     OrderStockCommand command=new OrderStockCommand();command.setChannelId(number(order,"channel_id"));command.setPlatformTid(group.getKey());command.setAllowPublicStock(number(config,"allow_public_stock")==1);
-                    for(Map<String,Object> line:group.getValue()){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));item.setComponentQuantity(Math.toIntExact(number(line,"component_quantity")));command.getLines().add(item);}
+                    for(Map<String,Object> line:group.getValue()){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(text(line,"platform_oid"));item.setGift(line.get("gift_plan_id")!=null);item.setSkuSn(text(line,"sku_sn"));item.setQuantity(Math.toIntExact(number(line,"quantity")));item.setComponentQuantity(Math.toIntExact(number(line,"component_quantity")));command.getLines().add(item);}
                     for(Map<String,Object> row:data(inventory.execute("reserve",company,command,SecurityConstants.INNER))){Map<String,Object> copy=new LinkedHashMap<>(row);copy.put("stock_reference",group.getKey());receipts.add(copy);}
                 }
                 repository.complete(company,id,lease,config,receipts);return;
@@ -87,6 +87,7 @@ public class OrderProcessor {
             List<Map<String,Object>> issues=parser.conversionIssues(trade);
             if(!issues.isEmpty()){repository.failure(company,id,lease,text(issues.get(0),"code"),text(issues.get(0),"message"),issues,false);return;}
             parser.validateConversion(trade,allowedTypes);
+            if(repository.gifts()!=null){for(Map<String,Object> gift:repository.gifts().prepare(company,order,trade,matched)){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setGift(true);item.setPlatformOid("");item.setSkuSn(text(gift,"sku_sn"));item.setQuantity(Math.toIntExact(number(gift,"quantity")));command.getLines().add(item);}require(command.getLines().size()<=500,"商品及赠品展开后超过500行");data(inventory.execute("register",company,command,SecurityConstants.INNER));}
             List<Map<String,Object>> result=data(inventory.execute("reserve",company,command,SecurityConstants.INNER));
             repository.complete(company,id,lease,config,result);
         }catch(IllegalArgumentException e){repository.failure(company,id,lease,e instanceof ConversionException?((ConversionException)e).code:"ORDER_DATA_INVALID",safe(e),Collections.emptyList(),false);}

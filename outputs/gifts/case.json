@@ -1,0 +1,55 @@
+{
+  "stamp": "20261019234013",
+  "checks": [
+    "new pending order reserves purchased and gift stock with separate identities",
+    "new cancel order reserves purchased and gift stock with separate identities",
+    "new return order reserves purchased and gift stock with separate identities",
+    "five purchased goods and two gifts share normal allocation, XS and TEST WMS outbound",
+    "pending refund pauses gifts without cancellation or stock release",
+    "confirmed refund cancels only the excess unshipped gift and releases its actual reservation",
+    "gift THK receipt and duplicate callback restore inventory once without changing platform funds",
+    "fresh browser verifies rule editor and pending/cancel/returned gift guidance"
+  ],
+  "orders": {
+    "pending": {
+      "id": 122,
+      "tid": "962026101923401301",
+      "oid": "9620261019234013011",
+      "order_sn": "SOaec97a3df8cb4d10bc9aec3fd4859924",
+      "refund_id": 70,
+      "refund_number": "972026101923401301"
+    },
+    "cancel": {
+      "id": 123,
+      "tid": "962026101923401302",
+      "oid": "9620261019234013021",
+      "order_sn": "SO4311569c63804181bc98229509354e7a",
+      "refund_id": 71,
+      "refund_number": "972026101923401302"
+    },
+    "return": {
+      "id": 124,
+      "tid": "962026101923401303",
+      "oid": "9620261019234013031",
+      "order_sn": "SO14867ae4145d41adb57c8d88a7ad7bdc",
+      "shipped": true,
+      "refund_id": 72,
+      "refund_number": "972026101923401303",
+      "return_plan": 18,
+      "return_sn": "THK7371500183802A453F607A58678AC9",
+      "receipt_done": true,
+      "gift_stock_after_return": 19
+    }
+  },
+  "seller": "GIFT_ACCEPT_20261019234013",
+  "sku": "GIFT_A_20261019234013",
+  "gift_sku": "GIFT_G_20261019234013",
+  "created": "2026-10-19 23:42:26",
+  "channel_id": 73,
+  "store": "GIFT_V_20261019234013",
+  "owner": "SAASQM01",
+  "connection_id": 10,
+  "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+  "group_id": 1,
+  "fixture_metadata_rebuilt_before_first_wms_submission": "XS17f5261227da414ea6baf47ae0d59d59"
+}
