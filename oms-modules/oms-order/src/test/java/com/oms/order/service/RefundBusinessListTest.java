@@ -89,4 +89,21 @@ class RefundBusinessListTest {
         f.db.update("UPDATE oms_order SET document_info=? WHERE id=?",encode(doc),f.order);plan("VERIFY",id,false,2,1,1);plan("VERIFY",id,true,1,0,0);
         Map<String,Object> d=f.workspace.detail("VERIFY",id);assertEquals("85.00",object(object(d,"sales_context"),"line").get("goods_payment"));assertEquals(2,number(object(d,"purchase_progress"),"return_quantity"));assertEquals(1,number(object(d,"gift_progress"),"return_quantity"));assertThrows(IllegalArgumentException.class,()->f.workspace.detail("OTHER",id));
     }
+    @Test @SuppressWarnings("unchecked") void detailSeparatesLocalApprovalPlatformOperationAndConfirmedFunds(){
+        long id=f.convert(f.ingest(f.source(1,"2.00","WAIT_SELLER_AGREE")));
+        f.workspace.review("VERIFY",id,f.review(id,"DIFFERENCE","KEEP"),"test");
+        Map<String,Object> detail=f.workspace.detail("VERIFY",id),interaction=object(detail,"platform_interaction");
+        assertEquals(false,interaction.get("execution_supported"));assertEquals("SOURCE_SYNC",interaction.get("mode"));
+        assertTrue(((List<?>)interaction.get("operations")).isEmpty());assertEquals("NONE",detail.get("funds_state"));
+        Map<String,Object> observed=((List<Map<String,Object>>)interaction.get("observations")).get(0);
+        assertEquals("WAIT_SELLER_AGREE",observed.get("platform_status"));assertFalse(observed.containsKey("payload"));
+        assertEquals(false,object(detail,"capability").get("platform_agree"));
+        f.db.update("INSERT INTO oms_refund_operation(company_code,refund_id,request_id,action,state,source_version,platform_version,fee,reason,actor) VALUES ('VERIFY',?,'PLATFORM_PROGRESS_TEST','AGREE','SUCCESS',1,'1',2,'isolated record fixture','test')",id);
+        f.db.update("INSERT INTO oms_refund_operation(company_code,refund_id,request_id,action,state,source_version,platform_version,fee,reason,actor) VALUES ('OTHER',?,'FOREIGN_PLATFORM_PROGRESS','AGREE','SUCCESS',1,'1',999,'foreign fixture','test')",id);
+        detail=f.workspace.detail("VERIFY",id);interaction=object(detail,"platform_interaction");
+        assertEquals(1,((List<?>)interaction.get("operations")).size());assertEquals("NONE",detail.get("funds_state"));
+        assertEquals("WAIT_SELLER_AGREE",object(detail,"platform").get("platform_status"));
+        assertEquals("APPROVED",detail.get("review_state"));assertThrows(IllegalArgumentException.class,()->f.workspace.detail("OTHER",id));
+    }
+
 }

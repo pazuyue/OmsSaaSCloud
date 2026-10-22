@@ -71,4 +71,15 @@ class RefundGoodsServiceTest {
         f.reset();f.shipped();source=f.db.queryForObject("SELECT id FROM oms_order_shipment_line",Long.class);refund=f.convert(f.ingest(f.source(1,"2.00","WAIT_SELLER_AGREE")));f.workspace.review("VERIFY",refund,f.review(refund,"CANCEL","RETURN"),"test");goods.refunds=f.refunds;long id=create(5);Map<String,Object> closed=f.source(2,"2.00","CLOSED");f.ingest(closed);assertEquals("CLOSED",f.refunds.platform("VERIFY",number(f.refunds.business("VERIFY",refund,false),"platform_refund_id"),false).get("platform_status"));assertEquals("CLOSED",f.refunds.business("VERIFY",refund,false).get("funds_state"));
         assertThrows(IllegalArgumentException.class,()->goods.closeWithdrawn("VERIFY",refund,version(),"test"));assertThrows(IllegalArgumentException.class,()->goods.finish("VERIFY",refund,version(),"test"));goods.action("VERIFY",refund,id,0,"stop",command(id),"test");goods.closeWithdrawn("VERIFY",refund,version(),"test");assertEquals("CLOSED",f.refunds.business("VERIFY",refund,false).get("state"));assertEquals(5,number(plan(id),"waived_quantity"));assertEquals(0,number(plan(id),"posted_quantity"));assertEquals("",OrderExchangeGuard.reason(f.repo,"VERIFY",f.order,false));verify(goods.inventory,never()).adjust(anyString(),anyMap(),anyString());
     }
+    @Test @SuppressWarnings("unchecked") void progressContextKeepsFrozenUnitsAndUnresolvedWarehouseWork(){
+        long id=create(5);f.db.update("UPDATE oms_order_line SET stocked_bundle_snapshot='{}' WHERE company_code='VERIFY' AND order_id=?",f.order);
+        Map<String,Object> actual=m("pending_review_count",1,"documents",Collections.singletonList(m("return_sn","THK_PROGRESS","dispatch_state","UNKNOWN","cancel_state","NONE","receipt_state","WAITING")));
+        f.db.update("UPDATE oms_refund_return_plan SET result_json=? WHERE id=?",encode(actual),id);
+        Map<String,Object> detail=f.workspace.detail("VERIFY",refund),context=(Map<String,Object>)detail.get("progress_context");
+        Map<String,Object> row=((List<Map<String,Object>>)context.get("plans")).get(0);
+        assertEquals("套",row.get("stock_unit"));assertEquals(1,number(row,"pending_count"));assertEquals(1,number(row,"active_documents"));
+        assertEquals(true,row.get("has_document"));assertFalse(row.containsKey("result_json"));assertEquals("UNKNOWN",row.get("dispatch_state"));
+        assertEquals(0,number(plan(id),"posted_quantity"));assertEquals("SUCCESS",detail.get("funds_state"));
+    }
+
 }

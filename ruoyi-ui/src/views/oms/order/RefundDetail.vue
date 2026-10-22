@@ -2,24 +2,26 @@
   <el-dialog :title="business ? '业务退款详情 · '+label(row&&row.platform&&row.platform.dispute_type) : '平台退款详情'" :visible.sync="visible" width="92%" append-to-body :close-on-click-modal="false">
     <div v-loading="loading" v-if="row">
       <header class="refund-identity">
-        <div class="refund-identity-main"><strong>{{ business ? row.refund_sn : row.refund_id }}</strong><span class="refund-type">{{ label(platform.dispute_type) }}</span><el-tag v-if="business" size="small" :type="scenario.tone" effect="plain">{{ scenario.text }}</el-tag><el-popover placement="bottom-start" trigger="click" width="360"><dl class="related-numbers"><dt>平台退款单</dt><dd>{{ row.refund_id }}</dd><dt>平台订单</dt><dd>{{ row.platform_tid }}</dd><dt>平台子订单</dt><dd>{{ row.platform_oid }}</dd><dt v-if="business">OMS 订单</dt><dd v-if="business">{{ row.order_sn }}</dd><dt>平台状态</dt><dd>{{ label(platform.platform_status) }}</dd></dl><el-button slot="reference" size="small" type="text">关联单号</el-button></el-popover></div>
+        <div class="refund-identity-main"><strong>{{ business ? row.refund_sn : row.refund_id }}</strong><span class="refund-type">{{ label(platform.dispute_type) }}</span><el-popover placement="bottom-start" trigger="click" width="360"><dl class="related-numbers"><dt>平台退款单</dt><dd>{{ row.refund_id }}</dd><dt>平台订单</dt><dd>{{ row.platform_tid }}</dd><dt>平台子订单</dt><dd>{{ row.platform_oid }}</dd><dt v-if="business">OMS 订单</dt><dd v-if="business">{{ row.order_sn }}</dd><dt>平台状态</dt><dd>{{ label(platform.platform_status) }}</dd></dl><el-button slot="reference" size="small" type="text">关联单号</el-button></el-popover></div>
         <div class="refund-amount"><span class="hint">{{ business && row.approved_version ? '已采用申请金额' : '本次申请金额' }}</span><strong>{{ money(business ? row.refund_fee : platform.refund_fee) }}</strong></div>
-        <div v-if="business" class="refund-status-line"><strong>{{ processingSummary }}</strong><span class="hint">审核：{{ label(row.review_state) }}</span><el-tooltip content="实际资金结果来自平台同步；货物处理进度独立跟踪。" placement="top"><i class="el-icon-info hint" aria-label="资金和货物状态说明" tabindex="0"/></el-tooltip></div>
-        <div v-else class="refund-status-line">平台状态：{{ platform.platform_status === 'SUCCESS' ? '退款成功' : label(platform.platform_status) }}</div>
+
+        <div v-if="!business" class="refund-status-line">平台状态：{{ platform.platform_status === 'SUCCESS' ? '退款成功' : label(platform.platform_status) }}</div>
       </header>
       <template v-if="business">
+        <refund-progress :progress="progress" @task="locateTask" @track="openProgressTrack"/>
         <el-tabs v-model="detailTab">
           <el-tab-pane label="本次处理" name="current">
-            <section v-if="currentTask" class="refund-current-task"><div><strong>{{ currentTask.title }}</strong><p>{{ currentTask.message }}</p></div><el-button size="small" type="primary" plain @click="openTask">{{ currentTask.action }}</el-button></section>
+
             <el-alert v-if="amountChanged" title="平台申请金额已变化，请核对已采用方案与最新申请" :description="'已采用 ' + money(row.refund_fee) + '；平台最新 ' + money(platform.refund_fee)" type="warning" :closable="false" show-icon/>
             <refund-application-goods :refund="row" @open-goods="scrollToGoods"/>
-            <order-gifts v-if="visible && row.order_id" ref="gifts" :key="row.id" :order-id="row.order_id" :refund-id="row.id" @loaded="giftReport=$event" @changed="changed('gifts')" @open-goods="openGiftGoods"/>
+            <order-gifts v-if="visible && row.order_id" ref="gifts" :key="row.id" :order-id="row.order_id" :refund-id="row.id" @load-start="giftReport=null;giftError=''" @load-error="giftError=$event" @loaded="giftReport=$event;giftError=''" @changed="changed('gifts')" @open-goods="openGiftGoods"/>
 
           </el-tab-pane>
           <el-tab-pane label="退货与入库" name="goods" lazy>      <section v-if="business&&(row.parcel_issues||[]).length" class="parcel-issue-tasks"><article v-for="issue in row.parcel_issues" :key="issue.plan_id" class="parcel-issue-task"><el-alert :title="issue.title" :description="issue.reason" type="warning" show-icon :closable="false"/><p><b>本退款：</b>计划退回 {{ issue.quantity }} 件 · 实收 {{ issue.accepted_quantity }} 件 · 入账 {{ issue.posted_quantity }} 件 · {{ issue.has_document?'已有THK，请核对原单':'未生成THK，尚未加入目标包裹' }}</p><p v-if="issue.target_parcel_sn"><b>目标包裹：</b>{{ issue.target_parcel_sn }}<br><span class="hint">{{ issue.carrier_code }} · {{ issue.waybill }} · 退回仓 {{ issue.store_code }}</span></p><p><b>下一步：</b>{{ issue.next_action }}</p><el-button v-hasPermi="['order:refund:goods']" type="primary" size="small" @click="openIssue(issue.plan_id)">核对合包归属</el-button><el-button size="small" @click="openIssue(issue.plan_id)">查看目标包裹与回传</el-button><p class="hint">重新检查不会解除实收后的自动追加限制；原包裹实收不能直接认定属于本退款。</p></article></section>
       <section v-if="business&&(row.parcel_followups||[]).length"><el-alert v-for="task in row.parcel_followups" :key="task.plan_id" :title="task.title" :description="task.next_action" type="info" show-icon :closable="false"/><el-button size="small" type="primary" @click="scrollToGoods">{{ row.parcel_followups.some(t=>t.manual_dispatch)?'去下发补充THK':'去登记真实寄回物流' }}</el-button></section>
       <el-alert v-if="row.problem_message || platform.source_error || platform.conversion_error" :title="row.problem_message || platform.source_error || platform.conversion_error" type="warning" :closable="false" show-icon />
 <refund-goods v-if="visible" ref="goods" :key="row.id" :refund="row" :active="detailTab === 'goods'" @changed="changed('goods')"/></el-tab-pane>
+          <el-tab-pane label="平台处理与资金" name="platform" lazy><refund-platform-progress :refund="row" @refresh="reload()" @snapshot="snapshot"/></el-tab-pane>
           <el-tab-pane label="审核与来源" name="approval" lazy>        <el-alert :title="(row.capability || {}).message || '按审核方案分别处理资金与货物'" type="info" :closable="false" show-icon />
         <h4>本次采用方案</h4><el-descriptions border :column="2" size="small"><el-descriptions-item label="审核人 / 时间">{{ row.review_by || '—' }} / {{ row.reviewed_at || '—' }}</el-descriptions-item><el-descriptions-item label="采用来源版本">{{ row.approved_version || '—' }}</el-descriptions-item><el-descriptions-item label="审核依据">{{ row.review_reason || '—' }}</el-descriptions-item><el-descriptions-item label="协商凭证">{{ row.review_evidence || '—' }}</el-descriptions-item><el-descriptions-item v-if="row.cancel_quantity" label="取消方案">商品明细 #{{ row.cancel_line_id }} · {{ row.cancel_quantity }} 件；已执行 {{ row.cancelled_quantity }} 件</el-descriptions-item></el-descriptions>
         <el-button v-hasPermi="['order:refund:review']" size="small" type="primary" style="margin-top:16px" @click="prepareReview">{{ row.approved_version ? '核对并重审方案' : '审核退款方案' }}</el-button>
@@ -51,20 +53,42 @@ import RefundGoods from './RefundGoods'
 import OrderGifts from './OrderGifts'
 import MessageProgress from '@/views/oms/messaging/MessageProgress'
 import RefundApplicationGoods from './RefundApplicationGoods'
-import { refundGiftRows, refundCurrentTask, refundGoodsNextAction, refundScenario } from './refundDetailPresentation'
+import { refundGoodsNextAction, refundScenario } from './refundDetailPresentation'
+import { refundProgress } from './refundProgressPresentation'
+import RefundProgress from './RefundProgress'
+import RefundPlatformProgress from './RefundPlatformProgress'
 import { money, amount } from './orderAmounts'
 import { label, purposes, goodsActions } from './refundLabels'
-export default { name: 'RefundDetail', components:{OrderGifts,RefundGoods,RefundApplicationGoods,MessageProgress}, props: { business: Boolean }, data: () => ({ visible: false, loading: false, saving: false, row: null, reviewVisible: false, form: {}, confirmed: false, purposes, goodsActions, rawVisible: false, raw: '', detailTab: 'current', giftReport: null, sequence: 0 }), beforeDestroy() { this.sequence++ }, computed: {
+export default { name: 'RefundDetail', components:{OrderGifts,RefundGoods,RefundApplicationGoods,MessageProgress,RefundProgress,RefundPlatformProgress}, props: { business: Boolean }, data: () => ({ visible: false, loading: false, saving: false, row: null, reviewVisible: false, form: {}, confirmed: false, purposes, goodsActions, rawVisible: false, raw: '', detailTab: 'current', giftReport: null, giftError: '', sequence: 0 }), beforeDestroy() { this.sequence++ }, computed: {
   scenario() { return refundScenario(this.row || {}) },
   amountChanged() { return !!(this.row && this.row.approved_version && this.platform && this.row.refund_fee != null && this.platform.refund_fee != null && amount(this.row.refund_fee) !== amount(this.platform.refund_fee)) },
-  currentGiftRows() { return refundGiftRows(((this.giftReport || {}).lines || []), (this.row || {}).id) },
-  processingSummary() {
-    const row = this.row || {}, parts = [row.funds_state === 'SUCCESS' ? '平台已退款' : '平台资金：' + label(row.funds_state), '购买商品：' + label(row.goods_state)]
-    if (this.currentGiftRows.some(line => line.needs_action)) parts.push('关联赠品待处理')
-    return parts.join(' · ')
+  progress() { return refundProgress(this.row || {}, this.giftReport, this.giftError) },
+  currentTask() { return this.progress.primary }, availableGoodsActions(){return this.platform&&this.platform.dispute_type==='REFUND_AND_RETURN'?['RETURN','REFUSAL','INTERCEPT']:this.goodsActions},goodsNextAction(){return refundGoodsNextAction(this.row || {})},platform() { return this.business ? (this.row&&this.row.platform) : this.row } }, methods: {
+  openTask() { return this.locateTask(this.currentTask) },
+  async locateTask(task) {
+    if (!task) return
+    if (task.focus === 'gifts') {
+      this.detailTab = 'current'
+      await this.$nextTick()
+      if (this.$refs.gifts) {
+        if (this.giftError) await this.$refs.gifts.load()
+        this.$refs.gifts.$el.scrollIntoView({ block: 'start', behavior: 'smooth' })
+      }
+      return
+    }
+    this.detailTab = task.tab
+    await this.$nextTick()
+    if (task.tab === 'goods' && this.$refs.goods) {
+      this.$refs.goods.planScope = task.gifts ? 'gift' : 'purchase'
+      if (task.issue) return this.$refs.goods.openIssue(task.plan_id)
+      if (task.plan_id) return this.$refs.goods.openPlan(task.plan_id)
+    }
   },
-  currentTask() { return refundCurrentTask(this.row || {}, this.currentGiftRows, this.goodsNextAction) }, availableGoodsActions(){return this.platform&&this.platform.dispute_type==='REFUND_AND_RETURN'?['RETURN','REFUSAL','INTERCEPT']:this.goodsActions},goodsNextAction(){return refundGoodsNextAction(this.row || {})},platform() { return this.business ? (this.row&&this.row.platform) : this.row } }, methods: {
-  openTask() { if (!this.currentTask) return; if (this.currentTask.gifts) return this.openGiftGoods(); this.detailTab = this.currentTask.tab },
+  openProgressTrack(track) {
+    if (track.task) return this.locateTask(track.task)
+    if (track.key === 'gift' && !Number((this.row.gift_progress || {}).plan_count)) return this.locateTask({ focus: 'gifts' })
+    return this.locateTask({ tab: track.tab, gifts: track.gifts })
+  },
   openGiftGoods() { this.detailTab = 'goods'; this.$nextTick(() => { if (this.$refs.goods) this.$refs.goods.planScope = 'gift' }) },
   openIssue(id) { this.detailTab = 'goods'; this.$nextTick(() => { if (this.$refs.goods) this.$refs.goods.openIssue(id) }) },
   goReturnRules(){this.visible=false;this.$router.push({path:'/oms-order/afterSaleRules/returns',query:{channelId:this.row.channel_id,refundId:this.row.id}})},
@@ -77,7 +101,8 @@ export default { name: 'RefundDetail', components:{OrderGifts,RefundGoods,Refund
     const same = this.row && String(this.row.id) === String(id)
     this.visible = true
     this.loading = true
-    if (!same) { this.row = null; this.giftReport = null }
+    if (!same) this.row = null
+    if (!same || (preserve && source !== 'gifts')) { this.giftReport = null; this.giftError = '' }
     if (!preserve || !same) this.detailTab = focusIssue || focusParcel ? 'goods' : 'current'
     try {
       const row = (await api.refundDetail(this.business, id)).data
@@ -94,7 +119,7 @@ export default { name: 'RefundDetail', components:{OrderGifts,RefundGoods,Refund
   prepareReview() { this.form = { control_version: this.row.control_version, platform_version: this.platform.version, purpose: this.row.purpose === 'UNKNOWN' ? '' : this.row.purpose, goods_action: this.row.goods_action === 'UNKNOWN' ? (this.platform.dispute_type==='REFUND_AND_RETURN'?'RETURN':'') : this.row.goods_action, reason: '', evidence: '', cancel_line_id: this.row.cancel_line_id || 0, cancel_quantity: this.row.cancel_quantity || 0 }; this.confirmed = false; this.reviewVisible = true },
   goodsChanged() { this.form.cancel_line_id = 0; this.form.cancel_quantity = this.form.goods_action === 'CANCEL' ? 1 : 0 },
   async review() { this.saving = true; try { await api.refundReview(this.row.id, this.form); this.$message.success('审核方案已保存；可分别核对资金和货物处理'); this.reviewVisible = false; await this.reload(); this.$emit('changed') } finally { this.saving = false } },
-  async snapshot(s) { const r = (await api.refundSnapshot(this.row.id, s.id)).data; try { this.raw = JSON.stringify(JSON.parse(r.payload), null, 2) } catch (_) { this.raw = r.payload } this.rawVisible = true }
+  async snapshot(s) { const r = (await api.refundSnapshot(this.business ? this.row.platform_refund_id : this.row.id, s.id)).data; try { this.raw = JSON.stringify(JSON.parse(r.payload), null, 2) } catch (_) { this.raw = r.payload } this.rawVisible = true }
 } }
 </script>
 <style scoped>

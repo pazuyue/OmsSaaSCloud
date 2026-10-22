@@ -63,8 +63,9 @@ export default {
       const seq = ++this.sequence
       this.loading = true
       this.error = ''
+      this.$emit('load-start')
       try { const result = (await api.orderGifts(this.orderId)).data; if (seq === this.sequence) { this.row = result; this.$emit('loaded', result) } }
-      catch (_) { if (seq === this.sequence) this.error = '赠品进度加载失败，请刷新重试' }
+      catch (_) { if (seq === this.sequence) { this.error = '赠品进度加载失败，请刷新重试'; this.$emit('load-error', this.error) } }
       finally { if (seq === this.sequence) this.loading = false }
     },
     origins(sku) { const parent=(this.row.parents||[]).find(p=>p.sku_sn===sku),snapshot=parent&&parent.bundle_snapshot,unit=snapshot?snapshot.business_type==='LUCKY_BAG'?'袋':'套':'件';return ((this.row.snapshot || {}).entitlements || []).filter(g => g.sku_sn === sku).map(g => `${g.group_name} / ${g.rule_name}：${g.quantity} ${unit}`).join('；') },

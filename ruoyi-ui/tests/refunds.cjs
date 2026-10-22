@@ -8,8 +8,8 @@ for (const file of ['PlatformRefunds.vue', 'BusinessRefunds.vue', 'RefundSetting
   assert.deepEqual(compiler.compile(c.template.content).errors, [], file)
 }
 // Check the rendered workflow makes the actual authority and separate progress visible.
-const detail = fs.readFileSync(path.join(root, 'RefundDetail.vue'), 'utf8')
-for (const label of ['平台资金', '货物处理', '实际资金结果来自平台同步', '原子订单的实际商品', '实际发货来源', '平台已退款']) assert.ok(detail.includes(label), label)
+const detail = ['RefundDetail.vue', 'RefundProgress.vue', 'RefundPlatformProgress.vue', 'refundProgressPresentation.js'].map(file => fs.readFileSync(path.join(root, file), 'utf8')).join('\n')
+for (const label of ['平台资金', '货物处理', '状态来自平台同步', '原子订单的实际商品', '实际发货来源', '平台已退款']) assert.ok(detail.includes(label), label)
 assert.ok(detail.includes('control_version') && detail.includes('platform_version'))
 const list = fs.readFileSync(path.join(root, 'RefundList.vue'), 'utf8')
 assert.ok(list.includes('openSync') && list.includes("kind:'REFUND'") && list.includes('/oms-order/management'))
