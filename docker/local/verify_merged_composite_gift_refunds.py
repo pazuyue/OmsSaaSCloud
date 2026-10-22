@@ -207,7 +207,7 @@ class Acceptance(original.Acceptance):
             expect(parcel.get_by_text('合包退回 · 4 张退款单', exact=True)).to_be_visible()
             expect(parcel).to_contain_text('共同退货入库单 ' + self.c['return_sn'])
             expect(parcel).to_contain_text('TEST_MERGED_' + self.c['case_id'])
-            page.screenshot(path=str(OUT / 'shared-return-parcel.png'), full_page=True)
+            page.screenshot(path=str(OUT / 'shared-return-parcel.png'), full_page=True, animations='disabled')
             assert not errors, errors
             browser.close()
         assert self.snapshot() == before
