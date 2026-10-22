@@ -21,6 +21,16 @@ original.OUT = OUT
 
 
 class Acceptance(original.Acceptance):
+    def protected_order(self):
+        previous = json.loads((original.ROOT / 'outputs/composite-gift-refunds/case.json').read_text('utf-8'))
+        scope = ','.join(original.quote(previous[k]) for k in original.KEYS)
+        return original.sql("SELECT sku_sn,total_stock,reserved_stock,allocated_stock,available_stock,version FROM oms_inventory WHERE company_code='QM' AND sku_sn IN (" + scope + ') ORDER BY sku_sn', original.INV)
+
+    def prepare(self):
+        if 'preceding_order_stock' not in self.c:
+            self.c['preceding_order_stock'] = self.protected_order(); self.save()
+        super().prepare()
+
     def before_conversion(self, current, credential):
         super().before_conversion(current, credential)
         c = self.c
@@ -61,6 +71,7 @@ class Acceptance(original.Acceptance):
         super().ship()
         shipments = self.order()['shipments']
         assert len(shipments) == 1 and shipments[0]['shipped_quantity'] == 24
+        assert self.shipment(shipments[0]['id'])['package_count'] == 1
         c['shipment_sn'] = shipments[0]['shipment_sn']; self.save()
         self.check('预览及确认均为1张XS，发货单上限1生效；购买商品和四种赠品同单出库')
 
@@ -172,10 +183,36 @@ class Acceptance(original.Acceptance):
 
     def finish(self):
         super().finish()
+        assert self.protected_order() == self.c['preceding_order_stock'], 'Previous shipped acceptance stock changed'
         path = OUT / 'result.json'; result = json.loads(path.read_text('utf-8'))
         result.update(shipment_count=1, shipment_sn=self.c['shipment_sn'], parcel_id=self.c['parcel_id'], parcel_sn=self.c['parcel_sn'],
                       return_document_count=1, return_sn=self.c['return_sn'], shared_parcel=self.parcels()[0])
         path.write_text(json.dumps(result, ensure_ascii=False, indent=2), 'utf-8')
+
+    def verify_ui(self):
+        super().verify_ui()
+        from playwright.sync_api import sync_playwright, expect
+        before, errors = self.snapshot(), []
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(viewport={'width': 1700, 'height': 1100})
+            context.add_cookies([{'name': 'Admin-Token', 'value': self.token, 'url': BASE}])
+            page = context.new_page(); page.set_default_timeout(30000)
+            page.on('pageerror', lambda e: errors.append(str(e)))
+            page.goto(BASE + '/oms-order/businessRefunds?id=' + str(self.c['refunds']['kit']['id']), wait_until='networkidle')
+            dialog = page.get_by_role('dialog', name='业务退款详情 · 退货退款', exact=True)
+            dialog.get_by_role('tab', name='退回与包裹', exact=True).click()
+            dialog.locator('.return-plans-table .el-table__fixed-right .el-button:visible').first.click()
+            dialog.locator('.plan').get_by_role('button', name='查看包裹及处理实收', exact=True).first.click()
+            parcel = page.locator('.refund-parcel-drawer')
+            expect(parcel.get_by_text('合包退回 · 4 张退款单', exact=True)).to_be_visible()
+            expect(parcel).to_contain_text('共同退货入库单 ' + self.c['return_sn'])
+            expect(parcel).to_contain_text('TEST_MERGED_' + self.c['case_id'])
+            page.screenshot(path=str(OUT / 'shared-return-parcel.png'), full_page=True)
+            assert not errors, errors
+            browser.close()
+        assert self.snapshot() == before
+        self.check('浏览器确认同一退回运单、4张退款和1张共同THK，购买商品与赠品各自实收入账')
 
 
 if __name__ == '__main__':

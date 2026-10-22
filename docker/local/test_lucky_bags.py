@@ -38,7 +38,7 @@ def main():
     suites = ['GiftProductsTest', 'GiftQuotaTest', 'GiftCatalogTest', 'GiftStrategyDesignerTest', 'GoodsGiftProtectionTest', 'OrderDocumentInfoTest', 'OrderDocumentPersistenceTest', 'OrderUpdateServiceTest', 'TmallOrderParserTest', 'LuckyBagRulesTest', 'GoodsLuckyBagTest', 'LuckyBagInventoryTest', 'GoodsBundleTest', 'GoodsWorkspaceTest', 'OrderBundleTest', 'OrderAllocationServiceTest', 'RefundBusinessListTest', 'OrderProcessorTest', 'OrderRepositoryTest', 'OrderProductMatchServiceTest', 'OrderShipmentServiceTest', 'OrderPlatformShippingServiceTest', 'RefundBundleReturnTest', 'RefundGoodsServiceTest', 'GiftServiceTest', 'StockSyncTest', 'OrderStockTest', 'OrderFulfillmentAdjustmentTest', 'LuckyBagOrderTest', 'RefundReturnAutoCreateTest', 'AllocationWorkspaceTest', 'DailyAllocationTest', 'InventoryTransactionsTest', 'ProductInventoryQueryTest', 'DailyCoordinatorTest']
     if '--focused' in sys.argv:
         suites=[s for s in suites if s not in ['InventoryTransactionsTest','DailyCoordinatorTest','DailyAllocationTest']]
-    suites += ['OrderShipmentDispatchServiceTest', 'OrderShipmentReceiptServiceTest', 'OrderVirtualOutboundServiceTest', 'OrderCutoffServiceTest', 'OrderVirtualOutboundTest']
+    suites += ['OrderShipmentDispatchServiceTest', 'OrderShipmentReceiptServiceTest', 'OrderVirtualOutboundServiceTest', 'OrderCutoffServiceTest', 'OrderVirtualOutboundTest', 'RefundSharedScopeTest']
     if '--inventory-only' in sys.argv:
         suites=['LuckyBagInventoryTest','BundleWarehousePlannerTest','WarehouseAllocationPlannerTest','OrderStockTest','AllocationWorkspaceTest','ProductInventoryQueryTest']
     env = dict(os.environ, GOODS_TEST_URL=test_jdbc_url('goods_workspace_test'),
