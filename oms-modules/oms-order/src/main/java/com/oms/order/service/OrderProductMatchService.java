@@ -29,7 +29,7 @@ public class OrderProductMatchService {
         try{
             Map<String,Object> order=repository.raw(company,id);validateOrder(order,expected);
             Map<String,List<Map<String,Object>>> goods=catalog.goods(company,new ArrayList<>(new LinkedHashSet<>(selections.values())));
-            for(String sku:selections.values()){List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());require(found.size()==1,"所选OMS SKU不存在或不唯一："+sku);require(number(found.get(0),"is_fd")==0,"暂不支持福袋："+sku);if(number(found.get(0),"is_package")==1)OrderBundles.snapshot(sku,text(found.get(0),"goods_name"),found.get(0));}
+            for(String sku:selections.values()){List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());require(found.size()==1,"所选OMS SKU不存在或不唯一："+sku);if(number(found.get(0),"is_fd")==1)OrderLuckyBags.definition(sku,text(found.get(0),"goods_name"),found.get(0));if(number(found.get(0),"is_package")==1)OrderBundles.snapshot(sku,text(found.get(0),"goods_name"),found.get(0));}
             Set<String> registered=new HashSet<>();for(Map<String,Object> demand:data(inventory.demands(company,channel,text(order,"platform_tid"),SecurityConstants.INNER)))registered.add(text(demand,"platform_oid"));
             for(String oid:selections.keySet())require(!registered.contains(oid),"子订单 "+oid+" 已登记库存需求，不能直接换SKU");
             TransactionTemplate tx=new TransactionTemplate(new DataSourceTransactionManager(repository.db().getDataSource()));

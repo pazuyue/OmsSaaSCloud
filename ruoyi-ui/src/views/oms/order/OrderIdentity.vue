@@ -1,6 +1,7 @@
 <template>
-  <div class="order-identity"><div v-if="order.gift_plan_id" class="identity-line"><el-tag size="mini" :type="order.gift_block_reason?'warning':''">{{ order.gift_block_reason?'赠品待处理':'含 OMS 赠品' }}</el-tag><router-link :to="{path:'/oms-order/gifts',query:{orderId:order.id}}">查看赠品</router-link></div>
-    <div v-if="order.bundle_count" class="identity-line"><el-tag size="mini">套装 {{ order.bundle_sets }} 套</el-tag><span class="identity-label">按组件履约</span></div>
+  <div class="order-identity"><div v-if="order.gift_plan_id" class="identity-line"><el-tag size="mini" :type="order.gift_block_reason?'warning':''">{{ order.gift_block_reason?'赠品待处理':'含 OMS 赠品' }}</el-tag><el-button v-if="localGifts" type="text" @click="$emit('gifts')">查看赠品</el-button><router-link v-else :to="{path:'/oms-order/gifts',query:{orderId:order.id}}">查看赠品</router-link></div>
+    <div v-if="Number(order.lucky_bag_quantity)>0" class="identity-line"><el-tag size="mini">福袋 {{ order.lucky_bag_quantity }} 袋</el-tag><span class="identity-label">按原袋实际组成履约</span></div>
+    <div v-if="Number(order.bundle_sets)>0" class="identity-line"><el-tag size="mini">套装 {{ order.bundle_sets }} 套</el-tag><span class="identity-label">按组件履约</span></div>
     <div v-if="order.business_type === 'EXCHANGE'" class="identity-line"><el-tag size="mini" type="info">换货换出</el-tag><router-link v-if="order.exchange_id" :to="{ path: '/oms-order/exchanges', query: { exchangeId: order.exchange_id } }">查看换货处理</router-link></div>
     <div v-if="order.order_sn" class="identity-line">
       <span class="identity-label">OMS 单号</span>
@@ -22,6 +23,7 @@ export default {
   name: 'OrderIdentity',
   props: {
     order: { type: Object, required: true },
+    localGifts: Boolean,
     link: { type: Boolean, default: false }
   },
   methods: {

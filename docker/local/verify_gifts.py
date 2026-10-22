@@ -70,6 +70,7 @@ def main():
         api('/order/orders/carrier-configs',{'channel_id':c['channel_id'],'revision':p['revision'],'policy':{'enabled':1,'carrier_order':['SF'],'routes':[]}})
         rule={'key':'BUY_TWO','name':'每买两件赠一件','type':'MULTIPLE','minimum':2,'amount':0,'cap':100,'skus':[c['sku']],'gifts':[{'sku_sn':c['gift_sku'],'goods_name':'[赠品验收] OMS 策略赠品','quantity':1}],'tiers':[],'stop':False}
         c['group_id']=api('/order/gifts/groups',{'name':'[验收] 买二赠一及售后 '+stamp,'priority':1,'enabled':1,'policy':{'channels':[c['channel_id']],'start_time':(datetime.now()-timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'),'end_time':(datetime.now()+timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'),'cross_group_stack':False,'shipped_policy':'RETURN','allow_waive':True,'difference_affects_amount':False,'rules':[rule]}})['id'];save()
+        c['shop_group_id']=api('/order/gifts/shop-groups',{'name':'[验收] 赠品店铺组 '+stamp,'enabled':1,'channels':[c['channel_id']],'links':[{'group_id':c['group_id'],'continue_after_match':False}]})['id'];save()
         api('/order/refunds/configs',{'channel_id':c['channel_id'],'source_key':c['source_key'],'seller_nick':c['seller'],'initial_time':c['created'],'revision':0,'enabled':0,'auto_convert':1,'interval_seconds':30})
     for index,name in enumerate(['pending','cancel','return'],1):
         if name in c['orders']:continue
@@ -157,9 +158,9 @@ def main():
     from playwright.sync_api import sync_playwright,expect
     with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True);ctx=browser.new_context(viewport={'width':1700,'height':1100});ctx.add_cookies([{'name':'Admin-Token','value':token,'url':BASE}]);page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-        page.goto(BASE+'/oms-order/gifts',wait_until='networkidle');expect(page.locator('.gift-management h2')).to_be_visible();page.get_by_role('button',name='新增策略组').click();expect(page.get_by_text('组内策略 · 从上到下执行',exact=True)).to_be_visible();page.screenshot(path=str(OUT/'rule-editor.png'),full_page=True,animations='disabled');page.locator('.el-dialog:visible').get_by_role('button',name='取消',exact=True).click()
+        page.goto(BASE+'/oms-order/gifts',wait_until='networkidle');expect(page.locator('.gift-management h2')).to_be_visible();page.get_by_role('button',name='新增公共策略组').click();expect(page.locator('.editor-heading h2')).to_have_text('新增赠品策略组');page.screenshot(path=str(OUT/'rule-editor.png'),full_page=True,animations='disabled');page.get_by_role('button',name='返回赠品管理',exact=True).click()
         for name in ['pending','cancel','return']:
-            page.goto(BASE+'/oms-order/gifts?orderId='+str(c['orders'][name]['id']),wait_until='networkidle');expect(page.get_by_role('heading',name='赠品与售后处理',exact=True)).to_be_visible();page.screenshot(path=str(OUT/(name+'.png')),full_page=True,animations='disabled')
+            page.goto(BASE+'/oms-order/gifts?orderId='+str(c['orders'][name]['id']),wait_until='networkidle');expect(page.get_by_role('heading',name='赠品处理',exact=True)).to_be_visible();page.screenshot(path=str(OUT/(name+'.png')),full_page=True,animations='disabled')
         assert not errors,errors;browser.close()
     checked('fresh browser verifies rule editor and pending/cancel/returned gift guidance')
     (OUT/'acceptance.json').write_text(json.dumps(c,ensure_ascii=False,indent=2),encoding='utf-8')

@@ -122,6 +122,6 @@ public class OrderWorkspaceService {
                 boolean can=line!=null&&eligible.containsKey(text(issue,"platform_oid"))&&number(line,"demand_prepared")==0&&text(line,"sku_sn").isEmpty()&&number(row,"change_pending")==0&&row.get("business_order_id")==null&&"EXCEPTION".equals(text(row,"conversion_status"));
                 issue.put("can_manual_match",can);
             }
-        }long platform=business?number(row,"platform_order_id"):id;row.put("logs",repository.db().query("SELECT action,result,message,operator_name,create_time FROM oms_order_process_log WHERE company_code=? AND platform_order_id=? ORDER BY id DESC LIMIT 100",ROW,company,platform));return row;
+        }OrderDocumentInfo.attach(row);long platform=business?number(row,"platform_order_id"):id;row.put("logs",repository.db().query("SELECT action,result,message,operator_name,create_time FROM oms_order_process_log WHERE company_code=? AND platform_order_id=? ORDER BY id DESC LIMIT 100",ROW,company,platform));return row;
     }
 }

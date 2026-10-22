@@ -1,0 +1,17 @@
+{
+  "backend_regressions_passed": 331,
+  "quota_tests_passed": 18,
+  "concurrency": {
+    "orders": 100,
+    "workers": 8,
+    "shops": 2,
+    "available_times": 10,
+    "granted_times": 10,
+    "overspend": 0,
+    "elapsed_ms": 142
+  },
+  "scope": "Local disposable MySQL schema, not a production capacity benchmark",
+  "frontend_regressions": "passed",
+  "frontend_production_build": "passed",
+  "browser_checks_passed": 5
+}

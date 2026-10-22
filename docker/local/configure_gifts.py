@@ -5,6 +5,7 @@ from configure_order import column
 
 def install_order(db):
     execute((__import__('pathlib').Path(__file__).parent/'migrations/20261019_gifts.sql').read_text(encoding='utf-8'), db)
+    execute((__import__('pathlib').Path(__file__).parent/'migrations/20261020_gift_quota.sql').read_text(encoding='utf-8'), db)
     for name, definition in [('gift_plan_id', 'BIGINT NULL'), ('gift_block_reason', "VARCHAR(500) NOT NULL DEFAULT ''")]:
         column(db, 'oms_order', name, definition)
     column(db, 'oms_gift_plan', 'dirty', 'TINYINT NOT NULL DEFAULT 1')
@@ -16,6 +17,10 @@ def install_order(db):
 
 def install_inventory(db):
     column(db, 'oms_order_stock_demand', 'line_kind', "VARCHAR(12) NOT NULL DEFAULT 'SALE'")
+
+
+def install_goods(db):
+    execute((__import__('pathlib').Path(__file__).parent/'migrations/20261020_gift_catalog_protection.sql').read_text(encoding='utf-8'), db)
 
 
 def menus():
@@ -33,5 +38,6 @@ def menus():
 if __name__ == '__main__':
     install_order('qm_oms_saas_order')
     install_inventory('qm_oms_saas_inventory')
+    install_goods('qm_oms_saas_commodity')
     menus()
     print('Gift rules, entitlement ledger and after-sales schema installed; no historical documents changed')

@@ -1,0 +1,15 @@
+{
+  "task_id": 129,
+  "event_id": "MEb57206a1e10e44788a44d832f84a37e2",
+  "channel_id": 67,
+  "source_trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.83.17924935457381543",
+  "execution_trace_id": "afb5504cf60f4d0fac1d1cfeaf7070a5.136.17924935488550001",
+  "span_count": 190,
+  "checks": [
+    "trusted simulation only",
+    "source HTTP association",
+    "MQ publish/consume same trace",
+    "Outbox execution separated",
+    "technical trace search"
+  ]
+}

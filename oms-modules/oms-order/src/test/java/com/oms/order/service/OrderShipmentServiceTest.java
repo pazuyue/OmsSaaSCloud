@@ -26,6 +26,14 @@ class OrderShipmentServiceTest {
     void mirror(List<Map<String,Object>> receipts){long qty=receipts.stream().mapToLong(r->number(r,"quantity")).sum();db.update("UPDATE oms_order SET allocation_quantity=?,allocation_status=?,allocation_receipts=?",qty,qty==10?"FULL":"PART",encode(receipts));}
     List<Map<String,Object>> generate(long version){return service.generate("VERIFY",id,version,"tester");}
     long count(){return db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment",Long.class);}
+    @Test void purchasedAndFourGiftReferencesShareOnePhysicalDocumentAndReplayKeepsOwnership(){
+        List<Map<String,Object>> receipts=new ArrayList<>();receipts.add(receipt(1,10,"V1","R1"));
+        for(int i=1;i<=4;i++){String reference="GIFT:77:"+i;db.update("INSERT INTO oms_order_line(company_code,order_id,platform_oid,sku_sn,goods_name,quantity,reserved_quantity,payment,gift_plan_id,stock_reference) VALUES ('VERIFY',?,'','A','gift',1,1,0,77,?)",id,reference);Map<String,Object> r=receipt(100+i,1,"V1","R1");r.put("platform_oid","");r.put("platform_tid",reference);receipts.add(r);}
+        db.update("UPDATE oms_order SET allocation_policy=?",encode(row("owner_code","O1","max_shipments",1)));mirror(receipts);
+        List<Map<String,Object>> documents=generate(0);assertEquals(1,documents.size());assertEquals(14,number(documents.get(0),"quantity"));assertEquals(5,db.queryForObject("SELECT COUNT(*) FROM oms_order_shipment_line",Integer.class));
+        List<Map<String,Object>> lines=OrderShipmentSources.lines(repository,"VERIFY",number(documents.get(0),"id"),false);assertEquals(5,lines.stream().map(l->text(l,"stock_reference")).distinct().count());assertEquals(4,lines.stream().filter(l->l.get("gift_plan_id")!=null&&text(l,"platform_oid").isEmpty()).count());
+        assertTrue(generate(1).isEmpty());assertEquals(1,count());receipts.get(1).put("platform_tid","GIFT:77:2");mirror(receipts);assertThrows(IllegalArgumentException.class,()->generate(2));assertEquals(1,count());
+    }
     Map<String,Object> summary(){return (Map<String,Object>)business.list("VERIFY",null,"","","","","",0,1,20).getRows().get(0);}
     @Test void virtualWarehousesSharingPhysicalWarehouseCreateIndependentDocumentsWithoutPackages(){
         Map<String,Object> a=receipt(1,6,"V1","R1"),b=receipt(2,4,"V2","R1");mirror(Arrays.asList(a,b));

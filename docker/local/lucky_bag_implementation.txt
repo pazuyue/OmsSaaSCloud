@@ -1,0 +1,76 @@
+福袋一期、二期实施跟踪（用户已授权执行；不回填历史单据）
+
+入口统一：商品是否福袋 -> 商品配置；复用现有分货、渠道库存、店铺库存同步。
+一期：版本规则、分组选1、组件保障来源、渠道袋额度、需求登记、逐袋组成、仓库实际SKU履约、原来源售后、清晰UI。
+二期：现有日常任务自动补足、预制组合池、固定数量配额、成本上限、清仓优先。
+设计边界：同袋同仓；首版组间SKU互斥；权重不承诺精确比例；明确组合配额用预制池；平台未知结果仍占预算。
+
+工作区已有大量赠品、退款和链路追踪未提交改动，必须保留；不得重置、提交或覆盖。
+没有发现 AGENTS.md。不使用子代理。Windows命令需 require_escalated（原sandbox logon失败）。
+
+待完成：
+1. 商品规则及版本、引用保护、通用有界选品/预制算法和数据库迁移。
+2. 库存来源、分货集成、渠道及组件占用、取消/出库、同步快照与补足。
+3. 订单组成快照/逐袋映射、平台回传/售后和赠品口径。
+4. 商品/分货/库存/店铺同步/订单/退款页面。
+5. 有意义的并发、来源、重试、配额/成本/清仓测试；本地TEST全链路验收；部署时保留tracing.compose.json。
+
+测试入口：docker/local/test_inventory.py、test_bundles.py、test_stock_sync.py、test_refund_goods.py、test_goods_workspace.py。
+后端构建/测试共享 ~/.cache/oms-local/source，顺序执行。
+本地服务 http://127.0.0.1:8088，API /prod-api。
+此前指定退款 TKb5775de4e3c74eb0858491b7b47ffd75 验收已完成，购买退货单THKF6E40EA3425F310EFA0838DBE2530F，不更改该验收数据。
+
+2026-10-20 实施进度（尚未完成，不得宣称第一二期已交付）：
+- 新增 common/lucky/LuckyBagRules：分组互斥、每组选1、权重/清仓、PRESET固定数量和每袋批次成本上限、有界回溯；normalize配置与plan实际批次。
+- 新增 GoodsLuckyBagService 与 /info/{id}/lucky-bag GET、/{draft|publish} POST，goods目录带lucky_bag已发布快照；商品身份/候选引用受保护。
+- 新增 configure_lucky_bags.py，接入configure_bundles三种install；只在测试库安装过，生产本地业务库未安装、未部署。
+- 新增 LuckyBagInventory：外部prepare元数据 ->本地定义投影，池按仓/渠道/分货单/版本建立，RANDOM保留组件余额，PRESET保存逐袋组合；库存保障按实际批次成本锁定，allocate支持daily缺口。
+- InventoryMutationService新增luckyLock原批次占用；settleReservation额外保护lucky_source余额。
+- 新增 LuckyBagStock：claim幂等原袋组成，组件来源LUCKY转订单，静态consume/release/reconcile维护整袋消耗与返还。
+- 来源LUCKY已接入OrderStockService cancel/publicReserved/refresh锁来源，OrderWarehouseAllocationService、WarehouseAllocationPlanner、BundleWarehousePlanner、OrderVirtualOutboundService、OrderFulfillmentAdjustmentService、库存诊断和商品总览；OrderShipmentService允许LUCKY，OrderBusinessService显示锁来源。
+- 库存不足的claim现在返回WAIT_STOCK并持久化WAITING袋数需求；pool.project和同步快照扣WAITING保护。新增WAIT逻辑刚写，待完整测试和取消路径补齐。
+- AllocationWorkspaceService新增可选LuckyBagInventory注入，preview外部prepare、step预取10SKU再入事务，applyTargets按袋和组件保障；DailyAllocationService预取50SKU后再入项事务。未做平台曝光保护、池释放。
+- 新增 /lucky-bags/{sku} 库存只读详情，现有StockSyncService可以读取福袋snapshot，PlatformStockSnapshot新增lucky_sku分支。
+- 新增OrderStockClient.luckyClaim与库存内部控制器。OrderProcessor两遍处理福袋：先持久意图和规则，再claim -> resolvedLucky保存实际组成，再普通register/reserve组件。
+- 新增OrderLuckyBags工具，OrderBundles.expand/persist/report/shippingGoods区分LUCKY_BAG组件总量与逐袋完成数；OrderProductMatchService允许有效福袋规则。这部分刚写尚未回归。
+
+测试：docker/local/test_lucky_bags.py。第一轮规则+商品4组共41项通过；新增LuckyBagInventoryTest10项，9项曾通过，出库夹具缺real_store_name已补，后续WAIT逻辑修改了测试（并发只有一个RESERVED，其余WAITING）。目前无运行中的测试需确认sessions。
+- 历次lucky-bag-tests.log是旧失败日志：仓库夹具real_store_name缺失，已修但尚未重跑最新源码。
+- 新旧测试上下文同名@Resource冲突已通过把LuckyBagInventory.stock改名inventoryMutation解决。
+- MySQL JSON重放数字类型/scale不同，测试改核对稳定unit_id、数量而非直接Map.equals。
+- GoodsWorkspaceTest加Lucky bean和清理新三表，并装配手动目录controller.luckyBags。
+
+剩余必做：
+1. 跑并修正当前测试；增加订单、平台同步和统一分货回归（目前新runner只3个模块，没有channel），包含并发及部分取消/出库、快照版本。
+2. WAIT需求取消/撤回处理；自动补足要考虑waiting数量（当前need=target-beforeFree还未算等待缺口），pool.available返回原池余额而非发布余额需统一；冻结投放/规则停用/旧规则池的投放版本语义。
+3. 平台曝光持久保护（按同步组/链接），同步未知或停用仍保留预算；回收需先降平台和核对未处理订单，再释放原组件。池释放与现有分货RELEASE集成，mixed allocationType1/2要准确处理；当前还未实现。
+4. LuckyBagInventory.facts调用publicClaims会间接FOR UPDATE，试算应改纯只读口径；preview应真正试plan验证PRESET成本/配额，不能只理论capacity。
+5. 统一分货全仓范围的skuSource目前只wms_inventory，虚拟福袋应通过商品规则投影纳入（导入指定福袋SKU已可走分支）；需要可靠的目录投影发现。
+6. order snapshot/平台回传/赠品再评估/截单/退款仍需审查固定组件coefficient=0调用；RefundBundleReturn当前固定套装公式不适用于福袋，需逐袋退回与来源映射；自动退回唯一明确袋源才执行。
+7. 所有前端尚未开发：商品福袋配置、统一分货单位/组件预览、库存和渠道袋数来源、平台同步来源/保护、订单逐袋组件、退款袋/件/赠品分区。
+8. 部署前备份，业务库执行schema（goods/inventory/order），build相关goods/inventory/order/channel及前端，保留tracing.compose.json覆盖。不要更新或使用真实平台接口，构造独立TEST店铺/仓验收。
+9. 现有普通回归需覆盖bundles、stock_sync、goods、inventory、refund、gift；不并行maven任务（共用cache）。
+
+2026-10-20 22:19 更新（以本段覆盖上文过时剩余清单）
+- 第一、二期核心服务和 UI 已实现：分组草稿/发布/不可变版本；物理保障池、预制逐袋、固定配额、批次成本、清仓；现有一次性/日常分货；渠道和库存明细；平台曝光 fencing 与安全回收；订单/平台袋数和组件件数；退款显式选原袋和全部原袋自动创建。
+- WAITING 订单持久扣可售，取消、补足、出库已接入；停用只停新增保障和投放，已付款/在途继续消耗原保障。
+- 逐袋发出和退回按 stock_source_id 原批次判断；保留原平台子单号；赠品独立。旧规则候选身份引用保留，避免仍存旧池的 SKU 被改为虚拟福袋或删除。
+- 性能：同仓同渠道多批预制合并一个 pool；按每500条真正多 VALUES SQL批量写 unit，无需 JDBC rewrite 参数；元数据在库存锁外核对，目录60秒缓存；每SKU事务和有界组合搜索。
+- 新增定向内部处理接口（既有租户与内部认证/租约）：平台商品 process/{id}、stockSync execute/{id}，只用于精确指定任务，避免验收扫全公司。
+- 全量后端回归352项通过（22:14）；新候选版本保护/不完整草稿等最新 focused310项通过（22:16）。最后增加501袋跨500条批量写边界测试，当前 session82396 正在跑最新focused回归。
+- 前端 LuckyBag +10个关联template/script回归，以及赠品/退款既有前端回归均通过；生产构建成功，dist-next 已完成（22:10），之后只有测试/后台代码更新。
+- 本地业务库新增 schema 已安装（goods/inventory/order），无历史回填、无任务开关改变。
+- 备份完成：docker/local/backups/lucky-bags-20261020-220130（4业务库SQL、运行中goods/inventory/order/channel jar、dist、tracing override）。
+- 待做：最新测试完成后 build.sh -pl goods/inventory/order/channel -am，保留 tracing.compose.json 重建4服务，publish_frontend.py发布dist-next；运行 python docker/local/verify_lucky_bags.py，修复实际验收问题并截图；补充 WMS实际退回回执验收（脚本目前到创建原袋退回计划+平台安全回收，尚无实际收货回执）；最后写结果。
+- verify_lucky_bags.py 是新建可恢复独立TEST脚本，尚未运行。用本地WMS simulator，自己专属店铺/仓/商品/分货，PRESET3袋，A2/B1/D3配额、每袋成本≤5，卖2袋发4件，按原袋退1袋2件；2平台链接共享预算3→1→0，先停投待清零再释放。脚本模拟拉单心跳只改自己专属店铺，结束恢复disabled。
+- 前期TKb5775…等验收记录严禁改动。本任务不要全局扫描真实平台/仓库，不要启用全局任务。Maven缓存单任务，不可并行Maven。
+
+完成验收（2026-10-20）：
+第一、二期已部署本地TEST，最后生产构建成功；goods/inventory/order/channel均健康，保留 tracing.compose.json。
+最终专项340项通过，之前全量352项通过；前端模板/脚本、赠品和退款回归、生产构建通过。501袋跨500条多VALUES批量写入验证通过。
+实际分仓曾误入固定套装校验，已按库存需求 lucky_sku 可信身份修复，固定套装校验保留，并补带bundle_id的实际分仓/出库回归。LUCKY源分仓查询已改批量查询，商品/渠道库存核对和福袋来源完整接入。
+订单/退款列表袋与套分开；订单原袋明细直接展示，逐袋包含平台子单和原源；退款原袋号选择与其他退款已占用禁选。
+验收脚本 verify_lucky_bags.py 已通过，含真实本地TEST WMS实收入账与重复回传幂等；另外验证了组件库存与渠道库存CONSISTENT，退款列表单位袋，3个收货后页面无浏览器错误。
+验收记录：{"order_id": 126, "order_sn": "SOd524efc738204bf0aa5f3556c77b1beb", "refund_id": 80, "refund_sn": "TK6c44fa97eb4d41c5bdfb273b2eaf6dc6", "sku": "FD20261020222327", "bags_sold": 2, "pieces_shipped": 4, "bag_quota_original": 3, "fixed_quantities": {"A": 2, "B": 1, "D": 3}, "cost_cap": 5, "parent_physical_stock": 0, "platform_shipped_bags": 2, "return_bags": 1, "return_pieces": 2, "return_pieces_posted": 2, "return_plan_adds_stock": false, "receipt_does_not_restore_bag_quota": true, "duplicate_receipt_posts_once": true, "allocation_ms": 313.45, "shared_platform_budget": [3, 1, 0], "safe_reclaim": true, "real_platform_writes": false, "browser_errors": [], "component_inventory_consistent": true, "channel_inventory_consistent": true, "refund_list_unit": "袋", "receipt_ui_verified": true}
+证据：outputs/lucky-bags/result.json 及rule/protection/order/refund/channel-inventory/component-inventory/return-received.png。
+原TKb5775...等历史验收记录未触碰；未启用全局任务，独立TEST拉单配置同步心跳验收后已恢复disabled；未调用真实平台/仓库。

@@ -28,6 +28,7 @@ import java.util.*;
  @RequiresPermissions("channel:product:query") @GetMapping("/tasks/{id}") public AjaxResult task(@PathVariable long id){return AjaxResult.success(service.task(company(),id));}
  @RequiresPermissions("channel:product:pull") @PostMapping("/tasks/{id}/retry") public AjaxResult retry(@PathVariable long id){service.retry(company(),id);return AjaxResult.success(service.task(company(),id));}
  @RequiresPermissions(value={"channel:product:query","channel:stockSync:query"},logical=Logical.OR) @GetMapping("/bound") public AjaxResult bound(@RequestParam long channelId,@RequestParam String skuSn){return AjaxResult.success(service.boundOptions(company(),channelId,skuSn));}
+ @InnerAuth @PostMapping("/internal/process/{id}") public R<Map<String,Object>> processOne(@RequestParam("company_code") String company,@PathVariable long id){String c=TenantRouting.company(company);service.process(c,id);return R.ok(service.task(c,id));}
  @InnerAuth @PostMapping("/internal/scan-all") public R<Map<String,Object>> scan(){Map<String,Object> result=new LinkedHashMap<>();for(String c:tenants.companies())try(TenantRouting.Binding ignored=tenants.open(c)){result.put(c,service.scan(c));}return R.ok(result);}
  @ExceptionHandler(IllegalArgumentException.class) public AjaxResult invalid(IllegalArgumentException e){return AjaxResult.error(e.getMessage());}
 }

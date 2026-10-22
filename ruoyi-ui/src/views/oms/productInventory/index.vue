@@ -10,7 +10,7 @@
     <div class="product-toolbar"><div>共 <strong>{{ total }}</strong> 个商品 <span class="muted">· 总库存含正次品，正品可用不等同于渠道可售</span></div><div class="product-actions"><el-checkbox v-model="showDefective">显示次品</el-checkbox><el-button size="small" icon="el-icon-refresh" :loading="loading" @click="loadList">刷新</el-button></div></div>
     <el-alert v-if="listError" title="商品库存加载失败，请刷新重试" type="error" :closable="false" show-icon />
     <el-table v-loading="loading" :data="rows" row-key="id" :empty-text="listError ? '加载失败' : '暂无符合条件的商品库存'">
-      <el-table-column label="商品 / SKU" min-width="210" :fixed="mobile ? false : 'left'"><template slot-scope="s"><el-button type="text" class="product-name" @click="open(s.row)">{{ goodsName(s.row.skuSn) }}</el-button><div class="muted">{{ s.row.skuSn }}</div></template></el-table-column>
+      <el-table-column label="商品 / SKU" min-width="210" :fixed="mobile ? false : 'left'"><template slot-scope="s"><el-button type="text" class="product-name" @click="open(s.row)">{{ goodsName(s.row.skuSn) }}</el-button><div class="muted">{{ s.row.skuSn }} <el-tag v-if="bagMap[s.row.skuSn]" size="mini">福袋 · 袋</el-tag></div><lucky-bag-ledger v-if="bagMap[s.row.skuSn]" :sku="s.row.skuSn" /></template></el-table-column>
       <el-table-column label="总库存" prop="totalStock" width="105" align="right" />
       <el-table-column label="正品 · 仓库合计" align="center"><el-table-column v-for="c in stockColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s"><strong :class="{ available: c.key === 'AvailableNumber' }">{{ s.row.warehouseTotals['zp' + c.key] }}</strong></template></el-table-column></el-table-column>
       <el-table-column v-if="showDefective" label="次品 · 仓库合计" align="center"><el-table-column v-for="c in stockColumns" :key="c.key" :label="c.label" width="100" align="right"><template slot-scope="s">{{ s.row.warehouseTotals['cp' + c.key] }}</template></el-table-column></el-table-column>
@@ -31,6 +31,7 @@
             <div v-for="c in summaryColumns" :key="c.key" class="balance-row"><span>{{ c.label }}</span><strong>{{ detail[c.key] }}</strong><span>{{ detail.warehouseTotals[c.key] }}</span><span>{{ detail.batchTotals[c.key] }}</span><strong :class="{ difference: delta(c.key) !== 0 }">{{ delta(c.key) > 0 ? '+' : '' }}{{ delta(c.key) }}</strong></div>
           </div>
           <p v-if="detail.reservationSummary" class="scope-note">仓库与批次按订单逻辑预占折算后核对，实物数量未因转单而改变。可追溯实物锁库 {{ detail.reservationSummary.trackedLocked }}，其中订单占用 {{ detail.reservationSummary.occupiedQuantity }}。其他或数据异常的正品锁定 {{ detail.reservationSummary.otherLocked }}。</p>
+          <section v-if="(detail.luckySources || []).length"><h4>福袋组件保障来源（件）</h4><p class="scope-note">组件仍属于实物库存；以下保障不能重复分配给普通订单或赠品，最多展示最近100条。</p><el-table :data="detail.luckySources" size="small"><el-table-column label="销售福袋" min-width="190"><template slot-scope="s">{{ s.row.bagSku }}<lucky-bag-ledger :sku="s.row.bagSku" :channel-id="s.row.channelId"/></template></el-table-column><el-table-column prop="storeCode" label="原仓"/><el-table-column prop="batchId" label="原批次编号"/><el-table-column prop="quantity" label="原保障（件）"/><el-table-column prop="occupiedQuantity" label="订单占用（件）"/><el-table-column prop="consumedQuantity" label="已发（件）"/><el-table-column prop="releasedQuantity" label="已回收（件）"/></el-table></section>
           <el-tabs v-model="tab" @tab-click="changeTab">
             <el-tab-pane label="仓库分布" name="warehouses" />
             <el-tab-pane label="锁库来源" name="reservations" />
@@ -69,15 +70,17 @@
 </template>
 
 <script>
+import LuckyBagLedger from '@/views/oms/inventory/LuckyBagLedger'
 import { productInventoryList, productInventoryDetail, productInventoryRows } from '@/api/wmsInventory/product'
 import { lookupGoods, lookupStores } from '@/api/wmsInventory/workspace'
 const defaults = () => ({ skuSn: '', onlyStock: false, pageNum: 1, pageSize: 20 })
 export default {
+  components: { LuckyBagLedger },
   name: 'ProductInventory',
   data() {
     return {
       query: defaults(), rows: [], total: 0, loading: false, listError: false, showDefective: false,
-      options: [], goodsMap: {}, storeMap: {}, goodsSearching: false,
+      options: [], goodsMap: {}, bagMap: {}, storeMap: {}, goodsSearching: false,
       drawer: false, detail: null, detailLoading: false, detailError: false, tab: 'warehouses',
       tabRows: [], tabTotal: 0, tabLoading: false, tabError: false, tabQuery: { pageNum: 1, pageSize: 20 }, historyOperation: '',
       checkNames: { CONSISTENT: '一致', DIFFERENT: '存在差异', INCOMPLETE: '明细不完整' },
@@ -105,7 +108,7 @@ export default {
     search() { this.query.pageNum = 1; this.searchPage() },
     searchPage() { this.syncRoute(); this.loadList() },
     reset() { this.query = defaults(); this.searchPage() },
-    async loadNames(skus) { const missing = [...new Set(skus)].filter(s => s && !this.goodsMap[s]); if (!missing.length) return; try { const r = await lookupGoods({ skus: missing.join(',') }); r.data.forEach(g => this.$set(this.goodsMap, g.skuSn, g.goodsName)) } catch (_) { /* Quantities remain visible when metadata is unavailable. */ } },
+    async loadNames(skus) { const missing = [...new Set(skus)].filter(s => s && !this.goodsMap[s]); if (!missing.length) return; try { const r = await lookupGoods({ skus: missing.join(',') }); r.data.forEach(g => { this.$set(this.goodsMap, g.skuSn, g.goodsName); this.$set(this.bagMap,g.skuSn,Number(g.isFd)===1) }) } catch (_) { /* Quantities remain visible when metadata is unavailable. */ } },
     searchGoods(keyword) { clearTimeout(this.goodsTimer); const seq = ++this.goodsSeq; this.goodsTimer = setTimeout(async() => { this.goodsSearching = true; try { const r = await lookupGoods({ keyword }); if (seq === this.goodsSeq) this.options = r.data } catch (_) { if (seq === this.goodsSeq) this.options = [] } finally { if (seq === this.goodsSeq) this.goodsSearching = false } }, 300) },
     async loadList() { const seq = ++this.listSeq; this.loading = true; this.listError = false; try { const r = await productInventoryList(this.query); if (seq !== this.listSeq) return; this.rows = r.rows; this.total = r.total; this.loadNames(r.rows.map(row => row.skuSn)) } catch (_) { if (seq === this.listSeq) { this.rows = []; this.total = 0; this.listError = true } } finally { if (seq === this.listSeq) this.loading = false } },
     open(row, restore = false) { this.detailSeq++; this.tabSeq++; this.detail = row; this.drawer = true; this.detailError = true; if (!restore) this.tab = 'warehouses'; this.tabQuery = { pageNum: 1, pageSize: 20 }; this.historyOperation = ''; this.tabRows = []; this.tabTotal = 0; this.syncRoute(); return this.refreshDetail() },

@@ -59,10 +59,13 @@ public class DailyAllocationService {
     }
     /** Bounded work; safely callable from multiple JVMs or resumed after a process restart. */
     public boolean tick(String company,long id) {
+        workspace.discoverLucky(company,id);
         long deadline=System.nanoTime()+2000000000L;
         // Approved round configuration is immutable; decode once per batch, not query twice per SKU.
         Map<Long,Map<String,Object>> configs=new HashMap<>();
+        Set<String> prepared=new HashSet<>();
         for(int i=0;i<50 && System.nanoTime()<deadline && !Thread.currentThread().isInterrupted();i++) {
+            workspace.prepareLuckyDaily(company,id,prepared);
             final long[] attempted={0,0};
             try {
                 Boolean more=workspace.transaction().execute(tx->{

@@ -1,0 +1,42 @@
+{
+  "shipment_id": 73,
+  "shipment_sn": "XSc44dc794dc60492aad27d9778bbcfb60",
+  "order_id": 127,
+  "external_order": "SIMOUT_5023b4ac8d3e4fdcab94",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 4,
+  "message_id": "SIM_COMPLETE_XSc44dc794dc60492aad27d9778bbcfb60",
+  "package_code": "SIMPKG_XSc44dc794dc60492aad27d9778bbcfb60",
+  "express_code": "TEST-SF-XSc44dc794dc60492aad27d9778bbcfb60",
+  "outbound_time": "2026-10-21 12:54:34",
+  "plans": [
+    {
+      "id": 80,
+      "sku_sn": "FDR20261021125335B",
+      "quantity": 2,
+      "platform_oid": "9942026102112533501",
+      "store_code": "FDR_V_20261021125335",
+      "batch_code": "FDR-20261021125335-2"
+    },
+    {
+      "id": 81,
+      "sku_sn": "FDR20261021125335D",
+      "quantity": 2,
+      "platform_oid": "9942026102112533501",
+      "store_code": "FDR_V_20261021125335",
+      "batch_code": "FDR-20261021125335-3"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSc44dc794dc60492aad27d9778bbcfb60</deliveryOrderCode><deliveryOrderId>SIMOUT_5023b4ac8d3e4fdcab94</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSc44dc794dc60492aad27d9778bbcfb60</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-21 12:54:34</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>80</orderLineNo><itemCode>FDR20261021125335B</itemCode><ownerCode>VC00001</ownerCode><batchCode>FDR-20261021125335-2</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>81</orderLineNo><itemCode>FDR20261021125335D</itemCode><ownerCode>VC00001</ownerCode><batchCode>FDR-20261021125335-3</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSc44dc794dc60492aad27d9778bbcfb60</packageCode><expressCode>TEST-SF-XSc44dc794dc60492aad27d9778bbcfb60</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>FDR20261021125335B</itemCode><quantity>2</quantity></item><item><itemCode>FDR20261021125335D</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSc44dc794dc60492aad27d9778bbcfb60",
+    "quantity": 4,
+    "status": "SHIPPED",
+    "shipped_quantity": 4,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSc44dc794dc60492aad27d9778bbcfb60",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

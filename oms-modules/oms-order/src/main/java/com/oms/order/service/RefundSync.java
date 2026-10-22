@@ -14,6 +14,7 @@ import static com.oms.order.service.RefundValues.*;
 @Service public class RefundSync {
     @Resource RefundService refunds;
     @Resource RefundGoodsService goods;
+    @Resource RefundReturnAutoCreate autoCreate;
     @Resource RefundParcelAutomation parcelAutomation;
     @Resource ConfiguredPushReader reader;
     @Resource OrderCatalog catalog;
@@ -21,6 +22,7 @@ import static com.oms.order.service.RefundValues.*;
     @Resource RefundSyncLog logs;
     private final ScopedWorkExecutor executor=new ScopedWorkExecutor("refund");
     private final Set<String> active=ConcurrentHashMap.newKeySet();
+    private final Set<String> requested=ConcurrentHashMap.newKeySet();
     private OrderRepository repo(){return refunds.repository;}
     Map<String,Object> config(String company,long channel,boolean lock){List<Map<String,Object>> rows=repo().db().query("SELECT * FROM oms_refund_config WHERE company_code=? AND channel_id=?"+(lock?" FOR UPDATE":""),ROW,company,channel);require(rows.size()==1,"请先配置该店铺的退款接入");return rows.get(0);}
     public Map<String,Object> configurations(String company){return m("channels",catalog.channels(company),"sources",reader.choices(company),"configs",repo().db().query("SELECT company_code,channel_id,source_key,seller_nick,enabled,auto_convert,initial_time,cursor_time,revision,interval_seconds,last_error,last_success,next_run FROM oms_refund_config WHERE company_code=? ORDER BY channel_id",ROW,company));}
@@ -40,8 +42,16 @@ import static com.oms.order.service.RefundValues.*;
     public Map<String,Object> task(String company,long id){List<Map<String,Object>> rows=repo().db().query("SELECT id,channel_id,mode,start_time,end_time,page_time,state,attempts,synced_count,last_error,create_time FROM oms_refund_sync WHERE company_code=? AND id=?",ROW,company,id);require(rows.size()==1,"任务不存在或无权访问");Map<String,Object> t=rows.get(0);repo().messageProgress(company,Collections.singletonList(t),"REFUND_PULL");t.put("items",repo().db().query("SELECT refund_id,result,platform_refund_id,message FROM oms_refund_sync_item WHERE company_code=? AND task_id=? ORDER BY id",ROW,company,id));return t;}
     public void retry(String company,long id){refunds.tx().execute(s->{Map<String,Object> hint=rawTask(company,id,false);config(company,number(hint,"channel_id"),true);Map<String,Object> t=rawTask(company,id,true);require(Arrays.asList("FAILED","RETRY").contains(text(t,"state")),"当前任务无需重试；已完成任务可新建补拉");require(repo().db().queryForObject("SELECT COUNT(*) FROM oms_refund_config WHERE company_code=? AND channel_id=? AND lease_until>NOW()",Long.class,company,t.get("channel_id"))==0,"店铺正在处理，请稍后重试");repo().db().update("UPDATE oms_refund_sync SET state='RETRY',attempts=0,last_error='',work_version=work_version+1,next_attempt=NOW() WHERE company_code=? AND id=?",company,id);changed(company,id);return null;});}
     public Map<String,Object> poll(){int count=0;for(String c:tenants.companies())try(TenantRouting.Binding ignored=tenants.open(c)){if(kick(c))count++;}return m("queued_companies",count);}
-    public boolean kick(String company){TenantRouting.Route scope=tenants.capture(company);String key=scope.datasource()+"/"+company;if(!active.add(key))return false;boolean submitted=executor.submit(scope,()->{try{run(company);}finally{active.remove(key);}});if(!submitted)active.remove(key);return submitted;}
-    void run(String company){if(goods!=null)goods.scan(company);for(Map<String,Object> c:repo().db().query("SELECT channel_id FROM oms_refund_config c WHERE company_code=? AND ((auto_convert=1 AND EXISTS(SELECT 1 FROM oms_platform_refund p WHERE p.company_code=c.company_code AND p.channel_id=c.channel_id AND p.conversion_state='WAITING' AND p.source_state='VALID')) OR (enabled=1 AND next_run<=NOW()) OR EXISTS(SELECT 1 FROM oms_refund_sync t WHERE t.company_code=c.company_code AND t.channel_id=c.channel_id AND t.state IN ('PENDING','RUNNING','RETRY') AND t.next_attempt<=NOW())) ORDER BY next_run,channel_id LIMIT 10",ROW,company))shop(company,number(c,"channel_id"));if(parcelAutomation!=null)parcelAutomation.scan(company);if(repo().gifts()!=null)repo().gifts().scan(company);}
+    public boolean kick(String company){
+        TenantRouting.Route scope=tenants.capture(company);String key=scope.datasource()+"/"+company;
+        requested.add(key);if(!active.add(key))return false;
+        boolean submitted=executor.submit(scope,()->{
+            requested.remove(key);
+            try{run(company);}finally{active.remove(key);if(requested.remove(key))kick(company);}
+        });
+        if(!submitted){active.remove(key);requested.remove(key);}return submitted;
+    }
+    void run(String company){if(autoCreate!=null)autoCreate.scan(company);if(goods!=null)goods.scan(company);for(Map<String,Object> c:repo().db().query("SELECT channel_id FROM oms_refund_config c WHERE company_code=? AND ((auto_convert=1 AND EXISTS(SELECT 1 FROM oms_platform_refund p WHERE p.company_code=c.company_code AND p.channel_id=c.channel_id AND p.conversion_state='WAITING' AND p.source_state='VALID')) OR (enabled=1 AND next_run<=NOW()) OR EXISTS(SELECT 1 FROM oms_refund_sync t WHERE t.company_code=c.company_code AND t.channel_id=c.channel_id AND t.state IN ('PENDING','RUNNING','RETRY') AND t.next_attempt<=NOW())) ORDER BY next_run,channel_id LIMIT 10",ROW,company))shop(company,number(c,"channel_id"));if(parcelAutomation!=null)parcelAutomation.scan(company);if(repo().gifts()!=null)repo().gifts().scan(company);}
     void fence(String company,long channel,String lease){require(!repo().db().query("SELECT channel_id FROM oms_refund_config WHERE company_code=? AND channel_id=? AND lease_token=? AND lease_until>NOW() FOR UPDATE",ROW,company,channel,lease).isEmpty(),"退款同步租约已失效");}
     boolean claim(String company,long channel,String lease){return repo().db().update("UPDATE oms_refund_config SET lease_token=?,lease_until=DATE_ADD(NOW(),INTERVAL 90 SECOND) WHERE company_code=? AND channel_id=? AND (lease_until IS NULL OR lease_until<NOW())",lease,company,channel)==1;}
     void release(String company,long channel,String lease){repo().db().update("UPDATE oms_refund_config SET lease_token=NULL,lease_until=NULL WHERE company_code=? AND channel_id=? AND lease_token=?",company,channel,lease);}

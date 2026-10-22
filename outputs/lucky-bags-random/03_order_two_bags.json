@@ -1,0 +1,219 @@
+{
+  "batch": [
+    {
+      "id": 169,
+      "sku": "FDR20261021125335A",
+      "actual": 10,
+      "locked": 0,
+      "available": 10
+    },
+    {
+      "id": 170,
+      "sku": "FDR20261021125335B",
+      "actual": 10,
+      "locked": 6,
+      "available": 4
+    },
+    {
+      "id": 171,
+      "sku": "FDR20261021125335D",
+      "actual": 10,
+      "locked": 6,
+      "available": 4
+    }
+  ],
+  "pools": [
+    {
+      "id": 2,
+      "state": "ACTIVE",
+      "consumed": 0,
+      "occupied": 2,
+      "quantity": 6,
+      "released": 0,
+      "available": 4
+    }
+  ],
+  "units": [
+    {
+      "id": 4,
+      "tid": "99420261021125335",
+      "state": "RESERVED",
+      "components": [
+        {
+          "sku_sn": "FDR20261021125335B",
+          "batch_id": 170,
+          "quantity": 1,
+          "group_key": "top",
+          "source_id": 4,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 B",
+          "group_name": "上装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 84,
+          "clearance_priority": 0
+        },
+        {
+          "sku_sn": "FDR20261021125335D",
+          "batch_id": 171,
+          "quantity": 1,
+          "group_key": "bottom",
+          "source_id": 5,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 D",
+          "group_name": "下装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 85,
+          "clearance_priority": 0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "tid": "99420261021125335",
+      "state": "RESERVED",
+      "components": [
+        {
+          "sku_sn": "FDR20261021125335B",
+          "batch_id": 170,
+          "quantity": 1,
+          "group_key": "top",
+          "source_id": 4,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 B",
+          "group_name": "上装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 84,
+          "clearance_priority": 0
+        },
+        {
+          "sku_sn": "FDR20261021125335D",
+          "batch_id": 171,
+          "quantity": 1,
+          "group_key": "bottom",
+          "source_id": 5,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 D",
+          "group_name": "下装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 85,
+          "clearance_priority": 0
+        }
+      ]
+    }
+  ],
+  "channel": [
+    {
+      "sku": "FDR20261021125335",
+      "pending": 0,
+      "reserved": 2,
+      "allocated": 4,
+      "available": 4
+    },
+    {
+      "sku": "FDR20261021125335B",
+      "pending": 0,
+      "reserved": 2,
+      "allocated": 0,
+      "available": 0
+    },
+    {
+      "sku": "FDR20261021125335D",
+      "pending": 0,
+      "reserved": 2,
+      "allocated": 0,
+      "available": 0
+    }
+  ],
+  "company": [
+    {
+      "sku": "FDR20261021125335",
+      "total": 0,
+      "frozen": 0,
+      "reserved": 0,
+      "allocated": 0,
+      "available": 0
+    },
+    {
+      "sku": "FDR20261021125335A",
+      "total": 10,
+      "frozen": 0,
+      "reserved": 0,
+      "allocated": 0,
+      "available": 10
+    },
+    {
+      "sku": "FDR20261021125335B",
+      "total": 10,
+      "frozen": 0,
+      "reserved": 2,
+      "allocated": 4,
+      "available": 4
+    },
+    {
+      "sku": "FDR20261021125335D",
+      "total": 10,
+      "frozen": 0,
+      "reserved": 2,
+      "allocated": 4,
+      "available": 4
+    }
+  ],
+  "sources": [
+    {
+      "id": 4,
+      "sku": "FDR20261021125335B",
+      "batch_id": 170,
+      "consumed": 0,
+      "occupied": 2,
+      "quantity": 6,
+      "released": 0
+    },
+    {
+      "id": 5,
+      "sku": "FDR20261021125335D",
+      "batch_id": 171,
+      "consumed": 0,
+      "occupied": 2,
+      "quantity": 6,
+      "released": 0
+    }
+  ],
+  "warehouse": [
+    {
+      "sku": "FDR20261021125335A",
+      "actual": 10,
+      "locked": 0,
+      "available": 10
+    },
+    {
+      "sku": "FDR20261021125335B",
+      "actual": 10,
+      "locked": 6,
+      "available": 4
+    },
+    {
+      "sku": "FDR20261021125335D",
+      "actual": 10,
+      "locked": 6,
+      "available": 4
+    }
+  ],
+  "totals": {
+    "total": 30,
+    "available": 18,
+    "allocated": 8,
+    "reserved": 4
+  },
+  "warehouse_totals": {
+    "actual": 30,
+    "available": 18,
+    "locked": 12
+  },
+  "bag_totals": {
+    "quantity": 6,
+    "available": 4,
+    "occupied": 2,
+    "consumed": 0,
+    "released": 0
+  }
+}

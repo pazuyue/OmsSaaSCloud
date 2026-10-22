@@ -201,7 +201,93 @@ python3 docker/local/verify_business.py
 SQL 备份不包含上传文件、Docker 镜像或构建产物。
 备份使用单事务快照和单行 INSERT，从实际导出的 SQL 统计恢复校验行数，避免定时任务日志或业务写入期间，独立计数与备份快照不一致而误报。
 
-本地默认关闭 Sentinel 控制台集成，文件上传使用本地数据卷，未部署 FastDFS、MinIO、Seata 或 SkyWalking。
+本地默认关闭业务服务的 Sentinel 客户端集成，文件上传使用本地数据卷，未部署 FastDFS、MinIO 或 Seata。Sentinel 控制台由本地 Compose 管理，SkyWalking 可通过以下流程启用。
+
+## 本地 Sentinel 控制台
+
+“系统监控 → Sentinel控制台”在新标签页打开 `http://localhost:8718`，默认账号和密码均为 `sentinel`。
+控制台仅监听本机回环地址；可在 `docker/local/.env` 设置 `SENTINEL_DASHBOARD_USERNAME` 和
+`SENTINEL_DASHBOARD_PASSWORD`，然后重新启动控制台。
+
+```bash
+# 在 WSL 项目根目录执行；下载官方 1.8.10 安装包并校验发布页 SHA-256。
+# 仅启动或重建控制台容器。
+python3 docker/local/sentinel.py enable
+```
+
+`start.sh` 会自动准备并启动控制台，现有菜单 ID 和角色授权保持可用。
+业务服务的 Sentinel 客户端默认关闭，启用客户端并产生请求后，相应业务应用才会出现在控制台。
+浏览器验收可在 PowerShell 项目目录运行 `python docker/local/verify_sentinel_ui.py`，验证菜单跳转和实际登录。
+安装包来源及摘要见 [Sentinel 官方发布页](https://github.com/alibaba/Sentinel/releases/expanded_assets/1.8.10)。
+
+## 本地 SkyWalking 链路追踪
+
+在 WSL 的项目根目录执行：
+
+```bash
+# 下载官方 Agent 9.5.0，校验 SHA-512，准备 OAP/UI 10.3.0 和 Elasticsearch 8.17.4。
+# 镜像摘要保存在 docker/local/generated/tracing-images.json。
+python3 docker/local/tracing.py prepare
+
+# 构建包含追踪 Toolkit 和消息关联字段的新版本。
+bash docker/local/build.sh
+bash docker/local/build-frontend.sh
+
+# 增量升级两套本地消息库，启动追踪组件并为 Java 服务加载探针。
+python3 docker/local/tracing.py enable
+python3 docker/local/verify_tracing.py
+# 可选：使用仓库已有的本地模拟店铺验收消息链路。
+python3 docker/local/verify_tracing_messages.py
+# 短暂停止 OAP，验证业务可用性；脚本会在 finally 中恢复 OAP。
+python3 docker/local/verify_tracing.py --outage
+```
+
+控制台为 `http://localhost:18090`，OAP 的宿主机 gRPC 地址为 `127.0.0.1:11800`。
+系统监控菜单中的 `SkyWalking` 在新标签页打开控制台；入口地址跟随 `OMS_TRACING_UI_URL`。
+这些端口只绑定本机回环地址，容器中的探针使用 `skywalking-oap:11800`。
+Agent 目录以只读方式挂载，网关额外启用 Gateway 3.x 插件。OAP 不作为业务服务的健康依赖。
+启用状态保存在 `generated/tracing-enabled`，之后使用 `start.sh` 会继续加载探针；直接执行基础 Compose 不会自动加载。
+
+默认服务名为 `local::应用名`，实例由 Agent 自动区分。可在 `docker/local/.env` 设置
+`OMS_TRACE_ENV`、`OMS_TRACE_SAMPLE`、`OMS_TRACING_UI_URL`，修改后重新执行 `enable`。
+`OMS_TRACE_SAMPLE=-1` 表示全量采集；正数表示每个 Agent 每 3 秒最多采样的 TraceSegment 数量，不是百分比。
+链路记录默认保留 3 天，指标保留 7 天。生产环境须独立规划访问控制、存储容量与采样预算。
+
+日志中的 `TID` 对应 SkyWalking 链路；未加载 Agent 或没有活动链路时显示 `N/A`。
+网关业务响应提供 `X-Trace-Id`。默认关闭 SQL 参数、Feign 请求体和 HTTP 请求头采集，过滤健康检查和指标抓取。
+接口调用、Feign、数据库、Redis 和 RabbitMQ 的覆盖情况由验收脚本与实际链路检查。
+
+消息任务保留原 `trace_id` 作为业务追踪号，新增可空的 `source_trace_id` 记录创建通知时的技术链路，
+每次投递、处理与人工重试记录的 `sw_trace_id` 保存本次执行链路。数据库迁移兼容历史记录。
+消息详情支持复制来源及执行追踪号、打开链路平台；列表支持按技术追踪号精确查询，并保持公司隔离。
+后台投递和补偿按单条消息建立执行边界，短时任务通过公共执行器传递请求上下文。
+延迟执行和重试通过业务标识关联多个短链路；技术 Trace 的保留期不影响业务审计记录。
+
+```bash
+# 隔离数据库中的消息回归：不加载 Agent / 加载真实 Agent。
+python3 docker/local/test_tracing.py
+python3 docker/local/test_tracing.py --agent
+
+# 查看状态；停用探针时重建业务容器并停止追踪组件，保留数据卷。
+python3 docker/local/tracing.py status
+python3 docker/local/tracing.py disable
+# 增量发布时仅重建指定的已接入服务：
+python3 docker/local/tracing.py enable --services channel order
+```
+
+IDE 调试的 VM 参数示例（路径替换为下载后的 Agent 完整目录）：
+
+```text
+-javaagent:D:/path/to/agent/skywalking-agent.jar
+-Dskywalking.agent.service_name=dev::oms-order
+-Dskywalking.collector.backend_service=127.0.0.1:11800
+```
+
+普通启动即使停用 Agent，仍需执行增量字段升级；本地 `start.sh` 会自动调用 `tracing.py migrate`。
+其他环境应先参照 `configure_messaging.install()` 为 Outbox 增加 `source_trace_id VARCHAR(256) NULL`，
+为消息执行记录增加 `sw_trace_id VARCHAR(256) NULL`，再发布新应用。
+接入方式参考 [若依文档](https://doc.ruoyi.vip/ruoyi-cloud/cloud/skywalking.html) 与
+[SkyWalking Agent 文档](https://skywalking.apache.org/docs/skywalking-java/v9.5.0/en/setup/service-agent/java-agent/readme/)。
 
 ## 本地界面更新
 
@@ -488,3 +574,20 @@ spring:
 ```
 
 公司编码用于业务身份，master 是服务内连接名称；不同服务的 master 分别连接各自业务库。启动校验映射非空且连接明确存在，未知公司不能回退默认库。新增公司必须在所用服务登记路由；扫描不会根据表中出现的公司自动扩大范围。多个登记公司可以共库，但仍按 company_code 隔离查询与任务。配置变更通过校验后重启服务生效；当前不提供运行中自动迁库能力。具体升级、回归与本地验收见 `oms-modules/oms-order/README.md` 的“公司与数据源统一路由”。
+
+
+### 福袋第一、二期
+
+商品资料“是否福袋”控制福袋身份，从原商品行的“配置福袋”进入分组规则。草稿和发布版本分开，已有订单按原袋组成、原库存批次履约。福袋父 SKU 无实物库存；组件用件、销售和渠道用袋。固定套装与福袋不能同时启用，候选只允许普通实物 SKU，暂不支持嵌套。
+
+复用现有一次性分货、日常分货、渠道库存和平台库存同步。福袋分货先锁定组件批次再产生渠道袋数；普通销售和赠品不能重复使用这部分库存。日常规则只补足缺口；预制模式按完整批次补足，余额可能高于目标。预制池支持每批候选固定数量、每袋实际批次成本上限、清仓优先级和较早批次优先。平台多链接共享同一袋数预算，未知结果和暂停链接仍保留保护。
+
+内容规则页选择检查仓库后自动批量预检：固定配额显示商品需求、可用与缺口，随机分配按分组统计缺口，不合并多个仓库承诺可售。调整配额只在浏览器重算；更换仓库或候选才查询库存，快照超过30秒提示刷新。完整试算区分组件缺货、必需成本缺失、可证实的成本超限、未找到可行组合及检查失败；不将未找到组合直接判为缺货。预检和试算不占用库存，实际分货继续按最新库存加锁校验。新增接口 `POST /inventory/lucky-bags/stock-check` 沿用库存查询权限及公司范围，最多200种候选、20个仓库；无新增表或任务。只读浏览器验收 `python docker/local/verify_lucky_stock_check.py`，证据保存到 `outputs/lucky-bags/stock-check`。
+
+订单保留销售福袋、平台子单号、逐袋实际组成；仓库接收组件 SKU，金额只计销售父行。整袋退款选择原袋号，指定组件退款沿用原发货行，赠品独立展示。已开启自动创建退回的店铺，全部原袋且原出库来源明确时自动展开；部分福袋退款要求人工选袋。创建退回不增加库存，仓库实收只恢复组件库存，不自动增加袋数额度。
+
+回收从原分货单或库存页“福袋保障与回收”进入。先停用原日常规则，再停止投放；运行原平台同步组清零并核对未处理订单后继续回收。平台结果不明、仍有曝光或未处理订单时保留组件，已有订单保留原来源。订单后续结束后可再次核对回收。停用商品规则不撤销已付款或在途订单。
+
+性能边界：每袋 1–10 组、候选合计最多 200 SKU；每销售行最多 50 袋，展开最多 500 实物行；单次每渠道保障最多 5000 袋。批次查询、组合搜索均设上限，不枚举全量组合。预制批次合并保障、逐袋明细分批写入；商品元数据在库存事务外核实，全范围目录每公司缓存 60 秒。达不到成本、固定数量或库存条件时整 SKU 回滚，不承诺不可履约袋数。
+
+本地升级先运行 `python3 docker/local/backup_lucky_bags.py`，再运行 `python3 docker/local/configure_lucky_bags.py` 安装商品、库存、订单新增表列；不回填历史单据、不改变现有任务开关。构建并重启 goods/inventory/order/channel 时保留 `docker/local/generated/tracing.compose.json` 覆盖。后端回归 `python3 docker/local/test_lucky_bags.py`，前端回归 `node ruoyi-ui/tests/lucky-bags.cjs`，本地 TEST 全流程与浏览器验收 `python docker/local/verify_lucky_bags.py`（证据保存到 outputs/lucky-bags）。内部指定执行仅处理明确的公司与任务：平台商品 `/platformProducts/internal/process/{id}`、库存同步 `/stockSync/internal/execute/{id}`，沿用内部认证、租户校验和原任务租约。

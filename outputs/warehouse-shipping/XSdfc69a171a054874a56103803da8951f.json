@@ -1,0 +1,34 @@
+{
+  "shipment_id": 71,
+  "shipment_sn": "XSdfc69a171a054874a56103803da8951f",
+  "order_id": 125,
+  "external_order": "SIMOUT_0b8290988cc64685ab3d",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 10,
+  "message_id": "SIM_COMPLETE_XSdfc69a171a054874a56103803da8951f",
+  "package_code": "SIMPKG_XSdfc69a171a054874a56103803da8951f",
+  "express_code": "TEST-SF-XSdfc69a171a054874a56103803da8951f",
+  "outbound_time": "2026-10-20 18:44:43",
+  "plans": [
+    {
+      "id": 77,
+      "sku_sn": "RA_20261020183928_A",
+      "quantity": 10,
+      "platform_oid": "9942026102018392801",
+      "store_code": "RA_20261020183928_V",
+      "batch_code": "TEST-MULTI-BATCH-20261020183928-V1"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSdfc69a171a054874a56103803da8951f</deliveryOrderCode><deliveryOrderId>SIMOUT_0b8290988cc64685ab3d</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSdfc69a171a054874a56103803da8951f</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-20 18:44:43</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>77</orderLineNo><itemCode>RA_20261020183928_A</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-20261020183928-V1</batchCode><inventoryType>ZP</inventoryType><actualQty>10</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSdfc69a171a054874a56103803da8951f</packageCode><expressCode>TEST-SF-XSdfc69a171a054874a56103803da8951f</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>RA_20261020183928_A</itemCode><quantity>10</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSdfc69a171a054874a56103803da8951f",
+    "quantity": 10,
+    "status": "SHIPPED",
+    "shipped_quantity": 10,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSdfc69a171a054874a56103803da8951f",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

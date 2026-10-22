@@ -1,0 +1,80 @@
+{
+  "order_id": 135,
+  "order_sn": "SO40166ddaf3b94ed985fcc3e8e65f0090",
+  "goods_prefix": "CG20261021194225",
+  "checks": [
+    "真实转单：五种赠送形态、同SKU购买与赠送隔离，重试组成及库存不变",
+    "真实分仓：套装按原库存方式、福袋按原保障批次占用，未下发仓库",
+    "真实页面：形态筛选、独立赠品开关、库存方式、冻结组成与袋套件单位清晰",
+    "整单作废：普通赠品、两种套装和两种福袋按原来源释放，库存恢复到转单前"
+  ],
+  "stages": {
+    "before": {
+      "total": 33,
+      "reserved": 0,
+      "allocated": 8,
+      "available": 25,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 0,
+        "available": 4
+      }
+    },
+    "reserved": {
+      "total": 33,
+      "reserved": 10,
+      "allocated": 4,
+      "available": 19,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 2,
+        "available": 2
+      }
+    },
+    "allocated": {
+      "total": 33,
+      "reserved": 10,
+      "allocated": 4,
+      "available": 19,
+      "warehouse": {
+        "actual": 33,
+        "locked": 14,
+        "available": 19
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 2,
+        "available": 2
+      }
+    },
+    "voided": {
+      "total": 33,
+      "reserved": 0,
+      "allocated": 8,
+      "available": 25,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 0,
+        "available": 4
+      }
+    }
+  },
+  "browser_errors": [],
+  "warehouse_dispatched": false,
+  "order_voided": true
+}

@@ -46,6 +46,7 @@ export function getInfo(id) {
     method: 'get'
   })
 }
+export const giftReferences=id=>request({url:`/goods/info/${id}/gift-references`,method:'get'})
 
 // 新增产品信息
 export function addInfo(data) {

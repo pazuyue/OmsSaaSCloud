@@ -5,6 +5,8 @@ from configure_order import column
 def install(db):
  execute((HERE/'migrations/20261019_messaging.sql').read_text('utf-8'),db)
  for name,definition in [("problem_code","VARCHAR(32) NOT NULL DEFAULT 'NONE'"),("parent_event_id","VARCHAR(40) NOT NULL DEFAULT ''")]:column(db,"oms_message_outbox",name,definition)
+ column(db,"oms_message_outbox","source_trace_id","VARCHAR(256) NULL")
+ column(db,"oms_message_attempt","sw_trace_id","VARCHAR(256) NULL")
  for name,keys in [('kind_due','company_code,service_code,message_type,process_state,next_process_at,id'),('kind_recent','company_code,service_code,message_type,completed_at')]:
   if not execute("SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='oms_message_outbox' AND index_name='"+name+"' LIMIT 1",db).strip():execute('ALTER TABLE oms_message_outbox ADD KEY '+name+'('+keys+')',db)
 

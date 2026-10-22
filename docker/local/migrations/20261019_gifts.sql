@@ -1,3 +1,23 @@
+CREATE TABLE IF NOT EXISTS oms_gift_config_lock (
+ company_code VARCHAR(50) PRIMARY KEY
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS oms_gift_shop_group (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY, company_code VARCHAR(50) NOT NULL,
+ name VARCHAR(100) NOT NULL, enabled TINYINT NOT NULL DEFAULT 0,
+ revision BIGINT NOT NULL DEFAULT 1, config_json JSON NOT NULL,
+ updated_by VARCHAR(64) NOT NULL,
+ update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ UNIQUE KEY scope_name(company_code,name), KEY scope_state(company_code,enabled,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS oms_gift_shop_member (
+ company_code VARCHAR(50) NOT NULL, channel_id BIGINT NOT NULL, shop_group_id BIGINT NOT NULL,
+ PRIMARY KEY(company_code,channel_id), KEY group_members(company_code,shop_group_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS oms_gift_shop_group_version (
+ company_code VARCHAR(50) NOT NULL, shop_group_id BIGINT NOT NULL, revision BIGINT NOT NULL,
+ snapshot JSON NOT NULL, actor VARCHAR(64) NOT NULL, create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY(company_code,shop_group_id,revision)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE IF NOT EXISTS oms_gift_group (
  id BIGINT AUTO_INCREMENT PRIMARY KEY, company_code VARCHAR(50) NOT NULL,
  name VARCHAR(100) NOT NULL, priority INT NOT NULL, enabled TINYINT NOT NULL DEFAULT 0,

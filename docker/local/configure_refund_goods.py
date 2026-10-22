@@ -4,6 +4,8 @@ from configure_order import column
 
 
 def install_order(db):
+    from pathlib import Path
+    execute((Path(__file__).parent/'migrations/20261020_refund_auto_create.sql').read_text('utf-8'),db)
     column(db,'oms_refund','shared_return','TINYINT NOT NULL DEFAULT 0')
     execute("""CREATE TABLE IF NOT EXISTS oms_refund_parcel_config (
       company_code VARCHAR(50) NOT NULL, channel_id BIGINT NOT NULL,
@@ -12,7 +14,13 @@ def install_order(db):
       updated_by VARCHAR(64) NOT NULL, update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       PRIMARY KEY(company_code,channel_id), KEY auto_scope(company_code,auto_enabled,channel_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",db)
+    column(db,'oms_refund_parcel_config','auto_dispatch','TINYINT NOT NULL DEFAULT 0')
+    execute("UPDATE oms_refund_parcel_config SET auto_dispatch=COALESCE(JSON_EXTRACT(policy,'$.auto_dispatch'),0) WHERE auto_dispatch<>COALESCE(JSON_EXTRACT(policy,'$.auto_dispatch'),0)",db)
+    if not execute("SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='oms_refund_parcel_config' AND index_name='dispatch_scope' LIMIT 1",db).strip():
+        execute('ALTER TABLE oms_refund_parcel_config ADD KEY dispatch_scope(company_code,auto_dispatch,channel_id)',db)
     for name,definition in {
+        'auto_dispatch_state':"VARCHAR(24) NOT NULL DEFAULT 'NONE'",'auto_dispatch_message':"VARCHAR(500) NOT NULL DEFAULT ''",
+        'auto_dispatch_attempts':'INT NOT NULL DEFAULT 0','auto_dispatch_hold':'TINYINT NOT NULL DEFAULT 0',
         'parcel_state':"VARCHAR(24) NOT NULL DEFAULT 'WAIT_LOGISTICS'",
         'parcel_error':"VARCHAR(500) NOT NULL DEFAULT ''",
         'parcel_issue':'JSON NULL','parcel_resolution':"VARCHAR(24) NOT NULL DEFAULT ''",'parcel_manual_dispatch':'TINYINT NOT NULL DEFAULT 0',

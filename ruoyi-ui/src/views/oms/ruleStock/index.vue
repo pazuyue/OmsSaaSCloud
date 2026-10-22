@@ -22,12 +22,13 @@
           <el-table-column label="执行方式" width="130"><template slot-scope="s">{{ ruleTypes[s.row.ruleType] || '未知规则' }}</template></el-table-column>
           <el-table-column label="日常调度" min-width="220"><template slot-scope="s"><template v-if="s.row.ruleType === 1"><div>{{ s.row.dailyEnabled ? '已启用' : '未启用' }} · 每 {{ s.row.intervalMinutes }} 分钟</div><div class="secondary">{{ s.row.startTime }} 至 {{ s.row.endTime }}</div><div class="secondary">{{ s.row.activeRunId ? '当前轮次：' + s.row.activeRunId : '下次：' + (s.row.nextRunAt || '—') }}</div></template><span v-else>—</span></template></el-table-column>
           <el-table-column label="库存方式" width="110"><template slot-scope="s">{{ s.row.allocationType === 2 ? '锁库分货' : '普通配额' }}</template></el-table-column>
-          <el-table-column label="锁库进度" min-width="270"><template slot-scope="s">
+          <el-table-column label="保障进度" min-width="270"><template slot-scope="s">
             <template v-if="s.row.allocationType === 2 && s.row.reservationBalance">
               <div>已释放 <strong>{{ s.row.reservationBalance.releasedQuantity }}</strong> · 可释放 <strong>{{ s.row.reservationBalance.releasableQuantity }}</strong></div>
               <div class="secondary">原锁库 {{ s.row.reservationBalance.originalQuantity }} · 订单占用 {{ s.row.reservationBalance.occupiedQuantity }} · 已出库 {{ s.row.reservationBalance.consumedQuantity }}</div>
             </template>
-            <span v-else class="secondary">{{ s.row.allocationType !== 2 ? '—' : '暂无锁库明细' }}</span>
+            <div v-if="s.row.luckyBalance">福袋 {{ s.row.luckyBalance.original }} 袋 · 未占用 {{ s.row.luckyBalance.available }} 袋<div class="secondary">订单占用 {{ s.row.luckyBalance.occupied }} · 已发 {{ s.row.luckyBalance.consumed }} · 已回收 {{ s.row.luckyBalance.released }} 袋</div></div>
+            <span v-if="!s.row.reservationBalance && !s.row.luckyBalance" class="secondary">{{ s.row.luckyBalance ? '' : s.row.allocationType !== 2 ? '—' : '暂无锁库明细' }}</span>
           </template></el-table-column>
           <el-table-column label="分配策略" min-width="145"><template slot-scope="s">{{ s.row.ruleMode === 2 ? '按优先级分配' : s.row.ruleMode === 1 ? '渠道独立配额' : '待配置' }}</template></el-table-column>
           <el-table-column label="商品范围" width="110"><template slot-scope="s">{{ s.row.ruleRange === 1 ? '全部商品' : '指定商品' }}</template></el-table-column>
@@ -45,7 +46,7 @@
       <el-alert v-if="form.ruleType === 1" title="日常分货由系统定时任务调度，仅使用正品可用库存；锁库不参与。到期或停用后保留最后一次配额。" type="info" :closable="false" show-icon />
       <div v-if="form.ruleType === 1 && form.id" class="allocation-panel daily-summary"><span>{{ form.dailyEnabled ? '调度已启用' : '调度未启用' }}</span><span>有效期：{{ form.startTime }} 至 {{ form.endTime }}</span><span>每 {{ form.intervalMinutes }} 分钟 · 优先级 {{ form.dailyPriority }}</span><span>{{ form.activeRunId ? '当前轮次：' + form.activeRunId : '下次执行：' + (form.nextRunAt || '—') }}</span></div>
       <el-alert v-if="runError" :title="runError" type="warning" :closable="false" show-icon />
-      <el-alert v-if="[4,9].includes(form.status)" :title="running ? '正在处理，每个商品独立提交。成功项不会重复执行。' : '还有待处理商品。点击继续处理可从中断处继续，成功记录已保存。'" type="info" :closable="false" show-icon />
+      <el-alert v-if="[4,9].includes(form.status)" :title="running ? '正在处理，每个商品独立提交。福袋按袋分配并先保障组件，预制池须满足完整批次。成功项不会重复执行。' : '还有待处理商品。点击继续处理可从中断处继续，成功记录已保存。'" type="info" :closable="false" show-icon />
       <div v-if="Number(counts.total)" class="allocation-panel execution-summary">
         <div><span>商品总数</span><strong>{{ counts.total }}</strong></div><div><span>分货成功</span><strong>{{ counts.success }}</strong></div><div><span>分货失败</span><strong :class="{ danger: Number(counts.failed) }">{{ counts.failed }}</strong></div><div><span>{{ releasing ? '待释放' : '待处理' }}</span><strong>{{ releasing ? counts.releasePending : counts.pending }}</strong></div><div v-if="form.allocationType === 2"><span>已释放 / 释放失败</span><strong>{{ counts.released }} / {{ counts.releaseFailed }}</strong></div>
       </div>
@@ -91,27 +92,27 @@
               <el-table-column label="顺序" width="115"><template slot-scope="s"><span :class="{ 'drag-handle': editable && form.ruleMode === 2 }">{{ s.$index + 1 }} <i v-if="editable && form.ruleMode === 2" class="el-icon-rank" /></span><template v-if="editable && form.ruleMode === 2"><el-button type="text" :disabled="busy || s.$index === 0" aria-label="上移" @click="moveChannel(s.$index, -1)">↑</el-button><el-button type="text" :disabled="busy || s.$index === form.channels.length - 1" aria-label="下移" @click="moveChannel(s.$index, 1)">↓</el-button></template></template></el-table-column>
               <el-table-column label="渠道" prop="channelName" min-width="160" />
               <el-table-column label="计算方式" width="125"><template slot-scope="s"><el-select v-model="s.row.ruleType" :disabled="!editable || busy" @change="s.row.percentage = 0"><el-option label="按比例" :value="1" /><el-option label="固定数量" :value="2" /></el-select></template></el-table-column>
-              <el-table-column label="分配值" min-width="185"><template slot-scope="s"><el-input-number v-model="s.row.percentage" :disabled="!editable || busy" :min="0" :max="s.row.ruleType === 1 ? 100 : 100000000" :precision="s.row.ruleType === 1 ? 2 : 0" controls-position="right" /> {{ s.row.ruleType === 1 ? '%' : '件' }}</template></el-table-column>
+              <el-table-column label="分配值" min-width="185"><template slot-scope="s"><el-input-number v-model="s.row.percentage" :disabled="!editable || busy" :min="0" :max="s.row.ruleType === 1 ? 100 : 100000000" :precision="s.row.ruleType === 1 ? 2 : 0" controls-position="right" /> {{ s.row.ruleType === 1 ? '%' : '件 / 袋' }}</template></el-table-column>
               <el-table-column label="取整方式" width="140"><template slot-scope="s"><el-select v-model="s.row.decimalHandleType" :disabled="!editable || busy || s.row.ruleType === 2"><el-option label="向下取整" :value="1" /><el-option label="向上取整" :value="2" /><el-option label="四舍五入" :value="3" /></el-select></template></el-table-column>
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="4. 预览与结果" name="results">
             <template v-if="!Number(counts.total)">
-              <div class="section-toolbar"><div><h3>分货预览</h3><p class="field-help">预览不占库存；正式执行按当时库存和生效规则重新计算，每个商品独立提交。</p></div><el-button :loading="previewLoading" :disabled="busy" @click="preview">{{ editable ? '保存并预览' : '刷新预览' }}</el-button></div>
+              <div class="section-toolbar"><div><h3>分货预览</h3><p class="field-help">预览不占库存；正式执行按当时库存和生效规则重新计算，每个商品独立提交。福袋按袋分配并先保障组件，预制池须满足完整批次。</p></div><el-button :loading="previewLoading" :disabled="busy" @click="preview">{{ editable ? '保存并预览' : '刷新预览' }}</el-button></div>
               <el-table key="preview" v-loading="previewLoading" :data="previews" empty-text="完成仓库和渠道配置后，点击预览">
-                <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.channels || []" :locking="form.allocationType === 2" /></template></el-table-column>
-                <el-table-column label="SKU" prop="skuSn" min-width="150" /><el-table-column label="可分库存" prop="available" width="110" /><el-table-column label="渠道配额合计" prop="total" width="120" /><el-table-column label="预计锁定" prop="lockQuantity" width="110" /><el-table-column label="说明" min-width="200"><template slot-scope="s"><span :class="{ danger: s.row.error }">{{ s.row.error || (s.row.shared ? '共享库存：渠道配额合计超过实物库存' : '展开查看各渠道变化') }}</span></template></el-table-column>
+                <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.channels || []" :locking="form.allocationType === 2 || s.row.unit === '袋' || (s.row.detail && s.row.detail.unit === '袋')" :unit="s.row.unit || (s.row.detail && s.row.detail.unit) || '件'" /></template></el-table-column>
+                <el-table-column label="SKU" min-width="175"><template slot-scope="s">{{ s.row.skuSn }}<lucky-bag-ledger v-if="s.row.unit==='袋' || (s.row.detail && s.row.detail.unit==='袋')" :sku="s.row.skuSn"/></template></el-table-column><el-table-column label="可分库存" width="110"><template slot-scope="s">{{ s.row.available }} {{ s.row.unit || '件' }}</template></el-table-column><el-table-column label="渠道配额合计" width="130"><template slot-scope="s">{{ s.row.total }} {{ s.row.unit || '件' }}</template></el-table-column><el-table-column label="预计锁定" prop="lockQuantity" width="110" /><el-table-column label="说明" min-width="200"><template slot-scope="s"><span :class="{ danger: s.row.error }">{{ s.row.error || (s.row.shared ? '共享库存：渠道配额合计超过实物库存' : '展开查看各渠道变化') }}</span></template></el-table-column>
               </el-table>
               <pagination v-show="previewTotal > 0" :total="previewTotal" :page.sync="previewQuery.pageNum" :limit.sync="previewQuery.pageSize" :page-sizes="[10,20]" @pagination="loadPreview" />
             </template>
             <template v-else>
               <div class="section-toolbar"><h3>{{ releasing ? '分货与释放记录' : '执行结果' }}</h3><el-switch v-model="onlyFailed" active-text="仅看失败" @change="filterResults" /></div>
               <el-table key="results" v-loading="resultsLoading" :data="results" empty-text="暂无符合条件的执行记录">
-                <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.detail ? s.row.detail.channels : []" :locking="form.allocationType === 2" /><div class="field-help">操作人：{{ s.row.operatorName || '—' }} · 尝试 {{ s.row.attempts }} 次 · {{ s.row.modifyTime }}<span v-if="s.row.releaseOperator"> · 释放人：{{ s.row.releaseOperator }}</span></div></template></el-table-column>
-                <el-table-column label="SKU" prop="skuSn" min-width="150" /><el-table-column label="分货结果" width="100"><template slot-scope="s"><el-tag size="small" :type="s.row.status === 'FAILED' ? 'danger' : s.row.status === 'SUCCESS' ? 'success' : 'info'">{{ resultNames[s.row.status] }}</el-tag></template></el-table-column>
-                <el-table-column :label="form.allocationType === 2 ? '原锁库' : '配额合计'" prop="allocatedQuantity" width="100" />
-                <template v-if="form.allocationType === 2">
-                  <el-table-column v-for="c in balanceColumns" :key="c.key" :label="c.label" width="105"><template slot-scope="s">{{ s.row[c.key] }}</template></el-table-column>
+                <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.detail ? s.row.detail.channels : []" :locking="form.allocationType === 2 || s.row.unit === '袋' || (s.row.detail && s.row.detail.unit === '袋')" :unit="s.row.unit || (s.row.detail && s.row.detail.unit) || '件'" /><div class="field-help">操作人：{{ s.row.operatorName || '—' }} · 尝试 {{ s.row.attempts }} 次 · {{ s.row.modifyTime }}<span v-if="s.row.releaseOperator"> · 释放人：{{ s.row.releaseOperator }}</span></div></template></el-table-column>
+                <el-table-column label="SKU" min-width="175"><template slot-scope="s">{{ s.row.skuSn }}<lucky-bag-ledger v-if="s.row.unit==='袋' || (s.row.detail && s.row.detail.unit==='袋')" :sku="s.row.skuSn"/></template></el-table-column><el-table-column label="分货结果" width="100"><template slot-scope="s"><el-tag size="small" :type="s.row.status === 'FAILED' ? 'danger' : s.row.status === 'SUCCESS' ? 'success' : 'info'">{{ resultNames[s.row.status] }}</el-tag></template></el-table-column>
+                <el-table-column :label="form.allocationType === 2 ? '原锁库' : '配额合计'" width="110"><template slot-scope="s">{{ s.row.allocatedQuantity }} {{ s.row.unit || (s.row.detail && s.row.detail.unit) || '件' }}</template></el-table-column>
+                <template v-if="form.allocationType === 2 || form.hasLuckyPools">
+                  <el-table-column v-for="c in balanceColumns" :key="c.key" :label="c.label" width="105"><template slot-scope="s">{{ s.row[c.key] }} {{ s.row.unit || '件' }}</template></el-table-column>
                   <el-table-column label="释放结果" width="115"><template slot-scope="s">{{ releaseNames[s.row.releaseStatus] }}</template></el-table-column>
                 </template>
                 <el-table-column label="处理说明" min-width="220"><template slot-scope="s"><span class="danger">{{ s.row.releaseError || s.row.errorMessage }}</span><span v-if="!s.row.releaseError && !s.row.errorMessage">{{ s.row.status === 'SUCCESS' ? '已提交，展开查看渠道明细' : '等待处理' }}</span></template></el-table-column>
@@ -137,7 +138,7 @@
           </template>
           <el-button v-if="[4,9].includes(form.status)" v-hasPermi="['ruleStock:info:edit']" type="primary" :loading="running" @click="pump">继续处理</el-button>
           <el-button v-if="[7,8].includes(form.status) && !releasing" v-hasPermi="['ruleStock:info:edit']" :disabled="busy" type="primary" @click="execute('RETRY')">仅重试失败商品</el-button>
-          <el-button v-if="canRelease" v-hasPermi="['ruleStock:info:edit']" :disabled="busy" @click="execute('RELEASE')">释放剩余锁库</el-button>
+          <el-button v-if="canRelease" v-hasPermi="['ruleStock:info:edit']" :disabled="busy" @click="execute('RELEASE')">回收剩余保障 / 锁库</el-button>
         </div>
       </div>
     </template>
@@ -147,13 +148,14 @@
 <script>
 import Sortable from 'sortablejs'
 import { listRules, ruleDetail, ruleOptions, saveRule, submitRule, deleteRule, previewRule, startRule, stepRule, ruleResults, ruleGoods, importRuleGoods, dailyCommand } from '@/api/ruleStock/workspace'
+import LuckyBagLedger from '@/views/oms/inventory/LuckyBagLedger'
 import AllocationLines from './components/AllocationLines'
 import DailyRuns from './components/DailyRuns'
 
 const blank = () => ({ id: null, revision: 1, ruleType: 2, ruleName: '', remark: '', allocationType: 1, ruleRange: 1, ruleMode: 2, status: 1, startTime: null, endTime: null, intervalMinutes: 5, dailyPriority: 100, dailyEnabled: 0, stores: [], channels: [], goodsCount: 0, counts: {}})
 export default {
   name: 'AllocationWorkspace',
-  components: { AllocationLines, DailyRuns },
+  components: { LuckyBagLedger, AllocationLines, DailyRuns },
   beforeRouteLeave(to, from, next) { this.confirmLeave().then(() => { this.alive = false; next() }).catch(() => next(false)) },
   data() {
     return {
@@ -179,7 +181,7 @@ export default {
     channelIds() { return this.form.channels.map(c => c.channelId) },
     counts() { return this.form.counts || {} },
     releasing() { return this.form.runAction === 'RELEASE' },
-    canRelease() { return this.form.allocationType === 2 && [5, 7, 8, 11].includes(this.form.status) && Number(this.counts.success) > Number(this.counts.released || 0) },
+    canRelease() { return (this.form.allocationType === 2 || this.form.hasLuckyPools) && [5, 7, 8, 11].includes(this.form.status) && Number(this.counts.success) > Number(this.counts.released || 0) },
     progress() { return Math.min(100, Math.round(100 * (Number(this.counts.total) - Number(this.releasing ? this.counts.releasePending : this.counts.pending)) / Number(this.counts.total))) },
     dirty() { return this.editable && JSON.stringify(this.payload()) !== this.baseline }
   },
@@ -197,7 +199,7 @@ export default {
     apply(data) { this.form = { ...blank(), ...data }; this.baseline = JSON.stringify(this.payload()); this.mergeSelectedOptions(); this.$nextTick(this.initDrag) },
     payload() { return { id: this.form.id, revision: this.form.revision, ruleName: this.form.ruleName, remark: this.form.remark, ruleType: this.form.ruleType, startTime: this.form.startTime, endTime: this.form.endTime, intervalMinutes: this.form.intervalMinutes, dailyPriority: this.form.dailyPriority, allocationType: this.form.allocationType, ruleRange: this.form.ruleRange, ruleMode: this.form.ruleMode, stores: this.form.stores, channels: this.form.channels.map(c => ({ channelId: c.channelId, channelName: c.channelName, ruleType: c.ruleType, percentage: c.percentage, decimalHandleType: c.decimalHandleType })) } },
     changeRuleType(type) { this.form.allocationType = type === 3 ? 2 : 1; this.previews = []; this.previewRevision = null },
-    async controlDaily(action) { if (this.busy) return; const messages = { ENABLE: '启用后在有效期内自动重算普通配额，锁库库存不参与。', PAUSE: '停止后续处理，已提交的配额保留；当前正在提交的商品可能完成。', RUN: '立即创建一轮后台执行，按当前可用库存重算普通配额。' }; try { await this.$confirm(messages[action], '日常分货', { type: 'warning' }) } catch (_) { return } this.busy = true; try { const r = await dailyCommand(this.form.id, this.form.revision, action); this.apply(r.data); this.tab = 'basic'; await this.$nextTick(); this.tab = 'dailyRuns'; this.$message.success(action === 'RUN' ? '已提交后台处理' : '规则状态已更新') } catch (_) { /* request layer shows details */ } finally { this.busy = false } },
+    async controlDaily(action) { if (this.busy) return; const messages = { ENABLE: '启用后自动重算普通配额；福袋先保障组件再按袋补足，预制模式按完整批次补足。', PAUSE: '停止后续处理，已提交的配额保留；当前正在提交的商品可能完成。', RUN: '立即执行一轮：普通商品重算配额，福袋只补足缺口。' }; try { await this.$confirm(messages[action], '日常分货', { type: 'warning' }) } catch (_) { return } this.busy = true; try { const r = await dailyCommand(this.form.id, this.form.revision, action); this.apply(r.data); this.tab = 'basic'; await this.$nextTick(); this.tab = 'dailyRuns'; this.$message.success(action === 'RUN' ? '已提交后台处理' : '规则状态已更新') } catch (_) { /* request layer shows details */ } finally { this.busy = false } },
     async confirmLeave() { if (this.busy || this.running || this.dirty) await this.$confirm(this.running ? '离开后暂停后续处理，当前请求可能继续提交。可在详情中继续处理。' : '还有未保存或正在提交的内容，确定离开？', '离开分货详情', { type: 'warning' }) },
     async back() { try { await this.confirmLeave(); this.opened = false; this.loadList() } catch (_) { /* keep current work */ } },
     async refresh() { if (this.dirty) { try { await this.$confirm('刷新会丢弃未保存的配置，是否继续？', '刷新详情') } catch (_) { return } } await this.open(this.form.id) },
@@ -220,7 +222,7 @@ export default {
     async execute(action) {
       if (this.busy || this.running) return
       if (action === 'EXECUTE' && this.previewRevision !== this.form.revision) { this.tab = 'results'; await this.loadPreview(); this.$message.info('请先查看预览，再点击审核并执行'); return }
-      try { await this.$confirm(action === 'RELEASE' ? '仅释放本单未被订单占用的剩余库存。已出库数量不返还，订单占用继续保留。本单停止接受新占用；原订单取消后可再次释放腾出的余额。' : action === 'RETRY' ? '仅重新处理失败商品，按当前库存重新计算，成功商品保持原结果。' : '按执行时库存分货，允许部分商品成功。成功结果会立即生效，失败商品可重试。', action === 'RELEASE' ? '释放剩余锁库' : '确认执行', { type: 'warning', confirmButtonText: '确认执行' }) } catch (_) { return }
+      try { await this.$confirm(action === 'RELEASE' ? '仅释放本单未被订单占用的剩余库存。已出库数量不返还，订单占用继续保留。本单停止接受新占用；原订单取消后可再次释放腾出的余额。' : action === 'RETRY' ? '仅重新处理失败商品，按当前库存重新计算，成功商品保持原结果。' : '按执行时库存分货，允许部分商品成功。成功结果会立即生效，失败商品可重试。', action === 'RELEASE' ? '回收剩余保障 / 锁库' : '确认执行', { type: 'warning', confirmButtonText: '确认执行' }) } catch (_) { return }
       this.busy = true
       try { const r = await startRule(this.form.id, this.form.revision, action); this.apply(r.data); this.tab = 'results' } catch (_) { return } finally { this.busy = false }
       await this.pump()

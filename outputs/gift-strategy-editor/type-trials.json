@@ -1,0 +1,555 @@
+{
+  "product": {
+    "groups": [
+      {
+        "id": 0,
+        "name": "[编辑验收] 20261020120448 公共策略",
+        "priority": 1,
+        "revision": 0,
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "PRODUCT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      }
+    ],
+    "entitlements": [
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 1,
+        "group_id": 0,
+        "group_name": "[编辑验收] 20261020120448 公共策略",
+        "rule_key": "Rmvg5teirmz5r27",
+        "rule_name": "满额赠礼",
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "PRODUCT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      },
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 1,
+        "group_id": 0,
+        "group_name": "[编辑验收] 20261020120448 公共策略",
+        "rule_key": "Rmvg5tftb5t2xjm",
+        "rule_name": "买多赠多",
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "PRODUCT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      }
+    ],
+    "trace": [
+      {
+        "group_id": 0,
+        "name": "[编辑验收] 20261020120448 公共策略",
+        "priority": 1,
+        "shop_group_id": null,
+        "shop_group_name": null,
+        "matched": true,
+        "rules": [
+          {
+            "key": "Rmvg5teirmz5r27",
+            "name": "满额赠礼",
+            "matched": true,
+            "reason": "满足赠送条件",
+            "basis_quantity": 4,
+            "basis_amount": 400,
+            "gifts": [
+              {
+                "sku_sn": "GIFT_G_20261019234013",
+                "goods_name": "[赠品验收] OMS 策略赠品",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "key": "Rmvg5tftb5t2xjm",
+            "name": "买多赠多",
+            "matched": true,
+            "reason": "满足赠送条件",
+            "basis_quantity": 4,
+            "basis_amount": 400,
+            "gifts": [
+              {
+                "sku_sn": "GIFT_G_20261019234013",
+                "goods_name": "[赠品验收] OMS 策略赠品",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "reason": "命中，停止后续策略组"
+      }
+    ],
+    "gifts": [
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 2,
+        "payment": 0,
+        "platform_oid": "",
+        "line_kind": "GIFT"
+      }
+    ],
+    "simulated": true,
+    "paid_time": "2026-10-20 12:00:00",
+    "payment": 400
+  },
+  "tier": {
+    "groups": [
+      {
+        "id": 0,
+        "name": "[编辑验收] 20261020120448 公共策略",
+        "priority": 1,
+        "revision": 0,
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "TIER",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [
+                {
+                  "minimum": 2,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 1,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                },
+                {
+                  "minimum": 4,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 3,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                }
+              ],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      }
+    ],
+    "entitlements": [
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 1,
+        "group_id": 0,
+        "group_name": "[编辑验收] 20261020120448 公共策略",
+        "rule_key": "Rmvg5teirmz5r27",
+        "rule_name": "满额赠礼",
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "TIER",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [
+                {
+                  "minimum": 2,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 1,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                },
+                {
+                  "minimum": 4,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 3,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                }
+              ],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      },
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 3,
+        "group_id": 0,
+        "group_name": "[编辑验收] 20261020120448 公共策略",
+        "rule_key": "Rmvg5tftb5t2xjm",
+        "rule_name": "买多赠多",
+        "policy": {
+          "start_time": "2026-10-01 00:00:00",
+          "end_time": "2026-11-30 23:59:59",
+          "rules": [
+            {
+              "key": "Rmvg5teirmz5r27",
+              "name": "满额赠礼",
+              "type": "AMOUNT",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [],
+              "stop": false
+            },
+            {
+              "key": "Rmvg5tftb5t2xjm",
+              "name": "买多赠多",
+              "type": "TIER",
+              "amount": 200,
+              "minimum": 2,
+              "cap": 3,
+              "skus": [
+                "GIFT_A_20261019234013"
+              ],
+              "gifts": [
+                {
+                  "sku_sn": "GIFT_G_20261019234013",
+                  "quantity": 1,
+                  "goods_name": "[赠品验收] OMS 策略赠品"
+                }
+              ],
+              "tiers": [
+                {
+                  "minimum": 2,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 1,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                },
+                {
+                  "minimum": 4,
+                  "gifts": [
+                    {
+                      "sku_sn": "GIFT_G_20261019234013",
+                      "quantity": 3,
+                      "goods_name": "[赠品验收] OMS 策略赠品"
+                    }
+                  ]
+                }
+              ],
+              "stop": false
+            }
+          ],
+          "shipped_policy": "RETURN",
+          "allow_waive": true,
+          "difference_affects_amount": false,
+          "pause_pending": true,
+          "shortage_policy": "WAIT",
+          "channels": [
+            1
+          ],
+          "cross_group_stack": false
+        }
+      }
+    ],
+    "trace": [
+      {
+        "group_id": 0,
+        "name": "[编辑验收] 20261020120448 公共策略",
+        "priority": 1,
+        "shop_group_id": null,
+        "shop_group_name": null,
+        "matched": true,
+        "rules": [
+          {
+            "key": "Rmvg5teirmz5r27",
+            "name": "满额赠礼",
+            "matched": true,
+            "reason": "满足赠送条件",
+            "basis_quantity": 4,
+            "basis_amount": 400,
+            "gifts": [
+              {
+                "sku_sn": "GIFT_G_20261019234013",
+                "goods_name": "[赠品验收] OMS 策略赠品",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "key": "Rmvg5tftb5t2xjm",
+            "name": "买多赠多",
+            "matched": true,
+            "reason": "满足赠送条件",
+            "basis_quantity": 4,
+            "basis_amount": 400,
+            "gifts": [
+              {
+                "sku_sn": "GIFT_G_20261019234013",
+                "goods_name": "[赠品验收] OMS 策略赠品",
+                "quantity": 3
+              }
+            ]
+          }
+        ],
+        "reason": "命中，停止后续策略组"
+      }
+    ],
+    "gifts": [
+      {
+        "sku_sn": "GIFT_G_20261019234013",
+        "goods_name": "[赠品验收] OMS 策略赠品",
+        "quantity": 4,
+        "payment": 0,
+        "platform_oid": "",
+        "line_kind": "GIFT"
+      }
+    ],
+    "simulated": true,
+    "paid_time": "2026-10-20 12:00:00",
+    "payment": 400
+  }
+}

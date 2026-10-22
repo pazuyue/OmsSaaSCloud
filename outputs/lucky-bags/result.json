@@ -1,0 +1,37 @@
+{
+  "order_id": 126,
+  "order_sn": "SOd524efc738204bf0aa5f3556c77b1beb",
+  "refund_id": 80,
+  "refund_sn": "TK6c44fa97eb4d41c5bdfb273b2eaf6dc6",
+  "sku": "FD20261020222327",
+  "bags_sold": 2,
+  "pieces_shipped": 4,
+  "bag_quota_original": 3,
+  "fixed_quantities": {
+    "A": 2,
+    "B": 1,
+    "D": 3
+  },
+  "cost_cap": 5,
+  "parent_physical_stock": 0,
+  "platform_shipped_bags": 2,
+  "return_bags": 1,
+  "return_pieces": 2,
+  "return_pieces_posted": 2,
+  "return_plan_adds_stock": false,
+  "receipt_does_not_restore_bag_quota": true,
+  "duplicate_receipt_posts_once": true,
+  "allocation_ms": 313.45,
+  "shared_platform_budget": [
+    3,
+    1,
+    0
+  ],
+  "safe_reclaim": true,
+  "real_platform_writes": false,
+  "browser_errors": [],
+  "component_inventory_consistent": true,
+  "channel_inventory_consistent": true,
+  "refund_list_unit": "袋",
+  "receipt_ui_verified": true
+}

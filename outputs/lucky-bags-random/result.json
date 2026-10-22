@@ -1,0 +1,319 @@
+{
+  "mode": "RANDOM",
+  "order_id": 127,
+  "order_sn": "SO456fcf2844444710b8c2bc930dd2f386",
+  "cancel_order_id": 128,
+  "cancel_order_sn": "SO89cc127e034c467e9340c5431a6b0df7",
+  "goods_id": 238,
+  "sku": "FDR20261021125335",
+  "warehouse": "FDR_V_20261021125335",
+  "bags_protected": 6,
+  "bags_shipped": 2,
+  "pieces_shipped": 4,
+  "units_before_order": 0,
+  "actual_units": [
+    {
+      "cost": 4,
+      "unit": 1,
+      "pool_id": 2,
+      "unit_id": 4,
+      "revision": 1,
+      "components": [
+        {
+          "sku_sn": "FDR20261021125335B",
+          "batch_id": 170,
+          "quantity": 1,
+          "group_key": "top",
+          "source_id": 4,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 B",
+          "group_name": "上装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 84,
+          "clearance_priority": 0
+        },
+        {
+          "sku_sn": "FDR20261021125335D",
+          "batch_id": 171,
+          "quantity": 1,
+          "group_key": "bottom",
+          "source_id": 5,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 D",
+          "group_name": "下装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 85,
+          "clearance_priority": 0
+        }
+      ],
+      "store_code": "FDR_V_20261021125335"
+    },
+    {
+      "cost": 4,
+      "unit": 2,
+      "pool_id": 2,
+      "unit_id": 5,
+      "revision": 1,
+      "components": [
+        {
+          "sku_sn": "FDR20261021125335B",
+          "batch_id": 170,
+          "quantity": 1,
+          "group_key": "top",
+          "source_id": 4,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 B",
+          "group_name": "上装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 84,
+          "clearance_priority": 0
+        },
+        {
+          "sku_sn": "FDR20261021125335D",
+          "batch_id": 171,
+          "quantity": 1,
+          "group_key": "bottom",
+          "source_id": 5,
+          "unit_cost": 2,
+          "goods_name": "[随机福袋验收] 组件 D",
+          "group_name": "下装",
+          "store_code": "FDR_V_20261021125335",
+          "stock_source_id": 85,
+          "clearance_priority": 0
+        }
+      ],
+      "store_code": "FDR_V_20261021125335"
+    }
+  ],
+  "repeat_claim_keeps_composition_and_stock": true,
+  "cancel_returns_to_original_pool": true,
+  "duplicate_outbound_deducts_once": true,
+  "concurrent_requests": 8,
+  "concurrent_success": 4,
+  "concurrent_waiting": 4,
+  "all_test_concurrent_claims_canceled": true,
+  "unsold_bags_reclaimed": 4,
+  "parent_physical_stock": 0,
+  "platform_report_bags": 2,
+  "initial_stock": {
+    "total": 30,
+    "available": 30,
+    "allocated": 0,
+    "reserved": 0
+  },
+  "final_stock": {
+    "total": 26,
+    "available": 26,
+    "allocated": 0,
+    "reserved": 0
+  },
+  "component_inventory_consistency": {
+    "FDR20261021125335A": "CONSISTENT",
+    "FDR20261021125335B": "CONSISTENT",
+    "FDR20261021125335D": "CONSISTENT"
+  },
+  "real_platform_writes": false,
+  "browser_errors": [],
+  "timeline": {
+    "01_received": {
+      "company": {
+        "total": 30,
+        "available": 30,
+        "allocated": 0,
+        "reserved": 0
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 30,
+        "locked": 0
+      },
+      "bags": {
+        "quantity": 0,
+        "available": 0,
+        "occupied": 0,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "02_protected_before_order": {
+      "company": {
+        "total": 30,
+        "available": 18,
+        "allocated": 12,
+        "reserved": 0
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 18,
+        "locked": 12
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 6,
+        "occupied": 0,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "03_order_two_bags": {
+      "company": {
+        "total": 30,
+        "available": 18,
+        "allocated": 8,
+        "reserved": 4
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 18,
+        "locked": 12
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 4,
+        "occupied": 2,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "04_cancel_order_reserved": {
+      "company": {
+        "total": 30,
+        "available": 18,
+        "allocated": 6,
+        "reserved": 6
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 18,
+        "locked": 12
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 3,
+        "occupied": 3,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "05_cancel_returned_to_pool": {
+      "company": {
+        "total": 30,
+        "available": 18,
+        "allocated": 8,
+        "reserved": 4
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 18,
+        "locked": 12
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 4,
+        "occupied": 2,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "06_warehouse_allocated": {
+      "company": {
+        "total": 30,
+        "available": 18,
+        "allocated": 8,
+        "reserved": 4
+      },
+      "warehouse": {
+        "actual": 30,
+        "available": 18,
+        "locked": 12
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 4,
+        "occupied": 2,
+        "consumed": 0,
+        "released": 0
+      }
+    },
+    "07_shipped": {
+      "company": {
+        "total": 26,
+        "available": 18,
+        "allocated": 8,
+        "reserved": 0
+      },
+      "warehouse": {
+        "actual": 26,
+        "available": 18,
+        "locked": 8
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 4,
+        "occupied": 0,
+        "consumed": 2,
+        "released": 0
+      }
+    },
+    "08_concurrent_four_of_eight": {
+      "company": {
+        "total": 26,
+        "available": 18,
+        "allocated": 0,
+        "reserved": 8
+      },
+      "warehouse": {
+        "actual": 26,
+        "available": 18,
+        "locked": 8
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 0,
+        "occupied": 4,
+        "consumed": 2,
+        "released": 0
+      }
+    },
+    "09_concurrent_claims_canceled": {
+      "company": {
+        "total": 26,
+        "available": 18,
+        "allocated": 8,
+        "reserved": 0
+      },
+      "warehouse": {
+        "actual": 26,
+        "available": 18,
+        "locked": 8
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 4,
+        "occupied": 0,
+        "consumed": 2,
+        "released": 0
+      }
+    },
+    "10_unsold_protection_reclaimed": {
+      "company": {
+        "total": 26,
+        "available": 26,
+        "allocated": 0,
+        "reserved": 0
+      },
+      "warehouse": {
+        "actual": 26,
+        "available": 26,
+        "locked": 0
+      },
+      "bags": {
+        "quantity": 6,
+        "available": 0,
+        "occupied": 0,
+        "consumed": 2,
+        "released": 4
+      }
+    }
+  }
+}

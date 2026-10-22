@@ -1,0 +1,49 @@
+{
+  "case_id": "20261020222327",
+  "created": "2026-10-20 22:23:27",
+  "sku": "FD20261020222327",
+  "target_sku": "EXCH_LUCKYBAG_20261020222327_B",
+  "channel_name": "[福袋验收] 20261020222327",
+  "seller": "LUCKY_20261020222327",
+  "platform_tid": "99420261020222327",
+  "platform_oid": "9942026102022232701",
+  "warehouses": [
+    {
+      "code": "FD_V_20261020222327",
+      "quantity": 0,
+      "package_count": 1,
+      "id": 102
+    }
+  ],
+  "claims": [],
+  "a": "FD20261020222327A",
+  "b": "FD20261020222327B",
+  "d": "FD20261020222327D",
+  "received": true,
+  "goods_id": 234,
+  "initialized": true,
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 76,
+  "configured": true,
+  "components_ready": true,
+  "allocation_id": 16,
+  "allocation_ms": 313.45,
+  "sync_group": 3,
+  "initial_sync": true,
+  "platform_id": 210,
+  "order_id": 126,
+  "order_sn": "SOd524efc738204bf0aa5f3556c77b1beb",
+  "prepared": true,
+  "version_checked": true,
+  "refund_id": 80,
+  "refund_sn": "TK6c44fa97eb4d41c5bdfb273b2eaf6dc6",
+  "reclaim_checked": true,
+  "before_return": {
+    "FD20261020222327": 0,
+    "FD20261020222327A": 8,
+    "FD20261020222327B": 10,
+    "FD20261020222327D": 8
+  }
+}

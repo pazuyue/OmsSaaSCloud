@@ -9,6 +9,8 @@ def main():
     execute('CREATE DATABASE IF NOT EXISTS goods_workspace_test CHARACTER SET utf8mb4')
     for table in ['goods_sku_sn_info','goods_category','goods_color','goods_size','goods_master_lock','goods_import_batch','goods_import_row']:execute('CREATE TABLE IF NOT EXISTS goods_workspace_test.'+table+' LIKE qm_oms_saas_commodity.'+table)
     install_goods('goods_workspace_test')
+    from configure_gifts import install_goods as install_gift_goods
+    install_gift_goods('goods_workspace_test')
     cache=Path.home()/'.cache/oms-local'
     for module in ['oms-common-core','oms-order','oms-inventory','oms-goods-administration']:shutil.copytree(ROOT/'oms-modules'/module/'src',cache/'source/oms-modules'/module/'src',dirs_exist_ok=True)
     suites=['OrderBundleTest','ExchangeServiceTest','BundleWarehousePlannerTest','GoodsBundleTest','OrderProcessorTest','OrderRepositoryTest','OrderProductMatchServiceTest','OrderStockTest','WarehouseAllocationPlannerTest','OrderAllocationServiceTest','OrderShipmentServiceTest','OrderPlatformShippingServiceTest','OrderVirtualOutboundTest','OrderVirtualOutboundServiceTest','OrderShipmentReceiptServiceTest','OrderIssueServiceTest','OrderFulfillmentAdjustmentTest','OrderCutoffServiceTest','RefundGoodsServiceTest','RefundBundleReturnTest','RefundServiceTest','GoodsWorkspaceTest','OrderAllocationPolicyTest']

@@ -1,0 +1,42 @@
+{
+  "shipment_id": 72,
+  "shipment_sn": "XSa07189069b4747caa1df16d53e9b1de1",
+  "order_id": 126,
+  "external_order": "SIMOUT_35bbe812d5b24ea1a062",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 4,
+  "message_id": "SIM_COMPLETE_XSa07189069b4747caa1df16d53e9b1de1",
+  "package_code": "SIMPKG_XSa07189069b4747caa1df16d53e9b1de1",
+  "express_code": "TEST-SF-XSa07189069b4747caa1df16d53e9b1de1",
+  "outbound_time": "2026-10-20 22:42:41",
+  "plans": [
+    {
+      "id": 78,
+      "sku_sn": "FD20261020222327A",
+      "quantity": 2,
+      "platform_oid": "9942026102022232701",
+      "store_code": "FD_V_20261020222327",
+      "batch_code": "FD-20261020222327-1"
+    },
+    {
+      "id": 79,
+      "sku_sn": "FD20261020222327D",
+      "quantity": 2,
+      "platform_oid": "9942026102022232701",
+      "store_code": "FD_V_20261020222327",
+      "batch_code": "FD-20261020222327-3"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSa07189069b4747caa1df16d53e9b1de1</deliveryOrderCode><deliveryOrderId>SIMOUT_35bbe812d5b24ea1a062</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSa07189069b4747caa1df16d53e9b1de1</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-20 22:42:41</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>78</orderLineNo><itemCode>FD20261020222327A</itemCode><ownerCode>VC00001</ownerCode><batchCode>FD-20261020222327-1</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>79</orderLineNo><itemCode>FD20261020222327D</itemCode><ownerCode>VC00001</ownerCode><batchCode>FD-20261020222327-3</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSa07189069b4747caa1df16d53e9b1de1</packageCode><expressCode>TEST-SF-XSa07189069b4747caa1df16d53e9b1de1</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>FD20261020222327A</itemCode><quantity>2</quantity></item><item><itemCode>FD20261020222327D</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSa07189069b4747caa1df16d53e9b1de1",
+    "quantity": 4,
+    "status": "SHIPPED",
+    "shipped_quantity": 4,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSa07189069b4747caa1df16d53e9b1de1",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

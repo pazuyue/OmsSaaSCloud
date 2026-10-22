@@ -42,7 +42,7 @@ public class OrderStockService {
         for(OrderStockCommand.Line line:lines){require(line.getPlatformOid()!=null&&(line.isGift()?line.getPlatformOid().isEmpty():line.getPlatformOid().matches("[0-9]{1,64}"))&&seen.add(com.oms.common.util.FulfillmentLineKey.of(line.getPlatformOid(),line.getSkuSn())),"子订单号无效或重复");require(line.getSkuSn()!=null&&!line.getSkuSn().trim().isEmpty()&&line.getSkuSn().length()<=128&&line.getSkuSn().equals(line.getSkuSn().trim()),"SKU无效");require(line.getQuantity()>0&&line.getQuantity()<=100000000,"需求数量无效");require(line.getComponentQuantity()>=0&&line.getComponentQuantity()<=100000&&(line.getComponentQuantity()==0||line.getQuantity()%line.getComponentQuantity()==0),"套装组件配比无效");}
         lines.sort(Comparator.comparing(OrderStockCommand.Line::getSkuSn).thenComparing(OrderStockCommand.Line::getPlatformOid));
         // All writers (allocation, receiving, adjustment, demand) share the company/SKU mutex.
-        for(String sku:new TreeSet<String>(){{for(OrderStockCommand.Line line:lines)add(line.getSkuSn());}}){
+        Set<String> mutexSkus=new TreeSet<>();for(OrderStockCommand.Line line:lines)mutexSkus.add(line.getSkuSn());if("cancel".equals(action))mutexSkus.addAll(jdbc.queryForList("SELECT DISTINCT bag_sku FROM oms_lucky_claim WHERE company_code=? AND channel_id=? AND platform_tid=? AND state='WAITING'",String.class,company,command.getChannelId(),command.getPlatformTid()));for(String sku:mutexSkus){
             jdbc.update("INSERT INTO oms_inventory(company_code,sku_sn,total_stock,available_stock,version) VALUES (?,?,0,0,1) ON DUPLICATE KEY UPDATE id=id",company,sku);
             jdbc.queryForList("SELECT id FROM oms_inventory WHERE company_code=? AND sku_sn=? FOR UPDATE",company,sku);
             jdbc.update("INSERT INTO oms_channel_inventory(company_code,channel_id,sku_sn) VALUES (?,?,?) ON DUPLICATE KEY UPDATE id=id",company,command.getChannelId(),sku);
@@ -69,10 +69,14 @@ public class OrderStockService {
             }
             result.add(demand);
         }
-        if("cancel".equals(action)){require(!lines.isEmpty()&&scalar("SELECT COUNT(*) FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",company,command.getChannelId(),command.getPlatformTid())==lines.size(),"作废必须包含完整订单需求");cancel(result);}
+        if("cancel".equals(action)){require((!lines.isEmpty()||scalar("SELECT COUNT(*) FROM oms_lucky_claim WHERE company_code=? AND channel_id=? AND platform_tid=?",company,command.getChannelId(),command.getPlatformTid())>0)&&scalar("SELECT COUNT(*) FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",company,command.getChannelId(),command.getPlatformTid())==lines.size(),"作废必须包含完整订单需求");cancel(result);LuckyBagStock.cancelWaiting(jdbc,company,command.getChannelId(),command.getPlatformTid());}
         if("reserve".equals(action)){
             require(scalar("SELECT COUNT(*) FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=?",company,command.getChannelId(),command.getPlatformTid())==lines.size(),"预占必须包含完整订单需求");
-            for(List<Map<String,Object>> group:pending.values())reserve(group,command.isAllowPublicStock());
+            boolean wholeGift=!lines.isEmpty()&&command.getPlatformTid().startsWith("GIFT:")&&lines.stream().allMatch(line->line.isGift()&&line.getComponentQuantity()>0);
+            org.springframework.transaction.TransactionStatus status=wholeGift?org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus():null;Object savepoint=wholeGift?status.createSavepoint():null;
+            try{for(List<Map<String,Object>> group:pending.values())reserve(group,command.isAllowPublicStock());
+                if(wholeGift&&scalar("SELECT COUNT(*) FROM oms_order_stock_demand WHERE company_code=? AND channel_id=? AND platform_tid=? AND demand_quantity-cancelled_quantity>reserved_quantity",company,command.getChannelId(),command.getPlatformTid())>0){status.rollbackToSavepoint(savepoint);waitForStock(result,"GIFT_SET_SHORTAGE","套装赠品组成库存不足，保留完整赠送需求，未新增占用任何子件");}
+            }finally{if(savepoint!=null)status.releaseSavepoint(savepoint);}
         }
         Set<String> refreshed=new HashSet<>();
         for(int i=0;i<result.size();i++){
@@ -90,10 +94,11 @@ public class OrderStockService {
         Map<String,Map<String,Object>> releasing=new LinkedHashMap<>();
         for(Map<String,Object> demand:demands){
             if("CANCELLED".equals(s(demand,"status")))continue;
-            String company=s(demand,"company_code"),sku=s(demand,"sku_sn");long reserved=n(demand,"reserved_quantity"),locked=0,publicStock=0;
+            String company=s(demand,"company_code"),sku=s(demand,"sku_sn");long reserved=n(demand,"reserved_quantity"),locked=0,publicStock=0,lucky=0;
             List<Map<String,Object>> sources=jdbc.queryForList("SELECT * FROM oms_order_stock_source WHERE company_code=? AND demand_id=? AND reserved=1 ORDER BY id FOR UPDATE",company,demand.get("id"));
             for(Map<String,Object> source:sources){long quantity=n(source,"quantity");require(quantity>0,"预占来源数量异常");
                 if("PUBLIC_EXTRA".equals(s(source,"source_type"))){publicStock+=quantity;continue;}
+                if("LUCKY".equals(s(source,"source_type"))){LuckyBagStock.releaseSource(jdbc,company,source,quantity);lucky+=quantity;continue;}
                 require("LOCK".equals(s(source,"source_type")),"预占来源类型无效");
                 List<Map<String,Object>> found=jdbc.queryForList("SELECT s.*,r.id result_id,r.release_status,h.run_action FROM rule_stock_reservation s JOIN rule_stock_result r ON r.company_code=s.company_code AND r.rule_id=s.rule_id AND r.sku_sn=s.sku_sn JOIN rule_stock_info h ON h.id=s.rule_id AND h.company_code=s.company_code WHERE s.company_code=? AND s.sku_sn=? AND s.channel_id=? AND s.id=? FOR UPDATE",company,sku,demand.get("channel_id"),source.get("source_id"));
                 require(found.size()==1,"原锁库来源不存在或归属不一致");Map<String,Object> lock=found.get(0);
@@ -102,15 +107,16 @@ public class OrderStockService {
                 if(!"NONE".equals(s(lock,"release_status"))||"RELEASE".equals(s(lock,"run_action")))releasing.put(company+"/"+lock.get("result_id"),lock);
                 locked+=quantity;
             }
-            require(locked+publicStock==reserved,"订单预占与来源数量不一致，已回滚");
+            require(locked+publicStock+lucky==reserved,"订单预占与来源数量不一致，已回滚");
             if(reserved>0){
-                require(jdbc.update("UPDATE oms_inventory SET reserved_stock=reserved_stock-?,allocated_stock=allocated_stock+?,available_stock=available_stock+?,version=version+1 WHERE company_code=? AND sku_sn=? AND reserved_stock>=?",reserved,locked,publicStock,company,sku,reserved)==1,"公司预占余额不足，已回滚");
+                require(jdbc.update("UPDATE oms_inventory SET reserved_stock=reserved_stock-?,allocated_stock=allocated_stock+?,available_stock=available_stock+?,version=version+1 WHERE company_code=? AND sku_sn=? AND reserved_stock>=?",reserved,locked+lucky,publicStock,company,sku,reserved)==1,"公司预占余额不足，已回滚");
                 require(jdbc.update("UPDATE oms_channel_inventory SET reserved_stock=reserved_stock-?,allocated_stock=allocated_stock+?,version=version+1 WHERE company_code=? AND channel_id=? AND sku_sn=? AND reserved_stock>=?",reserved,locked,company,demand.get("channel_id"),sku,reserved)==1,"渠道预占余额不足，已回滚");
             }
             jdbc.update("UPDATE oms_order_stock_source SET reserved=0 WHERE company_code=? AND demand_id=? AND reserved=1",company,demand.get("id"));
             jdbc.update("UPDATE oms_order_stock_demand SET reserved_quantity=0,cancelled_quantity=demand_quantity,status='CANCELLED',reason='业务订单已作废',reason_code='ORDER_VOIDED' WHERE id=?",demand.get("id"));
             event(demand,"CANCEL","取消销售需求；释放渠道锁库预占 "+locked+" 件，公共预占 "+publicStock+" 件");
         }
+        if(!demands.isEmpty()){Map<String,Object> first=demands.get(0);LuckyBagStock.reconcile(jdbc,s(first,"company_code"),n(first,"channel_id"),s(first,"platform_tid"));}
         // A rule already being released must not retain newly returned channel locks.
         for(Map<String,Object> lock:releasing.values()){
             String company=s(lock,"company_code");long rule=n(lock,"rule_id");
@@ -171,7 +177,7 @@ public class OrderStockService {
     /** Locked reservations are backed by WMS locks; only the remainder uses public goods. */
     public static long publicReserved(JdbcTemplate jdbc,String company,String sku){
         long total=jdbc.queryForObject("SELECT COALESCE(SUM(reserved_quantity-outbound_quantity),0) FROM oms_order_stock_demand WHERE company_code=? AND sku_sn=? FOR UPDATE",Long.class,company,sku);
-        long locked=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_stock_source WHERE company_code=? AND sku_sn=? AND source_type='LOCK' AND reserved=1 FOR UPDATE",Long.class,company,sku);
+        long locked=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_stock_source WHERE company_code=? AND sku_sn=? AND source_type IN ('LOCK','LUCKY') AND reserved=1 FOR UPDATE",Long.class,company,sku);
         long warehousePublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-released_quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND sku_sn=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,sku);
         require(total>=locked+warehousePublic,"订单预占与仓库来源记录不一致");return total-locked-warehousePublic;
     }
@@ -183,13 +189,14 @@ public class OrderStockService {
     public static void refreshChannel(JdbcTemplate jdbc,String company,String sku,long channel){refresh(jdbc,company,sku,channel,false);}
     private static void refresh(JdbcTemplate jdbc,String company,String sku,long channel,boolean allChannels){
         company=company.toUpperCase(Locale.ROOT);
+        if(jdbc.queryForObject("SELECT COUNT(*) FROM oms_lucky_definition WHERE company_code=? AND sku_sn=?",Long.class,company,sku)>0){for(Long bagChannel:jdbc.queryForList("SELECT channel_id FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?"+(allChannels?"":" AND channel_id=?"),Long.class,allChannels?new Object[]{company,sku}:new Object[]{company,sku,channel}))LuckyBagStock.project(jdbc,company,sku,bagChannel);return;}
         List<Object> pendingArgs=new ArrayList<>(Arrays.asList(company,sku));if(!allChannels)pendingArgs.add(channel);
         jdbc.update("UPDATE oms_channel_inventory c SET pending_stock=(SELECT COALESCE(SUM(demand_quantity-cancelled_quantity-reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=UPPER(c.company_code) AND d.sku_sn=c.sku_sn AND d.channel_id=c.channel_id AND d.status<>'CANCELLED'),version=version+1 WHERE c.company_code=? AND c.sku_sn=?"+(allChannels?"":" AND c.channel_id=?"),pendingArgs.toArray());
         jdbc.update("UPDATE oms_inventory SET pending_public_stock=(SELECT COALESCE(SUM(GREATEST(0,pending_stock-allocated_stock)),0) FROM oms_channel_inventory WHERE company_code=? AND sku_sn=?) WHERE company_code=? AND sku_sn=?",company,sku,company,sku);
         // Public reservations consume the channel's quota even if made before allocation.
         // Rebuild the projection so retries, cancellation and reallocation cannot double count.
         Map<Long,Long> lockedByChannel=new HashMap<>();
-        for(Map<String,Object> locked:jdbc.queryForList("SELECT d.channel_id,SUM(s.quantity-s.outbound_quantity) quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE s.company_code=? AND s.sku_sn=? AND s.source_type='LOCK' AND s.reserved=1 GROUP BY d.channel_id",company,sku))lockedByChannel.put(n(locked,"channel_id"),n(locked,"quantity"));
+        for(Map<String,Object> locked:jdbc.queryForList("SELECT d.channel_id,SUM(s.quantity-s.outbound_quantity) quantity FROM oms_order_stock_source s JOIN oms_order_stock_demand d ON d.id=s.demand_id AND d.company_code=s.company_code WHERE s.company_code=? AND s.sku_sn=? AND s.source_type IN ('LOCK','LUCKY') AND s.reserved=1 GROUP BY d.channel_id",company,sku))lockedByChannel.put(n(locked,"channel_id"),n(locked,"quantity"));
         // Every channel projection for this SKU is capped by its eligible remaining stock.
         Map<String,Long> freeByScope=new HashMap<>();
         List<Object> channelArgs=new ArrayList<>(Arrays.asList(company,sku));if(!allChannels)channelArgs.add(channel);

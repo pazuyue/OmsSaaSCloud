@@ -1,0 +1,16 @@
+{
+  "random_order": 127,
+  "normal_order": 134,
+  "virtual_bundle_order": 66,
+  "stocked_bundle_order": 67,
+  "one_sales_parent": true,
+  "large_platform_oid_copy": true,
+  "bag_set_piece_units": true,
+  "both_original_bags_traced": true,
+  "warehouse_sources_collapsed": true,
+  "shipment_packages_opened": true,
+  "return_arrangement_separate": true,
+  "inventory_navigation_verified": true,
+  "inventory_unchanged": true,
+  "browser_errors": []
+}

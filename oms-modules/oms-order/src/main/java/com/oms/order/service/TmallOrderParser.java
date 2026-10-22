@@ -14,6 +14,7 @@ public class TmallOrderParser {
         public boolean hold;
         public String fulfillmentBlock="";
         public BigDecimal payment;
+        public Map<String,Object> document;
         public LocalDateTime created,modified;
         public List<Line> lines=new ArrayList<>();
         public boolean eligible(Collection<String> allowedTypes){return "WAIT_SELLER_SEND_GOODS".equals(status)&&allowedTypes.contains(type);}
@@ -57,6 +58,12 @@ public class TmallOrderParser {
             com.fasterxml.jackson.databind.node.ArrayNode fingerprints=semantic.putArray("orders");
             items.sort(Comparator.comparing(row->str(row,"oid")));
             for(JsonNode row:items){ObjectNode item=fingerprints.addObject();for(String key:Arrays.asList("oid","num_iid","sku_id","outer_sku_id","outer_iid","num","payment","divide_order_fee","status","refund_status","refund_id"))item.put(key,str(row,key));}
+            for(String key:OrderDocumentInfo.TRADE_MONEY)semantic.set(key,trade.path(key));
+            for(int i=0;i<items.size();i++)for(String key:OrderDocumentInfo.LINE_MONEY)((ObjectNode)fingerprints.get(i)).set(key,items.get(i).path(key));
+            t.document=OrderDocumentInfo.parse(trade);
+            @SuppressWarnings("unchecked") List<Map<String,Object>> commercial=(List<Map<String,Object>>)t.document.get("lines");
+            Map<String,Map<String,Object>> commercialByOid=new HashMap<>();for(Map<String,Object> row:commercial)commercialByOid.put(text(row,"platform_oid"),row);
+            for(Line line:t.lines){Map<String,Object> row=commercialByOid.get(line.oid);Object goods=row.get("goods_payment");boolean confirmed=text(row,"payment_source").startsWith("??")||"MATCHED".equals(t.document.get("check_state"));if(line.payment!=null&&goods!=null&&confirmed)line.payment=new BigDecimal(goods.toString());}
             t.fingerprint=hash(semantic.toString());return t;
         } catch(IllegalArgumentException e){throw e;}catch(Exception e){throw new IllegalArgumentException("天猫订单报文无法解析，请核对原始数据",e);}
     }

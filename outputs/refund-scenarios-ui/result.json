@@ -1,0 +1,35 @@
+{
+  "checks": [
+    "真实接口：五类场景在分页前筛选，场景、待办及货物处理可组合，翻页总数一致",
+    "真实页面：快捷场景与待办独立组合，重置清空场景，列表无逐行详情请求",
+    "浏览器模拟：销售父商品、原购3袋、本次1袋、退回2件清晰区分，只显示本退款关联原袋，金额新旧并列",
+    "浏览器模拟：实物组合按套、组件按件，窄屏无页面溢出，仅退赠品有独立场景",
+    "全程未提交退款或仓库业务变更，关联SKU库存保持一致，浏览器无脚本错误"
+  ],
+  "errors": [],
+  "mutations": [],
+  "scenario_api_timings": {
+    "REFUND_RETURN": {
+      "total": 1,
+      "elapsed_ms": 27.54
+    },
+    "REFUND_GIFT_ONLY": {
+      "total": 0,
+      "elapsed_ms": 17.15
+    },
+    "PAID_PENDING": {
+      "total": 10,
+      "elapsed_ms": 17.05
+    },
+    "MISSING_DOCUMENT": {
+      "total": 1,
+      "elapsed_ms": 18.57
+    },
+    "UNPOSTED": {
+      "total": 0,
+      "elapsed_ms": 21.67
+    }
+  },
+  "real_refund_id": 80,
+  "browser_product_fixtures_only": true
+}

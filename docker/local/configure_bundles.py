@@ -7,6 +7,8 @@ def index(db,table,name,fields):
     if current!=fields:
         execute('ALTER TABLE '+table+(' DROP INDEX '+name+',' if current and current!='NULL' else '')+' ADD UNIQUE KEY '+name+'('+fields+')',db)
 def install_goods(db):
+    from configure_lucky_bags import install_goods as install_lucky_goods
+    install_lucky_goods(db)
     execute("""CREATE TABLE IF NOT EXISTS goods_bundle (
       company_code VARCHAR(50) NOT NULL, sku_sn VARCHAR(128) NOT NULL, revision BIGINT NOT NULL DEFAULT 1,
       enabled TINYINT NOT NULL DEFAULT 1, components JSON NOT NULL, updated_by VARCHAR(64) NOT NULL,
@@ -47,7 +49,14 @@ def install_order(db):
       bundle_id BIGINT NOT NULL, quantity BIGINT NOT NULL, request_json JSON NOT NULL, actor VARCHAR(64) NOT NULL,
       create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY refund_bundle(company_code,refund_id,bundle_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",db)
+    column(db,'oms_order_bundle','stock_reference',"VARCHAR(64) NOT NULL DEFAULT ''")
+    column(db,'oms_order_bundle','gift_plan_id','BIGINT NULL')
+    index(db,'oms_order_bundle','sales_line','company_code,order_id,platform_oid,stock_reference')
+    from configure_lucky_bags import install_order as install_lucky_order
+    install_lucky_order(db)
 def install_inventory(db):
+    from configure_lucky_bags import install_inventory as install_lucky_inventory
+    install_lucky_inventory(db)
     column(db,'oms_order_stock_demand','component_quantity','INT NOT NULL DEFAULT 0')
     index(db,'oms_order_stock_demand','uk_order_demand','company_code,channel_id,platform_tid,platform_oid,sku_sn')
 if __name__=='__main__':

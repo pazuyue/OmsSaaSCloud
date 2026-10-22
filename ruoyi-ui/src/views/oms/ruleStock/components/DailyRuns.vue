@@ -1,6 +1,6 @@
 <template>
   <section class="daily-runs">
-    <div class="run-toolbar"><div><h3>{{ selected ? '第 ' + selected.id + ' 轮 · 商品结果' : '日常分货执行记录' }}</h3><p>后台按有效期和间隔执行，关闭页面仍会继续。每轮重新计算普通配额，失败项在后续轮次重新参与计算。</p></div><el-button :loading="loading" @click="load">刷新记录</el-button></div>
+    <div class="run-toolbar"><div><h3>{{ selected ? '第 ' + selected.id + ' 轮 · 商品结果' : '日常分货执行记录' }}</h3><p>后台按有效期和间隔执行，关闭页面仍会继续。每轮重新计算普通配额，福袋只补足保障缺口，失败项在后续轮次重新参与计算。</p></div><el-button :loading="loading" @click="load">刷新记录</el-button></div>
     <template v-if="selected"><el-button type="text" icon="el-icon-arrow-left" @click="back">返回执行记录</el-button><el-switch v-model="failedOnly" active-text="仅看失败" @change="filter" /><p class="hint">{{ labels[selected.status] }} · 未处理 {{ selected.pending }} 件商品。停用或到期后，已提交结果保留，未处理商品不再执行。</p></template>
     <el-alert v-if="error" title="加载失败，请刷新重试" type="error" :closable="false" />
     <el-table v-if="!selected" key="runs" v-loading="loading" :data="rows" empty-text="暂无执行轮次，启用并进入有效期后自动执行">
@@ -10,10 +10,10 @@
       <el-table-column prop="operatorName" label="触发人" min-width="110" /><el-table-column label="操作" width="100"><template slot-scope="s"><el-button type="text" @click="open(s.row)">查看结果</el-button></template></el-table-column>
     </el-table>
     <el-table v-else key="items" v-loading="loading" :data="rows" empty-text="暂无符合条件的商品">
-      <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.detail ? s.row.detail.channels : []" :locking="false" /></template></el-table-column>
+      <el-table-column type="expand"><template slot-scope="s"><allocation-lines :rows="s.row.detail ? s.row.detail.channels : []" :locking="!!(s.row.detail && s.row.detail.unit==='袋')" :unit="(s.row.detail && s.row.detail.unit) || '件'" /></template></el-table-column>
       <el-table-column prop="skuSn" label="SKU" min-width="170" /><el-table-column label="结果" width="100"><template slot-scope="s">{{ itemLabels[s.row.status] }}</template></el-table-column>
-      <el-table-column label="可分库存" width="100"><template slot-scope="s">{{ s.row.detail ? s.row.detail.available : '—' }}</template></el-table-column>
-      <el-table-column prop="allocatedQuantity" label="本轮配额合计" width="130" /><el-table-column label="说明" min-width="250"><template slot-scope="s">{{ s.row.errorMessage || (s.row.status === 'SUCCESS' ? '展开查看渠道变化和规则优先级处理结果' : '尚未处理') }}</template></el-table-column>
+      <el-table-column label="可分库存" width="100"><template slot-scope="s">{{ s.row.detail ? s.row.detail.available : '—' }} {{ (s.row.detail && s.row.detail.unit) || '件' }}</template></el-table-column>
+      <el-table-column label="本轮配额合计" width="140"><template slot-scope="s">{{ s.row.allocatedQuantity }} {{ (s.row.detail && s.row.detail.unit) || '件' }}</template></el-table-column><el-table-column label="说明" min-width="250"><template slot-scope="s">{{ s.row.errorMessage || (s.row.status === 'SUCCESS' ? '展开查看渠道变化和规则优先级处理结果' : '尚未处理') }}</template></el-table-column>
     </el-table>
     <pagination v-show="total > 0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" :page-sizes="[10,20,50,100]" @pagination="load" />
   </section>

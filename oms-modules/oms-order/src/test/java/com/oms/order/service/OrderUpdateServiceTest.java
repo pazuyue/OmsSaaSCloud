@@ -55,4 +55,18 @@ class OrderUpdateServiceTest {
         db.update("INSERT INTO oms_exchange_update_link(company_code,exchange_id,platform_order_id,update_id,source_hash,field_path,difference_hash,difference,state) VALUES ('VERIFY',1,?,1,?,?,?,?, 'APPLIED')",platform,hash(next.toString()),"987654321012345679/outer_sku_id",hash(ExchangeService.canonical(d)),encode(d));updates.refreshProjection("VERIFY",platform);assertEquals("REFUND",p().get("update_categories"));assertEquals(1,number(p(),"change_pending"));
         target.put("outer_sku_id","C");ingest(next.toString(),"2026-10-01 02:00:00");assertTrue(text(p(),"update_categories").contains("GOODS"));assertTrue(text(p(),"update_categories").contains("REFUND"));
     }
+
+    @Test void freightDiscountAndPriceChangesPauseWithoutOverwritingAdoptedMoney(){
+        Map<String,Object> doc=OrderDocumentInfo.fromPayload(original);db.update("UPDATE oms_order SET document_info=?",encode(doc));
+        ingest(changed("post_fee","10.00"),"2026-10-01 01:00:00");assertEquals(1,number(p(),"change_pending"));assertTrue(text(p(),"update_categories").contains("AMOUNT"));
+        assertNull(OrderDocumentInfo.stored(db.queryForObject("SELECT document_info FROM oms_order",String.class)).get("buyer_freight"));
+        assertEquals("10.00",OrderDocumentInfo.stored(p().get("document_info")).get("buyer_freight"));assertEquals(5,n("SELECT reserved_quantity FROM oms_order_line"));
+        ingest(lineChanged("price","12.00"),"2026-10-01 02:00:00");assertTrue(text(p(),"update_categories").contains("AMOUNT"));
+        ingest(changed("discount_fee","2.00"),"2026-10-01 03:00:00");assertTrue(text(p(),"update_categories").contains("AMOUNT"));
+    }
+    @Test void displayMetadataRefreshesWithoutPausingOrChangingOriginalAmounts(){
+        Map<String,Object> doc=OrderDocumentInfo.fromPayload(original);db.update("UPDATE oms_order SET document_info=?",encode(doc));
+        ingest(changed("buyer_message","请分开包装"),"2026-10-01 01:00:00");assertEquals(0,number(p(),"change_pending"));
+        Map<String,Object> adopted=OrderDocumentInfo.stored(db.queryForObject("SELECT document_info FROM oms_order",String.class));assertEquals("请分开包装",adopted.get("buyer_message"));assertEquals("25.00",adopted.get("payment"));assertEquals("APPROVED",db.queryForObject("SELECT review_status FROM oms_order",String.class));
+    }
 }

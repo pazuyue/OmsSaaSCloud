@@ -66,12 +66,20 @@ public class OrderProcessor {
             Map<String,List<Map<String,Object>>> goods=catalog.goods(company,skus);Map<String,Map<String,Object>> bundleSnapshots=new HashMap<>();Map<String,Map<String,Object>> frozen=repository.bundleSnapshots(company,id);Map<String,String> matched=new HashMap<>(),errors=new LinkedHashMap<>();
             OrderStockCommand command=new OrderStockCommand();command.setChannelId(number(config,"channel_id"));command.setPlatformTid(trade.tid);command.setAllowPublicStock(number(config,"allow_public_stock")==1);
             for(TmallOrderParser.Line line:trade.lines){String sku=matchingSku(line,manual);List<Map<String,Object>> found=goods.getOrDefault(sku,Collections.emptyList());String error=bindingErrors.containsKey(line.oid)?bindingErrors.get(line.oid):sku.isEmpty()?"缺少outer_sku_id":found.isEmpty()?"内部SKU不存在："+sku:found.size()!=1?"内部SKU匹配不唯一："+sku:"";
-                if(error.isEmpty()&&number(found.get(0),"is_fd")==1)error="暂不支持福袋："+line.outerSku;
+                if(error.isEmpty()&&number(found.get(0),"is_fd")==1){try{Map<String,Object> bag=frozen.containsKey(line.oid)?frozen.get(line.oid):OrderLuckyBags.definition(sku,line.title,found.get(0));require(OrderLuckyBags.lucky(bag),"福袋身份与原快照不一致");bundleSnapshots.put(line.oid,bag);matched.put(line.oid,sku);continue;}catch(IllegalArgumentException invalid){error=invalid.getMessage();}}
                 if(error.isEmpty()&&(number(found.get(0),"is_package")==1||frozen.containsKey(line.oid)))try{bundleSnapshots.put(line.oid,frozen.containsKey(line.oid)?frozen.get(line.oid):OrderBundles.snapshot(sku,line.title,found.get(0)));}catch(IllegalArgumentException e){error=e.getMessage();}
                 if(!error.isEmpty()){errors.put(line.oid,error);continue;}
                 matched.put(line.oid,sku);OrderStockCommand.Line stock=new OrderStockCommand.Line();stock.setPlatformOid(line.oid);stock.setSkuSn(sku);stock.setQuantity(line.quantity);if(bundleSnapshots.containsKey(line.oid)){Map<String,Object> parent=new LinkedHashMap<>();parent.put("platform_oid",line.oid);parent.put("quantity",line.quantity);parent.put("payment",line.payment);parent.put("bundle_snapshot",bundleSnapshots.get(line.oid));for(Map<String,Object> component:OrderBundles.expand(Collections.singletonList(parent))){OrderStockCommand.Line child=new OrderStockCommand.Line();child.setPlatformOid(line.oid);child.setSkuSn(text(component,"sku_sn"));child.setQuantity(Math.toIntExact(number(component,"quantity")));child.setComponentQuantity(Math.toIntExact(number(component,"component_quantity")));command.getLines().add(child);}}else command.getLines().add(stock);
             }
             require(command.getLines().size()<=500,"套装展开后超过500行，请核对订单商品范围");repository.parsed(company,id,lease,trade,matched,errors);repository.bindingSnapshots(company,id,lease,bindingSnapshots);if(!bundleSnapshots.isEmpty())repository.bundleSnapshots(company,id,lease,bundleSnapshots);
+            for(TmallOrderParser.Line line:trade.lines)if(OrderLuckyBags.lucky(bundleSnapshots.getOrDefault(line.oid,Collections.emptyMap()))){
+                repository.prepareDemand(company,id,lease);
+                Map<String,Object> resolved=data(inventory.luckyClaim(company,com.oms.common.lucky.LuckyBagRules.map("channel_id",number(config,"channel_id"),"platform_tid",trade.tid,"platform_oid",line.oid,"sku_sn",matched.get(line.oid),"quantity",line.quantity),SecurityConstants.INNER));
+                if("WAIT_STOCK".equals(text(resolved,"state"))){failure(company,id,lease,"LUCKY_STOCK_SHORTAGE","福袋渠道保障余额不足，已保留袋数需求等待补足",Collections.emptyList(),true,managed);return;}
+                repository.resolvedLucky(company,id,lease,line.oid,resolved);bundleSnapshots.put(line.oid,resolved);
+                for(Map<String,Object> child:com.oms.common.lucky.LuckyBagRules.rows(resolved.get("components"))){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setPlatformOid(line.oid);item.setSkuSn(text(child,"sku_sn"));item.setQuantity(Math.toIntExact(number(child,"quantity")));command.getLines().add(item);}
+            }
+            require(command.getLines().size()<=500,"福袋、套装及普通商品展开后超过500行");
             if(!command.getLines().isEmpty()){repository.prepareDemand(company,id,lease);data(inventory.execute("register",company,command,SecurityConstants.INNER));repository.registered(company,id,lease);}
             if(!errors.isEmpty()){
                 List<Map<String,Object>> details=new ArrayList<>();
@@ -87,10 +95,19 @@ public class OrderProcessor {
             List<Map<String,Object>> issues=parser.conversionIssues(trade);
             if(!issues.isEmpty()){repository.failure(company,id,lease,text(issues.get(0),"code"),text(issues.get(0),"message"),issues,false);return;}
             parser.validateConversion(trade,allowedTypes);
-            if(repository.gifts()!=null){for(Map<String,Object> gift:repository.gifts().prepare(company,order,trade,matched)){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setGift(true);item.setPlatformOid("");item.setSkuSn(text(gift,"sku_sn"));item.setQuantity(Math.toIntExact(number(gift,"quantity")));command.getLines().add(item);}require(command.getLines().size()<=500,"商品及赠品展开后超过500行");data(inventory.execute("register",company,command,SecurityConstants.INNER));}
-            List<Map<String,Object>> result=data(inventory.execute("reserve",company,command,SecurityConstants.INNER));
+            List<Map<String,Object>> giftLines=Collections.emptyList();
+            if(repository.gifts()!=null){repository.gifts().prepare(company,order,trade,matched);giftLines=repository.gifts().resolve(company,id,inventory);}
+            require(command.getLines().size()+giftLines.size()<=500,"商品及赠品展开后超过500行");
+            List<Map<String,Object>> result=new ArrayList<>(data(inventory.execute("reserve",company,command,SecurityConstants.INNER)));
+            for(Map.Entry<String,List<Map<String,Object>>> group:OrderFulfillmentLines.groups(order,giftLines).entrySet()){
+                OrderStockCommand giftCommand=new OrderStockCommand();giftCommand.setChannelId(number(config,"channel_id"));giftCommand.setPlatformTid(group.getKey());giftCommand.setAllowPublicStock(number(config,"allow_public_stock")==1);
+                for(Map<String,Object> gift:group.getValue()){OrderStockCommand.Line item=new OrderStockCommand.Line();item.setGift(true);item.setPlatformOid("");item.setSkuSn(text(gift,"sku_sn"));item.setQuantity(Math.toIntExact(number(gift,"quantity")));item.setComponentQuantity(Math.toIntExact(number(gift,"component_quantity")));giftCommand.getLines().add(item);}
+                data(inventory.execute("register",company,giftCommand,SecurityConstants.INNER));
+                for(Map<String,Object> receipt:data(inventory.execute("reserve",company,giftCommand,SecurityConstants.INNER))){Map<String,Object> copy=new LinkedHashMap<>(receipt);copy.put("stock_reference",group.getKey());result.add(copy);}
+            }
             repository.complete(company,id,lease,config,result);
-        }catch(IllegalArgumentException e){repository.failure(company,id,lease,e instanceof ConversionException?((ConversionException)e).code:"ORDER_DATA_INVALID",safe(e),Collections.emptyList(),false);}
+        }catch(GiftProducts.StockShortage e){failure(company,id,lease,"GIFT_LUCKY_STOCK_SHORTAGE",e.getMessage(),Collections.emptyList(),true,managed);}
+        catch(IllegalArgumentException e){repository.failure(company,id,lease,e instanceof ConversionException?((ConversionException)e).code:"ORDER_DATA_INVALID",safe(e),Collections.emptyList(),false);}
         catch(RuntimeException e){failure(company,id,lease,"SYSTEM_FAILURE","服务调用或数据处理失败，请查看重试进度",Collections.emptyList(),true,managed);}
     }
     private void failure(String c,long id,String lease,String code,String reason,List<Map<String,Object>> details,boolean retry,boolean managed){if(managed)repository.failure(c,id,lease,code,reason,details,retry,true);else repository.failure(c,id,lease,code,reason,details,retry);}

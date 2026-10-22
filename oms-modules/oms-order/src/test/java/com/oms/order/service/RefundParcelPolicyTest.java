@@ -46,4 +46,11 @@ class RefundParcelPolicyTest {
         assertThrows(IllegalArgumentException.class,()->policy.detail("VERIFY",999));
     }
     @Test void partialAllocationRequiresRuleModeAndPersistsSeparatelyFromMergeSwitch(){Map<String,Object> p=config();p.put("allow_partial_allocation",1);assertThrows(IllegalArgumentException.class,()->policy.save("VERIFY",1,p,"test"));p.put("allocation_mode","RULE");p.put("auto_enabled",0);p.put("enabled",0);policy.save("VERIFY",1,p,"test");Map<String,Object> saved=policy.get("VERIFY",1);assertEquals("RULE",saved.get("allocation_mode"));assertEquals(1,number(saved,"allow_partial_allocation"));assertEquals(0,number(saved,"auto_enabled"));assertEquals("REFUND_CREATED",saved.get("allocation_order"));}
+    @Test void allCreationDispatchAndMergeCombinationsAreIndependentAndPersistMirroredDispatchFlag(){
+        for(String mode:Arrays.asList("NONE","MANUAL","AUTO"))for(int create=0;create<2;create++)for(int dispatch=0;dispatch<2;dispatch++){
+            Map<String,Object> p=policy.get("VERIFY",1);p.putAll(m("merge_mode",mode,"auto_create",create,"auto_dispatch",dispatch,"create_store_code","V","create_return_address","Address","create_return_contact","Contact","store_codes",Collections.singletonList("V")));policy.save("VERIFY",1,p,"test");
+            Map<String,Object> saved=policy.get("VERIFY",1);assertEquals(mode,RefundParcelPolicy.mergeMode(saved));assertEquals(dispatch,number(saved,"auto_dispatch"));assertEquals(create,number(saved,"auto_create"));assertEquals(dispatch,f.f.db.queryForObject("SELECT auto_dispatch FROM oms_refund_parcel_config WHERE company_code='VERIFY' AND channel_id=1",Integer.class));
+        }
+    }
+    @Test void independentAutoDispatchRequiresUsableScopeButNotLogisticsSources(){Map<String,Object> p=config();p.putAll(m("merge_mode","NONE","auto_dispatch",1,"logistics_sources",Collections.emptyList()));policy.save("VERIFY",1,p,"test");assertEquals(1,number(policy.get("VERIFY",1),"auto_dispatch"));}
 }

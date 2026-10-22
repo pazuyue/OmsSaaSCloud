@@ -21,9 +21,10 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>debug</level>
         </filter>
-        <encoder>
-            <pattern>%d [%t] %5p %c:%L - %m%n</pattern>
-            <!-- 设置字符集 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+            <pattern>%d [%t] %5p %c:%L - [%tid] [company=%X{companyCode} business=%X{businessId} event=%X{eventId} businessTrace=%X{businessTraceId}] %m%n</pattern>
+            </layout>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -31,8 +32,10 @@
     <appender name="INFO_FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_PATH}${APP_NAME}-info.log</File>
-        <encoder>
-            <pattern>%d [%t] %5p %c:%L - %m%n</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+            <pattern>%d [%t] %5p %c:%L - [%tid] [company=%X{companyCode} business=%X{businessId} event=%X{eventId} businessTrace=%X{businessTraceId}] %m%n</pattern>
+            </layout>
         </encoder>
         <!-- 日志记录器的滚动策略，按日期，按大小记录，日志按天分类压缩保存-->
         <rollingPolicy
@@ -54,8 +57,10 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>error</level>
         </filter>
-        <encoder>
-            <pattern>%d [%t] %5p %c:%L - %m%n</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+            <pattern>%d [%t] %5p %c:%L - [%tid] [company=%X{companyCode} business=%X{businessId} event=%X{eventId} businessTrace=%X{businessTraceId}] %m%n</pattern>
+            </layout>
         </encoder>
         <!-- 日志记录器的滚动策略，按日期，按大小记录，日志按天分类压缩保存-->
         <rollingPolicy

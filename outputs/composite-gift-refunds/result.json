@@ -1,0 +1,3954 @@
+{
+  "order_id": 136,
+  "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+  "platform_tid": "98920261022102630",
+  "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=136",
+  "refunds": {
+    "kit": {
+      "number": "9882026102210263001",
+      "id": 81,
+      "sn": "TK7028e6496daf492b957e0baabc29846a",
+      "purchase_planned": true,
+      "gifts_planned": true,
+      "verified": true
+    },
+    "random": {
+      "number": "9882026102210263002",
+      "id": 82,
+      "sn": "TK3f2a1109a96344f6a244f783c3c57276",
+      "returned_unit": {
+        "cost": 4,
+        "unit": 1,
+        "pool_id": 5,
+        "unit_id": 18,
+        "revision": 1,
+        "components": [
+          {
+            "sku_sn": "RF20261022102630A",
+            "batch_id": 178,
+            "quantity": 1,
+            "group_key": "top",
+            "source_id": 11,
+            "unit_cost": 2,
+            "goods_name": "[复合退货验收] sku",
+            "group_name": "上装",
+            "store_code": "RF20261022102630V",
+            "stock_source_id": 113,
+            "clearance_priority": 0
+          },
+          {
+            "sku_sn": "RF20261022102630D",
+            "batch_id": 180,
+            "quantity": 1,
+            "group_key": "bottom",
+            "source_id": 13,
+            "unit_cost": 2,
+            "goods_name": "[复合退货验收] d",
+            "group_name": "下装",
+            "store_code": "RF20261022102630V",
+            "stock_source_id": 114,
+            "clearance_priority": 0
+          }
+        ],
+        "store_code": "RF20261022102630V",
+        "shipped_complete": true
+      },
+      "purchase_planned": true,
+      "verified": true
+    },
+    "stocked": {
+      "number": "9882026102210263003",
+      "id": 83,
+      "sn": "TK0fff895a176f486aad1db45a28ec6ee6",
+      "purchase_planned": true,
+      "verified": true
+    },
+    "preset": {
+      "number": "9882026102210263004",
+      "id": 84,
+      "sn": "TK26c58f18930f4a31a05862ac39f5171a",
+      "returned_unit": {
+        "cost": 4,
+        "unit": 1,
+        "pool_id": 6,
+        "unit_id": 14,
+        "revision": 1,
+        "components": [
+          {
+            "sku_sn": "RF20261022102630B",
+            "batch_id": 179,
+            "quantity": 1,
+            "group_key": "top",
+            "source_id": 15,
+            "unit_cost": 2,
+            "goods_name": "[复合退货验收] b",
+            "group_name": "上装",
+            "store_code": "RF20261022102630V",
+            "raw_available": 48,
+            "stock_source_id": 116,
+            "clearance_priority": 0,
+            "public_reserved_deduction": 0
+          },
+          {
+            "sku_sn": "RF20261022102630D",
+            "batch_id": 180,
+            "quantity": 1,
+            "group_key": "bottom",
+            "source_id": 16,
+            "unit_cost": 2,
+            "goods_name": "[复合退货验收] d",
+            "group_name": "下装",
+            "store_code": "RF20261022102630V",
+            "raw_available": 46,
+            "stock_source_id": 117,
+            "clearance_priority": 0,
+            "public_reserved_deduction": 0
+          }
+        ],
+        "store_code": "RF20261022102630V",
+        "shipped_complete": true
+      },
+      "purchase_planned": true,
+      "verified": true
+    }
+  },
+  "checks": [
+    "同单购买和赠送两种套装、两种福袋；24个库存单位占用正确，同SKU来源分离",
+    "TEST WMS真实发货及重复回传：只扣实际组件和成品套装，福袋父SKU不扣虚拟库存",
+    "首次退一套后购买门槛失效，四种赠品均追退，购买退回与赠品退回来源分开",
+    "kit退款：原来源退回入库、重复回传与重复记账不多加库存",
+    "random退款：原来源退回入库、重复回传与重复记账不多加库存",
+    "stocked退款：原来源退回入库、重复回传与重复记账不多加库存",
+    "preset退款：原来源退回入库、重复回传与重复记账不多加库存",
+    "四笔退款无重复追赠；库存恢复16个单位，福袋实际组件回库且未重建售出袋配额",
+    "逐SKU公司账和仓库账一致；付费原袋ID及出库库存来源准确，成品套装按整套回库",
+    "购买商品不能从赠品入口退回，错误请求已拦截且库存不变",
+    "赠品不能从购买商品入口退回，错误请求已拦截且库存不变",
+    "后续退款不能重复追回已退赠品，错误请求已拦截且库存不变",
+    "浏览器验收：购买商品与赠品分开，首次退款关联赠品、后续退款无重复关联"
+  ],
+  "stages": {
+    "before": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 50,
+          "reserved": 0,
+          "allocated": 3,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 50,
+          "reserved": 0,
+          "allocated": 5,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 50,
+          "reserved": 0,
+          "allocated": 8,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 10,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 10
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 50,
+          "locked": 3,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 50,
+          "locked": 5,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 50,
+          "locked": 8,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 10,
+          "locked": 0,
+          "available": 10
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 0,
+          "occupied": 0,
+          "available": 4
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 0,
+          "occupied": 0,
+          "available": 4
+        }
+      ],
+      "totals": {
+        "total": 160,
+        "available": 144,
+        "allocated": 16,
+        "reserved": 0
+      }
+    },
+    "reserved": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 50,
+          "reserved": 9,
+          "allocated": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 50,
+          "reserved": 6,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 50,
+          "reserved": 6,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 10,
+          "reserved": 3,
+          "allocated": 0,
+          "available": 7
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 50,
+          "locked": 3,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 50,
+          "locked": 5,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 50,
+          "locked": 8,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 10,
+          "locked": 0,
+          "available": 10
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 0,
+          "occupied": 3,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 0,
+          "occupied": 3,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 160,
+        "available": 132,
+        "allocated": 4,
+        "reserved": 24
+      }
+    },
+    "allocated": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 50,
+          "reserved": 9,
+          "allocated": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 50,
+          "reserved": 6,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 50,
+          "reserved": 6,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 10,
+          "reserved": 3,
+          "allocated": 0,
+          "available": 7
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 50,
+          "locked": 9,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 50,
+          "locked": 8,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 50,
+          "locked": 8,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 10,
+          "locked": 3,
+          "available": 7
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 0,
+          "occupied": 3,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 0,
+          "occupied": 3,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 160,
+        "available": 132,
+        "allocated": 4,
+        "reserved": 24
+      }
+    },
+    "shipped": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 41,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 44,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 44,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 7,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 7
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 41,
+          "locked": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 44,
+          "locked": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 44,
+          "locked": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 7,
+          "locked": 0,
+          "available": 7
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 136,
+        "available": 132,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "first_return_planned": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 41,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 44,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 44,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 7,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 7
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 41,
+          "locked": 0,
+          "available": 41
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 44,
+          "locked": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 44,
+          "locked": 2,
+          "available": 42
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 7,
+          "locked": 0,
+          "available": 7
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 136,
+        "available": 132,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "returned_kit": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 45,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 46,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 44
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 8,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 8
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 45,
+          "locked": 0,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 46,
+          "locked": 2,
+          "available": 44
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 8,
+          "locked": 0,
+          "available": 8
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 147,
+        "available": 143,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "returned_random": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 46,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 47,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 8,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 8
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 46,
+          "locked": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 47,
+          "locked": 2,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 8,
+          "locked": 0,
+          "available": 8
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 149,
+        "available": 145,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "returned_stocked": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 46,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 47,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 9,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 9
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 46,
+          "locked": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 47,
+          "locked": 2,
+          "available": 45
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 9,
+          "locked": 0,
+          "available": 9
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 150,
+        "available": 146,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "returned_preset": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 46,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 49,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 9,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 9
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 46,
+          "locked": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 49,
+          "locked": 2,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 9,
+          "locked": 0,
+          "available": 9
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 152,
+        "available": 148,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "final": {
+      "company": [
+        {
+          "sku": "RF20261022102630A",
+          "total": 46,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "total": 49,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630D",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022102630S",
+          "total": 9,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 9
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022102630A",
+          "actual": 46,
+          "locked": 0,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630B",
+          "actual": 49,
+          "locked": 2,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022102630D",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022102630S",
+          "actual": 9,
+          "locked": 0,
+          "available": 9
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022102630P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022102630R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 152,
+        "available": 148,
+        "allocated": 4,
+        "reserved": 0
+      }
+    }
+  },
+  "gift_final": {
+    "available": true,
+    "id": 5,
+    "order_id": 136,
+    "lines": [
+      {
+        "id": 179,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630A",
+        "goods_name": "[复合退货验收] sku",
+        "quantity": 2,
+        "payment": 0.0,
+        "reserved_quantity": 2,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:1",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 21,
+        "component_quantity": 2,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 2,
+        "gift_parent_sku": "RF20261022102630K",
+        "gift_parent_name": "[复合退货验收] kit",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "套",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 2,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 31,
+            "refund_id": 81,
+            "quantity": 2,
+            "posted_quantity": 2,
+            "accepted_quantity": 2,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 36,
+            "order_line_id": 179,
+            "actual": {
+              "id": 31,
+              "lines": [
+                {
+                  "id": 13,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630A",
+                  "bad_qty": 0,
+                  "event_id": 13,
+                  "good_qty": 2,
+                  "return_sn": "THK89E15ED62F03CDAD6636320199A532",
+                  "batch_code": "RF_RETURN_31",
+                  "message_id": "RF_RETURN_31",
+                  "create_time": "2026-10-22T10:28:17",
+                  "source_log_id": 612
+                }
+              ],
+              "events": [
+                {
+                  "id": 13,
+                  "state": "POSTED",
+                  "quantity": 2,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_31",
+                  "create_time": "2026-10-22T10:28:17",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 2,
+                "posted_qty": 2
+              },
+              "sku_sn": "RF20261022102630A",
+              "plan_id": 31,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 2,
+              "documents": [
+                {
+                  "id": 31,
+                  "sku_sn": "RF20261022102630A",
+                  "attempts": 1,
+                  "quantity": 2,
+                  "return_sn": "THK89E15ED62F03CDAD6636320199A532",
+                  "ticket_id": 164,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:14",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_0c8413bfbcbb445fb307",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 2,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 2,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THK89E15ED62F03CDAD6636320199A532",
+              "ticket_id": 164,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:14",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "312C8D28131CD58ECC8DC96EF369C916FDA21BDE38E278AC519550C25DA7CBB5",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_0c8413bfbcbb445fb307",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 2,
+              "real_store_code": "TW201",
+              "request_quantity": 2,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 2,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XS5bfae87474a24ab1b5818a5fe7d38691",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 100,
+            "company_code": "QM",
+            "shipment_id": 81,
+            "allocation_id": 100,
+            "order_line_id": 179,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630A",
+            "goods_name": "[复合退货验收] sku",
+            "store_code": "RF20261022102630V",
+            "batch_id": 178,
+            "source_type": "PUBLIC_EXTRA",
+            "stock_source_id": 125,
+            "quantity": 2,
+            "shipped_quantity": 2,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XS5bfae87474a24ab1b5818a5fe7d38691",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 180,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630B",
+        "goods_name": "[复合退货验收] b",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:1",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 21,
+        "component_quantity": 1,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630K",
+        "gift_parent_name": "[复合退货验收] kit",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "套",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 32,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 33,
+            "order_line_id": 180,
+            "actual": {
+              "id": 32,
+              "lines": [
+                {
+                  "id": 14,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630B",
+                  "bad_qty": 0,
+                  "event_id": 14,
+                  "good_qty": 1,
+                  "return_sn": "THKF495962F9A4196067930ADD9D9F003",
+                  "batch_code": "RF_RETURN_32",
+                  "message_id": "RF_RETURN_32",
+                  "create_time": "2026-10-22T10:28:25",
+                  "source_log_id": 615
+                }
+              ],
+              "events": [
+                {
+                  "id": 14,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_32",
+                  "create_time": "2026-10-22T10:28:25",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630B",
+              "plan_id": 32,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 32,
+                  "sku_sn": "RF20261022102630B",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THKF495962F9A4196067930ADD9D9F003",
+                  "ticket_id": 165,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:22",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_c314823ee2304ab1bf98",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THKF495962F9A4196067930ADD9D9F003",
+              "ticket_id": 165,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:22",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "A01C6E50B525312A4C9F3B427B2B7993E1F4B7BD4BAA3D7DB2E2A9A34D48E46D",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_c314823ee2304ab1bf98",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XS5bfae87474a24ab1b5818a5fe7d38691",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 99,
+            "company_code": "QM",
+            "shipment_id": 81,
+            "allocation_id": 99,
+            "order_line_id": 180,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630B",
+            "goods_name": "[复合退货验收] b",
+            "store_code": "RF20261022102630V",
+            "batch_id": 179,
+            "source_type": "PUBLIC_EXTRA",
+            "stock_source_id": 126,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XS5bfae87474a24ab1b5818a5fe7d38691",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 181,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630S",
+        "goods_name": "[复合退货验收] stocked",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:2",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": null,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": "{\"sku_sn\": \"RF20261022102630S\", \"enabled\": 1, \"revision\": 1, \"components\": [{\"sku_sn\": \"RF20261022102630A\", \"quantity\": 1, \"goods_name\": \"[复合退货验收] sku\"}, {\"sku_sn\": \"RF20261022102630B\", \"quantity\": 1, \"goods_name\": \"[复合退货验收] b\"}], \"goods_name\": \"[复合退货验收] stocked\", \"inventory_mode\": \"STOCKED\"}",
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630S",
+        "gift_parent_name": "[复合退货验收] stocked",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "套",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 33,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 30,
+            "order_line_id": 181,
+            "actual": {
+              "id": 33,
+              "lines": [
+                {
+                  "id": 15,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630S",
+                  "bad_qty": 0,
+                  "event_id": 15,
+                  "good_qty": 1,
+                  "return_sn": "THK9178A3B49F187FAE630B517D599241",
+                  "batch_code": "RF_RETURN_33",
+                  "message_id": "RF_RETURN_33",
+                  "create_time": "2026-10-22T10:28:33",
+                  "source_log_id": 618
+                }
+              ],
+              "events": [
+                {
+                  "id": 15,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_33",
+                  "create_time": "2026-10-22T10:28:33",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630S",
+              "plan_id": 33,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 33,
+                  "sku_sn": "RF20261022102630S",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THK9178A3B49F187FAE630B517D599241",
+                  "ticket_id": 166,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:29",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_f8b503fb06a141f89d6a",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THK9178A3B49F187FAE630B517D599241",
+              "ticket_id": 166,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:29",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "EF742B38579E621CA2E62533751BCA285A6D295A1772229AFE636CA765E84183",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_f8b503fb06a141f89d6a",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XSe5e9cc79c76a4da0a04bbbedf821c880",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 101,
+            "company_code": "QM",
+            "shipment_id": 82,
+            "allocation_id": 101,
+            "order_line_id": 181,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630S",
+            "goods_name": "[复合退货验收] stocked",
+            "store_code": "RF20261022102630V",
+            "batch_id": 181,
+            "source_type": "PUBLIC_EXTRA",
+            "stock_source_id": 127,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XSe5e9cc79c76a4da0a04bbbedf821c880",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 182,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630B",
+        "goods_name": "[复合退货验收] b",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:3",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 23,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630R",
+        "gift_parent_name": "[复合退货验收] random",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "袋",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 34,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 27,
+            "order_line_id": 182,
+            "actual": {
+              "id": 34,
+              "lines": [
+                {
+                  "id": 16,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630B",
+                  "bad_qty": 0,
+                  "event_id": 16,
+                  "good_qty": 1,
+                  "return_sn": "THK00CA337F8611785FC6D8BA7EC1F436",
+                  "batch_code": "RF_RETURN_34",
+                  "message_id": "RF_RETURN_34",
+                  "create_time": "2026-10-22T10:28:42",
+                  "source_log_id": 621
+                }
+              ],
+              "events": [
+                {
+                  "id": 16,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_34",
+                  "create_time": "2026-10-22T10:28:42",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630B",
+              "plan_id": 34,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 34,
+                  "sku_sn": "RF20261022102630B",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THK00CA337F8611785FC6D8BA7EC1F436",
+                  "ticket_id": 167,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:38",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_aca4bb5ee15a4ab8956e",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THK00CA337F8611785FC6D8BA7EC1F436",
+              "ticket_id": 167,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:38",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "B541BF5B1F03EE28978D4831EDA24C5066AE7DA36AB637CF01A253BB632EC341",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_aca4bb5ee15a4ab8956e",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 102,
+            "company_code": "QM",
+            "shipment_id": 83,
+            "allocation_id": 102,
+            "order_line_id": 182,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630B",
+            "goods_name": "[复合退货验收] b",
+            "store_code": "RF20261022102630V",
+            "batch_id": 179,
+            "source_type": "LUCKY",
+            "stock_source_id": 118,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 183,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630D",
+        "goods_name": "[复合退货验收] d",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:3",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 23,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630R",
+        "gift_parent_name": "[复合退货验收] random",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "袋",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 35,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 24,
+            "order_line_id": 183,
+            "actual": {
+              "id": 35,
+              "lines": [
+                {
+                  "id": 17,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630D",
+                  "bad_qty": 0,
+                  "event_id": 17,
+                  "good_qty": 1,
+                  "return_sn": "THKE74E120B08ECBCD75864CE05DBDBC2",
+                  "batch_code": "RF_RETURN_35",
+                  "message_id": "RF_RETURN_35",
+                  "create_time": "2026-10-22T10:28:50",
+                  "source_log_id": 624
+                }
+              ],
+              "events": [
+                {
+                  "id": 17,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_35",
+                  "create_time": "2026-10-22T10:28:50",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630D",
+              "plan_id": 35,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 35,
+                  "sku_sn": "RF20261022102630D",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THKE74E120B08ECBCD75864CE05DBDBC2",
+                  "ticket_id": 168,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:46",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_4baf25c1501e4880bffd",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THKE74E120B08ECBCD75864CE05DBDBC2",
+              "ticket_id": 168,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:46",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "FF9D57C51EAB8A036F1145FF3804BEF5929232D7CBAB3906575307B24D78276D",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_4baf25c1501e4880bffd",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 103,
+            "company_code": "QM",
+            "shipment_id": 83,
+            "allocation_id": 103,
+            "order_line_id": 183,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630D",
+            "goods_name": "[复合退货验收] d",
+            "store_code": "RF20261022102630V",
+            "batch_id": 180,
+            "source_type": "LUCKY",
+            "stock_source_id": 119,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 184,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630B",
+        "goods_name": "[复合退货验收] b",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:4",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 25,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630P",
+        "gift_parent_name": "[复合退货验收] preset",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "袋",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 36,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 21,
+            "order_line_id": 184,
+            "actual": {
+              "id": 36,
+              "lines": [
+                {
+                  "id": 18,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630B",
+                  "bad_qty": 0,
+                  "event_id": 18,
+                  "good_qty": 1,
+                  "return_sn": "THK3E1E717A71A7CADE642F8864420130",
+                  "batch_code": "RF_RETURN_36",
+                  "message_id": "RF_RETURN_36",
+                  "create_time": "2026-10-22T10:28:57",
+                  "source_log_id": 627
+                }
+              ],
+              "events": [
+                {
+                  "id": 18,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_36",
+                  "create_time": "2026-10-22T10:28:57",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630B",
+              "plan_id": 36,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 36,
+                  "sku_sn": "RF20261022102630B",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THK3E1E717A71A7CADE642F8864420130",
+                  "ticket_id": 169,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:28:54",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_28fea529134f4acdbfb7",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THK3E1E717A71A7CADE642F8864420130",
+              "ticket_id": 169,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:28:54",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "582CC5588A3D66DE9560C6830B42E8B20BFD939FAFD584A60A6FECE169188DB0",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_28fea529134f4acdbfb7",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XSebf7af5b38fc42eb80fa75418208324a",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 104,
+            "company_code": "QM",
+            "shipment_id": 84,
+            "allocation_id": 104,
+            "order_line_id": 184,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630B",
+            "goods_name": "[复合退货验收] b",
+            "store_code": "RF20261022102630V",
+            "batch_id": 179,
+            "source_type": "LUCKY",
+            "stock_source_id": 120,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XSebf7af5b38fc42eb80fa75418208324a",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      },
+      {
+        "id": 185,
+        "company_code": "QM",
+        "order_id": 136,
+        "platform_oid": "",
+        "sku_sn": "RF20261022102630D",
+        "goods_name": "[复合退货验收] d",
+        "quantity": 1,
+        "payment": 0.0,
+        "reserved_quantity": 1,
+        "inventory_reason": "",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 0,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "GIFT:5:4",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": 25,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": 5,
+        "shipped_quantity": 1,
+        "gift_parent_sku": "RF20261022102630P",
+        "gift_parent_name": "[复合退货验收] preset",
+        "gift_parent_quantity": 1,
+        "gift_parent_unit": "袋",
+        "eligible_quantity": 0,
+        "projected_eligible_quantity": 0,
+        "cancel_required": 0,
+        "return_required": 0,
+        "unarranged_quantity": 0,
+        "returned_quantity": 1,
+        "waived_quantity": 0,
+        "return_plans": [
+          {
+            "id": 37,
+            "refund_id": 81,
+            "quantity": 1,
+            "posted_quantity": 1,
+            "accepted_quantity": 1,
+            "waived_quantity": 0,
+            "state": "CLOSED",
+            "control_version": 18,
+            "order_line_id": 185,
+            "actual": {
+              "id": 37,
+              "lines": [
+                {
+                  "id": 19,
+                  "posted": 1,
+                  "sku_sn": "RF20261022102630D",
+                  "bad_qty": 0,
+                  "event_id": 19,
+                  "good_qty": 1,
+                  "return_sn": "THK01B0840FB95B5283041ECD7AD9A9B8",
+                  "batch_code": "RF_RETURN_37",
+                  "message_id": "RF_RETURN_37",
+                  "create_time": "2026-10-22T10:29:05",
+                  "source_log_id": 630
+                }
+              ],
+              "events": [
+                {
+                  "id": 19,
+                  "state": "POSTED",
+                  "quantity": 1,
+                  "last_error": "",
+                  "message_id": "RF_RETURN_37",
+                  "create_time": "2026-10-22T10:29:05",
+                  "final_confirmation": 1
+                }
+              ],
+              "grades": {
+                "bad_qty": 0,
+                "good_qty": 1,
+                "posted_qty": 1
+              },
+              "sku_sn": "RF20261022102630D",
+              "plan_id": 37,
+              "reviews": [],
+              "attempts": 1,
+              "order_sn": "SO47e025f87f4f47aa92f713cb5d6cee31",
+              "quantity": 1,
+              "documents": [
+                {
+                  "id": 37,
+                  "sku_sn": "RF20261022102630D",
+                  "attempts": 1,
+                  "quantity": 1,
+                  "return_sn": "THK01B0840FB95B5283041ECD7AD9A9B8",
+                  "ticket_id": 170,
+                  "generation": 1,
+                  "last_error": "",
+                  "owner_code": "SAASQM01",
+                  "store_code": "RF20261022102630V",
+                  "cancel_mode": "",
+                  "create_time": "2026-10-22T10:29:01",
+                  "cancel_actor": "",
+                  "cancel_state": "NONE",
+                  "cancelled_at": null,
+                  "cancel_reason": "",
+                  "receipt_state": "COMPLETED",
+                  "dispatch_state": "ACCEPTED",
+                  "external_order": "SIMIN_e2ff740135924fe4b66d",
+                  "return_address": "[复合退货验收] 原仓退回，无实际配送",
+                  "return_contact": "TEST-COMPOSITE",
+                  "control_version": 2,
+                  "posted_quantity": 1,
+                  "real_store_code": "TW201",
+                  "warehouse_status": "FULFILLED",
+                  "accepted_quantity": 1,
+                  "cancelled_quantity": 0
+                }
+              ],
+              "refund_id": 81,
+              "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+              "return_sn": "THK01B0840FB95B5283041ECD7AD9A9B8",
+              "ticket_id": 170,
+              "unit_cost": 2,
+              "generation": 1,
+              "last_error": "",
+              "owner_code": "SAASQM01",
+              "store_code": "RF20261022102630V",
+              "cancel_mode": "",
+              "create_time": "2026-10-22T10:29:01",
+              "lease_until": null,
+              "cancel_actor": "",
+              "cancel_state": "NONE",
+              "cancelled_at": null,
+              "company_code": "QM",
+              "payload_hash": "BBE872F7D2A4156387684928C4DF5562D75A47422FE8B56AA4CEBFA89C7EF007",
+              "platform_tid": "98920261022102630",
+              "progress_ack": 2,
+              "cancel_reason": "",
+              "connection_id": 10,
+              "receipt_state": "COMPLETED",
+              "dispatch_state": "ACCEPTED",
+              "document_count": 1,
+              "external_order": "SIMIN_e2ff740135924fe4b66d",
+              "external_owner": "VC00001",
+              "notify_pending": 0,
+              "control_version": 2,
+              "posted_quantity": 1,
+              "real_store_code": "TW201",
+              "request_quantity": 1,
+              "warehouse_status": "FULFILLED",
+              "accepted_quantity": 1,
+              "progress_revision": 2,
+              "rejected_receipts": [],
+              "cancelled_quantity": 0,
+              "external_warehouse": "VC00001",
+              "original_shipment_sn": "XSebf7af5b38fc42eb80fa75418208324a",
+              "parcel_pending_count": 0,
+              "pending_review_count": 0
+            }
+          }
+        ],
+        "pending_assessment": false,
+        "sources": [
+          {
+            "id": 105,
+            "company_code": "QM",
+            "shipment_id": 84,
+            "allocation_id": 105,
+            "order_line_id": 185,
+            "platform_oid": "",
+            "sku_sn": "RF20261022102630D",
+            "goods_name": "[复合退货验收] d",
+            "store_code": "RF20261022102630V",
+            "batch_id": 180,
+            "source_type": "LUCKY",
+            "stock_source_id": 121,
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "shipment_sn": "XSebf7af5b38fc42eb80fa75418208324a",
+            "shipment_status": "SHIPPED"
+          }
+        ],
+        "needs_cutoff": false,
+        "stock_shortage": false,
+        "gift_state": "RETURNED",
+        "next_action": "无需处理"
+      }
+    ],
+    "triggers": [
+      {
+        "id": 81,
+        "refund_sn": "TK7028e6496daf492b957e0baabc29846a",
+        "purpose": "CANCEL",
+        "funds_state": "SUCCESS",
+        "review_state": "APPROVED",
+        "control_version": 7
+      },
+      {
+        "id": 82,
+        "refund_sn": "TK3f2a1109a96344f6a244f783c3c57276",
+        "purpose": "CANCEL",
+        "funds_state": "SUCCESS",
+        "review_state": "APPROVED",
+        "control_version": 7
+      },
+      {
+        "id": 83,
+        "refund_sn": "TK0fff895a176f486aad1db45a28ec6ee6",
+        "purpose": "CANCEL",
+        "funds_state": "SUCCESS",
+        "review_state": "APPROVED",
+        "control_version": 5
+      },
+      {
+        "id": 84,
+        "refund_sn": "TK26c58f18930f4a31a05862ac39f5171a",
+        "purpose": "CANCEL",
+        "funds_state": "SUCCESS",
+        "review_state": "APPROVED",
+        "control_version": 7
+      }
+    ],
+    "pending": false,
+    "block_reason": "",
+    "effective_basis": [
+      {
+        "sku_sn": "RF20261022102630K",
+        "payment": 40.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263001",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630S",
+        "payment": 30.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263002",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630R",
+        "payment": 50.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263003",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630P",
+        "payment": 50.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263004",
+        "difference_refund": 0
+      }
+    ],
+    "projected_basis": [
+      {
+        "sku_sn": "RF20261022102630K",
+        "payment": 40.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263001",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630S",
+        "payment": 30.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263002",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630R",
+        "payment": 50.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263003",
+        "difference_refund": 0
+      },
+      {
+        "sku_sn": "RF20261022102630P",
+        "payment": 50.0,
+        "quantity": 1,
+        "platform_oid": "9892026102210263004",
+        "difference_refund": 0
+      }
+    ],
+    "snapshot": {
+      "gifts": [
+        {
+          "sku_sn": "RF20261022102630K",
+          "payment": 0,
+          "quantity": 1,
+          "line_kind": "GIFT",
+          "goods_name": "[复合退货验收] kit",
+          "sales_unit": "套",
+          "platform_oid": ""
+        },
+        {
+          "sku_sn": "RF20261022102630S",
+          "payment": 0,
+          "quantity": 1,
+          "line_kind": "GIFT",
+          "goods_name": "[复合退货验收] stocked",
+          "sales_unit": "套",
+          "platform_oid": ""
+        },
+        {
+          "sku_sn": "RF20261022102630R",
+          "payment": 0,
+          "quantity": 1,
+          "line_kind": "GIFT",
+          "goods_name": "[复合退货验收] random",
+          "sales_unit": "袋",
+          "platform_oid": ""
+        },
+        {
+          "sku_sn": "RF20261022102630P",
+          "payment": 0,
+          "quantity": 1,
+          "line_kind": "GIFT",
+          "goods_name": "[复合退货验收] preset",
+          "sales_unit": "袋",
+          "platform_oid": ""
+        }
+      ],
+      "trace": [
+        {
+          "name": "[复合退货验收] 20261022102630",
+          "rules": [
+            {
+              "key": "G",
+              "name": "买满八套袋赠四种复合商品",
+              "gifts": [
+                {
+                  "sku_sn": "RF20261022102630K",
+                  "quantity": 1,
+                  "goods_name": "[复合退货验收] kit",
+                  "sales_unit": "套"
+                },
+                {
+                  "sku_sn": "RF20261022102630S",
+                  "quantity": 1,
+                  "goods_name": "[复合退货验收] stocked",
+                  "sales_unit": "套"
+                },
+                {
+                  "sku_sn": "RF20261022102630R",
+                  "quantity": 1,
+                  "goods_name": "[复合退货验收] random",
+                  "sales_unit": "袋"
+                },
+                {
+                  "sku_sn": "RF20261022102630P",
+                  "quantity": 1,
+                  "goods_name": "[复合退货验收] preset",
+                  "sales_unit": "袋"
+                }
+              ],
+              "reason": "满足赠送条件",
+              "matched": true,
+              "basis_amount": 340,
+              "granted_count": 1,
+              "basis_quantity": 8,
+              "requested_count": 1,
+              "condition_matched": true
+            }
+          ],
+          "reason": "命中，停止后续策略组",
+          "matched": true,
+          "group_id": 11,
+          "priority": 1,
+          "shop_group_id": 9,
+          "shop_group_name": "[复合退货验收] 20261022102630"
+        }
+      ],
+      "groups": [
+        {
+          "id": 11,
+          "name": "[复合退货验收] 20261022102630",
+          "policy": {
+            "rules": [
+              {
+                "cap": 1,
+                "key": "G",
+                "name": "买满八套袋赠四种复合商品",
+                "skus": [
+                  "RF20261022102630K",
+                  "RF20261022102630S",
+                  "RF20261022102630R",
+                  "RF20261022102630P"
+                ],
+                "stop": true,
+                "type": "PRODUCT",
+                "gifts": [
+                  {
+                    "sku_sn": "RF20261022102630K",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] kit",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630S",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] stocked",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630R",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] random",
+                    "sales_unit": "袋"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630P",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] preset",
+                    "sales_unit": "袋"
+                  }
+                ],
+                "tiers": [],
+                "amount": 0,
+                "minimum": 8,
+                "max_count": 1,
+                "quota_tracked": true
+              }
+            ],
+            "channels": [
+              81
+            ],
+            "end_time": "2026-10-23 10:26:48",
+            "start_time": "2026-10-21 10:26:48",
+            "allow_waive": true,
+            "catalog_token": "229f4e4e64084b7c83a2612d458e7788",
+            "pause_pending": true,
+            "shipped_policy": "RETURN",
+            "shortage_policy": "WAIT",
+            "cross_group_stack": false,
+            "difference_affects_amount": false
+          },
+          "enabled": 1,
+          "priority": 1,
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-22 10:26:48",
+          "company_code": "QM",
+          "shop_group_id": 9,
+          "shop_group_name": "[复合退货验收] 20261022102630",
+          "shop_group_revision": 1
+        }
+      ],
+      "entitlements": [
+        {
+          "policy": {
+            "rules": [
+              {
+                "cap": 1,
+                "key": "G",
+                "name": "买满八套袋赠四种复合商品",
+                "skus": [
+                  "RF20261022102630K",
+                  "RF20261022102630S",
+                  "RF20261022102630R",
+                  "RF20261022102630P"
+                ],
+                "stop": true,
+                "type": "PRODUCT",
+                "gifts": [
+                  {
+                    "sku_sn": "RF20261022102630K",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] kit",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630S",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] stocked",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630R",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] random",
+                    "sales_unit": "袋"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630P",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] preset",
+                    "sales_unit": "袋"
+                  }
+                ],
+                "tiers": [],
+                "amount": 0,
+                "minimum": 8,
+                "max_count": 1,
+                "quota_tracked": true
+              }
+            ],
+            "channels": [
+              81
+            ],
+            "end_time": "2026-10-23 10:26:48",
+            "start_time": "2026-10-21 10:26:48",
+            "allow_waive": true,
+            "catalog_token": "229f4e4e64084b7c83a2612d458e7788",
+            "pause_pending": true,
+            "shipped_policy": "RETURN",
+            "shortage_policy": "WAIT",
+            "cross_group_stack": false,
+            "difference_affects_amount": false
+          },
+          "sku_sn": "RF20261022102630K",
+          "group_id": 11,
+          "quantity": 1,
+          "rule_key": "G",
+          "rule_name": "买满八套袋赠四种复合商品",
+          "goods_name": "[复合退货验收] kit",
+          "group_name": "[复合退货验收] 20261022102630",
+          "sales_unit": "套"
+        },
+        {
+          "policy": {
+            "rules": [
+              {
+                "cap": 1,
+                "key": "G",
+                "name": "买满八套袋赠四种复合商品",
+                "skus": [
+                  "RF20261022102630K",
+                  "RF20261022102630S",
+                  "RF20261022102630R",
+                  "RF20261022102630P"
+                ],
+                "stop": true,
+                "type": "PRODUCT",
+                "gifts": [
+                  {
+                    "sku_sn": "RF20261022102630K",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] kit",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630S",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] stocked",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630R",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] random",
+                    "sales_unit": "袋"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630P",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] preset",
+                    "sales_unit": "袋"
+                  }
+                ],
+                "tiers": [],
+                "amount": 0,
+                "minimum": 8,
+                "max_count": 1,
+                "quota_tracked": true
+              }
+            ],
+            "channels": [
+              81
+            ],
+            "end_time": "2026-10-23 10:26:48",
+            "start_time": "2026-10-21 10:26:48",
+            "allow_waive": true,
+            "catalog_token": "229f4e4e64084b7c83a2612d458e7788",
+            "pause_pending": true,
+            "shipped_policy": "RETURN",
+            "shortage_policy": "WAIT",
+            "cross_group_stack": false,
+            "difference_affects_amount": false
+          },
+          "sku_sn": "RF20261022102630S",
+          "group_id": 11,
+          "quantity": 1,
+          "rule_key": "G",
+          "rule_name": "买满八套袋赠四种复合商品",
+          "goods_name": "[复合退货验收] stocked",
+          "group_name": "[复合退货验收] 20261022102630",
+          "sales_unit": "套"
+        },
+        {
+          "policy": {
+            "rules": [
+              {
+                "cap": 1,
+                "key": "G",
+                "name": "买满八套袋赠四种复合商品",
+                "skus": [
+                  "RF20261022102630K",
+                  "RF20261022102630S",
+                  "RF20261022102630R",
+                  "RF20261022102630P"
+                ],
+                "stop": true,
+                "type": "PRODUCT",
+                "gifts": [
+                  {
+                    "sku_sn": "RF20261022102630K",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] kit",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630S",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] stocked",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630R",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] random",
+                    "sales_unit": "袋"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630P",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] preset",
+                    "sales_unit": "袋"
+                  }
+                ],
+                "tiers": [],
+                "amount": 0,
+                "minimum": 8,
+                "max_count": 1,
+                "quota_tracked": true
+              }
+            ],
+            "channels": [
+              81
+            ],
+            "end_time": "2026-10-23 10:26:48",
+            "start_time": "2026-10-21 10:26:48",
+            "allow_waive": true,
+            "catalog_token": "229f4e4e64084b7c83a2612d458e7788",
+            "pause_pending": true,
+            "shipped_policy": "RETURN",
+            "shortage_policy": "WAIT",
+            "cross_group_stack": false,
+            "difference_affects_amount": false
+          },
+          "sku_sn": "RF20261022102630R",
+          "group_id": 11,
+          "quantity": 1,
+          "rule_key": "G",
+          "rule_name": "买满八套袋赠四种复合商品",
+          "goods_name": "[复合退货验收] random",
+          "group_name": "[复合退货验收] 20261022102630",
+          "sales_unit": "袋"
+        },
+        {
+          "policy": {
+            "rules": [
+              {
+                "cap": 1,
+                "key": "G",
+                "name": "买满八套袋赠四种复合商品",
+                "skus": [
+                  "RF20261022102630K",
+                  "RF20261022102630S",
+                  "RF20261022102630R",
+                  "RF20261022102630P"
+                ],
+                "stop": true,
+                "type": "PRODUCT",
+                "gifts": [
+                  {
+                    "sku_sn": "RF20261022102630K",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] kit",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630S",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] stocked",
+                    "sales_unit": "套"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630R",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] random",
+                    "sales_unit": "袋"
+                  },
+                  {
+                    "sku_sn": "RF20261022102630P",
+                    "quantity": 1,
+                    "goods_name": "[复合退货验收] preset",
+                    "sales_unit": "袋"
+                  }
+                ],
+                "tiers": [],
+                "amount": 0,
+                "minimum": 8,
+                "max_count": 1,
+                "quota_tracked": true
+              }
+            ],
+            "channels": [
+              81
+            ],
+            "end_time": "2026-10-23 10:26:48",
+            "start_time": "2026-10-21 10:26:48",
+            "allow_waive": true,
+            "catalog_token": "229f4e4e64084b7c83a2612d458e7788",
+            "pause_pending": true,
+            "shipped_policy": "RETURN",
+            "shortage_policy": "WAIT",
+            "cross_group_stack": false,
+            "difference_affects_amount": false
+          },
+          "sku_sn": "RF20261022102630P",
+          "group_id": 11,
+          "quantity": 1,
+          "rule_key": "G",
+          "rule_name": "买满八套袋赠四种复合商品",
+          "goods_name": "[复合退货验收] preset",
+          "group_name": "[复合退货验收] 20261022102630",
+          "sales_unit": "袋"
+        }
+      ]
+    },
+    "parents": [
+      {
+        "sku_sn": "RF20261022102630K",
+        "payment": 0,
+        "quantity": 1,
+        "line_kind": "GIFT",
+        "goods_name": "[复合退货验收] kit",
+        "sales_unit": "套",
+        "gift_plan_id": 5,
+        "platform_oid": "",
+        "bundle_snapshot": {
+          "sku_sn": "RF20261022102630K",
+          "enabled": 1,
+          "revision": 1,
+          "components": [
+            {
+              "sku_sn": "RF20261022102630A",
+              "quantity": 2,
+              "goods_name": "[复合退货验收] sku"
+            },
+            {
+              "sku_sn": "RF20261022102630B",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] b"
+            }
+          ],
+          "goods_name": "[复合退货验收] kit",
+          "inventory_mode": "VIRTUAL"
+        },
+        "stock_reference": "GIFT:5:1",
+        "eligible_quantity": 0,
+        "shipped_keep_quantity": 0
+      },
+      {
+        "sku_sn": "RF20261022102630S",
+        "payment": 0,
+        "quantity": 1,
+        "line_kind": "GIFT",
+        "goods_name": "[复合退货验收] stocked",
+        "sales_unit": "套",
+        "gift_plan_id": 5,
+        "platform_oid": "",
+        "bundle_snapshot": {
+          "sku_sn": "RF20261022102630S",
+          "enabled": 1,
+          "revision": 1,
+          "components": [
+            {
+              "sku_sn": "RF20261022102630A",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] sku"
+            },
+            {
+              "sku_sn": "RF20261022102630B",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] b"
+            }
+          ],
+          "goods_name": "[复合退货验收] stocked",
+          "inventory_mode": "STOCKED"
+        },
+        "stock_reference": "GIFT:5:2",
+        "eligible_quantity": 0,
+        "shipped_keep_quantity": 0
+      },
+      {
+        "sku_sn": "RF20261022102630R",
+        "payment": 0,
+        "quantity": 1,
+        "line_kind": "GIFT",
+        "goods_name": "[复合退货验收] random",
+        "sales_unit": "袋",
+        "gift_plan_id": 5,
+        "platform_oid": "",
+        "bundle_snapshot": {
+          "units": [
+            {
+              "cost": 4,
+              "unit": 1,
+              "pool_id": 5,
+              "unit_id": 20,
+              "revision": 1,
+              "components": [
+                {
+                  "sku_sn": "RF20261022102630B",
+                  "batch_id": 179,
+                  "quantity": 1,
+                  "group_key": "top",
+                  "source_id": 12,
+                  "unit_cost": 2,
+                  "goods_name": "[复合退货验收] b",
+                  "group_name": "上装",
+                  "store_code": "RF20261022102630V",
+                  "stock_source_id": 118,
+                  "clearance_priority": 0
+                },
+                {
+                  "sku_sn": "RF20261022102630D",
+                  "batch_id": 180,
+                  "quantity": 1,
+                  "group_key": "bottom",
+                  "source_id": 13,
+                  "unit_cost": 2,
+                  "goods_name": "[复合退货验收] d",
+                  "group_name": "下装",
+                  "store_code": "RF20261022102630V",
+                  "stock_source_id": 119,
+                  "clearance_priority": 0
+                }
+              ],
+              "store_code": "RF20261022102630V"
+            }
+          ],
+          "sku_sn": "RF20261022102630R",
+          "enabled": 1,
+          "quantity": 1,
+          "revision": 1,
+          "components": [
+            {
+              "sku_sn": "RF20261022102630B",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] b"
+            },
+            {
+              "sku_sn": "RF20261022102630D",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] d"
+            }
+          ],
+          "goods_name": "[复合退货验收] random",
+          "business_type": "LUCKY_BAG",
+          "inventory_mode": "VIRTUAL"
+        },
+        "stock_reference": "GIFT:5:3",
+        "eligible_quantity": 0,
+        "shipped_keep_quantity": 0
+      },
+      {
+        "sku_sn": "RF20261022102630P",
+        "payment": 0,
+        "quantity": 1,
+        "line_kind": "GIFT",
+        "goods_name": "[复合退货验收] preset",
+        "sales_unit": "袋",
+        "gift_plan_id": 5,
+        "platform_oid": "",
+        "bundle_snapshot": {
+          "units": [
+            {
+              "cost": 4,
+              "unit": 1,
+              "pool_id": 6,
+              "unit_id": 16,
+              "revision": 1,
+              "components": [
+                {
+                  "sku_sn": "RF20261022102630B",
+                  "batch_id": 179,
+                  "quantity": 1,
+                  "group_key": "top",
+                  "source_id": 15,
+                  "unit_cost": 2,
+                  "goods_name": "[复合退货验收] b",
+                  "group_name": "上装",
+                  "store_code": "RF20261022102630V",
+                  "raw_available": 48,
+                  "stock_source_id": 120,
+                  "clearance_priority": 0,
+                  "public_reserved_deduction": 0
+                },
+                {
+                  "sku_sn": "RF20261022102630D",
+                  "batch_id": 180,
+                  "quantity": 1,
+                  "group_key": "bottom",
+                  "source_id": 16,
+                  "unit_cost": 2,
+                  "goods_name": "[复合退货验收] d",
+                  "group_name": "下装",
+                  "store_code": "RF20261022102630V",
+                  "raw_available": 46,
+                  "stock_source_id": 121,
+                  "clearance_priority": 0,
+                  "public_reserved_deduction": 0
+                }
+              ],
+              "store_code": "RF20261022102630V"
+            }
+          ],
+          "sku_sn": "RF20261022102630P",
+          "enabled": 1,
+          "quantity": 1,
+          "revision": 1,
+          "components": [
+            {
+              "sku_sn": "RF20261022102630B",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] b"
+            },
+            {
+              "sku_sn": "RF20261022102630D",
+              "quantity": 1,
+              "goods_name": "[复合退货验收] d"
+            }
+          ],
+          "goods_name": "[复合退货验收] preset",
+          "business_type": "LUCKY_BAG",
+          "inventory_mode": "VIRTUAL"
+        },
+        "stock_reference": "GIFT:5:4",
+        "eligible_quantity": 0,
+        "shipped_keep_quantity": 0
+      }
+    ],
+    "order_status": "WAIT_ALLOCATION",
+    "control_version": 263,
+    "events": [
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:34:29"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:34:27"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:34:25"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:34:23"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:34:23"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:30:09"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:30:01"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:57"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:57"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:54"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:46"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:41"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:39"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:38"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:29"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:21"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:15"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:15"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:13"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:12"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:11"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:10"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:10"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:10"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:06"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:06"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:05"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:05"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:02"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:29:02"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:59"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:59"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:58"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:58"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:54"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:54"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:51"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:51"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:50"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:50"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:46"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:46"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:43"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:43"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:42"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:42"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:38"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:38"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:34"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:34"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:33"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:33"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:29"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:29"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:26"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:26"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:25"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:25"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:22"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:22"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:19"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:19"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:17"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:17"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:14"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:14"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:10"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:28:02"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:56"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:56"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:55"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:53"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:53"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:51"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:50"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:46"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:43"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:41"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:40"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:36"
+      },
+      {
+        "action": "ASSESS",
+        "message": "已重新核对赠品资格及售后累计处理数量",
+        "actor": "系统赠品核对",
+        "create_time": "2026-10-22 10:27:33"
+      }
+    ]
+  },
+  "sku_reconciliation": [
+    {
+      "sku": "RF20261022102630A",
+      "key": "sku",
+      "unit": "件",
+      "initial": 50,
+      "shipped": 9,
+      "returned": 5,
+      "expected": 46,
+      "actual": 46
+    },
+    {
+      "sku": "RF20261022102630B",
+      "key": "b",
+      "unit": "件",
+      "initial": 50,
+      "shipped": 6,
+      "returned": 5,
+      "expected": 49,
+      "actual": 49
+    },
+    {
+      "sku": "RF20261022102630D",
+      "key": "d",
+      "unit": "件",
+      "initial": 50,
+      "shipped": 6,
+      "returned": 4,
+      "expected": 48,
+      "actual": 48
+    },
+    {
+      "sku": "RF20261022102630K",
+      "key": "kit",
+      "unit": "件",
+      "initial": 0,
+      "shipped": 0,
+      "returned": 0,
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "sku": "RF20261022102630S",
+      "key": "stocked",
+      "unit": "套",
+      "initial": 10,
+      "shipped": 3,
+      "returned": 2,
+      "expected": 9,
+      "actual": 9
+    },
+    {
+      "sku": "RF20261022102630R",
+      "key": "random",
+      "unit": "件",
+      "initial": 0,
+      "shipped": 0,
+      "returned": 0,
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "sku": "RF20261022102630P",
+      "key": "preset",
+      "unit": "件",
+      "initial": 0,
+      "shipped": 0,
+      "returned": 0,
+      "expected": 0,
+      "actual": 0
+    }
+  ],
+  "return_lineage": [
+    {
+      "refund_id": 81,
+      "plan_id": 29,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630A",
+      "quantity": 2,
+      "shipment_line_id": 91,
+      "order_line_id": 171,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263001",
+      "stock_source_id": 122,
+      "return_documents": [
+        "THKEC86670043B5CF932B1ACBE85A78D8"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 30,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630B",
+      "quantity": 1,
+      "shipment_line_id": 92,
+      "order_line_id": 172,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263001",
+      "stock_source_id": 123,
+      "return_documents": [
+        "THKD7BF79CAEF776F8F046E70C9913814"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 31,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630A",
+      "quantity": 2,
+      "shipment_line_id": 100,
+      "order_line_id": 179,
+      "stock_reference": "GIFT:5:1",
+      "platform_oid": "",
+      "stock_source_id": 125,
+      "return_documents": [
+        "THK89E15ED62F03CDAD6636320199A532"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 32,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630B",
+      "quantity": 1,
+      "shipment_line_id": 99,
+      "order_line_id": 180,
+      "stock_reference": "GIFT:5:1",
+      "platform_oid": "",
+      "stock_source_id": 126,
+      "return_documents": [
+        "THKF495962F9A4196067930ADD9D9F003"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 33,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630S",
+      "quantity": 1,
+      "shipment_line_id": 101,
+      "order_line_id": 181,
+      "stock_reference": "GIFT:5:2",
+      "platform_oid": "",
+      "stock_source_id": 127,
+      "return_documents": [
+        "THK9178A3B49F187FAE630B517D599241"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 34,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630B",
+      "quantity": 1,
+      "shipment_line_id": 102,
+      "order_line_id": 182,
+      "stock_reference": "GIFT:5:3",
+      "platform_oid": "",
+      "stock_source_id": 118,
+      "return_documents": [
+        "THK00CA337F8611785FC6D8BA7EC1F436"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 35,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630D",
+      "quantity": 1,
+      "shipment_line_id": 103,
+      "order_line_id": 183,
+      "stock_reference": "GIFT:5:3",
+      "platform_oid": "",
+      "stock_source_id": 119,
+      "return_documents": [
+        "THKE74E120B08ECBCD75864CE05DBDBC2"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 36,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630B",
+      "quantity": 1,
+      "shipment_line_id": 104,
+      "order_line_id": 184,
+      "stock_reference": "GIFT:5:4",
+      "platform_oid": "",
+      "stock_source_id": 120,
+      "return_documents": [
+        "THK3E1E717A71A7CADE642F8864420130"
+      ]
+    },
+    {
+      "refund_id": 81,
+      "plan_id": 37,
+      "purchase_or_gift": "GIFT",
+      "sku": "RF20261022102630D",
+      "quantity": 1,
+      "shipment_line_id": 105,
+      "order_line_id": 185,
+      "stock_reference": "GIFT:5:4",
+      "platform_oid": "",
+      "stock_source_id": 121,
+      "return_documents": [
+        "THK01B0840FB95B5283041ECD7AD9A9B8"
+      ]
+    },
+    {
+      "refund_id": 83,
+      "plan_id": 40,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630S",
+      "quantity": 1,
+      "shipment_line_id": 98,
+      "order_line_id": 173,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263002",
+      "stock_source_id": 124,
+      "return_documents": [
+        "THK5BC5F7AD18BD8EA60E6543107DC6FE"
+      ]
+    },
+    {
+      "refund_id": 82,
+      "plan_id": 38,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630A",
+      "quantity": 1,
+      "shipment_line_id": 93,
+      "order_line_id": 174,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263003",
+      "stock_source_id": 113,
+      "return_documents": [
+        "THKF847ABE4B8E859ADC2F2CC382D2CC5"
+      ]
+    },
+    {
+      "refund_id": 82,
+      "plan_id": 39,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630D",
+      "quantity": 1,
+      "shipment_line_id": 96,
+      "order_line_id": 175,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263003",
+      "stock_source_id": 114,
+      "return_documents": [
+        "THK58F9D4AB3FA06BA3A988C5B3AA5A0F"
+      ]
+    },
+    {
+      "refund_id": 84,
+      "plan_id": 41,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630B",
+      "quantity": 1,
+      "shipment_line_id": 95,
+      "order_line_id": 177,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263004",
+      "stock_source_id": 116,
+      "return_documents": [
+        "THKD27D22ACC2A2A9A74D2DA58797A7E9"
+      ]
+    },
+    {
+      "refund_id": 84,
+      "plan_id": 42,
+      "purchase_or_gift": "PURCHASE",
+      "sku": "RF20261022102630D",
+      "quantity": 1,
+      "shipment_line_id": 97,
+      "order_line_id": 178,
+      "stock_reference": "",
+      "platform_oid": "9892026102210263004",
+      "stock_source_id": 117,
+      "return_documents": [
+        "THK6725582DDB2587BFAFF6A7BA74A6A1"
+      ]
+    }
+  ],
+  "real_platform_writes": false,
+  "warehouse_environment": "TEST"
+}

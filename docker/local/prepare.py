@@ -115,6 +115,8 @@ for name, jar, port in apps:
     if name == 'file':
         services[name]['volumes'].append('uploads:/home/ruoyi/uploadPath')
 services['nginx'] = {'image': 'nginx:latest', 'ports': ['127.0.0.1:8088:80'], 'volumes': ['./dist:/usr/share/nginx/html:ro', './nginx.conf:/etc/nginx/nginx.conf:ro'], 'depends_on': {'gateway': {'condition': 'service_started'}}, 'healthcheck': health(['CMD-SHELL', 'curl -fsS http://localhost/ >/dev/null'])}
+from sentinel import service as sentinel_service
+services['sentinel'] = sentinel_service()
 for name, service in services.items():
     service['container_name'] = 'oms-local-' + name
     service['restart'] = 'unless-stopped'

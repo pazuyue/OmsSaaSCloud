@@ -24,20 +24,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GoodsWorkspaceTest {
     static AnnotationConfigApplicationContext context;static JdbcTemplate db;static GoodsWorkspaceService goods;
     static AtomicBoolean referenced=new AtomicBoolean(),unavailable=new AtomicBoolean();
+    static volatile java.util.function.Function<Map<String,Object>,Map<String,Object>> giftInspection=GoodsWorkspaceTest::emptyGiftInspection;
+    static Map<String,Object> emptyGiftInspection(Map<String,Object> query){List<Map<String,Object>> states=new ArrayList<>();for(Object id:(List<?>)query.get("group_ids"))states.add(data("group_id",id,"enabled",0,"request_token",""));return data("states",states,"references",Collections.emptyList());}
     long category,color,size;
     @Configuration @EnableTransactionManagement static class Config {
-        @Bean DataSource dataSource(){String url=System.getenv("GOODS_TEST_URL");if(url==null || !url.contains("/goods_workspace_test?"))throw new IllegalStateException("Disposable schema required");return new DriverManagerDataSource(url,"root",System.getenv("INVENTORY_TEST_PASSWORD"));}
+        @Bean DataSource dataSource(){String url=System.getenv("GOODS_TEST_URL");if(url==null || !url.contains("/goods_workspace_test?"))throw new IllegalStateException("Disposable schema required");com.alibaba.druid.pool.DruidDataSource pool=new com.alibaba.druid.pool.DruidDataSource();pool.setUrl(url);pool.setUsername("root");pool.setPassword(System.getenv("INVENTORY_TEST_PASSWORD"));pool.setMaxActive(8);pool.setMaxWait(10000);return pool;}
         @Bean JdbcTemplate jdbcTemplate(DataSource ds){return new JdbcTemplate(ds);}
         @Bean PlatformTransactionManager transactionManager(DataSource ds){return new DataSourceTransactionManager(ds);}
         @Bean com.oms.goods.service.goods.impl.GoodsBundleService bundles(){return new com.oms.goods.service.goods.impl.GoodsBundleService();}
+        @Bean com.oms.goods.service.goods.impl.GoodsLuckyBagService luckyBags(){return new com.oms.goods.service.goods.impl.GoodsLuckyBagService();}
+        @Bean com.oms.goods.service.goods.impl.GoodsGiftProtection giftProtection(){return new com.oms.goods.service.goods.impl.GoodsGiftProtection();}
+        @Bean com.oms.goods.service.goods.GiftStrategyReferenceClient giftReferences(){return (company,query,source)->R.ok(giftInspection.apply(query));}
         @Bean GoodsWorkspaceService goods(){return new GoodsWorkspaceService();}
         @Bean GoodsReferenceClient references(){return (company,skus,source)->{if(unavailable.get())throw new IllegalStateException("offline");return R.ok(referenced.get()?skus:Collections.emptyList());};}
     }
     @BeforeAll static void init(){context=new AnnotationConfigApplicationContext(Config.class);db=context.getBean(JdbcTemplate.class);goods=context.getBean(GoodsWorkspaceService.class);}
     @AfterAll static void close(){context.close();}
     @BeforeEach void seed(){
-        for(String table:Arrays.asList("goods_bundle_component","goods_bundle_version","goods_bundle","goods_import_row","goods_import_batch","goods_sku_sn_info","goods_category","goods_color","goods_size","goods_master_lock"))db.update("DELETE FROM "+table);
-        referenced.set(false);unavailable.set(false);
+        for(String table:Arrays.asList("goods_lucky_bag_component","goods_lucky_bag_version","goods_lucky_bag","goods_gift_strategy_ref","goods_bundle_component","goods_bundle_version","goods_bundle","goods_import_row","goods_import_batch","goods_sku_sn_info","goods_category","goods_color","goods_size","goods_master_lock"))db.update("DELETE FROM "+table);
+        referenced.set(false);unavailable.set(false);giftInspection=GoodsWorkspaceTest::emptyGiftInspection;
         long root=goods.saveMaster("QM","category",data("name","服装","pid",0));long second=goods.saveMaster("QM","category",data("name","上装","pid",root));category=goods.saveMaster("QM","category",data("name","衬衫","pid",second));
         color=goods.saveMaster("QM","color",data("colorName","白色","outColorCode","WHITE"));size=goods.saveMaster("QM","size",data("sizeName","M","outSizeCode","MEDIUM","sortOrder",20));
     }
@@ -45,6 +50,7 @@ public class GoodsWorkspaceTest {
     Map<String,Object> product(String sku){return data("skuSn",sku,"goodsSn","STYLE-1","goodsName","测试衬衫","categoryCode",category,"colorCode",color,"sizeCode",size,"marketPrice",BigDecimal.ZERO,"validity","30");}
     GoodsVO imported(String sku){GoodsVO vo=new GoodsVO();vo.setSkuSn(sku);vo.setGoodsSn("STYLE-1");vo.setGoodsName("导入衬衫");vo.setCategoryName("服装/上装/衬衫");vo.setColorName("白色");vo.setSizeName("M");vo.setMarketPrice(BigDecimal.ZERO);vo.setValidity(30);return vo;}
     long count(){return db.queryForObject("SELECT COUNT(*) FROM goods_sku_sn_info",Long.class);}
+    @Test void productFormIsExclusiveAndGiftEligibilityIsIndependent(){for(String type:Arrays.asList("NORMAL","BUNDLE","LUCKY_BAG")){Map<String,Object> input=product(type);input.put("productType",type);input.put("isGift",1);long id=goods.saveGoods("QM",input,"test");Map<String,Object> detail=goods.goodsDetail("QM",id);assertEquals(type,detail.get("productType"));assertEquals(1,((Number)detail.get("isGift")).intValue());assertEquals(1,goods.goodsPage("QM",data("productType",type,"isGift",1),1,1).getTotal());}assertEquals(3,goods.goodsPage("QM",data("isGift",1),1,1).getTotal());assertEquals(1,goods.goodsPage("QM",data("giftEligible",true),1,10).getTotal());Map<String,Object> conflict=product("CONFLICT");conflict.put("productType","BUNDLE");conflict.put("isFd",1);assertThrows(IllegalArgumentException.class,()->goods.saveGoods("QM",conflict,"test"));assertThrows(IllegalArgumentException.class,()->goods.goodsPage("QM",data("productType","INVALID"),1,10));}
     @Test void inventoryLookupMatchesMixedCompanyCaseWithoutCrossingCompanies(){
         goods.saveGoods("QM",product("UPPER-SKU"),"tester");goods.saveGoods("QM",product("LOWER-SKU"),"tester");
         db.update("UPDATE goods_sku_sn_info SET company_code='qm' WHERE sku_sn='LOWER-SKU'");
@@ -114,7 +120,7 @@ public class GoodsWorkspaceTest {
 
     @Test @SuppressWarnings("unchecked") void exchangePickerSearchIsPagedLiteralAndReturnsSpecsWithoutCrossCompany(){
         goods.saveGoods("QM",product("A"),"tester");goods.saveGoods("QM",product("B"),"tester");goods.saveGoods("QM",product("C"),"tester");db.update("UPDATE goods_sku_sn_info SET company_code='OTHER',sku_sn='A' WHERE sku_sn='C'");
-        com.oms.goods.controller.OrderGoodsCatalogController api=new com.oms.goods.controller.OrderGoodsCatalogController();org.springframework.test.util.ReflectionTestUtils.setField(api,"workspace",goods);org.springframework.test.util.ReflectionTestUtils.setField(api,"jdbc",db);org.springframework.test.util.ReflectionTestUtils.setField(api,"bundles",context.getBean(com.oms.goods.service.goods.impl.GoodsBundleService.class));
+        com.oms.goods.controller.OrderGoodsCatalogController api=new com.oms.goods.controller.OrderGoodsCatalogController();org.springframework.test.util.ReflectionTestUtils.setField(api,"workspace",goods);org.springframework.test.util.ReflectionTestUtils.setField(api,"jdbc",db);org.springframework.test.util.ReflectionTestUtils.setField(api,"bundles",context.getBean(com.oms.goods.service.goods.impl.GoodsBundleService.class));org.springframework.test.util.ReflectionTestUtils.setField(api,"luckyBags",context.getBean(com.oms.goods.service.goods.impl.GoodsLuckyBagService.class));
         Map<String,Object> page=api.search("qm",data("field","goodsSn","keyword","STYLE-1","pageNum",1,"pageSize",1)).getData();assertEquals(2L,((Number)page.get("total")).longValue());Map<String,Object> row=((List<Map<String,Object>>)page.get("rows")).get(0);assertEquals("白色",row.get("colorName"));assertEquals("M",row.get("sizeName"));
         Map<String,Object> exact=api.search("QM",data("field","skuSn","keyword","A")).getData();assertEquals(1L,((Number)exact.get("total")).longValue());assertEquals(0L,((Number)api.search("QM",data("field","goodsName","keyword","%")).getData().get("total")).longValue());
         assertEquals("白色",api.goods("QM",Arrays.asList("A")).getData().get(0).get("color_name"));assertThrows(IllegalArgumentException.class,()->api.search("QM",data("field","company_code","keyword","OTHER")));

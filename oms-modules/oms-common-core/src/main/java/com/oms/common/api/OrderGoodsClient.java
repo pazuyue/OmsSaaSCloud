@@ -10,4 +10,10 @@ public interface OrderGoodsClient {
     R<Map<String,Object>> search(@RequestParam("company_code") String company,@RequestBody Map<String,Object> query,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderCatalog/internal/goods")
     R<List<Map<String,Object>>> goods(@RequestParam("company_code") String company,@RequestBody List<String> skus,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @GetMapping("/orderCatalog/internal/lucky-skus")
+    R<List<String>> luckySkus(@RequestParam("company_code") String company,@RequestParam("after") String after,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderCatalog/internal/gift-protection")
+    R<Boolean> protectGift(@RequestParam("company_code") String company,@RequestBody Map<String,Object> input,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderCatalog/internal/gift-protection/refresh")
+    R<Boolean> refreshGift(@RequestParam("company_code") String company,@RequestBody Map<String,Object> input,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 }

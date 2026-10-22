@@ -17,7 +17,7 @@ import static com.oms.inventory.service.impl.InventoryQueryService.*;
 @Transactional(readOnly=true,isolation=Isolation.REPEATABLE_READ,timeout=15)
 public class ProductInventoryQueryService {
     @Resource private JdbcTemplate jdbc;
-    @Resource private InventoryQueryService warehouses;
+    @Resource private InventoryQueryService warehouseInventory;
     private final ObjectMapper json=new ObjectMapper();
     private static int size(int value){return Math.max(1,Math.min(100,value));}
     private static int offset(int page,int size){return (Math.max(1,Math.min(100000,page))-1)*size;}
@@ -45,6 +45,8 @@ public class ProductInventoryQueryService {
     public Map<String,Object> detail(String company,long id) {
         Map<String,Object> row=head(company,id);enrich(company,Collections.singletonList(row));
         Map<String,Object> source=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-consumed_quantity-released_quantity),0) AS tracked_locked,COALESCE(SUM(occupied_quantity),0) AS occupied_quantity FROM rule_stock_reservation WHERE company_code=? AND sku_sn=?",ROW,company,row.get("skuSn"));
+        Map<String,Object> lucky=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-consumed_quantity-released_quantity),0) tracked,COALESCE(SUM(occupied_quantity),0) occupied FROM oms_lucky_source WHERE company_code=? AND sku_sn=?",ROW,company,row.get("skuSn"));source.put("trackedLocked",number(source,"trackedLocked")+number(lucky,"tracked"));source.put("occupiedQuantity",number(source,"occupiedQuantity")+number(lucky,"occupied"));
+        row.put("luckySources",jdbc.query("SELECT s.pool_id,p.bag_sku,p.channel_id,p.store_code,p.revision,s.batch_id,s.quantity,s.occupied_quantity,s.consumed_quantity,s.released_quantity FROM oms_lucky_source s JOIN oms_lucky_pool p ON p.company_code=s.company_code AND p.id=s.pool_id WHERE s.company_code=? AND s.sku_sn=? ORDER BY s.id DESC LIMIT 100",ROW,company,row.get("skuSn")));
         source.put("otherLocked",Math.max(0,number((Map<String,Object>)row.get("warehouseTotals"),"zpLockNumber")-number(source,"trackedLocked")));
         row.put("reservationSummary",source);return row;
     }
@@ -64,8 +66,9 @@ public class ProductInventoryQueryService {
         for(Map<String,Object> b:jdbc.query("SELECT b.sku_sn,COUNT(*) AS batch_count,"+sums("b")+",SUM(w.id IS NULL) AS orphan_batches FROM wms_inventory_batch b LEFT JOIN wms_inventory w ON w.company_code=b.company_code AND w.sku_sn=b.sku_sn AND w.store_code=b.store_code WHERE "+filter.replace("company_code","b.company_code").replace("sku_sn","b.sku_sn")+" GROUP BY b.sku_sn",ROW,args.toArray()))batchBySku.put((String)b.get("skuSn"),b);
         Map<String,Long> publicBySku=new HashMap<>(),lockedBySku=new HashMap<>();
         for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(reserved_quantity) AS quantity FROM oms_order_stock_demand WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))publicBySku.put((String)claim.get("skuSn"),number(claim,"quantity"));
-        for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(quantity) AS quantity FROM oms_order_stock_source WHERE "+filter+" AND source_type='LOCK' AND reserved=1 GROUP BY sku_sn",ROW,args.toArray()))publicBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->value-number(claim,"quantity"));
+        for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(quantity) AS quantity FROM oms_order_stock_source WHERE "+filter+" AND source_type IN ('LOCK','LUCKY') AND reserved=1 GROUP BY sku_sn",ROW,args.toArray()))publicBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->value-number(claim,"quantity"));
         for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(occupied_quantity) AS quantity FROM rule_stock_reservation WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))lockedBySku.put((String)claim.get("skuSn"),number(claim,"quantity"));
+        for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(occupied_quantity) AS quantity FROM oms_lucky_source WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))lockedBySku.merge((String)claim.get("skuSn"),number(claim,"quantity"),Long::sum);
         for(Map<String,Object> row:rows) {
             Map<String,Object> w=bySku.getOrDefault(row.get("skuSn"),new LinkedHashMap<>()),b=batchBySku.getOrDefault(row.get("skuSn"),new LinkedHashMap<>());
             for(String field:QUANTITIES){String key=camel(field);w.putIfAbsent(key,0L);b.putIfAbsent(key,0L);}
@@ -84,7 +87,7 @@ public class ProductInventoryQueryService {
     }
 
     public TableDataInfo warehouses(String company,long id,int page,int pageSize) {
-        Map<String,Object> row=head(company,id);return warehouses.list(company,null,(String)row.get("skuSn"),false,false,page,pageSize);
+        Map<String,Object> row=head(company,id);return warehouseInventory.list(company,null,(String)row.get("skuSn"),false,false,page,pageSize);
     }
 
     public TableDataInfo reservations(String company,long id,int page,int pageSize) {

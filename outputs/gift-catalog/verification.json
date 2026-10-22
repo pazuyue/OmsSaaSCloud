@@ -1,0 +1,11 @@
+{
+  "backend_tests_passed": 402,
+  "goods_reference_protection_tests_passed": 11,
+  "order_catalog_tests_passed": 5,
+  "browser_checks_passed": 6,
+  "frontend_regressions": "passed",
+  "frontend_production_build": "passed",
+  "order_and_goods_build": "passed",
+  "deployment": "local goods/order/frontend",
+  "documents_and_stock_writes": false
+}

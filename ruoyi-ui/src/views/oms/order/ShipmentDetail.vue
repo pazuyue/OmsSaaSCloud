@@ -40,7 +40,7 @@
           <el-table-column label="虚拟仓 / 库存批次" min-width="150"><template slot-scope="s">{{ s.row.store_code }}<div class="hint">批次 {{ s.row.batch_id }}</div></template></el-table-column>
           <el-table-column label="单据数量" prop="quantity" width="100" />
           <el-table-column label="已发货" prop="shipped_quantity" width="90" /><el-table-column label="已截停" prop="cancelled_quantity" width="90" />
-          <el-table-column label="占用来源" min-width="155"><template slot-scope="s">{{ s.row.source_type === 'LOCK' ? '继承渠道锁库' : '公共库存转占用' }}<div class="hint">分仓回执 {{ s.row.allocation_id }}</div></template></el-table-column>
+          <el-table-column label="占用来源" min-width="155"><template slot-scope="s">{{ s.row.source_type === 'LUCKY' ? '福袋原组件保障' : s.row.source_type === 'LOCK' ? '继承渠道锁库' : '公共库存转占用' }}<div class="hint">分仓回执 {{ s.row.allocation_id }}</div></template></el-table-column>
         </el-table>
         <shipment-outbound-history ref="outboundHistory" :detail="detail" @changed="changed" />
         <el-table v-if="detail.logs && detail.logs.length" :data="detail.logs" class="summary"><el-table-column label="操作时间" prop="create_time" width="170" /><el-table-column label="操作人" prop="operator_name" width="130" /><el-table-column label="结果" width="90"><template slot-scope="s">{{ s.row.result === 'SUCCESS' ? '成功' : s.row.result === 'FAILED' ? '失败' : '待处理' }}</template></el-table-column><el-table-column label="处理记录" prop="message" min-width="280" /></el-table>

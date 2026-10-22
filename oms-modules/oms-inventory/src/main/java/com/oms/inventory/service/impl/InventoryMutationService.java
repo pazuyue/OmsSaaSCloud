@@ -191,6 +191,20 @@ public class InventoryMutationService {
 
     /** Source service owns attribution; physical changes share the same transaction and SKU mutex. */
     @Transactional(propagation=org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void luckyLock(String company,String sku,String store,Map<Long,Long> batches,String request){
+        Map<String,Object> oms=lockOms(company,sku,false),warehouse=lockWarehouse(company,sku,store);checkConsistent(warehouse,company);
+        long total=batches.values().stream().mapToLong(Long::longValue).sum();require(total>0&&total<=Integer.MAX_VALUE&&batches.values().stream().allMatch(q->q>0),"福袋保障数量无效");
+        require(number(oms,"availableStock")>=total&&allocationAvailable(company,sku,Collections.singletonList(store))>=total,"福袋候选可用库存不足，已回滚");
+        require(previous(company,sku,request,"LOCK").isEmpty(),"福袋保障请求已执行，须沿用原池回执");
+        for(Long id:new TreeSet<>(batches.keySet())){Map<String,Object> before=jdbc.queryForObject("SELECT * FROM wms_inventory_batch WHERE company_code=? AND sku_sn=? AND store_code=? AND id=? FOR UPDATE",ROW,company,sku,store,id);long q=batches.get(id);
+            require(jdbc.update("UPDATE wms_inventory_batch SET zp_available_number=zp_available_number-?,zp_lock_number=zp_lock_number+?,version=version+1 WHERE company_code=? AND id=? AND zp_available_number>=?",q,q,company,id,q)==1,"福袋原批次库存不足，已回滚");journal(company,before,"LOCK",request,request,"ZP",Math.toIntExact(q),"福袋组件保障");}
+        require(jdbc.update("UPDATE wms_inventory SET zp_available_number=zp_available_number-?,zp_lock_number=zp_lock_number+?,version=version+1 WHERE company_code=? AND id=? AND zp_available_number>=?",total,total,company,warehouse.get("id"),total)==1,"福袋仓库库存不足");
+        require(jdbc.update("UPDATE oms_inventory SET available_stock=available_stock-?,allocated_stock=allocated_stock+?,version=version+1 WHERE company_code=? AND id=? AND available_stock>=?",total,total,company,oms.get("id"),total)==1,"福袋组件汇总库存不足");
+        OrderStockService.refresh(jdbc,company,sku,0);
+    }
+
+    /** Source service owns attribution; physical changes share the same transaction and SKU mutex. */
+    @Transactional(propagation=org.springframework.transaction.annotation.Propagation.MANDATORY)
     public void settleReservation(String company,String sku,Map<Long,Long> quantities,String request,String relation,boolean consume) {
         Map<String,Object> oms=lockOms(company,sku,false);
         long total=quantities.values().stream().mapToLong(Long::longValue).sum();
@@ -210,7 +224,7 @@ public class InventoryMutationService {
             // Protect every tracked source in this batch, including other allocation rules.
             long owed=jdbc.queryForObject("SELECT COALESCE(SUM(original_quantity-consumed_quantity-released_quantity),0) FROM rule_stock_reservation WHERE company_code=? AND sku_sn=? AND batch_id=?",Long.class,company,sku,id);
             long orderPublic=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-outbound_quantity),0) FROM oms_order_warehouse_allocation WHERE company_code=? AND batch_id=? AND source_type='PUBLIC_EXTRA' AND status='OCCUPIED'",Long.class,company,id);
-            require(number(before,"zpLockNumber")>=Math.max(take,owed)+orderPublic,"批次锁库与来源余额不一致，操作已回滚");
+            owed+=LuckyBagStock.batchOwed(jdbc,company,id);require(number(before,"zpLockNumber")>=Math.max(take,owed)+orderPublic,"批次锁库与来源余额不一致，操作已回滚");
             String field=consume?"zp_actual_number=zp_actual_number-?":"zp_available_number=zp_available_number+?";
             jdbc.update("UPDATE wms_inventory_batch SET "+field+",zp_lock_number=zp_lock_number-?,version=version+1 WHERE id=?",take,take,id);
             journal(company,before,consume?"CONSUME":"UNLOCK",request,relation,"ZP",-(int)take,consume?"订单按锁库来源出库":"释放本单未占用余额");
@@ -231,6 +245,7 @@ public class InventoryMutationService {
         require(relation!=null && !relation.isEmpty() && relation.length()<=64,"入库必须关联来源单据");
         int zp=input.getZpActualNumber(),cp=input.getCpActualNumber();
         require(zp>=0 && cp>=0 && (long)zp+cp>0,"入库数量必须为非负整数且合计大于零");
+        require(jdbc.queryForObject("SELECT COUNT(*) FROM oms_lucky_definition WHERE company_code=? AND sku_sn=?",Long.class,company,sku)==0,"虚拟福袋父SKU不能作为实物入库，请按实际组件入库");
         Map<String,Object> oms=lockOms(company,sku,true);
         List<Map<String,Object>> prior=previous(company,sku,relation,"RECEIVE");
         for(Map<String,Object> p:prior) if(input.getBatchCode().equals(p.get("batchCode")) && store.equals(p.get("storeCode"))) {

@@ -94,6 +94,23 @@ export const constantRoutes = [
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
   {
+    path: '/oms-goods/lucky-bag', component: Layout, hidden: true,
+    permissions: ['goods:info:query', 'goods:info:edit'],
+    children: [{ path: 'index', component: () => import('@/views/oms/goods/LuckyBagEditor'), name: 'LuckyBagEditor', meta: { title: '福袋配置', activeMenu: '/oms-goods/info', noCache: true } }]
+  },
+  {
+    path: '/oms-order/gift-editor',
+    component: Layout,
+    hidden: true,
+    permissions: ['order:gift:config'],
+    children: [{
+      path: 'index',
+      component: () => import('@/views/oms/order/GiftStrategyEditor'),
+      name: 'GiftStrategyEditor',
+      meta: { title: '赠品策略编辑', activeMenu: '/oms-order/gifts', noCache: true }
+    }]
+  },
+  {
     path: '/system/user-auth',
     component: Layout,
     hidden: true,

@@ -26,6 +26,8 @@ public class AllocationWorkspaceService {
     @Resource private PlatformTransactionManager transactionManager;
     @Resource private InventoryMutationService inventory;
     @Resource private AllocationReservationService reservations;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    private com.oms.inventory.service.impl.LuckyBagInventory luckyBags;
     private final ObjectMapper json=new ObjectMapper();
 
     TransactionTemplate transaction() {
@@ -63,8 +65,9 @@ public class AllocationWorkspaceService {
         if(!rows.isEmpty()) {
             List<Object> ids=new ArrayList<>();ids.add(company);rows.forEach(row->ids.add(row.get("id")));
             Map<Long,Map<String,Object>> balances=new HashMap<>();
-            for(Map<String,Object> row:jdbc.query("SELECT rule_id,SUM(allocated_quantity) AS original_quantity,SUM(occupied_quantity) AS occupied_quantity,SUM(consumed_quantity) AS consumed_quantity,SUM(released_quantity) AS released_quantity,SUM(allocated_quantity-occupied_quantity-consumed_quantity-released_quantity) AS releasable_quantity FROM rule_stock_result WHERE company_code=? AND rule_id IN ("+marks(rows.size())+") AND status='SUCCESS' GROUP BY rule_id",ROW,ids.toArray()))balances.put(number(row,"ruleId"),row);
-            for(Map<String,Object> row:rows)row.put("reservationBalance",balances.get(number(row,"id")));
+            for(Map<String,Object> row:jdbc.query("SELECT rule_id,SUM(allocated_quantity) AS original_quantity,SUM(occupied_quantity) AS occupied_quantity,SUM(consumed_quantity) AS consumed_quantity,SUM(released_quantity) AS released_quantity,SUM(allocated_quantity-occupied_quantity-consumed_quantity-released_quantity) AS releasable_quantity FROM rule_stock_result WHERE company_code=? AND rule_id IN ("+marks(rows.size())+") AND status='SUCCESS' AND NOT EXISTS (SELECT 1 FROM oms_lucky_pool p WHERE p.company_code=rule_stock_result.company_code AND p.rule_id=rule_stock_result.rule_id AND p.bag_sku=rule_stock_result.sku_sn) GROUP BY rule_id",ROW,ids.toArray()))balances.put(number(row,"ruleId"),row);
+            Map<Long,Map<String,Object>> bags=new HashMap<>();for(Map<String,Object> q:jdbc.query("SELECT rule_id,SUM(quantity) original,SUM(available_quantity) available,SUM(occupied_quantity) occupied,SUM(consumed_quantity) consumed,SUM(released_quantity) released FROM oms_lucky_pool WHERE company_code=? AND rule_id IN ("+marks(rows.size())+") GROUP BY rule_id",ROW,ids.toArray()))bags.put(number(q,"ruleId"),q);
+            for(Map<String,Object> row:rows){row.put("reservationBalance",balances.get(number(row,"id")));row.put("luckyBalance",bags.get(number(row,"id")));}
         }
         return page(rows,total);
     }
@@ -78,7 +81,7 @@ public class AllocationWorkspaceService {
         Map<String,Object> row=rule(company,id,false);
         row.put("stores",stores(id));row.put("channels",channels(id));
         row.put("goodsCount",jdbc.queryForObject("SELECT COUNT(DISTINCT sku_sn) FROM rule_stock_goods_info WHERE rule_id=?",Long.class,id));
-        row.put("counts",counts(id));return row;
+        row.put("counts",counts(id));row.put("hasLuckyPools",jdbc.queryForObject("SELECT COUNT(*) FROM oms_lucky_pool WHERE company_code=? AND rule_id=?",Long.class,company,id)>0);return row;
     }
     private Map<String,Object> counts(long id) {
         return jdbc.queryForObject("SELECT COUNT(*) AS total,COALESCE(SUM(status='SUCCESS'),0) AS success,COALESCE(SUM(status='FAILED'),0) AS failed,COALESCE(SUM(status='PENDING'),0) AS pending,COALESCE(SUM(release_status='RELEASED'),0) AS released,COALESCE(SUM(release_status='FAILED'),0) AS release_failed,COALESCE(SUM(release_status='PENDING'),0) AS release_pending FROM rule_stock_result WHERE rule_id=?",ROW,id);
@@ -190,7 +193,7 @@ public class AllocationWorkspaceService {
         if(number(rule,"ruleRange")==2) {args.add(id);return "SELECT DISTINCT sku_sn FROM rule_stock_goods_info WHERE rule_id=?";}
         List<String> warehouses=stores(id);require(!warehouses.isEmpty(),"请先配置仓库");
         args.add(rule.get("companyCode"));args.addAll(warehouses);
-        return "SELECT DISTINCT sku_sn FROM wms_inventory WHERE company_code=? AND store_code IN ("+marks(warehouses.size())+")";
+        args.add(rule.get("companyCode"));return "SELECT DISTINCT sku_sn FROM (SELECT sku_sn FROM wms_inventory WHERE company_code=? AND store_code IN ("+marks(warehouses.size())+") UNION SELECT sku_sn FROM oms_lucky_definition WHERE company_code=?) lucky_scope WHERE 1=1";
     }
     private Map<Long,Map<String,Object>> current(String company,String sku,List<Map<String,Object>> channels,boolean lock) {
         List<Object> args=new ArrayList<>(Arrays.asList(company,sku));channels.forEach(c->args.add(c.get("channelId")));
@@ -219,6 +222,7 @@ public class AllocationWorkspaceService {
         long total=jdbc.queryForObject("SELECT COUNT(*) FROM ("+source+") skus",Long.class,args.toArray());
         int count=Math.min(20,limit(size));args.add(count);args.add(offset(page,count));
         List<String> skus=jdbc.queryForList(source+" ORDER BY sku_sn LIMIT ? OFFSET ?",String.class,args.toArray());
+        if(luckyBags!=null)luckyBags.prepare(company,skus);
         List<Map<String,Object>> rows=new ArrayList<>();
         if(skus.isEmpty())return page(rows,total);
         // Fixed query count per page, independent of SKU/channel counts. Preview never locks rows.
@@ -227,7 +231,7 @@ public class AllocationWorkspaceService {
         Map<String,Long> availableBySku=new HashMap<>();
         for(Map<String,Object> row:jdbc.query("SELECT sku_sn,SUM(zp_available_number) AS available FROM wms_inventory"+stockWhere+" GROUP BY sku_sn",ROW,stockArgs.toArray()))availableBySku.put((String)row.get("skuSn"),number(row,"available"));
         List<Object> demandArgs=new ArrayList<>();demandArgs.add(company);demandArgs.addAll(skus);
-        if(number(rule,"allocationType")==2)for(Map<String,Object> claim:jdbc.query("SELECT i.sku_sn,i.pending_public_stock+(SELECT COALESCE(SUM(d.reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=i.company_code AND d.sku_sn=i.sku_sn)-(SELECT COALESCE(SUM(s.quantity),0) FROM oms_order_stock_source s WHERE s.company_code=i.company_code AND s.sku_sn=i.sku_sn AND s.source_type='LOCK' AND s.reserved=1) AS quantity FROM oms_inventory i WHERE i.company_code=? AND i.sku_sn IN ("+marks(skus.size())+")",ROW,demandArgs.toArray()))availableBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->Math.max(0,value-number(claim,"quantity")));
+        if(number(rule,"allocationType")==2)for(Map<String,Object> claim:jdbc.query("SELECT i.sku_sn,i.pending_public_stock+(SELECT COALESCE(SUM(d.reserved_quantity),0) FROM oms_order_stock_demand d WHERE d.company_code=i.company_code AND d.sku_sn=i.sku_sn)-(SELECT COALESCE(SUM(s.quantity),0) FROM oms_order_stock_source s WHERE s.company_code=i.company_code AND s.sku_sn=i.sku_sn AND s.source_type IN ('LOCK','LUCKY') AND s.reserved=1) AS quantity FROM oms_inventory i WHERE i.company_code=? AND i.sku_sn IN ("+marks(skus.size())+")",ROW,demandArgs.toArray()))availableBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->Math.max(0,value-number(claim,"quantity")));
         List<Object> skuArgs=new ArrayList<>();skuArgs.add(company);skuArgs.addAll(skus);
         Set<String> omsSkus=new HashSet<>(jdbc.queryForList("SELECT sku_sn FROM oms_inventory WHERE company_code=? AND sku_sn IN ("+marks(skus.size())+")",String.class,skuArgs.toArray()));
         List<Object> channelArgs=new ArrayList<>(skuArgs);channels.forEach(c->channelArgs.add(c.get("channelId")));
@@ -242,6 +246,10 @@ public class AllocationWorkspaceService {
         for(String sku:skus) {
             Map<String,Object> row=new LinkedHashMap<>();row.put("skuSn",sku);
             try {
+                if(luckyBags!=null&&!luckyBags.definition(company,sku).isEmpty()){
+                    long capacity=luckyBags.capacity(company,luckyBags.definition(company,sku),warehouses);
+                    row=luckyCalculation(company,rule,sku,capacity,channels,false);luckyBags.validatePreview(company,sku,warehouses,(List<Map<String,Object>>)row.get("channels"),number(rule,"ruleType")==1);row.put("goodsType","LUCKY_BAG");row.put("unit","袋");row.put("pieces",luckyBags.definition(company,sku).get("pieces"));rows.add(row);continue;
+                }
                 row=calculation(rule,sku,availableBySku.getOrDefault(sku,0L),channels,currentBySku.getOrDefault(sku,Collections.emptyMap()));
                 if(!omsSkus.contains(sku))row.put("error","缺少商品汇总库存，请先核对入库记录");
                 else if(inconsistent.contains(sku))row.put("error","汇总与批次库存不一致，请先核对数据");
@@ -251,6 +259,7 @@ public class AllocationWorkspaceService {
         return page(rows,total);
     }
     public void start(String company,long id,int version,String action,String actor) {
+        if(luckyBags!=null&&"EXECUTE".equals(action)&&number(rule(company,id,false),"ruleRange")==1)luckyBags.discover(company);
         require(Arrays.asList("EXECUTE","RETRY","RELEASE").contains(action),"执行动作无效");
         transaction().execute(tx->{
             Map<String,Object> rule=rule(company,id,true);int status=(int)number(rule,"status");
@@ -269,8 +278,8 @@ public class AllocationWorkspaceService {
                 jdbc.update("UPDATE rule_stock_result SET status='PENDING',error_message='' WHERE rule_id=? AND status='FAILED'",id);
                 jdbc.update("UPDATE rule_stock_info SET status=4,revision=revision+1 WHERE id=?",id);
             } else {
-                require(number(rule,"allocationType")==2 && (status==5 || status==7 || status==8 || status==11),"当前单据不能释放锁库");
-                int count=jdbc.update("UPDATE rule_stock_result SET release_status='PENDING',release_error='' WHERE rule_id=? AND status='SUCCESS' AND release_status IN ('NONE','FAILED','PARTIAL')",id);
+                require((number(rule,"allocationType")==2 || jdbc.queryForObject("SELECT COUNT(*) FROM oms_lucky_pool WHERE company_code=? AND rule_id=?",Long.class,company,id)>0) && (status==5 || status==7 || status==8 || status==11),"当前单据不能释放锁库");
+                int count=jdbc.update("UPDATE rule_stock_result SET release_status='PENDING',release_error='' WHERE rule_id=? AND status='SUCCESS' AND release_status IN ('NONE','FAILED','PARTIAL')"+(number(rule,"allocationType")==2?"":" AND EXISTS (SELECT 1 FROM oms_lucky_pool p WHERE p.company_code=rule_stock_result.company_code AND p.rule_id=rule_stock_result.rule_id AND p.bag_sku=rule_stock_result.sku_sn)"),id);
                 require(count>0,"没有可释放的锁库记录");
                 jdbc.update("UPDATE rule_stock_info SET status=9,run_action='RELEASE',revision=revision+1 WHERE id=?",id);
             }
@@ -282,6 +291,7 @@ public class AllocationWorkspaceService {
         require(number(head,"ruleType")!=1,"日常分货由后台定时处理");
         require(number(head,"status")==4 || number(head,"status")==9,"当前没有待执行任务");
         boolean release=number(head,"status")==9;
+        if(luckyBags!=null&&!release){List<String> next=jdbc.queryForList("SELECT sku_sn FROM rule_stock_result WHERE company_code=? AND rule_id=? AND status='PENDING' ORDER BY sku_sn LIMIT 10",String.class,company,id);luckyBags.prepare(company,next);}
         List<String> stores=stores(id);List<Map<String,Object>> channels=channels(id);
         long deadline=System.nanoTime()+2000000000L;
         for(int i=0;i<10 && System.nanoTime()<deadline;i++) {
@@ -333,6 +343,12 @@ public class AllocationWorkspaceService {
     /** Caller must hold the rule header in a short transaction. Both execution modes share this writer. */
     @SuppressWarnings("unchecked")
     Map<String,Object> applyTargets(String company,Map<String,Object> rule,String sku,List<String> stores,List<Map<String,Object>> channels) {
+        if(luckyBags!=null&&!luckyBags.definition(company,sku).isEmpty()){
+            Map<String,Object> definition=luckyBags.definition(company,sku);List<String> locks=com.oms.common.lucky.LuckyBagRules.skus(definition);locks.add(sku);luckyBags.lockSkus(company,locks);
+            Map<String,Object> planned=luckyCalculation(company,rule,sku,luckyBags.capacity(company,definition,stores),channels,true);
+            List<Map<String,Object>> targets=((List<Map<String,Object>>)planned.get("channels")).stream().filter(t->!Boolean.TRUE.equals(t.get("skipped"))).collect(Collectors.toList());
+            return luckyBags.allocate(company,number(rule,"id"),sku,stores,targets,number(rule,"ruleType")==1);
+        }
         long id=number(rule,"id");
         require(number(rule,"ruleType")!=1 || number(rule,"allocationType")==1,"日常分货不能锁库");
         long available=number(rule,"allocationType")==2?inventory.allocationAvailable(company,sku,stores):inventory.allocationBasis(company,sku,stores);
@@ -358,12 +374,25 @@ public class AllocationWorkspaceService {
         if(locking){reservations.record(company,id,sku,targets,quantity);com.oms.inventory.service.impl.OrderStockService.refresh(jdbc,company,sku,0);}
         return result;
     }
+    @SuppressWarnings("unchecked") private Map<String,Object> luckyCalculation(String company,Map<String,Object> rule,String sku,long capacity,List<Map<String,Object>> channels,boolean locked){
+        Map<String,Object> effective=new LinkedHashMap<>(rule);effective.put("allocationType",2);Map<Long,Map<String,Object>> old=current(company,sku,channels,locked);
+        if(number(rule,"ruleType")==1)for(Map<String,Object> c:channels)capacity=Math.addExact(capacity,luckyBags.available(company,sku,number(c,"channelId")));
+        Map<String,Object> result=calculation(effective,sku,capacity,channels,old);result.put("goodsType","LUCKY_BAG");result.put("unit","袋");return result;
+    }
+    void discoverLucky(String company,long id){if(luckyBags!=null&&number(rule(company,id,false),"ruleRange")==1)luckyBags.discover(company);}
+    /** Called before daily item transactions, once for a bounded pending page. */
+    void prepareLuckyDaily(String company,long id,Set<String> prepared){
+        if(luckyBags==null||!prepared.isEmpty())return;
+        List<String> skus=jdbc.queryForList("SELECT i.sku_sn FROM rule_stock_daily_item i JOIN rule_stock_info h ON h.active_run_id=i.run_id WHERE h.company_code=? AND h.id=? AND i.status='PENDING' ORDER BY i.sku_sn LIMIT 50",String.class,company,id);
+        if(!skus.isEmpty()){luckyBags.prepare(company,skus);prepared.addAll(skus);}
+    }
     private List<String> existingStores(String company,String sku,List<String> stores) {
         List<Object> args=new ArrayList<>(Arrays.asList(company,sku));args.addAll(stores);
         return jdbc.queryForList("SELECT store_code FROM wms_inventory WHERE company_code=? AND sku_sn=? AND store_code IN ("+marks(stores.size())+") ORDER BY store_code",String.class,args.toArray());
     }
     @SuppressWarnings("unchecked")
     private void release(String company,long id,Map<String,Object> item,List<String> stores,String actor) {
+        if(luckyBags!=null&&!luckyBags.definition(company,(String)item.get("skuSn")).isEmpty()){luckyBags.release(company,id,(String)item.get("skuSn"),actor);return;}
         reservations.release(company,id,item,actor);
     }
     String encode(Object value) {try{return json.writeValueAsString(value);}catch(Exception e){throw new IllegalStateException("保存执行明细失败",e);}}
@@ -382,7 +411,8 @@ public class AllocationWorkspaceService {
         long total=jdbc.queryForObject("SELECT COUNT(*) FROM rule_stock_result"+where,Long.class,args.toArray());
         int count=limit(size);args.add(count);args.add(offset(page,count));
         List<Map<String,Object>> rows=jdbc.query("SELECT * FROM rule_stock_result"+where+" ORDER BY sku_sn LIMIT ? OFFSET ?",ROW,args.toArray());
-        for(Map<String,Object> row:rows){
+        Map<String,Map<String,Object>> bagTotals=new HashMap<>();for(Map<String,Object> q:jdbc.query("SELECT bag_sku,SUM(available_quantity) available,SUM(occupied_quantity) occupied,SUM(consumed_quantity) consumed,SUM(released_quantity) released FROM oms_lucky_pool WHERE company_code=? AND rule_id=? GROUP BY bag_sku",ROW,company,id))bagTotals.put((String)q.get("bagSku"),q);
+        for(Map<String,Object> row:rows){Map<String,Object> q=bagTotals.get(row.get("skuSn"));if(q!=null){row.put("unit","袋");row.put("occupiedQuantity",q.get("occupied"));row.put("consumedQuantity",q.get("consumed"));row.put("releasedQuantity",q.get("released"));}
             Object detail=row.remove("detailJson");if(detail!=null)row.put("detail",decode(detail.toString()));
             row.put("releasableQuantity",number(row,"allocatedQuantity")-number(row,"occupiedQuantity")-number(row,"consumedQuantity")-number(row,"releasedQuantity"));
         }

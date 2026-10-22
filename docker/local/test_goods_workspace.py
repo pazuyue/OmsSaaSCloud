@@ -8,12 +8,18 @@ from local_db import execute, ENV, ROOT
 
 DB = 'goods_workspace_test'
 
-def main():
+def prepare():
     execute('CREATE DATABASE IF NOT EXISTS ' + DB + ' CHARACTER SET utf8mb4')
     for table in ['goods_sku_sn_info', 'goods_category', 'goods_color', 'goods_size', 'goods_master_lock', 'goods_import_batch', 'goods_import_row']:
         execute(f'CREATE TABLE IF NOT EXISTS {DB}.{table} LIKE qm_oms_saas_commodity.{table}')
     from configure_bundles import install_goods
     install_goods(DB)
+    from configure_gifts import install_goods as install_gift_goods
+    install_gift_goods(DB)
+
+
+def main():
+    prepare()
     cache = Path.home() / '.cache/oms-local'
     test = Path('oms-modules/oms-goods-administration/src/test/java/com/oms/goods/GoodsWorkspaceTest.java')
     shutil.copytree(ROOT/'oms-modules/oms-goods-administration/src',cache/'source/oms-modules/oms-goods-administration/src',dirs_exist_ok=True)

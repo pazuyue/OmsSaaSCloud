@@ -1,0 +1,42 @@
+{
+  "shipment_id": 83,
+  "shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+  "order_id": 136,
+  "external_order": "SIMOUT_aaed7ef2a3864cdb9b80",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 2,
+  "message_id": "SIM_COMPLETE_XSadd96fe17ef843c09dc62e2eb43c61e0",
+  "package_code": "SIMPKG_XSadd96fe17ef843c09dc62e2eb43c61e0",
+  "express_code": "TEST-SF-XSadd96fe17ef843c09dc62e2eb43c61e0",
+  "outbound_time": "2026-10-22 10:27:42",
+  "plans": [
+    {
+      "id": 102,
+      "sku_sn": "RF20261022102630B",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630B"
+    },
+    {
+      "id": 103,
+      "sku_sn": "RF20261022102630D",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630D"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSadd96fe17ef843c09dc62e2eb43c61e0</deliveryOrderCode><deliveryOrderId>SIMOUT_aaed7ef2a3864cdb9b80</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSadd96fe17ef843c09dc62e2eb43c61e0</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-22 10:27:42</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>102</orderLineNo><itemCode>RF20261022102630B</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630B</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>103</orderLineNo><itemCode>RF20261022102630D</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630D</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSadd96fe17ef843c09dc62e2eb43c61e0</packageCode><expressCode>TEST-SF-XSadd96fe17ef843c09dc62e2eb43c61e0</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>RF20261022102630B</itemCode><quantity>1</quantity></item><item><itemCode>RF20261022102630D</itemCode><quantity>1</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSadd96fe17ef843c09dc62e2eb43c61e0",
+    "quantity": 2,
+    "status": "SHIPPED",
+    "shipped_quantity": 2,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSadd96fe17ef843c09dc62e2eb43c61e0",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

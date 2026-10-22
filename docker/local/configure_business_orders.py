@@ -3,6 +3,8 @@ from configure_order import column
 from local_db import execute
 
 def install_order(database):
+    from configure_order_documents import install as documents
+    documents(database)
     from configure_order_updates import install as updates
     updates(database)
     from configure_order_review import install as install_review

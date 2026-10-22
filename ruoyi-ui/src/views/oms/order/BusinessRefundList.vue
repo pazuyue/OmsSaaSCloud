@@ -1,0 +1,80 @@
+<template>
+  <div class="app-container business-refund-list">
+    <el-radio-group v-model="query.task" size="small" class="task-views" @change="search"><el-radio-button v-for="view in taskViews" :key="view.value" :label="view.value">{{ view.label }}</el-radio-button></el-radio-group>
+    <div class="refund-scenarios"><span class="hint">业务场景</span><el-radio-group v-model="query.scenario" size="small" @change="search"><el-radio-button v-for="item in scenarioViews" :key="item.value" :label="item.value">{{ item.label }}</el-radio-button></el-radio-group></div>
+    <el-form inline size="small" class="list-filters" @submit.native.prevent="search">
+      <el-form-item label="单号"><el-input v-model="query.number" clearable placeholder="完整退款 / 订单 / 子单号" class="number-filter" @keyup.enter.native="search"/></el-form-item>
+      <el-form-item label="店铺"><el-select v-model="query.channelId" clearable filterable placeholder="全部店铺"><el-option v-for="channel in channels" :key="channel.channel_id" :value="channel.channel_id" :label="channel.channel_name"/></el-select></el-form-item>
+      <el-form-item label="处理状态"><el-select v-model="query.state" clearable placeholder="全部状态"><el-option v-for="state in states" :key="state" :value="state" :label="label(state)"/></el-select></el-form-item>
+      <el-form-item><el-button type="primary" icon="el-icon-search" @click="search">查询</el-button><el-button @click="reset">重置</el-button><el-button type="text" @click="advanced=!advanced">更多筛选{{ advancedCount ? '（'+advancedCount+'）' : '' }}<i :class="advanced?'el-icon-arrow-up':'el-icon-arrow-down'"/></el-button></el-form-item>
+      <div v-show="advanced" class="advanced-filters">
+        <el-form-item label="平台申请类型"><el-select v-model="query.disputeType" clearable placeholder="全部类型"><el-option value="REFUND" label="仅退款"/><el-option value="REFUND_AND_RETURN" label="退货退款"/></el-select></el-form-item>
+        <el-form-item label="实际货物处理"><el-select v-model="query.goodsAction" clearable placeholder="全部处理方式"><el-option v-for="action in goodsActions" :key="action" :value="action" :label="label(action)"/></el-select></el-form-item>
+        <el-form-item label="资金状态"><el-select v-model="query.fundsState" clearable placeholder="全部资金状态"><el-option value="NONE" label="待平台处理"/><el-option value="SUCCESS" label="平台已退款"/><el-option value="CLOSED" label="平台申请已关闭"/></el-select></el-form-item>
+        <el-form-item label="货物状态"><el-select v-model="query.goodsState" clearable placeholder="全部货物状态"><el-option v-for="state in goodsStates" :key="state" :value="state" :label="label(state)"/></el-select></el-form-item>
+        <el-form-item label="创建时间"><el-date-picker v-model="createdRange" type="daterange" value-format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"/></el-form-item>
+      </div>
+    </el-form>
+    <div class="list-toolbar"><span class="hint">共 {{ total }} 张退款<span v-if="query.task"> · {{ currentView }}</span></span><div><el-popover placement="bottom-end" trigger="click" width="160"><div class="list-tools"><el-button v-hasPermi="['order:refund:config']" type="text" @click="openReturnRules">退货规则</el-button><el-button v-hasPermi="['order:refund:sync']" type="text" @click="openTasks">同步任务</el-button></div><el-button slot="reference" size="small">更多</el-button></el-popover><el-button size="small" icon="el-icon-refresh" :loading="loading" @click="load">刷新</el-button></div></div>
+    <el-alert v-if="error" :title="error" type="error" :closable="false" show-icon/>
+    <el-table v-loading="loading" :data="rows" row-key="id" size="small" :max-height="tableHeight" :empty-text="error ? '列表加载失败，请重试' : '暂无符合当前筛选的业务退款'" class="refund-table">
+      <el-table-column label="退款信息" min-width="220"><template slot-scope="s"><div class="refund-number"><el-tooltip :content="s.row.refund_sn" placement="top"><el-button v-hasPermi="['order:refund:query']" type="text" @click="open(s.row.id)">{{ s.row.refund_sn }}</el-button></el-tooltip><el-button v-clipboard:copy="s.row.refund_sn" v-clipboard:success="copied" type="text" icon="el-icon-document-copy" aria-label="复制业务退款单号" title="复制业务退款单号"/></div><div class="shop-name hint" :title="shop(s.row.channel_id)">{{ shop(s.row.channel_id) }}</div><div class="identity-meta"><span class="hint" :title="s.row.create_time">{{ time(s.row.create_time) }}</span><el-popover placement="right" trigger="click" width="330"><dl class="related-numbers"><dt>平台退款单</dt><dd>{{ s.row.refund_id }}</dd><dt>平台订单</dt><dd>{{ s.row.platform_tid }}</dd><dt>平台子订单</dt><dd>{{ s.row.platform_oid }}</dd><dt>OMS 订单</dt><dd><router-link :to="{path:'/oms-order/business',query:{view:'business',orderId:s.row.order_id}}">{{ s.row.order_sn }}</router-link></dd></dl><el-button slot="reference" type="text" icon="el-icon-link" aria-label="查看关联单号" title="查看关联单号"/></el-popover></div></template></el-table-column>
+      <el-table-column label="退款申请商品" min-width="215"><template slot-scope="s"><div class="product-heading"><strong class="ellipsis" :title="s.row.application.name">{{ s.row.application.name }}</strong><span class="quantity">{{ s.row.application.quantity }}</span></div><div class="hint ellipsis" :title="s.row.application.sku">{{ s.row.application.sku || 'SKU 待核对' }}<span v-if="s.row.application.more"> · 另 {{ s.row.application.more }} 项</span></div><div class="hint platform-oid">子单 {{ s.row.platform_oid }}</div></template></el-table-column>
+      <el-table-column label="业务场景" min-width="180"><template slot-scope="s"><div class="scenario-platform">{{ s.row.scene.platform }}</div><el-tag size="mini" :type="s.row.scene.tone" effect="plain">{{ s.row.scene.text }}</el-tag><div v-if="Number(s.row.missing_purchase_document)" class="hint scenario-warning">商品退回单尚未生成</div></template></el-table-column>
+      <el-table-column label="申请金额" width="100" align="right"><template slot-scope="s"><strong class="money">{{ money(s.row.refund_fee) }}</strong></template></el-table-column>
+      <el-table-column label="资金状态" width="110"><template slot-scope="s"><span :class="{'funds-success':s.row.funds_state==='SUCCESS'}">{{ fundsLabel(s.row.funds_state) }}</span></template></el-table-column>
+      <el-table-column label="商品与赠品进度" min-width="190"><template slot-scope="s"><el-tooltip :disabled="!s.row.purchase.evidence" :content="s.row.purchase.evidence" placement="top"><div class="progress-line"><span class="progress-kind">商品</span><span>{{ s.row.purchase.label }}</span></div></el-tooltip><el-tooltip :disabled="!s.row.gift.evidence" :content="s.row.gift.evidence" placement="top"><div class="progress-line" :class="{'progress-warning':s.row.gift_pending}"><span class="progress-kind">赠品</span><span>{{ s.row.gift.label }}</span></div></el-tooltip><div v-if="s.row.purchase_progress" class="hint">商品 {{ s.row.purchase.detail }}</div><div v-if="s.row.gift_progress" class="hint">赠品 {{ s.row.gift.detail }}</div></template></el-table-column>
+      <el-table-column label="当前待办" min-width="180"><template slot-scope="s"><template v-if="s.row.task"><div :class="{'task-warning':problem(s.row)}">{{ s.row.task.title }}</div><div class="hint task-description" :title="s.row.task.message">{{ s.row.task.message }}</div></template><span v-else class="hint">{{ s.row.state==='COMPLETED' ? '已完成' : s.row.state==='CLOSED' ? '已关闭' : '等待平台进度' }}</span><div v-if="Number(s.row.shared_return)" class="hint">合包退回</div></template></el-table-column>
+      <el-table-column label="操作" width="125" fixed="right"><template slot-scope="s"><div class="row-actions"><el-button v-if="s.row.task" v-hasPermi="['order:refund:query']" type="text" class="task-action" @click="openAction(s.row)">{{ s.row.task.button }}</el-button><el-button v-hasPermi="['order:refund:query']" type="text" @click="open(s.row.id)">详情</el-button></div></template></el-table-column>
+    </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" :page-sizes="[20,50]" @pagination="load"/>
+    <refund-detail ref="detail" business @changed="load"/>
+  </div>
+</template>
+<script>
+import * as api from '@/api/order/refund'
+import RefundDetail from './RefundDetail'
+import { label } from './refundLabels'
+import { refundTaskViews, refundScenarioViews, refundScenario, businessRefundTask, progressSummary, applicationSummary } from './refundListPresentation'
+import { money } from './orderAmounts'
+const initialQuery = () => ({ number: '', task: '', scenario: '', goodsAction: '', channelId: '', state: '', disputeType: '', fundsState: '', goodsState: '', pageNum: 1, pageSize: 20 })
+export default {
+  name: 'BusinessRefundList', components: { RefundDetail },
+  data: () => ({ query: initialQuery(), rows: [], channels: [], total: 0, loading: false, error: '', sequence: 0, advanced: false, createdRange: [], viewportHeight: 1000, taskViews: refundTaskViews, scenarioViews: refundScenarioViews, goodsActions: ['KEEP','CANCEL','RETURN','REFUSAL','INTERCEPT'], states: ['NEEDS_REVIEW','PROCESSING','BLOCKED','COMPLETED','CLOSED'], goodsStates: ['WAIT_REVIEW','UNKNOWN','WAIT_ACTION','WAIT_RETURN','PART_RETURNED','WAIT_CHECK','WAIT_QC','DONE','CANCELED'] }),
+  computed: {
+    currentView() { return (this.taskViews.find(view => view.value === this.query.task) || {}).label || '全部' },
+    advancedCount() { return [this.query.disputeType,this.query.goodsAction,this.query.fundsState,this.query.goodsState,(this.createdRange || []).length].filter(Boolean).length },
+    tableHeight() { return Math.max(300, this.viewportHeight - (this.advanced ? 510 : 400)) }
+  },
+  watch: { '$route.query.id'(id) { if (id) this.open(Number(id)) } },
+  async created() { this.query.number = this.$route.query.number || ''; this.query.scenario = this.$route.query.scenario || ''; this.query.task = this.$route.query.task || '';  const catalog = this.loadCatalog(); await this.load(); await catalog; if (this.$route.query.id) this.open(Number(this.$route.query.id)) },
+  mounted() { this.resize(); window.addEventListener('resize', this.resize) },
+  beforeDestroy() { this.sequence++; window.removeEventListener('resize', this.resize) },
+  methods: {
+    label, money,
+    fundsLabel(state) { return state==='SUCCESS' ? '平台已退款' : state==='CLOSED' ? '平台申请已关闭' : '待平台处理' },
+    time(value) { return String(value || '').slice(0,16) },
+    copied() { this.$message.success('退款单号已复制') },
+    resize() { this.viewportHeight = window.innerHeight },
+    shop(id) { const channel=this.channels.find(row => String(row.channel_id)===String(id)); return channel ? channel.channel_name : '店铺资料待加载' },
+    problem(row) { return !!(row.problem_message || (row.parcel_issues || []).length || Number((row.gift_progress || {}).pending_count)) },
+    async loadCatalog() { try { this.channels=(await api.refundCatalog()).data } catch (_) { this.$message.warning('店铺资料加载失败，请刷新页面重试') } },
+    async load() {
+      const sequence=++this.sequence; this.loading=true; this.error=''
+      const params={...this.query,createdFrom:(this.createdRange || [])[0] || '',createdTo:(this.createdRange || [])[1] || ''}
+      try { const data=(await api.refundList(true,params)).data; if(sequence!==this.sequence)return; this.rows=data.rows.map(row=>({...row,scene:refundScenario(row),application:applicationSummary(row),purchase:progressSummary(row.purchase_progress,label(row.goods_state)),gift:progressSummary(row.gift_progress,'无关联'),task:businessRefundTask(row)}));this.total=Number(data.total) }
+      catch (_) { if(sequence===this.sequence){this.error='业务退款列表加载失败，请重试';this.rows=[];this.total=0} }
+      finally { if(sequence===this.sequence)this.loading=false }
+    },
+    search() { this.query.pageNum=1; return this.load() },
+    reset() { this.query=initialQuery();this.createdRange=[];return this.load() },
+    open(id) { return this.$refs.detail.open(id) },
+    async openAction(row) { const task=row.task;if(!task)return this.open(row.id);const detail=this.$refs.detail;await detail.open(row.id,task.issue);if(!detail.row||String(detail.row.id)!==String(row.id))return;if(task.gifts)detail.openGiftGoods();else detail.detailTab=task.tab },
+    openReturnRules() { this.$router.push({path:'/oms-order/afterSaleRules/returns',query:this.query.channelId?{channelId:this.query.channelId}:{}}) },
+    openTasks() { this.$router.push({path:'/oms-order/management',query:{kind:'REFUND',tab:'tasks',...(this.query.channelId?{channelId:this.query.channelId}:{})}}) }
+  }
+}
+</script>
+<style scoped>
+.refund-scenarios{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.refund-scenarios .el-radio-group{display:flex;flex-wrap:wrap;row-gap:8px}.scenario-platform{font-size:12px;margin-bottom:5px}.scenario-warning{color:#a36a16}.refund-table .el-tag{height:auto;white-space:normal;line-height:1.7;padding:2px 5px}.task-views{margin:0 0 20px;display:flex;flex-wrap:wrap}.list-filters{padding:16px 16px 0;border-radius:6px;background:#f7f9fc}.list-filters .el-form-item{margin-bottom:14px}.number-filter{width:270px}.advanced-filters{border-top:1px solid #e5ebf2;padding-top:14px}.list-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 12px}.list-toolbar>div{display:flex;gap:8px}.list-tools{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.list-tools .el-button{margin:0}.hint{color:#758397;font-size:12px;line-height:1.7}.refund-number{display:flex;align-items:center;gap:6px;min-width:0}.refund-number .el-button{font-size:12px;min-width:0;padding:3px 0;margin:0}.refund-number .el-button:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shop-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:4px 0}.identity-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.identity-meta .el-button{padding:0;margin:0}.type-label{font-size:11px;background:#f2f5f9;color:#65778e;padding:1px 5px;border-radius:3px}.product-heading{display:flex;gap:8px;align-items:center}.product-heading strong{font-size:13px;font-weight:500;flex:1;min-width:0;color:#30445d}.quantity{font-size:12px;white-space:nowrap;color:#536982}.ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.platform-oid{overflow-wrap:anywhere}.money{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}.funds-success{color:#328062}.progress-line{display:flex;gap:10px;align-items:baseline;line-height:1.8;font-size:12px}.progress-kind{color:#758397;flex-shrink:0}.progress-warning,.task-warning{color:#a36a16}.task-description{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;margin-top:4px}.row-actions{display:flex;align-items:flex-start;flex-direction:column;gap:4px}.row-actions .el-button{margin:0;padding:3px 0}.row-actions .task-action{font-weight:500}.related-numbers{display:grid;grid-template-columns:85px minmax(0,1fr);gap:10px;font-size:12px;line-height:1.8;margin:0}.related-numbers dt{color:#758397}.related-numbers dd{margin:0;overflow-wrap:anywhere}.refund-table ::v-deep td .cell{line-height:1.7}.refund-table ::v-deep .el-table__row td{padding-top:13px;padding-bottom:13px}@media(max-width:900px){.number-filter{width:230px}.list-filters{padding:12px 12px 0}.refund-scenarios{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.refund-scenarios .el-radio-group{display:flex;flex-wrap:wrap;row-gap:8px}.scenario-platform{font-size:12px;margin-bottom:5px}.scenario-warning{color:#a36a16}.refund-table .el-tag{height:auto;white-space:normal;line-height:1.7;padding:2px 5px}.task-views{row-gap:8px}}
+</style>

@@ -19,6 +19,11 @@ import java.util.stream.Collectors;
 @RestController @RequestMapping("/info")
 public class GoodsSkuSnInfoController extends BaseController {
     @Resource private GoodsWorkspaceService workspace;
+    @Resource private com.oms.goods.service.goods.impl.GoodsLuckyBagService luckyBags;
+    @RequiresPermissions(value={"goods:info:query","goods:info:edit"},logical=Logical.OR) @GetMapping("/{id}/lucky-bag")
+    public AjaxResult luckyBag(@PathVariable long id){return success(luckyBags.detail(GoodsCompany.current(),id));}
+    @RequiresPermissions("goods:info:edit") @PostMapping("/{id}/lucky-bag/{action}")
+    public AjaxResult luckyBagSave(@PathVariable long id,@PathVariable String action,@RequestBody Map<String,Object> input){if(!Arrays.asList("draft","publish").contains(action))throw new IllegalArgumentException("福袋规则动作无效");return success(luckyBags.save(GoodsCompany.current(),id,input,SecurityUtils.getUsername(),"publish".equals(action)));}
     /** Bounded inventory lookup: one request for a page of SKUs, or a small search result. */
     @RequiresPermissions(value={"wmsInventory:inventory:list","channelInventory:inventory:list"},logical=com.ruoyi.common.security.annotation.Logical.OR)
     @GetMapping("/inventoryLookup")
@@ -41,8 +46,10 @@ public class GoodsSkuSnInfoController extends BaseController {
         List<GoodsExportRow> rows=workspace.goodsExport(GoodsCompany.current(),filter).stream().map(r->workspace.convert(r,GoodsExportRow.class)).collect(Collectors.toList());
         new ExcelUtil<>(GoodsExportRow.class).exportExcel(response,rows,"商品资料");
     }
-    @RequiresPermissions("goods:info:query") @GetMapping("/{id}")
+    @RequiresPermissions(value={"goods:info:query","goods:info:edit"},logical=Logical.OR) @GetMapping("/{id}")
     public AjaxResult getInfo(@PathVariable long id){return success(workspace.goodsDetail(GoodsCompany.current(),id));}
+    @RequiresPermissions(value={"goods:info:query","goods:info:edit"},logical=Logical.OR) @GetMapping("/{id}/gift-references")
+    public AjaxResult giftReferences(@PathVariable long id){return success(workspace.giftReferences(GoodsCompany.current(),id));}
     @RequiresPermissions("goods:info:add") @PostMapping
     @Log(title="商品资料",businessType=BusinessType.INSERT)
     public AjaxResult add(@RequestBody Map<String,Object> data) {

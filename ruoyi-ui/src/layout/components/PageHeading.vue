@@ -10,7 +10,9 @@
 </template>
 <script>
 const descriptions = {
-  '/oms-order/afterSaleRules/returns': ['按店铺维护退回包裹关联、仓库下发与实收分配规则。', 'el-icon-setting'],
+  '/oms-order/gift-editor/index': ['配置赠送条件、模拟购物清单并关联适用店铺组。', 'el-icon-present'],
+  '/oms-order/gifts': ['按店铺组编排赠品策略，查看执行路径并处理赠品售后。', 'el-icon-present'],
+  '/oms-order/afterSaleRules/returns': ['独立设置退回安排、仓库下发、合包与实收处理。', 'el-icon-setting'],
   '/oms-order/platformDocuments': ['集中查看平台订单、退款和换货，按原交易追溯来源及 OMS 业务单据。', 'el-icon-files'],
   '/oms-order/platformExchanges': ['保存平台换货申请与来源版本，跟进原单关联、转单及业务处理。', 'el-icon-document'],
   '/oms-order/platformRefunds': ['保存平台退款原文与版本，跟进同步、转单与来源问题。', 'el-icon-document'],

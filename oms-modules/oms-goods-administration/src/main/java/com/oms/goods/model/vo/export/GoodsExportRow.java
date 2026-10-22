@@ -13,8 +13,7 @@ public class GoodsExportRow {
     @Excel(name="市场价") private java.math.BigDecimal marketPrice;
     @Excel(name="保质期（天）") private String validity;
     @Excel(name="商品描述") private String goodsDesc;
-    @Excel(name="是否福袋",readConverterExp="0=否,1=是") private Integer isFd;
-    @Excel(name="是否赠品",readConverterExp="0=否,1=是") private Integer isGift;
-    @Excel(name="是否套装",readConverterExp="0=否,1=是") private Integer isPackage;
+    @Excel(name="商品形态",readConverterExp="NORMAL=普通商品,BUNDLE=固定套装,LUCKY_BAG=福袋") private String productType;
+    @Excel(name="允许作为赠品",readConverterExp="0=否,1=是") private Integer isGift;
     @Excel(name="备注") private String description;
 }

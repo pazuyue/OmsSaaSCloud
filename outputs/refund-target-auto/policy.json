@@ -1,0 +1,29 @@
+{
+  "auto_create": 1,
+  "create_store_code": "GIFT_V_20261019234013",
+  "create_return_address": "[赠品验收] 退回地址，无实际配送",
+  "create_return_contact": "TEST-GIFT-RETURN",
+  "revision": 3,
+  "enabled": 0,
+  "manual_enabled": 0,
+  "scope": "SAME_ORDER",
+  "allow_append": 0,
+  "max_refunds": 100,
+  "max_quantity": 0,
+  "auto_enabled": 0,
+  "auto_append": 0,
+  "auto_dispatch": 1,
+  "auto_allocate": 0,
+  "allocation_mode": "STRICT",
+  "allow_partial_allocation": 0,
+  "allocation_order": "REFUND_CREATED",
+  "collect_seconds": 120,
+  "logistics_sources": [
+    "PLATFORM",
+    "MANUAL"
+  ],
+  "store_codes": [
+    "GIFT_V_20261019234013"
+  ],
+  "channel_id": 73
+}

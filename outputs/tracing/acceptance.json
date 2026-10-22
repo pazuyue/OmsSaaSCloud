@@ -1,0 +1,95 @@
+{
+  "verified_at": "2026-10-20T10:56:33.696258+00:00",
+  "http_traces": {
+    "/system/user/getInfo": {
+      "trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.83.17924936388781733",
+      "services": [
+        "local::ruoyi-gateway",
+        "local::ruoyi-system"
+      ],
+      "span_count": 25,
+      "has_jdbc": true
+    },
+    "/channel/messages?pageSize=1": {
+      "trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.69.17924936610041659",
+      "services": [
+        "local::oms-channel",
+        "local::ruoyi-gateway"
+      ],
+      "span_count": 29,
+      "has_jdbc": true
+    },
+    "/order/messages?pageSize=1": {
+      "trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.69.17924936891491693",
+      "services": [
+        "local::oms-order",
+        "local::ruoyi-gateway"
+      ],
+      "span_count": 29,
+      "has_jdbc": true
+    },
+    "/order/exchanges/catalog": {
+      "trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.98.17924937191091901",
+      "services": [
+        "local::oms-channel",
+        "local::oms-order",
+        "local::oms-supplychain",
+        "local::ruoyi-gateway"
+      ],
+      "span_count": 33,
+      "has_jdbc": true
+    }
+  },
+  "oap_outage_verified": true,
+  "agents": [
+    {
+      "service": "gateway",
+      "agent_name": "local::ruoyi-gateway"
+    },
+    {
+      "service": "auth",
+      "agent_name": "local::ruoyi-auth"
+    },
+    {
+      "service": "system",
+      "agent_name": "local::ruoyi-system"
+    },
+    {
+      "service": "gen",
+      "agent_name": "local::ruoyi-gen"
+    },
+    {
+      "service": "job",
+      "agent_name": "local::ruoyi-job"
+    },
+    {
+      "service": "file",
+      "agent_name": "local::ruoyi-file"
+    },
+    {
+      "service": "monitor",
+      "agent_name": "local::ruoyi-monitor"
+    },
+    {
+      "service": "goods",
+      "agent_name": "local::oms-modules-goods"
+    },
+    {
+      "service": "supplychain",
+      "agent_name": "local::oms-supplychain"
+    },
+    {
+      "service": "inventory",
+      "agent_name": "local::oms-inventory"
+    },
+    {
+      "service": "channel",
+      "agent_name": "local::oms-channel"
+    },
+    {
+      "service": "order",
+      "agent_name": "local::oms-order"
+    }
+  ],
+  "recovery_trace_id": "4cf2181cd9f64ce5a7bcbe7e121c8c32.69.17924939061372101"
+}

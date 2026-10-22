@@ -1,0 +1,48 @@
+{
+  "refunds": [
+    {
+      "key": "00",
+      "id": 74,
+      "number": "9982026102018392810",
+      "manual_sent": true,
+      "refund_sn": "TK05ab4403e72c4c558a948d1c8ec5cee5",
+      "return_sn": "THK9F6EF383E4E722014593E204BE64A2"
+    },
+    {
+      "key": "01",
+      "id": 75,
+      "number": "9982026102018392811",
+      "refund_sn": "TK8ea1b1051ac442bf9d1d13ca684703da",
+      "return_sn": "THK63F20E38188906F91303D0FAD30104"
+    },
+    {
+      "key": "10",
+      "id": 76,
+      "number": "9982026102018392812",
+      "manual_sent": true,
+      "refund_sn": "TKa2a1cbf634814496aa3a306fa5a45acb",
+      "return_sn": "THK296BDF33683C2F2257DD195CE96B1C"
+    },
+    {
+      "key": "11",
+      "id": 77,
+      "number": "9982026102018392813",
+      "refund_sn": "TK5c6184b21e1740b78d477f2c3cb9a142",
+      "return_sn": "THK88234A9D5F73489E64BEFF316388EB"
+    },
+    {
+      "key": "manualmerge",
+      "id": 78,
+      "number": "9982026102018392814",
+      "confirmed_parcel": 23
+    },
+    {
+      "key": "manualmerge_v2",
+      "id": 79,
+      "number": "9982026102018392815",
+      "confirmed_parcel": 25,
+      "refund_sn": "TK921f24ec1735406eadee846e86d9e5a0",
+      "return_sn": "THKfb21377a3e0c45caaac2561bef5254da"
+    }
+  ]
+}

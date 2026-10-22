@@ -15,6 +15,11 @@
     </description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <version>${skywalking.version}</version>
+        </dependency>
         
         <!-- SpringBoot Admin -->
         <dependency>

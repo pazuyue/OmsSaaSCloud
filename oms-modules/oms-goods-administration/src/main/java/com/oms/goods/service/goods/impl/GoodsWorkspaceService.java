@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class GoodsWorkspaceService {
     @Resource private JdbcTemplate jdbc;
     @Resource private GoodsReferenceClient references;
+    @Resource private GoodsGiftProtection giftProtection;
     private final ObjectMapper json = new ObjectMapper().findAndRegisterModules();
     private static final String GOODS = "goods_sku_sn_info";
     private static final String[] FIELDS = {"skuSn","goodsSn","barcodeSn","goodsName","categoryCode","colorCode","sizeCode","marketPrice","validity","goodsDesc","isFd","isGift","isPackage","description"};
@@ -120,6 +121,7 @@ public class GoodsWorkspaceService {
     @Transactional(rollbackFor=Exception.class)
     public long saveMaster(String company,String kind,Map<String,Object> input) {
         lock(company);Map<String,Object> data=new HashMap<>(input);long id=number(data.get("id"));
+        if(data.containsKey("productType")){String type=text(data.get("productType"));if(!Arrays.asList("NORMAL","BUNDLE","LUCKY_BAG").contains(type))throw new IllegalArgumentException("商品形态无效");int fd="LUCKY_BAG".equals(type)?1:0,kit="BUNDLE".equals(type)?1:0;if(data.containsKey("isFd")&&number(data.get("isFd"))!=fd||data.containsKey("isPackage")&&number(data.get("isPackage"))!=kit)throw new IllegalArgumentException("商品形态与套装、福袋标记不一致");data.put("isFd",fd);data.put("isPackage",kit);}
         if(id<0)throw new IllegalArgumentException("资料 ID 无效");
         if(id>0)owned(table(kind),company,id);
         String name=kind.equals("category")?"name":kind+"Name";required(data,name,kind.equals("category")?100:30,kind.equals("category")?"分类名称":"名称");
@@ -202,20 +204,31 @@ public class GoodsWorkspaceService {
         if(price.signum()<0 || price.compareTo(new BigDecimal("999999999999999.9999"))>0 || price.stripTrailingZeros().scale()>4)throw new IllegalArgumentException("市场价必须非负，最多四位小数");data.put("marketPrice",price);
         String days=text(data.get("validity"));if(!days.isEmpty() && (!days.matches("\\d{1,9}") || Long.parseLong(days)>999999999))throw new IllegalArgumentException("保质期必须为非负整数，单位天");data.put("validity",days.isEmpty()?null:days);
         for(String flag:Arrays.asList("isFd","isGift","isPackage")){String value=text(data.get(flag));if(value.isEmpty())value="0";if(!value.equals("0") && !value.equals("1"))throw new IllegalArgumentException("商品标记只能为是或否");data.put(flag,Integer.valueOf(value));}
+        if(number(data.get("isFd"))==1&&number(data.get("isPackage"))==1)throw new IllegalArgumentException("商品形态只能选择普通商品、固定套装或福袋之一");
         for(String field:Arrays.asList("goodsDesc","description")){String value=text(data.get(field));if(value.length()>10000)throw new IllegalArgumentException("描述或备注不能超过 10000 字符");data.put(field,value.isEmpty()?null:value);}
     }
     @Transactional(rollbackFor=Exception.class)
     public long saveGoods(String company,Map<String,Object> input,String actor) {
-        lock(company);Map<String,Object> data=new HashMap<>(input);long id=number(data.get("id"));
+        Map<String,Object> data=new HashMap<>(input);long id=number(data.get("id"));
+        if(data.containsKey("productType")){String type=text(data.get("productType"));if(!Arrays.asList("NORMAL","BUNDLE","LUCKY_BAG").contains(type))throw new IllegalArgumentException("商品形态无效");int fd="LUCKY_BAG".equals(type)?1:0,kit="BUNDLE".equals(type)?1:0;if(data.containsKey("isFd")&&number(data.get("isFd"))!=fd||data.containsKey("isPackage")&&number(data.get("isPackage"))!=kit)throw new IllegalArgumentException("商品形态与套装、福袋标记不一致");data.put("isFd",fd);data.put("isPackage",kit);}
+        boolean inspect=id>0&&(number(data.get("isGift"))!=1||number(data.get("isFd"))==1||number(data.get("isPackage"))==1);
+        GoodsGiftProtection.Inspection protection=inspect?giftProtection.inspect(company,Collections.singletonList(text(data.get("skuSn")))):null;
+        lock(company);Map<String,Object> old=null;
         if(id<0)throw new IllegalArgumentException("商品 ID 无效");
-        if(id>0){Map<String,Object> old=owned(GOODS,company,id);if(!text(old.get("skuSn")).equals(text(data.get("skuSn"))))throw new IllegalArgumentException("商品创建后不能修改 SKU");}
+        if(id>0){old=owned(GOODS,company,id);if(!text(old.get("skuSn")).equals(text(data.get("skuSn"))))throw new IllegalArgumentException("商品创建后不能修改 SKU");}
         validateGoods(company,data,id);
+        if(number(data.get("isFd"))==1&&number(data.get("isPackage"))==1)throw new IllegalArgumentException("福袋与固定套装不能同时启用");
+        if((number(data.get("isFd"))==1||number(data.get("isPackage"))==1)&&jdbc.queryForObject("SELECT COUNT(*) FROM goods_lucky_bag_component WHERE company_code=? AND component_sku=?",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("该SKU被福袋规则引用，不能改为套装或福袋");
+        if(number(data.get("isFd"))==0&&jdbc.queryForObject("SELECT COUNT(*) FROM goods_lucky_bag WHERE company_code=? AND sku_sn=? AND revision>0",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("已发布福袋身份不能直接取消，请使用新的SKU；停用请进入福袋规则");
+        if(protection!=null&&(number(data.get("isGift"))!=1||number(old.get("isFd"))!=number(data.get("isFd"))||number(old.get("isPackage"))!=number(data.get("isPackage"))))giftProtection.requireUnused(company,Collections.singletonList(text(data.get("skuSn"))),protection);
         if(number(data.get("isPackage"))==1||number(data.get("isFd"))==1)if(jdbc.queryForObject("SELECT COUNT(*) FROM goods_bundle_component WHERE company_code=? AND component_sku=?",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("该SKU已是套装组件，不能改为套装或福袋");
         if(number(data.get("isPackage"))==0&&jdbc.queryForObject("SELECT COUNT(*) FROM goods_bundle WHERE company_code=? AND sku_sn=?",Long.class,company,data.get("skuSn"))>0)throw new IllegalArgumentException("已发布套装不能改为普通库存商品，请使用新的SKU");data.put("createUser",actor);List<String> fields=new ArrayList<>(Arrays.asList(FIELDS));if(id==0)fields.add("createUser");
         return write(GOODS,company,id,data,fields);
     }
     private String goodsWhere(String company,Map<String,Object> filter,List<Object> args) {
         StringBuilder where=new StringBuilder(" WHERE UPPER(g.company_code)=?");args.add(company);
+        if(Boolean.TRUE.equals(filter.get("giftEligible"))){where.append(" AND g.is_gift=1 AND NOT (g.is_fd=1 AND g.is_package=1) AND (g.is_package=0 OR EXISTS (SELECT 1 FROM goods_bundle b WHERE b.company_code=? AND b.sku_sn=g.sku_sn AND b.enabled=1)) AND (g.is_fd=0 OR EXISTS (SELECT 1 FROM goods_lucky_bag l WHERE l.company_code=? AND l.sku_sn=g.sku_sn AND l.revision>0 AND JSON_EXTRACT(l.published_json,'$.enabled')=1))");args.add(company);args.add(company);}
+        String type=text(filter.get("productType"));if(!type.isEmpty()){if(!Arrays.asList("NORMAL","BUNDLE","LUCKY_BAG").contains(type))throw new IllegalArgumentException("商品形态筛选无效");where.append("LUCKY_BAG".equals(type)?" AND g.is_fd=1 AND g.is_package=0":"BUNDLE".equals(type)?" AND g.is_package=1 AND g.is_fd=0":" AND g.is_fd=0 AND g.is_package=0");}
         for(String field:Arrays.asList("skuSn","goodsSn","barcodeSn","colorCode","sizeCode","marketPrice","validity","isFd","isGift","isPackage"))
             if(!text(filter.get(field)).isEmpty()){where.append(" AND g.").append(snake(field)).append("=?");args.add(filter.get(field));}
         for(String field:Arrays.asList("goodsName","goodsDesc","description"))if(!text(filter.get(field)).isEmpty()){where.append(" AND g.").append(snake(field)).append(" LIKE ?");args.add("%"+text(filter.get(field)).replace("!","!!").replace("%","!%").replace("_","!_")+"%");where.append(" ESCAPE '!'");}
@@ -231,6 +244,10 @@ public class GoodsWorkspaceService {
         return where.toString();
     }
     private void enrich(String company,List<Map<String,Object>> goods) {
+        if(goods.isEmpty())return;
+        List<Object> args=new ArrayList<>();args.add(company);args.add(company);args.add(company);for(Map<String,Object> row:goods)args.add(row.get("skuSn"));Map<String,Map<String,Object>> configs=new HashMap<>();
+        for(Map<String,Object> row:rows("SELECT g.sku_sn,b.revision bundle_revision,b.enabled bundle_enabled,b.inventory_mode,l.revision lucky_revision,JSON_UNQUOTE(JSON_EXTRACT(l.published_json,'$.mode')) lucky_mode,JSON_EXTRACT(l.published_json,'$.enabled') lucky_enabled FROM goods_sku_sn_info g LEFT JOIN goods_bundle b ON b.company_code=? AND b.sku_sn=g.sku_sn LEFT JOIN goods_lucky_bag l ON l.company_code=? AND l.sku_sn=g.sku_sn WHERE UPPER(g.company_code)=? AND g.sku_sn IN ("+String.join(",",Collections.nCopies(goods.size(),"?"))+")",args.toArray()))configs.put(text(row.get("skuSn")),row);
+        for(Map<String,Object> row:goods){String type=number(row.get("isFd"))==1?"LUCKY_BAG":number(row.get("isPackage"))==1?"BUNDLE":"NORMAL";row.put("productType",type);Map<String,Object> config=configs.getOrDefault(text(row.get("skuSn")),Collections.emptyMap());boolean lucky="LUCKY_BAG".equals(type);row.put("inventoryMode",config.get("inventoryMode"));row.put("luckyMode",config.get("luckyMode"));row.put("compositionRevision",number(config.get(lucky?"luckyRevision":"bundleRevision")));row.put("compositionEnabled",number(config.get(lucky?"luckyEnabled":"bundleEnabled")));}
         Map<String,Object> choices=options(company);Map<Long,String> cats=new HashMap<>(),colors=new HashMap<>(),sizes=new HashMap<>();
         for(Map<String,Object> row:cast(choices.get("category")))cats.put(number(row.get("id")),text(row.get("path")));
         for(Map<String,Object> row:cast(choices.get("color")))colors.put(number(row.get("id")),text(row.get("colorName")));
@@ -252,7 +269,7 @@ public class GoodsWorkspaceService {
             where+=" AND (sku_sn=? OR barcode_sn=? OR goods_name LIKE ? ESCAPE '!')";
             args.add(term);args.add(term);args.add(term.replace("!","!!").replace("%","!%").replace("_","!_")+"%");
         }
-        return rows("SELECT sku_sn,goods_name,barcode_sn FROM "+GOODS+where+" ORDER BY sku_sn LIMIT 100",args.toArray());
+        return rows("SELECT sku_sn,goods_name,barcode_sn,is_fd FROM "+GOODS+where+" ORDER BY sku_sn LIMIT 100",args.toArray());
     }
     @Transactional(readOnly=true)
     public TableDataInfo goodsPage(String company,Map<String,Object> filter,int pageNum,int pageSize) {
@@ -265,10 +282,14 @@ public class GoodsWorkspaceService {
     }
     @Transactional(readOnly=true)
     public Map<String,Object> goodsDetail(String company,long id){Map<String,Object> row=owned(GOODS,company,id);enrich(company,Collections.singletonList(row));return row;}
+    public List<Map<String,Object>> giftReferences(String company,long id){return giftProtection.references(company,id);}
     @Transactional(rollbackFor=Exception.class)
     public int deleteGoods(String company,List<Long> ids) {
+        GoodsGiftProtection.Inspection protection=giftProtection.inspectIds(company,ids);
         lock(company);if(ids.isEmpty() || ids.size()>100)throw new IllegalArgumentException("每次请选择 1 至 100 个商品");
         List<String> skus=new ArrayList<>();for(long id:ids)skus.add(text(owned(GOODS,company,id).get("skuSn")));
+        giftProtection.requireUnused(company,skus,protection);
+        for(String sku:skus)if(jdbc.queryForObject("SELECT (SELECT COUNT(*) FROM goods_lucky_bag WHERE company_code=? AND sku_sn=?)+(SELECT COUNT(*) FROM goods_lucky_bag_component WHERE company_code=? AND component_sku=?)",Long.class,company,sku,company,sku)>0)throw new IllegalArgumentException("商品已被福袋规则引用，不能删除："+sku);
         for(String sku:skus)if(jdbc.queryForObject("SELECT (SELECT COUNT(*) FROM goods_bundle WHERE company_code=? AND sku_sn=?)+(SELECT COUNT(*) FROM goods_bundle_component WHERE company_code=? AND component_sku=?)",Long.class,company,sku,company,sku)>0)throw new IllegalArgumentException("商品已被套装定义引用，请停用规则并保留资料："+sku);
         R<List<String>> result;try{result=references.references(company,skus,SecurityConstants.INNER);}catch(Exception error){throw new IllegalArgumentException("库存引用检查暂时不可用，请稍后重试");}
         if(result==null || result.getCode()!=200 || result.getData()==null)throw new IllegalArgumentException("库存引用检查失败，请稍后重试");

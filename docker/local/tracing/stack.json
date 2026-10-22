@@ -1,0 +1,51 @@
+{
+  "services": {
+    "skywalking-es": {
+      "image": "docker.elastic.co/elasticsearch/elasticsearch:8.17.4@sha256:413d8df69823e9f41f6008f025fcbaf31a5849ab9c74894731d7ded65543cd56",
+      "environment": {
+        "discovery.type": "single-node",
+        "xpack.security.enabled": "false",
+        "node.store.allow_mmap": "false",
+        "ES_JAVA_OPTS": "-Xms512m -Xmx512m -XX:ActiveProcessorCount=2"
+      },
+      "volumes": ["skywalking-data:/usr/share/elasticsearch/data"],
+      "mem_limit": "1536m",
+      "healthcheck": {
+        "test": ["CMD-SHELL", "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >/dev/null"],
+        "interval": "10s", "timeout": "8s", "retries": 30, "start_period": "30s"
+      },
+      "restart": "unless-stopped"
+    },
+    "skywalking-oap": {
+      "image": "apache/skywalking-oap-server:10.3.0@sha256:902a8fb5302cedc8d896e79b68f8d6437568d23e48d066b6d952efbf05da4f47",
+      "environment": {
+        "SW_STORAGE": "elasticsearch",
+        "SW_STORAGE_ES_CLUSTER_NODES": "skywalking-es:9200",
+        "SW_STORAGE_ES_INDEX_REPLICAS_NUMBER": "0",
+        "SW_STORAGE_ES_SUPER_DATASET_INDEX_SHARDS_FACTOR": "1",
+        "SW_CORE_RECORD_DATA_TTL": "3",
+        "SW_CORE_METRICS_DATA_TTL": "7",
+        "SW_HEALTH_CHECKER": "default",
+        "SW_TELEMETRY": "none",
+        "JAVA_OPTS": "-Xms512m -Xmx1024m -XX:ActiveProcessorCount=2"
+      },
+      "ports": ["127.0.0.1:11800:11800", "127.0.0.1:12800:12800"],
+      "depends_on": {"skywalking-es": {"condition": "service_healthy"}},
+      "mem_limit": "1792m",
+      "healthcheck": {
+        "test": ["CMD-SHELL", "curl -fsS http://127.0.0.1:12800/healthcheck >/dev/null"],
+        "interval": "15s", "timeout": "10s", "retries": 30, "start_period": "60s"
+      },
+      "restart": "unless-stopped"
+    },
+    "skywalking-ui": {
+      "image": "apache/skywalking-ui:10.3.0@sha256:803b3a93e3432a89fa1f94df008b17422f10bd17cba611048c2f4eacee65bcaf",
+      "environment": {"SW_OAP_ADDRESS": "http://skywalking-oap:12800", "JAVA_OPTS": "-Xms64m -Xmx256m -XX:ActiveProcessorCount=2"},
+      "ports": ["127.0.0.1:18090:8080"],
+      "depends_on": {"skywalking-oap": {"condition": "service_healthy"}},
+      "mem_limit": "512m",
+      "restart": "unless-stopped"
+    }
+  },
+  "volumes": {"skywalking-data": {}}
+}

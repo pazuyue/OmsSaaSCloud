@@ -16,6 +16,7 @@ export const retryRefundTask = id => request({ url: `${root}/tasks/${id}/retry`,
 export const orderRefunds = id => request({ url: `${root}/orders/${id}` })
 
 export const refundGoods=id=>request({url:`${root}/business/${id}/goods`})
+export const retryRefundAutoCreate=(id,data)=>request({url:`${root}/business/${id}/goods/auto-create/retry`,method:'post',data})
 export const refundGoodsOptions=id=>request({url:`${root}/business/${id}/goods/options`})
 export const createRefundReturn=(id,data)=>request({url:`${root}/business/${id}/goods/plans`,method:'post',data})
 export const refreshRefundGoods=id=>request({url:`${root}/business/${id}/goods/refresh`,method:'post'})

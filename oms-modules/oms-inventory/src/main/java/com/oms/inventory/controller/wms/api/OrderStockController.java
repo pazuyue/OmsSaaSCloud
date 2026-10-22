@@ -8,6 +8,9 @@ import javax.annotation.Resource;
 import java.util.*;
 @RestController @RequestMapping("/orderStock/internal")
 public class OrderStockController {
+    @Resource private com.oms.inventory.service.impl.LuckyBagInventory luckyPools;
+    @Resource private com.oms.inventory.service.impl.LuckyBagStock luckyStock;
+    @InnerAuth @PostMapping("/lucky-claim") public R<Map<String,Object>> luckyClaim(@RequestParam("company_code") String company,@RequestBody Map<String,Object> input){String c=signalCompany(company);luckyPools.prepare(c,Collections.singletonList(com.oms.common.lucky.LuckyBagRules.text(input,"sku_sn")));return R.ok(luckyStock.claim(c,input));}
     @Resource private com.oms.inventory.service.impl.ExchangeStockLookup exchangeStock;
     @InnerAuth @PostMapping("/exchange-stock") public R<List<Map<String,Object>>> exchangeStock(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command){return R.ok(exchangeStock.lookup(signalCompany(company),command));}
     @Resource private com.oms.inventory.service.impl.OrderStockDiagnosticsService diagnostics;
@@ -35,6 +38,8 @@ public class OrderStockController {
     @Resource private com.oms.inventory.service.impl.OrderWarehouseAllocationService warehouses;
     @InnerAuth @GetMapping("/warehouse-receipts")
     public R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam("channel_id") long channel,@RequestParam("platform_tid") String tid){return R.ok(warehouses.receipts(company,channel,tid));}
+    @InnerAuth @PostMapping("/warehouse-receipts/batch")
+    public R<List<Map<String,Object>>> receiptsBatch(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command){return R.ok(warehouses.receiptsBatch(company,command));}
     @InnerAuth @PostMapping("/warehouse-allocation-preview")
     public R<Map<String,Object>> preview(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command){return R.ok(warehouses.preview(company,command));}
     @InnerAuth @PostMapping("/warehouse-allocate")

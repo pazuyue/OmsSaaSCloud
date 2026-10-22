@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 python3 prepare.py
+python3 sentinel.py prepare
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -14,7 +15,13 @@ for service in json.loads(Path('compose.yaml').read_text())['services'].values()
 if not Path('dist/index.html').is_file():
     raise SystemExit('Missing frontend; run bash docker/local/build-frontend.sh first.')
 PY
-docker compose -f compose.yaml config --quiet
-docker compose -f compose.yaml up -d --wait --wait-timeout 180 mysql redis nacos
+COMPOSE=(docker compose -f compose.yaml)
+if [[ -f generated/tracing-enabled ]]; then
+    python3 tracing.py render
+    COMPOSE+=(-f generated/tracing.compose.json)
+fi
+"${COMPOSE[@]}" config --quiet
+"${COMPOSE[@]}" up -d --wait --wait-timeout 180 mysql redis nacos
 python3 configure.py
-docker compose -f compose.yaml up -d --wait --wait-timeout 300
+python3 tracing.py migrate
+"${COMPOSE[@]}" up -d --wait --wait-timeout 300

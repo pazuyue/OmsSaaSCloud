@@ -1,0 +1,84 @@
+{
+  "case_id": "20261020183928",
+  "created": "2026-10-20 18:39:28",
+  "sku": "RA_20261020183928_A",
+  "target_sku": "RA_20261020183928_B",
+  "channel_name": "[自动退回验收] 20261020183928",
+  "seller": "REFUND_AUTO_20261020183928",
+  "platform_tid": "99420261020183928",
+  "platform_oid": "9942026102018392801",
+  "warehouses": [
+    {
+      "code": "RA_20261020183928_V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 101
+    }
+  ],
+  "claims": [],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 75,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "RA_20261020183928_A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "RA_20261020183928_A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "RA_20261020183928_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 163,
+        "store": "RA_20261020183928_V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 209,
+  "order_id": 125,
+  "order_sn": "SO93c18941886b428b8bdc5152978a34ff",
+  "prepared": true,
+  "shipped": true,
+  "shipment_id": 71,
+  "return_connection": 19,
+  "rule_ready": true,
+  "refund_id": 73,
+  "plan_verified": true,
+  "plan_id": 19,
+  "refund_sn": "TK41994914b0274282bb6b7f91662581ce",
+  "dispatch_verified": true,
+  "return_sn": "THK81e044a3056d46f19f944ccbba0aa388"
+}

@@ -9,6 +9,9 @@ import java.util.*;
 
 @FeignClient(contextId="orderStockClient",name="oms-inventory")
 public interface OrderStockClient {
+    @PostMapping("/orderStock/internal/lucky-claim")
+    R<Map<String,Object>> luckyClaim(@RequestParam("company_code") String company,@RequestBody Map<String,Object> input,
+        @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/diagnostics")
     R<List<Map<String,Object>>> diagnostics(@RequestParam("company_code") String company,@RequestBody List<Map<String,Object>> keys,
         @RequestHeader(SecurityConstants.FROM_SOURCE) String source);

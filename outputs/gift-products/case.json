@@ -1,0 +1,161 @@
+{
+  "case_id": "20261021194225",
+  "prefix": "CG20261021194225",
+  "created": "2026-10-21 19:42:25",
+  "sku": "CG20261021194225A",
+  "b": "CG20261021194225B",
+  "d": "CG20261021194225D",
+  "kit": "CG20261021194225K",
+  "stocked": "CG20261021194225S",
+  "random": "CG20261021194225R",
+  "preset": "CG20261021194225P",
+  "seller": "CG20261021194225",
+  "channel_name": "[复合赠品验收] 20261021194225",
+  "platform_tid": "99320261021194225",
+  "platform_oid": "9932026102119422501",
+  "warehouses": [
+    {
+      "code": "CG20261021194225V",
+      "quantity": 10,
+      "package_count": 0,
+      "id": 106
+    }
+  ],
+  "stages": {
+    "before": {
+      "total": 33,
+      "reserved": 0,
+      "allocated": 8,
+      "available": 25,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 0,
+        "available": 4
+      }
+    },
+    "reserved": {
+      "total": 33,
+      "reserved": 10,
+      "allocated": 4,
+      "available": 19,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 2,
+        "available": 2
+      }
+    },
+    "allocated": {
+      "total": 33,
+      "reserved": 10,
+      "allocated": 4,
+      "available": 19,
+      "warehouse": {
+        "actual": 33,
+        "locked": 14,
+        "available": 19
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 2,
+        "available": 2
+      }
+    },
+    "voided": {
+      "total": 33,
+      "reserved": 0,
+      "allocated": 8,
+      "available": 25,
+      "warehouse": {
+        "actual": 33,
+        "locked": 8,
+        "available": 25
+      },
+      "pools": {
+        "consumed": 0,
+        "occupied": 0,
+        "available": 4
+      }
+    }
+  },
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 80,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "CG20261021194225A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "CG20261021194225A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "CG20261021194225V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 174,
+        "store": "CG20261021194225V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "goods_ids": {
+    "sku": 241,
+    "b": 242,
+    "d": 243,
+    "kit": 244,
+    "stocked": 245,
+    "random": 246,
+    "preset": 247
+  },
+  "random_allocation": 18,
+  "preset_allocation": 19,
+  "gift_group": 10,
+  "shop_group": 8,
+  "gifts_ready": true,
+  "platform_id": 219,
+  "order_id": 135,
+  "order_sn": "SO40166ddaf3b94ed985fcc3e8e65f0090",
+  "prepared": true,
+  "verified": true,
+  "voided": true
+}

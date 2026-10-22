@@ -1,0 +1,73 @@
+{
+  "case_id": "20261021170928",
+  "created": "2026-10-21 17:09:28",
+  "sku": "DOC_20261021170928",
+  "seller": "DOC_20261021170928",
+  "channel_name": "[单据信息验收] 20261021170928",
+  "platform_tid": "99620261021170928",
+  "platform_oid": "9962026102117092801",
+  "mode": "multi",
+  "warehouses": [
+    {
+      "code": "DOC_V_20261021170928",
+      "quantity": 10,
+      "package_count": 0,
+      "id": 105
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 79,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "DOC_20261021170928",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "DOC_20261021170928",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "DOC_V_20261021170928",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 173,
+        "store": "DOC_V_20261021170928",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 216,
+  "order_id": 132,
+  "order_sn": "SOc73a646791f84f72a2714fe6f5535aaa",
+  "completed": true
+}

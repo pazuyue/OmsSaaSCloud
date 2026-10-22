@@ -18,9 +18,9 @@ def main():
     cache=Path.home()/'.cache/oms-local'
     for module in ['oms-common-core','oms-order','oms-supplychain']:
         shutil.copytree(ROOT/'oms-modules'/module/'src',cache/'source/oms-modules'/module/'src',dirs_exist_ok=True)
-    suites=['TenantRoutingTest','RefundGoodsServiceTest','RefundServiceTest','ExchangeServiceTest','ExchangeReturnTest','RefundReturnTest','RefundParcelsTest','RefundParcelPolicyTest','RefundAllocationContextTest','RefundParcelAutomationTest','RefundParcelReviewTest','RefundSharedScopeTest','PurchaseWorkspaceTest','WmsLogQueryTest']
+    suites=['TenantRoutingTest','RefundSyncWakeupTest','RefundGoodsServiceTest','RefundReturnAutoCreateTest','RefundReturnDispatchAutomationTest','RefundServiceTest','ExchangeServiceTest','ExchangeReturnTest','RefundReturnTest','RefundParcelsTest','RefundParcelPolicyTest','RefundAllocationContextTest','RefundParcelAutomationTest','RefundParcelReviewTest','RefundSharedScopeTest','PurchaseWorkspaceTest','WmsLogQueryTest']
     env=dict(os.environ,ORDER_TEST_URL=test_jdbc_url('order_workspace_test'),PURCHASE_TEST_URL=test_jdbc_url('purchase_workspace_test'),INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
-    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-supplychain','-am','-Dtest='+','.join(suites),'-Dsurefire.failIfNoSpecifiedTests=false','test']
+    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-order,oms-modules/oms-supplychain','-am','-Dtest='+','.join(suites),'-Dsurefire.failIfNoSpecifiedTests=false','clean','test']
     with (HERE/'logs/refund-goods-tests.log').open('w') as log:result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
     if result.returncode:raise SystemExit('Refund goods tests failed; see docker/local/logs/refund-goods-tests.log')
     total=0

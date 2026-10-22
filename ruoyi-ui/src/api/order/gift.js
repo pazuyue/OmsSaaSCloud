@@ -3,7 +3,7 @@ const root = '/order/gifts'
 export const giftGroups = () => request({ url: `${root}/groups` })
 export const saveGiftGroup = data => request({ url: `${root}/groups`, method: 'post', data })
 export const giftCatalog = () => request({ url: `${root}/catalog` })
-export const giftGoodsSearch = data => request({ url: `${root}/goods-search`, method: 'post', data })
+export const giftGoodsSearch = data => request({ url: `${root}/goods-search`, method: 'post', headers: { repeatSubmit: false }, data })
 export const giftRecords = params => request({ url: `${root}/records`, params })
 export const orderGifts = id => request({ url: `${root}/orders/${id}` })
 export const giftPreview = id => request({ url: `${root}/orders/${id}/preview`, method: 'post' })
@@ -14,3 +14,9 @@ export const createGiftReturn = (id, data) => request({ url: `${root}/refunds/${
 export const giftReturnAction = (refund, plan, document, action, data) => request({ url: `${root}/refunds/${refund}/plans/${plan}/documents/${document}/${action}`, method: 'post', data })
 
 export const giftPreviewNumber = number => request({url:`${root}/preview`,method:'post',data:{number}})
+
+export const giftShopGroups = () => request({url:`${root}/shop-groups`})
+export const saveGiftShopGroup = data => request({url:`${root}/shop-groups`,method:'post',data})
+export const giftShopEffective = channel => request({url:`${root}/shops/${channel}/effective`})
+export const resolveGiftGoods = data => request({url:`${root}/goods-resolve`,method:'post',headers:{repeatSubmit:false},data})
+export const simulateGiftStrategy = data => request({url:`${root}/simulate`,method:'post',headers:{repeatSubmit:false},data})

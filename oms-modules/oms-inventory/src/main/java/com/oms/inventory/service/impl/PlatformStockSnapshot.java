@@ -7,11 +7,17 @@ import javax.annotation.Resource;
 import java.util.*;
 @Service public class PlatformStockSnapshot {
  @Resource JdbcTemplate db;
+ @org.springframework.beans.factory.annotation.Autowired(required=false) LuckyBagInventory luckyBags;
  static long n(Map<String,Object> r,String k){Object x=r.get(k);return x==null?0:Long.parseLong(x.toString());}
  static String s(Map<String,Object> r,String k){return r.get(k)==null?"":r.get(k).toString();}
  static void require(boolean ok,String m){if(!ok)throw new IllegalArgumentException(m);}
  @SuppressWarnings("unchecked") @Transactional(isolation=Isolation.REPEATABLE_READ,timeout=15)
  public Map<String,Object> snapshot(String company,Map<String,Object> input){
+   if(!s(input,"lucky_sku").isEmpty()){
+    require(luckyBags!=null&&input.get("allowed_warehouses") instanceof List,"福袋库存来源或允许仓缺失");
+    List<String> stores=new ArrayList<>();for(Object item:(List<?>)input.get("allowed_warehouses"))stores.add(String.valueOf(item));require(stores.size()<=100,"福袋允许仓过多");
+    Map<String,Object> result=luckyBags.snapshot(company,s(input,"lucky_sku"),n(input,"channel_id"),stores);if(n(input,"lucky_enabled")==0)result.put("available",0);return result;
+   }
   long channel=n(input,"channel_id");require(channel>0&&input.get("components") instanceof List,"库存查询参数无效");List<Map<String,Object>> components=(List<Map<String,Object>>)input.get("components");require(!components.isEmpty()&&components.size()<=50,"组件范围无效");boolean publicStock=Boolean.TRUE.equals(input.get("allow_public_stock"));components=new ArrayList<>(components);components.sort(Comparator.comparing(x->s(x,"sku_sn")));
   long global=Long.MAX_VALUE;Map<String,Long> sets=new TreeMap<>();boolean first=true;List<Map<String,Object>> facts=new ArrayList<>();Set<String> seen=new HashSet<>();
   for(Map<String,Object> part:components){String sku=s(part,"sku_sn");long coefficient=n(part,"quantity");require(!sku.isEmpty()&&sku.length()<=128&&seen.add(sku)&&coefficient>0,"商品或配比无效");

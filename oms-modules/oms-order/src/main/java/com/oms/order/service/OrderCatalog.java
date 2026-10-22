@@ -12,6 +12,8 @@ public class OrderCatalog {
     @Resource private OrderGoodsClient goods;
     @Resource private com.oms.common.api.OrderWarehouseClient warehouses;
     public Map<String,Object> searchGoods(String company,Map<String,Object> query){return data(goods.search(company,query,SecurityConstants.INNER));}
+    public void protectGift(String company,long group,String name,String token,Collection<String> skus){Map<String,Object> input=new HashMap<>();input.put("group_id",group);input.put("group_name",name);input.put("request_token",token);input.put("skus",new ArrayList<>(skus));require(Boolean.TRUE.equals(data(goods.protectGift(company,input,SecurityConstants.INNER))),"赠品商品引用保护未确认");}
+    public void refreshGift(String company,long group){Map<String,Object> input=new HashMap<>();input.put("group_id",group);require(Boolean.TRUE.equals(data(goods.refreshGift(company,input,SecurityConstants.INNER))),"赠品商品引用刷新未确认");}
     public List<Map<String,Object>> warehouses(String company){return data(warehouses.stores(company,SecurityConstants.INNER));}
     public List<Map<String,Object>> channels(String company){return data(channels.channels(company,SecurityConstants.INNER));}
     public Map<String,List<Map<String,Object>>> goods(String company,List<String> skus){Map<String,List<Map<String,Object>>> result=new HashMap<>();for(Map<String,Object> row:data(goods.goods(company,skus,SecurityConstants.INNER)))result.computeIfAbsent(text(row,"sku_sn"),k->new ArrayList<>()).add(row);return result;}

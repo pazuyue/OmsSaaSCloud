@@ -1,0 +1,51 @@
+package com.oms.order.service;
+
+import org.junit.jupiter.api.*;
+import java.util.*;
+import java.util.concurrent.*;
+import com.ruoyi.common.core.domain.R;
+import static com.oms.order.service.OrderValues.*;
+import static com.oms.order.service.RefundValues.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+
+class RefundReturnDispatchAutomationTest {
+    RefundParcelAutomationTest f;RefundReturnDispatchAutomation dispatch;Map<String,Object> actual;
+    @BeforeAll static void start(){RefundParcelAutomationTest.start();}
+    @BeforeEach void setup(){
+        f=new RefundParcelAutomationTest();f.setup();dispatch=new RefundReturnDispatchAutomation();dispatch.refunds=f.f.f.refunds;dispatch.policies=f.policy;dispatch.goods=f.f.goods;dispatch.returns=f.auto.returns;f.auto.dispatcher=dispatch;f.f.goods.dispatchPolicy=f.policy;
+        actual=m("id",1,"return_sn","THK_AUTO","quantity",1,"accepted_quantity",0,"posted_quantity",0,"pending_review_count",0,"dispatch_state","ACCEPTED","documents",Collections.singletonList(m("id",1,"cancel_state","NONE","receipt_state","WAITING")));
+        when(dispatch.returns.prepare(eq("VERIFY"),eq(f.plan),anyMap(),anyString())).thenReturn(R.ok(actual));when(dispatch.returns.detail(eq("VERIFY"),eq(f.plan),anyString())).thenReturn(R.ok(actual));
+    }
+    @AfterEach void cleanup(){f.cleanup();}
+    void configure(String mode,boolean enabled){Map<String,Object> p=f.policy.get("VERIFY",1);p.putAll(m("merge_mode",mode,"auto_dispatch",enabled?1:0,"store_codes",Arrays.asList("V")));f.policy.save("VERIFY",1,p,"test");}
+    Map<String,Object> plan(){return f.f.plan(f.plan);}
+    void bound(){f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_state='LINKED',parcel_resolution='MANUAL_LINKED' WHERE id=?",f.plan);when(dispatch.returns.parcels(anyString(),anyLong(),anyString())).thenReturn(R.ok(Collections.singletonList(m("id",7,"dispatch_after",java.time.LocalDateTime.now().plusMinutes(5).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),"members",Collections.singletonList(m("plan_id",f.plan,"active",1))))));}
+    @Test void independentReturnDispatchesWithoutLogisticsOrParcelAssociation(){configure("NONE",true);f.auto.process("VERIFY",f.f.refund);assertEquals("SENT",plan().get("auto_dispatch_state"));assertEquals("ACTIVE",plan().get("state"));verify(dispatch.returns).prepare(eq("VERIFY"),eq(f.plan),anyMap(),anyString());verify(dispatch.returns,never()).attachParcel(anyString(),anyLong(),anyMap(),anyString());assertEquals(0,number(plan(),"posted_quantity"));}
+    @Test void manualCreatedPlanCanBeDispatchedByBackgroundScan(){configure("NONE",true);f.auto.scan("VERIFY");assertEquals("SENT",plan().get("auto_dispatch_state"));f.auto.scan("VERIFY");verify(dispatch.returns,times(1)).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void manualDispatchSettingDoesNotAutomaticallySend(){configure("NONE",false);f.auto.process("VERIFY",f.f.refund);verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void manualMergeWaitsForHumanConfirmationThenDispatchesWithoutCollectionDelay(){configure("MANUAL",true);f.auto.process("VERIFY",f.f.refund);assertEquals("WAIT_ASSOCIATION",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());bound();f.auto.process("VERIFY",f.f.refund);assertEquals("SENT",plan().get("auto_dispatch_state"));}
+    @Test void automaticMergeStillWaitsForLogistics(){configure("AUTO",true);f.auto.process("VERIFY",f.f.refund);assertEquals("WAIT_LOGISTICS",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void automaticMergeHonoursCollectionWindow(){configure("AUTO",true);bound();f.auto.process("VERIFY",f.f.refund);assertEquals("COLLECTING",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void existingAssociationDoesNotGetSplitWhenMergingIsTurnedOff(){configure("NONE",true);f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_state='LINKED' WHERE id=?",f.plan);f.auto.process("VERIFY",f.f.refund);assertEquals("MANUAL",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void lateSupplementAndManualStopsCannotBeAutomaticallyResumed(){configure("NONE",true);f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_manual_dispatch=1 WHERE id=?",f.plan);f.auto.process("VERIFY",f.f.refund);assertEquals("HELD",plan().get("auto_dispatch_state"));f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_manual_dispatch=0 WHERE id=?",f.plan);f.f.goods.action("VERIFY",f.f.refund,f.plan,0,"cancel",f.f.command(f.plan),"operator");f.f.f.db.update("UPDATE oms_refund_return_plan SET state='PLANNED' WHERE id=?",f.plan);f.f.goods.retryAutoDispatch("VERIFY",f.f.refund);f.auto.process("VERIFY",f.f.refund);assertEquals(1,number(plan(),"auto_dispatch_hold"));assertEquals("HELD",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void activeLeasePreventsDuplicateWorkers(){configure("NONE",true);f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_lease_token='worker',parcel_lease_until=DATE_ADD(NOW(),INTERVAL 1 MINUTE) WHERE id=?",f.plan);f.auto.process("VERIFY",f.f.refund);verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void serviceFailureRetriesFiveTimesThenWaitsForExplicitRetry(){configure("NONE",true);when(dispatch.returns.prepare(anyString(),anyLong(),anyMap(),anyString())).thenThrow(new IllegalStateException("warehouse unavailable"));for(int i=0;i<5;i++)f.auto.process("VERIFY",f.f.refund);assertEquals("FAILED",plan().get("auto_dispatch_state"));assertEquals(5,number(plan(),"auto_dispatch_attempts"));assertEquals(1,number(f.f.f.refunds.businessList("VERIFY",Collections.singletonMap("task","ISSUE")),"total"));f.auto.process("VERIFY",f.f.refund);verify(dispatch.returns,times(5)).prepare(anyString(),anyLong(),anyMap(),anyString());f.f.goods.retryAutoDispatch("VERIFY",f.f.refund);doReturn(R.ok(actual)).when(dispatch.returns).prepare(anyString(),anyLong(),anyMap(),anyString());f.auto.process("VERIFY",f.f.refund);assertEquals("SENT",plan().get("auto_dispatch_state"));}
+    @Test void changedSourceVersionAndConflictsStayVisibleWithoutSending(){configure("NONE",true);f.f.f.db.update("UPDATE oms_platform_refund SET version=version+1 WHERE id=?",f.f.f.refunds.business("VERIFY",f.f.refund,false).get("platform_refund_id"));f.auto.process("VERIFY",f.f.refund);assertEquals("WAIT_REVIEW",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void supplementIssueIsNotBypassedByIndependentMode(){configure("NONE",true);f.f.f.db.update("UPDATE oms_refund_return_plan SET parcel_state='NEED_CHECK',parcel_issue='{}' WHERE id=?",f.plan);f.auto.process("VERIFY",f.f.refund);assertEquals("MANUAL",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void switchingOffWarehouseScopeIsCheckedBeforeDispatch(){configure("NONE",true);Map<String,Object> p=f.policy.get("VERIFY",1);p.put("store_codes",Collections.singletonList("OTHER"));f.f.f.db.update("UPDATE oms_refund_parcel_config SET policy=? WHERE company_code='VERIFY'",encode(p));f.auto.process("VERIFY",f.f.refund);assertEquals("MANUAL",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void anotherTenantCannotRunThisPlan(){configure("NONE",true);assertThrows(IllegalArgumentException.class,()->dispatch.process("OTHER",f.f.refund));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void stoppedShopDoesNotSendAnyWarehouseCommand(){configure("NONE",true);when(f.policy.catalog.validateShop("VERIFY",1)).thenThrow(new IllegalArgumentException("shop stopped"));f.auto.process("VERIFY",f.f.refund);assertEquals("WAIT_SHOP",plan().get("auto_dispatch_state"));verify(dispatch.returns,never()).prepare(anyString(),anyLong(),anyMap(),anyString());}
+    @Test void concurrentWorkersShareOneWarehouseSubmission() throws Exception {
+        configure("NONE",true);CountDownLatch entered=new CountDownLatch(1),release=new CountDownLatch(1);ExecutorService workers=Executors.newSingleThreadExecutor();
+        when(dispatch.returns.prepare(anyString(),anyLong(),anyMap(),anyString())).thenAnswer(call->{entered.countDown();assertTrue(release.await(10,TimeUnit.SECONDS));return R.ok(actual);});
+        try{Future<?> first=workers.submit(()->f.auto.process("VERIFY",f.f.refund));assertTrue(entered.await(10,TimeUnit.SECONDS));f.auto.process("VERIFY",f.f.refund);release.countDown();first.get(10,TimeUnit.SECONDS);verify(dispatch.returns,times(1)).prepare(anyString(),anyLong(),anyMap(),anyString());assertEquals("SENT",plan().get("auto_dispatch_state"));}finally{release.countDown();workers.shutdownNow();}
+    }
+    @Test void confirmingManualAssociationImmediatelyMakesTheWaitingPlanDue(){
+        configure("MANUAL",true);f.auto.process("VERIFY",f.f.refund);assertEquals("WAIT_ASSOCIATION",plan().get("auto_dispatch_state"));
+        doAnswer(call->{when(dispatch.returns.parcels(anyString(),anyLong(),anyString())).thenReturn(R.ok(Collections.singletonList(m("id",7,"members",Collections.singletonList(m("plan_id",f.plan,"active",1))))));return R.ok(m("id",7));}).when(dispatch.returns).attachParcel(anyString(),anyLong(),anyMap(),anyString());
+        Map<String,Object> body=f.f.version();body.putAll(m("plan_version",plan().get("control_version"),"carrier_code","SF","waybill","MANUAL_READY","reason","confirmed source","evidence","parcel proof"));f.workspace.attach("VERIFY",f.f.refund,f.plan,body,"operator");
+        assertEquals(1,f.f.f.db.queryForObject("SELECT COUNT(*) FROM oms_refund_return_plan WHERE id=? AND parcel_next_attempt<=NOW()",Integer.class,f.plan));f.auto.scan("VERIFY");assertEquals("SENT",plan().get("auto_dispatch_state"));
+    }
+}

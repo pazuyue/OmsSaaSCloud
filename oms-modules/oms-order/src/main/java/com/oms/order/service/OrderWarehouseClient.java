@@ -21,6 +21,8 @@ public interface OrderWarehouseClient {
     R<Map<String,Object>> virtualOutbound(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @GetMapping("/orderStock/internal/warehouse-receipts")
     R<List<Map<String,Object>>> receipts(@RequestParam("company_code") String company,@RequestParam("channel_id") long channel,@RequestParam("platform_tid") String tid,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/orderStock/internal/warehouse-receipts/batch")
+    R<List<Map<String,Object>>> receiptsBatch(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/warehouse-allocation-preview")
     R<Map<String,Object>> preview(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/warehouse-allocate")

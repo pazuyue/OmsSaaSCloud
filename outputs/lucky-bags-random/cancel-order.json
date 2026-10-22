@@ -1,0 +1,26 @@
+{
+  "case_id": "20261021125335",
+  "created": "2026-10-21 12:53:35",
+  "sku": "FDR20261021125335",
+  "seller": "RANDOM_20261021125335",
+  "channel_name": "[随机福袋验收] 20261021125335",
+  "channel_id": 77,
+  "warehouses": [
+    {
+      "code": "FDR_V_20261021125335",
+      "quantity": 0,
+      "package_count": 1,
+      "id": 103
+    }
+  ],
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "received": true,
+  "configured": true,
+  "platform_tid": "99320261021125335",
+  "platform_oid": "9932026102112533501",
+  "platform_id": 212,
+  "order_id": 128,
+  "order_sn": "SO89cc127e034c467e9340c5431a6b0df7"
+}

@@ -53,6 +53,13 @@ class TenantRoutingTest {
         MockHttpServletRequest request=new MockHttpServletRequest("GET","/orderStock/internal/demands");request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");filter().doFilter(request,new MockHttpServletResponse(),(req,res)->assertEquals("second",DynamicDataSourceContextHolder.peek()));
         request.setParameter("company_code","UNKNOWN");MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(request,rejected,(req,res)->fail("unknown internal company"));assertEquals(503,rejected.getStatus());assertNull(DynamicDataSourceContextHolder.peek());
     }
+    @Test void giftCatalogInternalCallsUseTrustedCompanyAndPublicCannotOverride() throws Exception {
+        for(String path:Arrays.asList("/giftCatalog/internal/references","/orderCatalog/internal/gift-protection","/orderCatalog/internal/gift-protection/refresh")){
+            MockHttpServletRequest request=new MockHttpServletRequest("POST",path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");java.util.concurrent.atomic.AtomicBoolean called=new java.util.concurrent.atomic.AtomicBoolean();
+            filter().doFilter(request,new MockHttpServletResponse(),(req,res)->{called.set(true);assertEquals("second",DynamicDataSourceContextHolder.peek());});assertTrue(called.get());assertNull(DynamicDataSourceContextHolder.peek());
+            MockHttpServletRequest untrusted=new MockHttpServletRequest("POST",path);untrusted.addParameter("company_code","BETA");MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(untrusted,rejected,(req,res)->fail("public company override"));assertEquals(400,rejected.getStatus());
+        }
+    }
     @Test void requestBoundaryClearsContextAfterFailureAndDuplicateIdentityIsRejected() throws Exception {
         MockHttpServletRequest request=new MockHttpServletRequest("GET","/productInventory");DynamicDataSourceContextHolder.push("stale");assertThrows(javax.servlet.ServletException.class,()->filter().doFilter(request,new MockHttpServletResponse(),(req,res)->{assertEquals("master",DynamicDataSourceContextHolder.peek());throw new javax.servlet.ServletException("expected");}));assertNull(DynamicDataSourceContextHolder.peek());
         request.addParameter("company_code",new String[]{"QM","BETA"});MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(request,rejected,(req,res)->fail("duplicate identity"));assertEquals(400,rejected.getStatus());

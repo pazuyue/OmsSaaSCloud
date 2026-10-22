@@ -91,3 +91,5 @@ export const applyOrderRecipient = (id, data) => request({ url: `${base}/platfor
 export const withdrawOrderForUpdate = (id, data) => request({ url: `${base}/platform/${id}/updates/withdraw`, method: 'post', data, timeout: 60000 })
 
 export const orderUpdateEvent = (id, event) => request({ url: `${base}/platform/${id}/updates/events/${event}` })
+
+export const addOrderNote = (id, note) => request({ url: `${base}/business/${id}/notes`, method: 'post', data: { note } })

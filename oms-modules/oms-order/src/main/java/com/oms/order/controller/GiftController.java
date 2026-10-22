@@ -10,14 +10,21 @@ import java.util.*;
 
 @RestController @RequestMapping("/gifts") public class GiftController {
     @Resource GiftService gifts;
+    @Resource GiftConfiguration configuration;
+    @Resource GiftStrategyDesigner designer;
     @Resource OrderCatalog catalog;
     @Resource RefundGoodsService goods;
     @Resource RefundParcelAutomation parcels;
     private String company(){return OrderValues.company(SecurityUtils.getLoginUser().getCompanyCode());}
     @RequiresPermissions("order:gift:list") @GetMapping("/groups") public AjaxResult groups(){return AjaxResult.success(gifts.groups(company()));}
     @RequiresPermissions("order:gift:config") @PostMapping("/groups") public AjaxResult save(@RequestBody Map<String,Object> body){return AjaxResult.success(gifts.save(company(),body,SecurityUtils.getUsername()));}
+    @RequiresPermissions("order:gift:list") @GetMapping("/shop-groups") public AjaxResult shopGroups(){return AjaxResult.success(configuration.scopes(company()));}
+    @RequiresPermissions("order:gift:config") @PostMapping("/shop-groups") public AjaxResult saveShopGroup(@RequestBody Map<String,Object> body){Map<String,Object> saved=configuration.save(company(),body,SecurityUtils.getUsername());gifts.invalidate(company());return AjaxResult.success(saved);}
+    @RequiresPermissions("order:gift:list") @GetMapping("/shops/{channel}/effective") public AjaxResult effective(@PathVariable long channel){return AjaxResult.success(configuration.effective(company(),channel,gifts.groups(company())));}
     @RequiresPermissions("order:gift:list") @GetMapping("/catalog") public AjaxResult catalog(){return AjaxResult.success(catalog.channels(company()));}
     @RequiresPermissions("order:gift:config") @PostMapping("/goods-search") public AjaxResult search(@RequestBody Map<String,Object> query){return AjaxResult.success(catalog.searchGoods(company(),query));}
+    @RequiresPermissions("order:gift:config") @PostMapping("/goods-resolve") public AjaxResult resolve(@RequestBody Map<String,Object> body){return AjaxResult.success(designer.resolve(company(),body));}
+    @RequiresPermissions("order:gift:config") @PostMapping("/simulate") public AjaxResult simulate(@RequestBody Map<String,Object> body){return AjaxResult.success(designer.simulate(company(),body));}
     @RequiresPermissions("order:gift:query") @GetMapping("/records") public AjaxResult records(@RequestParam Map<String,String> query){return AjaxResult.success(gifts.records(company(),query));}
     @RequiresPermissions("order:gift:query") @GetMapping("/orders/{order}") public AjaxResult report(@PathVariable long order){return AjaxResult.success(gifts.report(company(),order));}
     @RequiresPermissions("order:gift:query") @PostMapping("/preview") public AjaxResult previewNumber(@RequestBody Map<String,Object> body){return AjaxResult.success(gifts.previewNumber(company(),OrderValues.text(body,"number")));}

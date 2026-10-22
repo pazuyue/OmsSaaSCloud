@@ -13,8 +13,8 @@
     <el-alert v-if="listError" title="渠道库存加载失败，请刷新重试" type="error" :closable="false" show-icon />
     <el-table v-loading="loading" :data="rows" row-key="id" :empty-text="listError ? '加载失败' : '暂无符合条件的渠道库存'">
       <el-table-column label="渠道" min-width="170" :fixed="mobile ? false : 'left'"><template slot-scope="s"><strong>{{ channelName(s.row.channelId) }}</strong><div class="muted">渠道 ID {{ s.row.channelId }}</div></template></el-table-column>
-      <el-table-column label="商品 / SKU" min-width="220"><template slot-scope="s"><el-button type="text" @click="open(s.row)">{{ goodsName(s.row.skuSn) }}</el-button><div class="muted">{{ s.row.skuSn }}</div></template></el-table-column>
-      <el-table-column v-for="c in quantities" :key="c.key" :label="c.label" :prop="c.key" width="125" align="right" />
+      <el-table-column label="商品 / SKU" min-width="220"><template slot-scope="s"><el-button type="text" @click="open(s.row)">{{ goodsName(s.row.skuSn) }}</el-button><div class="muted">{{ s.row.skuSn }} <el-tag v-if="bagMap[s.row.skuSn]" size="mini">福袋 · 袋</el-tag></div><lucky-bag-ledger v-if="bagMap[s.row.skuSn]" :sku="s.row.skuSn" :channel-id="s.row.channelId"/></template></el-table-column>
+      <el-table-column v-for="c in quantities" :key="c.key" :label="c.label" width="130" align="right"><template slot-scope="s">{{ s.row[c.key] }} {{ bagMap[s.row.skuSn] ? '袋' : '件' }}</template></el-table-column>
       <el-table-column label="记录更新时间" prop="modifyTime" width="165" />
       <el-table-column label="操作" width="100" :fixed="mobile ? false : 'right'"><template slot-scope="s"><el-button type="text" @click="open(s.row)">查看详情</el-button></template></el-table-column>
     </el-table>
@@ -25,6 +25,7 @@
       <div v-loading="detailLoading" class="inventory-detail">
         <div v-if="detail" class="inventory-toolbar"><div><h2>{{ channelName(detail.channelId) }}</h2><span>{{ goodsName(detail.skuSn) }} <span class="muted">· {{ detail.skuSn }}</span></span></div><el-button size="small" icon="el-icon-refresh" @click="refreshDetail">刷新详情</el-button></div>
         <el-alert v-if="detailError" title="详情加载失败或无权访问，请刷新重试" type="error" :closable="false" show-icon />
+        <template v-else-if="detail && detail.goodsType==='LUCKY_BAG'"><div class="quantity-cards"><div v-for="c in quantities" :key="c.key"><span class="muted">{{ c.label }}</span><strong>{{ detail[c.key] }} 袋</strong></div></div><el-alert :title="detail.checkMessage" :type="detail.checkStatus==='CONSISTENT'?'success':'warning'" :closable="false" show-icon/><p class="muted">福袋父SKU按袋记渠道额度，实物组件按件占用；订单固定原组成后履约。</p><lucky-bag-ledger :sku="detail.skuSn" :channel-id="detail.channelId"/></template>
         <template v-else-if="detail && detail.reservationSummary">
           <div class="quantity-cards"><div v-for="c in quantities" :key="c.key"><span class="muted">{{ c.label }}</span><strong>{{ detail[c.key] }}</strong></div></div>
           <el-alert :title="detail.checkMessage" :type="detail.checkStatus === 'CONSISTENT' ? 'success' : 'warning'" :closable="false" show-icon />
@@ -65,15 +66,17 @@
 </template>
 
 <script>
+import LuckyBagLedger from '@/views/oms/inventory/LuckyBagLedger'
 import { saveAs } from 'file-saver'
 import { channelInventoryList, channelInventoryDetail, channelInventoryRows, channelInventoryOptions } from '@/api/wmsInventory/channel'
 import { lookupGoods } from '@/api/wmsInventory/workspace'
 const defaults = () => ({ channelId: undefined, skuSn: '', onlyStock: false, pageNum: 1, pageSize: 20 })
 export default {
+  components: { LuckyBagLedger },
   name: 'ChannelInventory',
   data() {
     return {
-      query: defaults(), rows: [], total: 0, loading: false, listError: false, channelOptions: [], goodsOptions: [], channelMap: {}, goodsMap: {}, channelsSearching: false, goodsSearching: false,
+      query: defaults(), rows: [], total: 0, loading: false, listError: false, channelOptions: [], goodsOptions: [], channelMap: {}, goodsMap: {}, bagMap: {}, channelsSearching: false, goodsSearching: false,
       drawer: false, detail: null, detailLoading: false, detailError: false, tab: 'sources', tabRows: [], tabTotal: 0, tabLoading: false, tabError: false, tabQuery: { pageNum: 1, pageSize: 20 }, onlyOccupied: false,
       quantities: [{ key: 'availableStock', label: '渠道可售' }, { key: 'quotaStock', label: '普通额度' }, { key: 'allocatedStock', label: '未占用锁库' }, { key: 'pendingStock', label: '待占需求' }, { key: 'reservedStock', label: '订单预占' }, { key: 'frozenStock', label: '冻结' }],
       sourceQuantities: [{ key: 'originalQuantity', label: '原锁库' }, { key: 'remainingQuantity', label: '剩余锁库' }, { key: 'occupiedQuantity', label: '其中订单占用' }, { key: 'releasableQuantity', label: '未占用余额' }, { key: 'consumedQuantity', label: '已出库' }, { key: 'releasedQuantity', label: '已释放' }],
@@ -93,7 +96,7 @@ export default {
     search() { this.query.pageNum = 1; this.searchPage() }, searchPage() { this.syncRoute(); this.loadList() }, reset() { this.query = defaults(); this.searchPage() },
     searchChannels(keyword) { clearTimeout(this.channelTimer); const seq = ++this.channelSeq; this.channelTimer = setTimeout(async() => { this.channelsSearching = true; try { const r = await channelInventoryOptions({ keyword }); if (seq === this.channelSeq) { this.channelOptions = r.data; r.data.forEach(c => this.$set(this.channelMap, c.channelId, c.channelName)) } } catch (_) { if (seq === this.channelSeq) this.channelOptions = [] } finally { if (seq === this.channelSeq) this.channelsSearching = false } }, 300) },
     searchGoods(keyword) { clearTimeout(this.goodsTimer); const seq = ++this.goodsSeq; this.goodsTimer = setTimeout(async() => { this.goodsSearching = true; try { const r = await lookupGoods({ keyword }); if (seq === this.goodsSeq) this.goodsOptions = r.data } catch (_) { if (seq === this.goodsSeq) this.goodsOptions = [] } finally { if (seq === this.goodsSeq) this.goodsSearching = false } }, 300) },
-    async loadNames(rows) { const skus = [...new Set(rows.map(r => r.skuSn).filter(s => s && !this.goodsMap[s]))]; const ids = [...new Set(rows.map(r => r.channelId).filter(id => id && !this.channelMap[id]))]; await Promise.all([skus.length ? lookupGoods({ skus: skus.join(',') }).then(r => r.data.forEach(g => this.$set(this.goodsMap, g.skuSn, g.goodsName))).catch(() => {}) : null, ids.length ? channelInventoryOptions({ ids: ids.join(',') }).then(r => { r.data.forEach(c => this.$set(this.channelMap, c.channelId, c.channelName)); if (this.query.channelId && !this.channelOptions.some(c => c.channelId === this.query.channelId)) this.channelOptions = this.channelOptions.concat(r.data.filter(c => c.channelId === this.query.channelId)) }).catch(() => {}) : null]) },
+    async loadNames(rows) { const skus = [...new Set(rows.map(r => r.skuSn).filter(s => s && !this.goodsMap[s]))]; const ids = [...new Set(rows.map(r => r.channelId).filter(id => id && !this.channelMap[id]))]; await Promise.all([skus.length ? lookupGoods({ skus: skus.join(',') }).then(r => r.data.forEach(g => { this.$set(this.goodsMap, g.skuSn, g.goodsName); this.$set(this.bagMap,g.skuSn,Number(g.isFd)===1) })).catch(() => {}) : null, ids.length ? channelInventoryOptions({ ids: ids.join(',') }).then(r => { r.data.forEach(c => this.$set(this.channelMap, c.channelId, c.channelName)); if (this.query.channelId && !this.channelOptions.some(c => c.channelId === this.query.channelId)) this.channelOptions = this.channelOptions.concat(r.data.filter(c => c.channelId === this.query.channelId)) }).catch(() => {}) : null]) },
     async loadList() { const seq = ++this.listSeq; this.loading = true; this.listError = false; try { const r = await channelInventoryList(this.query); if (seq !== this.listSeq) return; this.rows = r.rows; this.total = r.total; this.loadNames(r.rows) } catch (_) { if (seq === this.listSeq) { this.rows = []; this.total = 0; this.listError = true } } finally { if (seq === this.listSeq) this.loading = false } },
     open(row, restore = false) { this.detailSeq++; this.tabSeq++; this.detail = row; this.drawer = true; this.detailError = true; if (!restore) this.tab = 'sources'; this.tabQuery = { pageNum: 1, pageSize: 20 }; this.onlyOccupied = false; this.tabRows = []; this.tabTotal = 0; this.syncRoute(); this.refreshDetail() },
     closeDetail() { this.detailSeq++; this.tabSeq++; this.drawer = false; this.syncRoute() },

@@ -1,0 +1,148 @@
+<div id="gift-detail-alignment" class="viz-carousel viz-dotted-background" aria-label="订单与退款明细布局示意" data-previous-label="上一种明细" data-next-label="下一种明细">
+  <section data-variant="订单明细" aria-label="订单明细示意" class="od-stage">
+    <div class="od-app" data-document="order">
+      <header class="od-header">
+        <div><div class="od-eyebrow">订单详情 · 布局示意</div><h2>SO-DEMO-1020</h2><div class="od-sub">天猫旗舰店 · 平台单号 1020…5678</div></div>
+        <div class="od-header-right"><span class="od-chip">已发货</span><div>实付 <strong>¥400.00</strong></div></div>
+      </header>
+      <div class="od-task"><div><strong>赠品有 1 项待处理</strong><div class="od-sub">保温杯需退回 1 件，尚未安排退回。</div></div><button type="button" class="od-primary cursor-interaction" data-go="gifts">去处理</button></div>
+      <nav class="od-tabs" aria-label="订单详情分区">
+        <button type="button" class="cursor-interaction" data-tab="items" aria-selected="true">商品明细</button>
+        <button type="button" class="cursor-interaction" data-tab="gifts" aria-selected="false">赠品 · 待处理 1</button>
+        <button type="button" class="cursor-interaction" data-tab="fulfilment" aria-selected="false">履约与发货</button>
+        <button type="button" class="cursor-interaction" data-tab="after-sale" aria-selected="false">退款与换货</button>
+        <button type="button" class="cursor-interaction" data-tab="info" aria-selected="false">订单资料</button>
+        <button type="button" class="cursor-interaction" data-tab="events" aria-selected="false">处理记录</button>
+      </nav>
+      <div class="od-content" aria-live="polite">
+        <section data-panel="items">
+          <div class="od-section-head"><h3>购买商品</h3><span class="od-sub">购买 4 件 · 实付 ¥400.00</span></div>
+          <div class="od-product"><div><strong>基础款上衣</strong><div class="od-sub">蓝色 / M · SKU_A</div></div><div class="od-quantity">购买 4 件</div><span class="od-chip">已发 4 件</span></div>
+          <div class="od-section-head"><h3>赠品</h3><span class="od-sub">2 种 · 原赠 3 件 · 不计入实付</span></div>
+          <div class="od-product"><div><strong>保温杯</strong><span class="od-gift-label">赠品</span><div class="od-sub">白色 · SKU_G</div></div><div class="od-quantity">原赠 2 件</div><div><span class="od-chip od-warning">待退回 1 件</span><div><button type="button" class="od-link cursor-interaction" data-go="gifts">查看处理</button></div></div></div>
+          <div class="od-product"><div><strong>品牌贴纸</strong><span class="od-gift-label">赠品</span><div class="od-sub">SKU_S</div></div><div class="od-quantity">原赠 1 件</div><span class="od-chip">已发 1 件</span></div>
+          <details class="od-disclosure"><summary class="cursor-interaction">商品履约来源与明细编号</summary><div class="od-sub">平台子单、库存预占来源、OMS 明细编号在这里按商品展开。</div></details>
+        </section>
+        <section data-panel="gifts" hidden>
+          <div class="od-section-head"><h3>待处理赠品</h3><span class="od-sub">按当前处理需要排序</span></div>
+          <article class="od-gift-detail">
+            <div class="od-section-head"><div><strong>保温杯</strong><span class="od-gift-label">赠品</span><div class="od-sub">SKU_G · 已发 2 件</div></div><span class="od-chip od-warning">待安排退回</span></div>
+            <div class="od-facts"><div><span>原赠送</span><strong>2 件</strong></div><div><span>当前可保留</span><strong>1 件</strong></div><div><span>当前待退回</span><strong>1 件</strong></div></div>
+            <div class="od-next"><div><strong>下一步：安排退回 1 件</strong><div class="od-sub">这是原订单累计售后结论。</div></div><button type="button" class="od-primary cursor-interaction" data-action="return">安排退回</button></div>
+            <details class="od-disclosure"><summary class="cursor-interaction">更多处理</summary><div class="od-sub">有权限人员可选择“确认不再追回”，填写审批依据；不增加库存。</div></details>
+            <details class="od-disclosure" data-evidence><summary class="cursor-interaction">为什么需要退回？</summary><dl class="od-proof"><dt>原赠送规则</dt><dd>每满 2 件上衣赠 1 个保温杯</dd><dt>购买数量</dt><dd>原购 4 件 → 售后后有效 2 件</dd><dt>赠品结论</dt><dd>原赠 2 件，可保留 1 件；已发部分需退回 1 件</dd></dl></details>
+          </article>
+          <details class="od-disclosure"><summary class="cursor-interaction">无需处理的赠品 · 1 种</summary><div class="od-product"><strong>品牌贴纸</strong><span>已发 1 件，可保留 1 件</span></div></details>
+          <section class="od-action-preview" data-return-preview hidden><div class="od-section-head"><h3>安排赠品退回 · 示意</h3><button class="od-link cursor-interaction" type="button" data-close-return>收起</button></div><dl class="od-proof"><dt>关联退款单</dt><dd>TK-DEMO-1020</dd><dt>实际发货来源</dt><dd>XS-DEMO · 保温杯</dd><dt>待安排数量</dt><dd>1 件</dd><dt>后续填写</dt><dd>接收仓、寄回地址、协商依据</dd></dl></section>
+        </section>
+        <section data-panel="fulfilment" hidden><h3>履约与发货</h3><div class="od-product"><div><strong>XS-DEMO</strong><div class="od-sub">顺丰 · SF…1234</div></div><span class="od-chip">已出库</span></div><details class="od-disclosure"><summary class="cursor-interaction">查看分仓、预占与仓库回执</summary><div class="od-sub">库存来源与仓库回执按发货单查看，默认不展开。</div></details></section>
+        <section data-panel="after-sale" hidden><h3>退款与换货</h3><div class="od-product"><div><strong>TK-DEMO-1020</strong><div class="od-sub">上衣退货退款 · ¥200.00</div></div><span class="od-chip od-warning">赠品待处理</span></div></section>
+        <section data-panel="info" hidden><h3>订单资料</h3><dl class="od-proof"><dt>收货信息</dt><dd>张女士 · 138****1020</dd><dt>下单时间</dt><dd>2026-10-20 10:20</dd><dt>店铺</dt><dd>天猫旗舰店</dd></dl><details class="od-disclosure"><summary class="cursor-interaction">审核、挂起与平台来源</summary><div class="od-sub">审核依据、来源版本和平台原始资料按需查看。</div></details></section>
+        <section data-panel="events" hidden><h3>处理记录</h3><ol class="od-timeline"><li><strong>赠品结论更新</strong><div class="od-sub">保温杯需退回 1 件，尚未安排。</div></li><li><strong>购买商品退回完成</strong><div class="od-sub">上衣 2 件已收货入账。</div></li><li><strong>原订单发货完成</strong><div class="od-sub">购买商品与赠品分别保留发货事实。</div></li></ol></section>
+      </div>
+      <footer class="od-footer"><span class="od-sub">示例数据 · 仅用于布局对齐</span><span>购买、赠品与售后分别计数</span></footer>
+    </div>
+  </section>
+  <section data-variant="退款明细" aria-label="退款明细示意" class="od-stage" hidden>
+    <div class="od-app" data-document="refund">
+      <header class="od-header"><div><div class="od-eyebrow">业务退款详情 · 布局示意</div><h2>TK-DEMO-1020</h2><div class="od-sub">原订单 SO-DEMO-1020 · 退货退款</div></div><div class="od-header-right"><span class="od-chip">平台已退款</span><div>退款 <strong>¥200.00</strong></div></div></header>
+      <div class="od-task"><div><strong>购买商品已退回，赠品还需处理</strong><div class="od-sub">赠品待安排退回 1 件；资金状态单独展示。</div></div><button class="od-primary cursor-interaction" type="button" data-go="gift-work">去处理</button></div>
+      <nav class="od-tabs" aria-label="退款详情分区"><button type="button" class="cursor-interaction" data-tab="current" aria-selected="true">本次处理</button><button type="button" class="cursor-interaction" data-tab="parcels" aria-selected="false">退回包裹</button><button type="button" class="cursor-interaction" data-tab="approval" aria-selected="false">审核依据</button><button type="button" class="cursor-interaction" data-tab="events" aria-selected="false">处理记录</button></nav>
+      <div class="od-content" aria-live="polite">
+        <section data-panel="current">
+          <div class="od-section-head"><h3>本次退款商品</h3><span class="od-sub">购买商品 · 退款 ¥200.00</span></div>
+          <div class="od-product"><div><strong>基础款上衣</strong><div class="od-sub">SKU_A · 本次退回 2 件</div></div><span class="od-chip">已收货入账</span></div>
+          <section data-gift-work>
+            <div class="od-section-head"><h3>赠品处理</h3><span class="od-sub">查看相关赠品及当前处理范围</span></div>
+            <article class="od-gift-detail"><div class="od-section-head"><div><strong>保温杯</strong><span class="od-gift-label">赠品</span><div class="od-sub">SKU_G · 原订单已发 2 件</div></div><span class="od-chip od-warning">待退回 1 件</span></div>
+              <div class="od-context">原订单累计结论：可保留 1 件，待退回 1 件。<br><span class="od-sub">累计数量包含其他售后影响，不能当作本次退款新增数量。</span></div>
+              <div class="od-next"><div><strong>本退款尚未安排赠品退回</strong><div class="od-sub">安排时默认关联当前退款单。</div></div><button class="od-primary cursor-interaction" type="button" data-action="return">安排退回</button></div>
+              <details class="od-disclosure" data-evidence><summary class="cursor-interaction">查看赠品判定依据</summary><dl class="od-proof"><dt>规则</dt><dd>每满 2 件上衣赠 1 个保温杯</dd><dt>原订单有效购买</dt><dd>4 件 → 2 件</dd><dt>处理范围</dt><dd>已发赠品需追回，未安排数量为 1 件</dd></dl></details>
+            </article>
+          </section>
+          <details class="od-disclosure"><summary class="cursor-interaction">原订单全部赠品 · 2 种</summary><div class="od-product"><strong>保温杯</strong><span>原赠 2 件 · 当前待退回 1 件</span></div><div class="od-product"><strong>品牌贴纸</strong><span>原赠 1 件 · 当前无需处理</span></div></details>
+          <section class="od-action-preview" data-return-preview hidden><div class="od-section-head"><h3>安排赠品退回 · 示意</h3><button type="button" class="od-link cursor-interaction" data-close-return>收起</button></div><dl class="od-proof"><dt>关联退款单</dt><dd>TK-DEMO-1020（当前退款）</dd><dt>商品与数量</dt><dd>保温杯 · 1 件</dd><dt>实际来源</dt><dd>XS-DEMO · 保温杯发货明细</dd></dl></section>
+        </section>
+        <section data-panel="parcels" hidden><h3>本退款退回包裹</h3><div class="od-product"><div><strong>退回包裹 · SF…5678</strong><div class="od-sub">购买商品：上衣 2 件 · 已入账</div></div><span class="od-chip">已完成</span></div><p class="od-sub">赠品尚未安排退回。安排、包裹和仓库实收在此查看；赠品区只展示摘要与入口。</p></section>
+        <section data-panel="approval" hidden><h3>审核依据</h3><dl class="od-proof"><dt>退款方案</dt><dd>退货退款 · 购买商品退回 2 件</dd><dt>赠品处理</dt><dd>按原赠品方案核对，当前需要退回 1 件</dd></dl><details class="od-disclosure"><summary class="cursor-interaction">来源版本与审批凭证</summary><div class="od-sub">显示原审核记录，不与当前货物进度混排。</div></details></section>
+        <section data-panel="events" hidden><h3>本退款处理记录</h3><ol class="od-timeline"><li><strong>购买商品已入账</strong><div class="od-sub">上衣 2 件；赠品仍待处理。</div></li><li><strong>平台退款成功</strong><div class="od-sub">平台确认退款 ¥200.00。</div></li></ol></section>
+      </div>
+      <footer class="od-footer"><span class="od-sub">示例数据 · 仅用于布局对齐</span><span>资金与购买商品、赠品进度分开</span></footer>
+    </div>
+  </section>
+</div>
+<style>
+#gift-detail-alignment{--od-surface:light-dark(#ffffff,#18212c);--od-ground:light-dark(#f5f7fa,#141b24);--od-ink:light-dark(#243448,#e6edf5);--od-muted:light-dark(#66768b,#abb9cc);--od-line:light-dark(#e4e9f0,#364454);--od-brand:light-dark(#0071e3,#76b8ff);--od-on-brand:light-dark(#ffffff,#102236);--od-soft:light-dark(#eef6ff,#24374e);--od-warn:light-dark(#92500c,#f7c77f);--od-warn-bg:light-dark(#fff7e9,#3b2d19);font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:var(--od-ink);font-size:14px;line-height:1.6}
+#gift-detail-alignment .od-stage{padding:14px 10px;min-height:770px;box-sizing:border-box}
+#gift-detail-alignment .od-app{background:var(--od-surface);border:1px solid var(--od-line);border-radius:12px;overflow:hidden;min-width:0}
+#gift-detail-alignment h2{font-size:20px;line-height:1.4;font-weight:500;margin:4px 0}
+#gift-detail-alignment h3{font-size:14px;font-weight:500;line-height:1.6;margin:0}
+#gift-detail-alignment strong{font-weight:500}
+#gift-detail-alignment .od-header{display:flex;justify-content:space-between;gap:20px;padding:24px 22px 18px}
+#gift-detail-alignment .od-eyebrow{font-size:12px;color:var(--od-muted)}
+#gift-detail-alignment .od-sub{font-size:12px;line-height:1.7;color:var(--od-muted);overflow-wrap:anywhere}
+#gift-detail-alignment .od-header-right{text-align:right;display:grid;align-content:center;gap:9px;white-space:nowrap}
+#gift-detail-alignment .od-chip{display:inline-block;background:var(--od-ground);color:var(--od-ink);border-radius:4px;padding:3px 8px;font-size:12px;line-height:1.5}
+#gift-detail-alignment .od-warning{background:var(--od-warn-bg);color:var(--od-warn)}
+#gift-detail-alignment .od-gift-label{font-size:11px;color:var(--od-brand);background:var(--od-soft);border-radius:4px;margin-left:8px;padding:2px 5px;white-space:nowrap}
+#gift-detail-alignment .od-task{margin:0 22px 18px;padding:13px 15px;background:var(--od-warn-bg);color:var(--od-warn);border-radius:7px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+#gift-detail-alignment .od-task .od-sub{color:var(--od-warn)}
+#gift-detail-alignment button{font:inherit;font-size:12px;border:1px solid var(--od-line);background:var(--od-surface);color:var(--od-ink);border-radius:5px;padding:7px 11px;white-space:nowrap}
+#gift-detail-alignment button.od-primary{background:var(--od-brand);border-color:var(--od-brand);color:var(--od-on-brand)}
+#gift-detail-alignment button.od-link{background:transparent;border:0;color:var(--od-brand);padding:5px 0}
+#gift-detail-alignment .od-tabs{display:flex;gap:2px;flex-wrap:wrap;border-top:1px solid var(--od-line);border-bottom:1px solid var(--od-line);padding:0 14px}
+#gift-detail-alignment .od-tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;padding:13px 9px;background:transparent;color:var(--od-muted)}
+#gift-detail-alignment .od-tabs button[aria-selected="true"]{border-bottom-color:var(--od-brand);color:var(--od-brand)}
+#gift-detail-alignment .od-content{padding:18px 22px;min-height:370px}
+#gift-detail-alignment .od-section-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 12px}
+#gift-detail-alignment .od-section-head:not(:first-child){margin-top:24px}
+#gift-detail-alignment .od-product{display:flex;align-items:center;gap:18px;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--od-line)}
+#gift-detail-alignment .od-product>div:first-child{flex:1;min-width:0}
+#gift-detail-alignment .od-product>div:last-child{text-align:right}
+#gift-detail-alignment .od-quantity{font-size:12px;white-space:nowrap}
+#gift-detail-alignment .od-disclosure{margin-top:17px;padding:12px 0;border-top:1px solid var(--od-line)}
+#gift-detail-alignment summary{font-size:12px;color:var(--od-muted);padding:3px 0}
+#gift-detail-alignment .od-disclosure[open] summary{margin-bottom:10px}
+#gift-detail-alignment .od-gift-detail{border:1px solid var(--od-line);border-radius:8px;padding:16px}
+#gift-detail-alignment .od-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--od-ground);border-radius:6px;padding:14px;gap:14px;margin:16px 0}
+#gift-detail-alignment .od-facts span{display:block;font-size:12px;color:var(--od-muted)}
+#gift-detail-alignment .od-facts strong{display:block;margin-top:4px;font-size:18px;font-variant-numeric:tabular-nums}
+#gift-detail-alignment .od-next{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
+#gift-detail-alignment .od-proof{display:grid;grid-template-columns:108px minmax(0,1fr);gap:10px 12px;font-size:12px;margin:14px 0 0}
+#gift-detail-alignment .od-proof dt{color:var(--od-muted)}
+#gift-detail-alignment .od-proof dd{margin:0;overflow-wrap:anywhere}
+#gift-detail-alignment .od-context{padding:12px;background:var(--od-ground);border-radius:6px;font-size:12px;margin:14px 0}
+#gift-detail-alignment .od-action-preview{padding:16px;border:1px solid var(--od-line);border-radius:8px;margin-top:18px;background:var(--od-soft)}
+#gift-detail-alignment .od-footer{padding:14px 22px;background:var(--od-ground);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--od-muted)}
+#gift-detail-alignment .od-timeline{padding-left:18px}
+#gift-detail-alignment .od-timeline li{margin:18px 0}
+@media(max-width:520px){#gift-detail-alignment .od-header{padding:18px 14px;gap:10px;flex-wrap:wrap}#gift-detail-alignment .od-header-right{display:flex;gap:14px;align-items:center;flex-wrap:wrap;text-align:left}#gift-detail-alignment .od-task{margin:0 14px 14px;padding:12px;align-items:flex-start;flex-wrap:wrap}#gift-detail-alignment .od-content{padding:16px 14px}#gift-detail-alignment .od-tabs{padding:0 8px}#gift-detail-alignment .od-product{gap:10px;flex-wrap:wrap}#gift-detail-alignment .od-product>div:first-child{flex-basis:100%}#gift-detail-alignment .od-product>div:last-child{text-align:left}#gift-detail-alignment .od-section-head{align-items:flex-start;gap:6px}#gift-detail-alignment .od-next{align-items:flex-start;flex-wrap:wrap}#gift-detail-alignment .od-proof{grid-template-columns:80px minmax(0,1fr)}#gift-detail-alignment .od-facts{padding:11px;gap:10px}#gift-detail-alignment .od-gift-detail{padding:12px}#gift-detail-alignment .od-stage{min-height:1020px;padding:8px 3px}#gift-detail-alignment button{min-height:40px}}
+</style>
+<script>
+(function(){
+  const root=document.getElementById('gift-detail-alignment');
+  const preferences={expandedEvidence:false};
+  let saved=window.openai&&window.openai.widgetState;
+  if(saved&&saved.privateContent&&typeof saved.privateContent.expandedEvidence==='boolean')preferences.expandedEvidence=saved.privateContent.expandedEvidence;
+  function applyPreferences(){root.querySelectorAll('[data-evidence]').forEach(el=>{el.open=preferences.expandedEvidence;});}
+  function remember(doc,tab){if(window.openai&&typeof window.openai.setWidgetState==='function')window.openai.setWidgetState({modelContent:{document:doc,section:tab},privateContent:{expandedEvidence:preferences.expandedEvidence}}).catch(()=>{});}
+  function switchTab(app,tab,persist){
+    app.querySelectorAll('[data-tab]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.tab===tab)));
+    app.querySelectorAll('[data-panel]').forEach(panel=>{panel.hidden=panel.dataset.panel!==tab;});
+    if(persist)remember(app.dataset.document,tab);
+  }
+  root.querySelectorAll('.od-app').forEach(app=>{
+    app.addEventListener('click',event=>{
+      const button=event.target.closest('button');if(!button||!app.contains(button))return;
+      if(button.dataset.tab)switchTab(app,button.dataset.tab,true);
+      if(button.dataset.go){const giftWork=button.dataset.go==='gift-work';switchTab(app,giftWork?'current':button.dataset.go,true);if(giftWork){const section=app.querySelector('[data-gift-work]');section.scrollIntoView({block:'nearest',behavior:'auto'});}}
+      if(button.dataset.action==='return'){app.querySelector('[data-return-preview]').hidden=false;remember(app.dataset.document,'return-preview');}
+      if(button.hasAttribute('data-close-return'))app.querySelector('[data-return-preview]').hidden=true;
+    });
+  });
+  applyPreferences();
+  if(saved&&saved.modelContent){const app=root.querySelector('[data-document="'+(saved.modelContent.document==='refund'?'refund':'order')+'"]');const tab=saved.modelContent.section;if(tab&&Array.from(app.querySelectorAll('[data-tab]')).some(el=>el.dataset.tab===tab))switchTab(app,tab,false);}
+  window.addEventListener('openai:set_globals',event=>{const state=event.detail&&event.detail.globals&&event.detail.globals.widgetState;if(state&&state.privateContent&&typeof state.privateContent.expandedEvidence==='boolean'){preferences.expandedEvidence=state.privateContent.expandedEvidence;applyPreferences();}});
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{applyPreferences();}});tweak.addToggle(preferences,'expandedEvidence',{label:'默认展开赠品计算依据'});}
+})();
+</script>

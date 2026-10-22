@@ -1,0 +1,63 @@
+<template>
+  <div>
+    <el-alert title="先选店铺组，再配置它执行的策略组。每家店铺只能归属一个启用的赠品店铺组；同一策略组可被不同店铺组复用。" type="info" :closable="false" show-icon/>
+    <div class="scope-toolbar"><el-input v-model="keyword" placeholder="搜索店铺组 / 店铺" clearable prefix-icon="el-icon-search"/><el-button v-hasPermi="['order:gift:config']" type="primary" icon="el-icon-plus" @click="edit()">新增店铺组</el-button><el-button @click="previewVisible=true">按店铺查看生效规则</el-button></div>
+    <div class="workspace">
+      <aside><div class="aside-title">店铺组 <span class="hint">{{ scopes.length }} 个</span></div><button v-for="s in filteredScopes" :key="s.id" class="scope-choice" :class="{selected:selected&&Number(s.id)===Number(selected.id)}" @click="selectedId=s.id"><strong>{{ s.name }}</strong><el-tag size="mini" :type="s.enabled?'success':'info'">{{ s.enabled?'已启用':'已停用' }}</el-tag><div class="hint">{{ s.channels.length }} 家店铺 · {{ s.links.length }} 个策略组 · {{ enabledCount(s) }} 个已启用</div></button><el-empty v-if="!filteredScopes.length" description="暂无匹配的店铺组" :image-size="70"/></aside>
+      <section v-if="selected" class="scope-detail">
+        <div class="heading"><div><h3>{{ selected.name }}</h3><span class="hint">配置版本 {{ selected.revision }} · {{ selected.enabled?'新转单按下列顺序执行':'已停用，本店铺组不参与新转单赠送' }}</span></div><div><el-button v-hasPermi="['order:gift:config']" @click="$emit('new-strategy',selected.id)">新增并关联策略组</el-button><el-button v-hasPermi="['order:gift:config']" @click="edit(selected)">管理店铺与执行顺序</el-button></div></div>
+        <div class="shops"><span class="hint">组内店铺</span><el-tag v-for="id in selected.channels" :key="id" size="small" effect="plain">{{ shopName(id) }}</el-tag></div>
+        <div class="sequence-help">从上到下执行：未命中继续下一组；命中后按每条关联配置继续或停止。付款时间按订单付款时间判断。</div>
+        <div v-for="(link,i) in selected.links" :key="link.group_id" class="strategy-card">
+          <div class="heading"><div class="strategy-title"><span class="sequence">{{ i+1 }}</span><strong>{{ strategy(link).name }}</strong><el-tag size="small" :type="strategy(link).enabled?'success':'info'">{{ strategy(link).enabled?'已启用':'已停用，跳过' }}</el-tag></div><el-button v-hasPermi="['order:gift:config']" type="text" @click="$emit('edit-strategy',strategy(link),selected.id)">编辑公共策略</el-button></div>
+          <div class="hint">付款范围 {{ strategy(link).policy.start_time }} 至 {{ strategy(link).policy.end_time }} · {{ usage(link.group_id) }} 个店铺组复用</div>
+          <div v-for="(r,j) in strategy(link).policy.rules" :key="r.key" class="rule-line"><span>{{ i+1 }}.{{ j+1 }}</span><strong>{{ r.name }}</strong><span>{{ types[r.type] }} · {{ condition(r) }}</span><span class="hint">赠送：{{ giftSummary(r) }}</span><span class="hint">{{ r.stop?'命中后结束本组':'命中后继续本组下一条' }}</span></div>
+          <div class="outcome"><el-tag size="small" :type="link.continue_after_match?'primary':'warning'">命中本组后：{{ link.continue_after_match?'继续下一策略组':'停止后续策略组' }}</el-tag><span class="hint">未命中：继续下一策略组</span></div>
+        </div>
+        <el-empty v-if="!selected.links.length" description="尚未关联策略组，请在“管理店铺与执行顺序”中添加" :image-size="90"/>
+      </section><section v-else class="scope-detail"><el-empty description="新增或选择一个店铺组，查看它的赠品执行路径"/></section>
+    </div>
+    <el-dialog :title="form.id?'管理店铺与执行顺序':'新增赠品店铺组'" :visible.sync="editor" width="min(1000px, 95vw)" append-to-body :close-on-click-modal="false" top="5vh">
+      <el-alert title="店铺范围、顺序和命中后处理仅属于当前店铺组；保存后对新转单生效，既有订单继续采用原快照。" :closable="false" type="info"/>
+      <el-form label-width="110px" size="small" class="scope-form"><el-form-item label="店铺组名称" required><el-input v-model="form.name" maxlength="100"/></el-form-item><el-form-item label="组内店铺" required><el-select v-model="form.channels" multiple filterable style="width:100%"><el-option v-for="s in shops" :key="s.channel_id" :value="Number(s.channel_id)" :label="shopLabel(s)" :disabled="!!form.enabled&&!!owner(s.channel_id)"/></el-select><div class="hint">启用时不可与其他启用组重复归属；停用组可先保存草稿。</div></el-form-item><el-form-item label="启用店铺组"><el-switch v-model="form.enabled" :active-value="1" :inactive-value="0"/></el-form-item></el-form>
+      <div class="heading"><h3>关联策略组 · 从上到下执行</h3><span class="hint">需要新策略时，先保存店铺组，再前往公共策略库新增。</span></div>
+      <el-table :data="form.links" empty-text="选择下方策略组并关联；也可先保存店铺组，稍后再配置"><el-table-column label="顺序" width="65"><template slot-scope="s">{{ s.$index+1 }}</template></el-table-column><el-table-column label="公共策略组" min-width="230"><template slot-scope="s"><strong>{{ strategy(s.row).name }}</strong><div class="hint">{{ strategy(s.row).enabled?'已启用':'已停用，运行时跳过' }} · {{ strategy(s.row).policy.rules.length }} 条规则</div></template></el-table-column><el-table-column label="命中后的执行路径" min-width="230"><template slot-scope="s"><el-select v-model="s.row.continue_after_match"><el-option :value="false" label="停止后续策略组"/><el-option :value="true" label="继续下一策略组"/></el-select></template></el-table-column><el-table-column label="调整" width="175"><template slot-scope="s"><el-button type="text" :disabled="s.$index===0" @click="move(s.$index,-1)">上移</el-button><el-button type="text" :disabled="s.$index===form.links.length-1" @click="move(s.$index,1)">下移</el-button><el-button type="text" @click="form.links.splice(s.$index,1)">移除</el-button></template></el-table-column></el-table>
+      <div class="add-link"><el-select v-model="adding" filterable clearable placeholder="选择需要复用的策略组"><el-option v-for="g in available" :key="g.id" :value="g.id" :label="g.name+(g.enabled?'':'（已停用）')"/></el-select><el-button :disabled="!adding||form.links.length>=50" @click="add">关联策略组</el-button></div><div class="hint">未命中始终继续。组内规则是否继续，在公共策略组中配置。</div>
+      <span slot="footer"><el-button @click="editor=false">取消</el-button><el-button type="primary" :loading="saving" @click="save">保存店铺组与关联</el-button></span>
+    </el-dialog>
+    <el-dialog title="按店铺查看生效规则" :visible.sync="previewVisible" width="min(950px, 95vw)" append-to-body><el-select v-model="previewShop" filterable placeholder="选择店铺" style="width:100%" @change="loadEffective"><el-option v-for="s in shops" :key="s.channel_id" :value="Number(s.channel_id)" :label="s.channel_name"/></el-select><div v-loading="previewLoading" class="effective"><template v-if="effective"><el-empty v-if="!effective.shop_groups.length" description="该店铺尚未加入赠品店铺组，不参与赠送" :image-size="70"/><div v-for="scope in effective.shop_groups" :key="scope.id"><h3>{{ scope.name }} <el-tag size="small" :type="scope.enabled?'success':'info'">{{ scope.enabled?'已启用':'已停用，不参与赠送' }}</el-tag></h3><el-table :data="scope.executions"><el-table-column prop="sequence" label="顺序" width="65"/><el-table-column prop="name" label="策略组" min-width="200"/><el-table-column label="启用 / 活动范围" min-width="250"><template slot-scope="s"><div>{{ s.row.enabled?'已启用':'已停用，跳过' }}</div><div class="hint">{{ s.row.policy.start_time }} 至 {{ s.row.policy.end_time }}</div></template></el-table-column><el-table-column label="命中后" min-width="160"><template slot-scope="s">{{ s.row.continue_after_match?'继续下一组':'停止后续组' }}</template></el-table-column><el-table-column label="规则" width="85"><template slot-scope="s">{{ s.row.policy.rules.length }} 条</template></el-table-column></el-table></div><p class="hint">活动是否命中以订单付款时间及购买商品为准，请到“订单试算”查看具体路径。</p></template></div><span slot="footer"><el-button @click="previewVisible=false">关闭</el-button></span></el-dialog>
+  </div>
+</template>
+<script>
+import { saveGiftShopGroup, giftShopEffective } from '@/api/order/gift'
+export default {
+  name:'GiftShopGroups',props:{scopes:{type:Array,default:()=>[]},groups:{type:Array,default:()=>[]},shops:{type:Array,default:()=>[]},types:Object,initialScope:[String,Number]},
+  data:()=>({keyword:'',selectedId:null,editor:false,saving:false,form:{channels:[],links:[]},adding:null,previewVisible:false,previewShop:null,effective:null,previewLoading:false,previewSequence:0}),
+  computed:{
+    selected(){return this.filteredScopes.find(s=>Number(s.id)===Number(this.selectedId))||this.filteredScopes[0]},
+    filteredScopes(){const q=this.keyword.trim().toLowerCase();return this.scopes.filter(s=>!q||(s.name+' '+s.channels.map(id=>this.shopName(id)).join(' ')).toLowerCase().includes(q))},
+    available(){return this.groups.filter(g=>!this.form.links.some(l=>Number(l.group_id)===Number(g.id)))}
+  },
+  watch:{initialScope:{immediate:true,handler(value){if(value)this.selectedId=value}}},
+  methods:{
+    strategy(link){return this.groups.find(g=>Number(g.id)===Number(link.group_id))||{name:'策略组不存在',policy:{rules:[]}}},
+    condition(r){const scope=(r.skus||[]).length?(r.skus||[]).join("、"):"全部购买商品";if(r.type==='AMOUNT')return `${scope}实付满 ${r.amount} 元`;if(r.type==='TIER')return `${scope}按最高满足阶梯赠送`;return r.type==='MULTIPLE'?`${scope}每满 ${r.minimum} 件，最多 ${r.cap} 倍`:`${scope}累计购买满 ${r.minimum} 件`},
+    giftSummary(r){const label=gifts=>(gifts||[]).map(g=>`${g.sku_sn} × ${g.quantity}`).join("、");return r.type==='TIER'?(r.tiers||[]).map(t=>`满${t.minimum}件：${label(t.gifts)}`).join("；"):label(r.gifts)},
+    usage(id){return this.scopes.filter(s=>s.links.some(l=>Number(l.group_id)===Number(id))).length},
+    enabledCount(s){return s.links.filter(l=>this.strategy(l).enabled).length},
+    shopName(id){const s=this.shops.find(v=>Number(v.channel_id)===Number(id));return s?s.channel_name:`店铺 ${id}`},
+    owner(id){return this.scopes.find(s=>s.enabled&&Number(s.id)!==Number(this.form.id)&&s.channels.some(v=>Number(v)===Number(id)))},
+    shopLabel(s){const owner=this.owner(s.channel_id);return s.channel_name+(owner?`（已归属：${owner.name}）`:'')},
+    edit(row){this.form=row?JSON.parse(JSON.stringify(row)):{name:'',channels:[],links:[],enabled:0,revision:0};this.adding=null;this.editor=true},
+    move(i,delta){const link=this.form.links.splice(i,1)[0];this.form.links.splice(i+delta,0,link)},
+    add(){if(!this.adding||this.form.links.some(l=>Number(l.group_id)===Number(this.adding)))return;this.form.links.push({group_id:this.adding,continue_after_match:false});this.adding=null},
+    async save(){if(!this.form.name.trim()||!this.form.channels.length)return this.$message.warning('请填写店铺组名称并选择组内店铺');this.saving=true;try{const result=(await saveGiftShopGroup(this.form)).data;this.selectedId=result.id;this.editor=false;this.$message.success('店铺组与执行顺序已保存');this.$emit('changed');this.effective=null}finally{this.saving=false}},
+    async loadEffective(){const seq=++this.previewSequence;this.effective=null;this.previewLoading=true;try{const data=(await giftShopEffective(this.previewShop)).data;if(seq===this.previewSequence)this.effective=data}finally{if(seq===this.previewSequence)this.previewLoading=false}}
+  }
+}
+</script>
+<style scoped>
+.scope-toolbar,.heading,.strategy-title,.add-link{display:flex;align-items:center;gap:12px}.scope-toolbar{margin:18px 0}.scope-toolbar>.el-input{max-width:340px}.workspace{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px}.workspace aside{border:1px solid #e4e9f0;border-radius:8px;padding:12px;align-self:start}.aside-title{padding:8px;font-weight:600}.scope-choice{display:block;width:100%;background:white;border:1px solid transparent;border-radius:6px;text-align:left;padding:14px 10px;margin:6px 0;cursor:pointer;color:#303d50}.scope-choice.selected{background:#edf5ff;border-color:#b8d7ff}.scope-choice strong{display:block;margin-bottom:8px}.scope-choice .el-tag{margin-bottom:5px}.scope-detail{min-width:0}.heading{justify-content:space-between}.heading h3{margin:4px 0 8px}.hint{font-size:12px;color:#7a8799;line-height:1.8}.shops{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}.sequence-help{background:#f5f8fc;padding:12px;color:#56667e;font-size:13px}.strategy-card{border:1px solid #dfe7f2;border-radius:8px;padding:18px;margin-top:14px}.sequence{background:#e8f2ff;color:#1672cf;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center}.rule-line{display:flex;align-items:center;gap:14px;padding:12px;background:#f7f9fc;margin-top:10px;font-size:13px}.outcome{display:flex;align-items:center;gap:16px;margin-top:14px}.scope-form{margin:20px 0}.add-link{margin:16px 0}.add-link .el-select{width:400px}.effective{min-height:120px;margin-top:20px}@media(max-width:1100px){.workspace{grid-template-columns:220px minmax(0,1fr)}.scope-toolbar{flex-wrap:wrap}.rule-line,.outcome{flex-wrap:wrap}}
+</style>
+
+<style scoped>@media(max-width:760px){.workspace{grid-template-columns:minmax(0,1fr)}.workspace aside{max-height:260px;overflow:auto}.heading{flex-wrap:wrap}.scope-toolbar>.el-input,.add-link .el-select{width:100%;max-width:100%}.add-link{flex-wrap:wrap}.rule-line{align-items:flex-start;gap:8px}.rule-line strong{overflow-wrap:anywhere}.shops .el-tag{height:auto;white-space:normal}}</style>

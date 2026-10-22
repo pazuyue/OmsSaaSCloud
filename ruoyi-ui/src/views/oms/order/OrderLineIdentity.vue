@@ -1,10 +1,10 @@
 <template>
   <div class="line-identity">
     <div class="identity-heading"><strong>{{ line.oms_goods_name || line.goods_name || '商品资料暂未加载' }}</strong><el-tag size="mini" :type="identityTone">{{ identity }}</el-tag></div>
-    <div v-if="line.bundle_id" class="muted">套装明细 #{{ line.bundle_id }} · 每套 {{ line.component_quantity }} 件</div>
+    <div v-if="line.bundle_id" class="muted"><template v-if="line.sales_origin">{{ line.sales_origin.lucky ? '福袋组件汇总' : '固定组合组件' }} · {{ line.sales_origin.name }}<span v-if="line.sales_origin.lucky && line.sales_origin.units.length"> · 涉及{{ line.sales_origin.units.length }}袋</span><span v-else-if="Number(line.component_quantity)>0"> · 每套{{ line.component_quantity }}件</span></template><template v-else>{{ Number(line.component_quantity) > 0 ? '固定组合组件' : '福袋组件汇总' }} · 销售组合 #{{ line.bundle_id }}</template></div>
     <div class="sku">{{ line.sku_sn || 'SKU 待匹配' }}</div>
     <div v-if="spec" class="muted">{{ spec }}<span> · 当前商品资料</span></div>
-    <div class="muted">OMS 履约明细 #{{ line.id }}<span v-if="Number(line.exchange_generation)"> · 第 {{ line.exchange_generation }} 次换货后发出</span></div>
+    <el-collapse v-if="compact && !summaryOnly" class="line-trace"><el-collapse-item title="来源与履约明细" name="trace"><div v-if="line.sales_origin && line.sales_origin.lucky" class="bag-origins"><div v-for="u in line.sales_origin.units" :key="u.unit_id">第{{ u.unit }}袋 · 原袋号 #{{ u.unit_id }} · 原组成包含本商品{{ u.quantity }}件</div></div>    <div class="muted">OMS 履约明细 #{{ line.id }}<span v-if="Number(line.exchange_generation)"> · 第 {{ line.exchange_generation }} 次换货后发出</span></div>
     <template v-if="line.exchange_id">
       <div class="source"><span>本次替换：</span><template v-if="line.source_product">{{ line.source_product.goods_name || line.source_product.sku_sn }}<div class="muted">{{ line.source_product.sku_sn }} · 履约明细 #{{ line.source_product.id }}</div></template><span v-else>来源待核对</span></div>
       <div class="links"><router-link :to="exchangeLink">{{ line.exchange_sn || '查看所属换货单' }}</router-link><el-button type="text" size="mini" @click="visible=true">查看换货链路</el-button></div>
@@ -12,6 +12,16 @@
     </template>
     <div v-if="line.platform_spec && !line.exchange_id" class="muted">平台规格：{{ line.platform_spec }}</div>
     <div v-if="line.manual_sku_sn" class="matched">人工匹配 · {{ line.manual_match_by }} · {{ line.manual_match_at }}<br>原商家编码：{{ line.outer_sku_id || '缺失' }}<br>{{ line.manual_match_reason }}</div>
+</el-collapse-item></el-collapse>
+    <template v-else-if="!summaryOnly">    <div class="muted">OMS 履约明细 #{{ line.id }}<span v-if="Number(line.exchange_generation)"> · 第 {{ line.exchange_generation }} 次换货后发出</span></div>
+    <template v-if="line.exchange_id">
+      <div class="source"><span>本次替换：</span><template v-if="line.source_product">{{ line.source_product.goods_name || line.source_product.sku_sn }}<div class="muted">{{ line.source_product.sku_sn }} · 履约明细 #{{ line.source_product.id }}</div></template><span v-else>来源待核对</span></div>
+      <div class="links"><router-link :to="exchangeLink">{{ line.exchange_sn || '查看所属换货单' }}</router-link><el-button type="text" size="mini" @click="visible=true">查看换货链路</el-button></div>
+      <div v-if="line.source_shipment_line_id" class="muted">来源发货明细 #{{ line.source_shipment_line_id }}</div>
+    </template>
+    <div v-if="line.platform_spec && !line.exchange_id" class="muted">平台规格：{{ line.platform_spec }}</div>
+    <div v-if="line.manual_sku_sn" class="matched">人工匹配 · {{ line.manual_match_by }} · {{ line.manual_match_at }}<br>原商家编码：{{ line.outer_sku_id || '缺失' }}<br>{{ line.manual_match_reason }}</div>
+</template>
     <el-dialog title="商品换货链路" :visible.sync="visible" width="760px" append-to-body custom-class="order-lineage-dialog">
       <p class="chain-hint">按独立履约明细追溯；相同 SKU 再次换回仍是不同的发货来源。</p>
       <el-alert v-if="line.lineage_incomplete" title="部分来源信息缺失，请核对关联单据。" type="warning" :closable="false" />
@@ -31,11 +41,11 @@
 <script>
 import { good } from './exchangePresentation'
 export default {
-  props: { line: { type: Object, required: true } },
+  props: { line: { type: Object, required: true }, compact: Boolean, summaryOnly: Boolean },
   data() { return { visible: false } },
   computed: {
     terminated() { return Number(this.line.quantity) <= Number(this.line.cancelled_quantity || 0) },
-    identity() { if(this.line.gift_plan_id)return this.terminated?'OMS 策略赠品 · 已取消':'OMS 策略赠品'; if(this.line.stocked_bundle_snapshot&&!this.terminated)return '实物套装 · 成品履约'; if (this.line.bundle_id&&!this.terminated) return '套装组件'; if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
+    identity() { if(this.line.gift_plan_id)return this.terminated?'OMS 策略赠品 · 已取消':'OMS 策略赠品'; if(this.line.stocked_bundle_snapshot&&!this.terminated)return '实物套装 · 成品履约'; if (this.line.bundle_id&&!this.terminated) return Number(this.line.component_quantity)>0?'套装组件':'福袋实际商品'; if (this.terminated) return this.line.was_replaced ? '已替换 · 不再发货' : '需求已终止'; if (this.line.business_type === 'EXCHANGE') return ({DURING_SALE:'售中换出商品',AFTER_SALE:'售后换出商品'})[this.line.exchange_phase] || '换货换出商品'; return this.line.exchange_id ? '换货后发出 · 原单履约' : '原购商品' },
     identityTone() { return this.terminated ? 'info' : this.line.business_type === 'EXCHANGE' ? 'warning' : this.line.exchange_id ? '' : 'info' },
     exchangeLink() { return { path: '/oms-order/exchanges', query: { exchangeId: this.line.exchange_id } } },
     spec() { return good(this.line.current_goods || {}).spec }
@@ -43,5 +53,7 @@ export default {
 }
 </script>
 <style scoped>
+.line-trace{border:0}.line-trace ::v-deep .el-collapse-item__header{height:30px;line-height:30px;font-size:12px;color:#758397;border:0}.line-trace ::v-deep .el-collapse-item__wrap{border:0}
+
 .line-identity{line-height:1.6;word-break:break-word}.identity-heading{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sku{color:#465870;margin-top:4px}.muted{color:#8490a2;font-size:12px;line-height:1.7}.source{margin-top:8px;padding:7px 10px;border-left:2px solid #bad3f6;background:#f6f9fd;font-size:13px}.source>span{color:#687b91}.links{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.matched{font-size:12px;color:#426e9a;margin-top:8px}.chain-hint{color:#687b91;margin-top:0}.lineage{list-style:none;padding:0 0 0 12px;margin:20px 0}.lineage li{position:relative;padding:0 0 22px 22px;border-left:2px solid #e1e9f3;word-break:break-word}.lineage li:before{content:'';position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:#a9bfd9}.lineage li.current:before{background:#409eff}.lineage li:last-child{padding-bottom:0;border-color:transparent}.node-heading{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
 </style>

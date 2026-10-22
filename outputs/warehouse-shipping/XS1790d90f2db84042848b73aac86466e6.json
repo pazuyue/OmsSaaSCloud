@@ -1,0 +1,90 @@
+{
+  "shipment_id": 80,
+  "shipment_sn": "XS1790d90f2db84042848b73aac86466e6",
+  "order_id": 136,
+  "external_order": "SIMOUT_456386df961343ea95a2",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 16,
+  "message_id": "SIM_COMPLETE_XS1790d90f2db84042848b73aac86466e6",
+  "package_code": "SIMPKG_XS1790d90f2db84042848b73aac86466e6",
+  "express_code": "TEST-SF-XS1790d90f2db84042848b73aac86466e6",
+  "outbound_time": "2026-10-22 10:27:37",
+  "plans": [
+    {
+      "id": 91,
+      "sku_sn": "RF20261022102630A",
+      "quantity": 4,
+      "platform_oid": "9892026102210263001",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630A"
+    },
+    {
+      "id": 92,
+      "sku_sn": "RF20261022102630B",
+      "quantity": 2,
+      "platform_oid": "9892026102210263001",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630B"
+    },
+    {
+      "id": 93,
+      "sku_sn": "RF20261022102630A",
+      "quantity": 2,
+      "platform_oid": "9892026102210263003",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630A"
+    },
+    {
+      "id": 94,
+      "sku_sn": "RF20261022102630A",
+      "quantity": 1,
+      "platform_oid": "9892026102210263004",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630A"
+    },
+    {
+      "id": 95,
+      "sku_sn": "RF20261022102630B",
+      "quantity": 1,
+      "platform_oid": "9892026102210263004",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630B"
+    },
+    {
+      "id": 96,
+      "sku_sn": "RF20261022102630D",
+      "quantity": 2,
+      "platform_oid": "9892026102210263003",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630D"
+    },
+    {
+      "id": 97,
+      "sku_sn": "RF20261022102630D",
+      "quantity": 2,
+      "platform_oid": "9892026102210263004",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630D"
+    },
+    {
+      "id": 98,
+      "sku_sn": "RF20261022102630S",
+      "quantity": 2,
+      "platform_oid": "9892026102210263002",
+      "store_code": "RF20261022102630V",
+      "batch_code": "RF-RF20261022102630S"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS1790d90f2db84042848b73aac86466e6</deliveryOrderCode><deliveryOrderId>SIMOUT_456386df961343ea95a2</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS1790d90f2db84042848b73aac86466e6</outBizCode><totalOrderLines>8</totalOrderLines><orderConfirmTime>2026-10-22 10:27:37</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>91</orderLineNo><itemCode>RF20261022102630A</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630A</batchCode><inventoryType>ZP</inventoryType><actualQty>4</actualQty></orderLine><orderLine><orderLineNo>92</orderLineNo><itemCode>RF20261022102630B</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630B</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>93</orderLineNo><itemCode>RF20261022102630A</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630A</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>94</orderLineNo><itemCode>RF20261022102630A</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630A</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>95</orderLineNo><itemCode>RF20261022102630B</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630B</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>96</orderLineNo><itemCode>RF20261022102630D</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630D</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>97</orderLineNo><itemCode>RF20261022102630D</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630D</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine><orderLine><orderLineNo>98</orderLineNo><itemCode>RF20261022102630S</itemCode><ownerCode>VC00001</ownerCode><batchCode>RF-RF20261022102630S</batchCode><inventoryType>ZP</inventoryType><actualQty>2</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS1790d90f2db84042848b73aac86466e6</packageCode><expressCode>TEST-SF-XS1790d90f2db84042848b73aac86466e6</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>RF20261022102630A</itemCode><quantity>7</quantity></item><item><itemCode>RF20261022102630B</itemCode><quantity>3</quantity></item><item><itemCode>RF20261022102630D</itemCode><quantity>4</quantity></item><item><itemCode>RF20261022102630S</itemCode><quantity>2</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS1790d90f2db84042848b73aac86466e6",
+    "quantity": 16,
+    "status": "SHIPPED",
+    "shipped_quantity": 16,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS1790d90f2db84042848b73aac86466e6",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS oms_message_outbox (
  id BIGINT AUTO_INCREMENT PRIMARY KEY,company_code VARCHAR(64) NOT NULL,service_code VARCHAR(24) NOT NULL,
  event_id VARCHAR(40) NOT NULL,message_type VARCHAR(40) NOT NULL,business_id VARCHAR(64) NOT NULL,business_version BIGINT NOT NULL,business_number VARCHAR(128) NOT NULL,
- dedupe_key CHAR(64) NOT NULL,trace_id VARCHAR(40) NOT NULL,schema_version INT NOT NULL DEFAULT 1,
+ dedupe_key CHAR(64) NOT NULL,trace_id VARCHAR(40) NOT NULL,source_trace_id VARCHAR(256) NULL,schema_version INT NOT NULL DEFAULT 1,
  publish_state VARCHAR(24) NOT NULL DEFAULT 'PENDING',process_state VARCHAR(24) NOT NULL DEFAULT 'PENDING',
  send_attempts INT NOT NULL DEFAULT 0,consume_attempts INT NOT NULL DEFAULT 0,business_attempts INT NOT NULL DEFAULT 0,
  next_publish_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),next_process_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS oms_message_outbox (
 CREATE TABLE IF NOT EXISTS oms_message_attempt (
  id BIGINT AUTO_INCREMENT PRIMARY KEY,company_code VARCHAR(64) NOT NULL,event_id VARCHAR(40) NOT NULL,
  stage VARCHAR(24) NOT NULL,result VARCHAR(24) NOT NULL,mode VARCHAR(24) NOT NULL DEFAULT '',message VARCHAR(1000) NOT NULL DEFAULT '',duration_ms BIGINT NOT NULL DEFAULT 0,
- actor VARCHAR(100) NOT NULL DEFAULT '',create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),KEY event_attempt(company_code,event_id,id)
+ sw_trace_id VARCHAR(256) NULL,actor VARCHAR(100) NOT NULL DEFAULT '',create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),KEY event_attempt(company_code,event_id,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

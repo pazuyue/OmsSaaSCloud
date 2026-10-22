@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 @FeignClient(contextId="stockSyncInventory",name="oms-inventory")
 interface StockSyncInventory {
+ @PostMapping("/platformStock/internal/lucky-exposure") R<Map<String,Object>> exposure(@RequestParam("company_code") String company,@RequestBody Map<String,Object> request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
  @PostMapping("/platformStock/internal/snapshot") R<Map<String,Object>> snapshot(@RequestParam("company_code") String company,@RequestBody Map<String,Object> request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 }
 @FeignClient(contextId="stockSyncOrders",name="oms-order")

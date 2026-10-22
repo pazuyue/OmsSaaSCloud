@@ -1,0 +1,98 @@
+{
+  "orders": [
+    {
+      "id": 129,
+      "number": "SO07674a63fb004132ade87835c081cb35",
+      "mode": "multi"
+    },
+    {
+      "id": 130,
+      "number": "SO4403a9edb6a948f98031e9186adc88cf",
+      "mode": "single"
+    },
+    {
+      "id": 131,
+      "number": "SO29ff740b9c9b42888ced08ff80dbc8f0",
+      "mode": "missing"
+    }
+  ],
+  "platform_business_amounts_equal": true,
+  "multi_discount_not_duplicated": true,
+  "single_freight_excluded_from_goods": true,
+  "missing_not_zero": true,
+  "internal_note_verified": true,
+  "stock_unchanged_by_ui": true,
+  "owned_test_orders_voided": true,
+  "final_stock": {
+    "company": [
+      {
+        "sku": "DOC_20261021163717",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 9
+      }
+    ],
+    "channel": [
+      {
+        "sku": "DOC_20261021163717",
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 20
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "DOC_V_20261021163717",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 172,
+        "store": "DOC_V_20261021163717",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [
+      {
+        "id": 173,
+        "quantity": 2,
+        "reserved": 0,
+        "outbound": 0
+      },
+      {
+        "id": 174,
+        "quantity": 1,
+        "reserved": 0,
+        "outbound": 0
+      }
+    ],
+    "source": [
+      {
+        "id": 96,
+        "quantity": 2,
+        "outbound": 0,
+        "reserved": 0
+      },
+      {
+        "id": 97,
+        "quantity": 1,
+        "outbound": 0,
+        "reserved": 0
+      }
+    ],
+    "allocation": []
+  },
+  "browser_errors": []
+}

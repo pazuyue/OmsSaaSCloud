@@ -1,0 +1,132 @@
+{
+  "partial_quota_identified": true,
+  "all_excluded_identified": true,
+  "automatic_remainder_verified": true,
+  "per_group_validation": true,
+  "invalid_configuration_sends_no_trial": true,
+  "draft_or_publish_writes": 0,
+  "browser_errors": [],
+  "actual_read_only_trial": [
+    {
+      "store_code": "FD_V_20261020222327",
+      "can_fulfill": true,
+      "quantity": 4,
+      "sample_units": [
+        {
+          "unit": 1,
+          "components": [
+            {
+              "batch_id": 164,
+              "sku_sn": "FD20261020222327A",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 A",
+              "group_key": "top",
+              "group_name": "上装（新版本）",
+              "quantity": 1,
+              "clearance_priority": 10
+            },
+            {
+              "batch_id": 166,
+              "sku_sn": "FD20261020222327D",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 D",
+              "group_key": "bottom",
+              "group_name": "下装",
+              "quantity": 1,
+              "clearance_priority": 0
+            }
+          ],
+          "cost": 4.0
+        },
+        {
+          "unit": 2,
+          "components": [
+            {
+              "batch_id": 164,
+              "sku_sn": "FD20261020222327A",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 A",
+              "group_key": "top",
+              "group_name": "上装（新版本）",
+              "quantity": 1,
+              "clearance_priority": 10
+            },
+            {
+              "batch_id": 166,
+              "sku_sn": "FD20261020222327D",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 D",
+              "group_key": "bottom",
+              "group_name": "下装",
+              "quantity": 1,
+              "clearance_priority": 0
+            }
+          ],
+          "cost": 4.0
+        },
+        {
+          "unit": 3,
+          "components": [
+            {
+              "batch_id": 165,
+              "sku_sn": "FD20261020222327B",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 B",
+              "group_key": "top",
+              "group_name": "上装（新版本）",
+              "quantity": 1,
+              "clearance_priority": 0
+            },
+            {
+              "batch_id": 166,
+              "sku_sn": "FD20261020222327D",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 D",
+              "group_key": "bottom",
+              "group_name": "下装",
+              "quantity": 1,
+              "clearance_priority": 0
+            }
+          ],
+          "cost": 4.0
+        },
+        {
+          "unit": 4,
+          "components": [
+            {
+              "batch_id": 165,
+              "sku_sn": "FD20261020222327B",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 B",
+              "group_key": "top",
+              "group_name": "上装（新版本）",
+              "quantity": 1,
+              "clearance_priority": 0
+            },
+            {
+              "batch_id": 166,
+              "sku_sn": "FD20261020222327D",
+              "unit_cost": 2.0,
+              "store_code": "FD_V_20261020222327",
+              "goods_name": "[福袋验收] 实际商品 D",
+              "group_key": "bottom",
+              "group_name": "下装",
+              "quantity": 1,
+              "clearance_priority": 0
+            }
+          ],
+          "cost": 4.0
+        }
+      ],
+      "min_cost": 4.0,
+      "max_cost": 4.0
+    }
+  ]
+}
