@@ -29,6 +29,24 @@ class RefundGoodsServiceTest {
         f.db.update("UPDATE oms_refund_return_plan SET gift_plan_id=NULL WHERE id=?",id);f.db.update("UPDATE oms_order_line SET gift_plan_id=7 WHERE company_code='VERIFY' AND order_id=?",f.order);OrderDocumentInfo.related(f.repo,"VERIFY",order);assertTrue(((List<?>)order.get("purchase_returns")).isEmpty());
     }
     @Test void sameSourceIsReusedButCannotBeOverwritten(){long id=create(3);assertEquals(id,create(3));assertThrows(IllegalArgumentException.class,()->create(4));assertEquals(1,f.db.queryForObject("SELECT COUNT(*) FROM oms_refund_return_plan",Integer.class));}
+    @Test @SuppressWarnings("unchecked") void returnPresentationUsesFrozenShipmentOwnershipAndStockUnit(){
+        long id=create(3);
+        Map<String,Object> row=((List<Map<String,Object>>)goods.report("VERIFY",refund).get("plans")).get(0);
+        assertEquals(source,number(row,"source_id"));assertEquals("件",row.get("stock_unit"));assertEquals("PURCHASE",row.get("item_kind"));assertFalse(text(row,"goods_name").isEmpty());
+        f.db.update("UPDATE oms_order_line SET stocked_bundle_snapshot='{}',gift_plan_id=7 WHERE company_code='VERIFY' AND order_id=?",f.order);
+        f.db.update("UPDATE oms_refund_return_plan SET gift_plan_id=7 WHERE id=?",id);
+        row=((List<Map<String,Object>>)goods.report("VERIFY",refund).get("plans")).get(0);
+        assertEquals("套",row.get("stock_unit"));assertEquals("STOCKED_BUNDLE",row.get("source_kind"));assertEquals("GIFT",row.get("item_kind"));
+        f.db.update("INSERT INTO oms_order_bundle(company_code,order_id,platform_oid,sku_sn,goods_name,quantity,payment,revision,snapshot,business_type) VALUES ('VERIFY',?,'PARENT','BAG','Frozen bag',1,0,1,'{}','LUCKY_BAG')",f.order);
+        long bundle=f.db.queryForObject("SELECT id FROM oms_order_bundle WHERE company_code='VERIFY' AND order_id=? AND platform_oid='PARENT'",Long.class,f.order);
+        f.db.update("UPDATE oms_order_line SET stocked_bundle_snapshot=NULL,bundle_id=? WHERE company_code='VERIFY' AND order_id=?",bundle,f.order);
+        row=((List<Map<String,Object>>)goods.report("VERIFY",refund).get("plans")).get(0);
+        assertEquals("件",row.get("stock_unit"));assertEquals("LUCKY_BAG",row.get("source_kind"));assertEquals("Frozen bag",row.get("parent_goods_name"));
+        List<Map<String,Object>> foreign=new ArrayList<>(Collections.singletonList(m("source_line_id",source)));
+        RefundReturnPresentation.sources(f.repo,"OTHER",foreign,"source_line_id");assertFalse(foreign.get(0).containsKey("goods_name"));
+        List<Map<String,Object>> members=new ArrayList<>(Arrays.asList(m("source_line_id",source,"refund_id",1),m("source_line_id",source,"refund_id",2)));
+        RefundReturnPresentation.sources(f.repo,"VERIFY",members,"source_line_id");assertEquals("GIFT",members.get(1).get("item_kind"));assertEquals(2,number(members.get(1),"refund_id"));
+    }
     @Test void cannotClaimBeyondActualSourceOrBorrowAnotherCompany(){assertThrows(IllegalArgumentException.class,()->create(6));assertThrows(IllegalArgumentException.class,()->goods.create("OTHER",refund,input(2),"test"));}
     @Test void approvedExchangeAndRefundShareOneSourceCapacity(){f.db.update("DELETE FROM oms_exchange");f.db.update("INSERT INTO oms_exchange(company_code,exchange_sn,channel_id,source_kind,source_modified,dispute_id,payload,payload_hash,source_shipment_line_id,requested_quantity,approved_version,state) VALUES ('VERIFY','HH_CLAIM',1,'INTERNAL',NOW(),'123456','{}','hash',?,3,1,'APPROVED')",source);assertThrows(IllegalArgumentException.class,()->create(3));assertNotNull(create(2));}
     @Test void unsentCancellationAndWaiverDoNotPretendReceived(){long id=create(5);Map<String,Object> stop=command(id);goods.action("VERIFY",refund,id,0,"cancel",stop,"test");assertEquals("STOPPED",plan(id).get("state"));Map<String,Object> waive=command(id);waive.put("quantity",5);goods.action("VERIFY",refund,id,0,"waive",waive,"test");assertEquals(0,number(plan(id),"accepted_quantity"));assertEquals(5,number(plan(id),"waived_quantity"));goods.finish("VERIFY",refund,version(),"test");assertEquals("COMPLETED",f.refunds.business("VERIFY",refund,false).get("state"));verifyNoInteractions(goods.returns);}

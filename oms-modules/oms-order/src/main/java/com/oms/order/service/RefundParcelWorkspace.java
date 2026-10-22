@@ -13,7 +13,7 @@ import static com.oms.order.service.RefundValues.*;
     @Resource RefundReturnClient returns;
     @Resource RefundGoodsService goods;
     @Resource RefundSharedScope scope;
-    public Object list(String c,long refund){refunds.business(c,refund,false);List<Map<String,Object>> parcels=data(returns.parcels(c,refund,SecurityConstants.INNER));return parcels;}
+    public Object list(String c,long refund){refunds.business(c,refund,false);List<Map<String,Object>> parcels=data(returns.parcels(c,refund,SecurityConstants.INNER));List<Map<String,Object>> sources=new ArrayList<>();for(Map<String,Object> parcel:parcels)sources.addAll(members(parcel));RefundReturnPresentation.sources(refunds.repository,c,sources,"source_line_id");return parcels;}
     @SuppressWarnings("unchecked") private List<Map<String,Object>> members(Map<String,Object> parcel){return (List<Map<String,Object>>)parcel.get("members");}
     public Object candidates(String c,long refund,String carrier,String waybill){refunds.business(c,refund,false);return data(returns.parcelCandidates(c,carrier.toUpperCase(Locale.ROOT).trim(),waybill.trim(),SecurityConstants.INNER));}
     public Object attach(String c,long refund,long plan,Map<String,Object> input,String actor){return attach(c,refund,plan,input,actor,false);}

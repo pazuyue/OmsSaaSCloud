@@ -1,4 +1,8 @@
 const number = value => Number(value || 0)
+function sourceUnit(sources) {
+  const units = new Set(sources.map(row => row.stock_unit || '库存单位'))
+  return units.size === 1 ? [...units][0] : '库存单位'
+}
 export function receiptPayload(receipt) {
   try { return typeof receipt.payload === 'string' ? JSON.parse(receipt.payload) : (receipt.payload || {}) } catch (_) { return {} }
 }
@@ -32,9 +36,9 @@ export function sourcePending(parcel, member) {
 export function scopePending(parcel, refundId) {
   return (parcel.members || []).some(m => String(m.refund_id) === String(refundId) && sourcePending(parcel, m))
 }
-export function receiptText(accepted, pending) {
-  if (pending) return number(accepted) ? `已确认 ${accepted} 件，另有待分配` : '待确定（已确认 0 件）'
-  return `已确认 ${number(accepted)} 件`
+export function receiptText(accepted, pending, unit = '件') {
+  if (pending) return number(accepted) ? `已确认 ${accepted} ${unit}，另有待分配` : `待确定（已确认 0 ${unit}）`
+  return `已确认 ${number(accepted)} ${unit}`
 }
 export function allocationReason(parcel, receipt) {
   const audit = allocationMetadata(receipt)
@@ -46,7 +50,7 @@ export function allocationReason(parcel, receipt) {
     const sources = eligibleSources(parcel, receipt, line)
     const available = sources.reduce((n, m) => n + number(m.quantity) - number(m.accepted_quantity), 0)
     const received = number(line.good) + number(line.bad)
-    if (!line.lineNo && sources.length > 1 && received < available) return `仓库回传同一SKU ${received} 件，未提供来源明细行号；该SKU合计待收 ${available} 件，无法确定各退款单的实收数量，暂停自动分配。`
+    if (!line.lineNo && sources.length > 1 && received < available) return `仓库回传同一SKU ${received} ${sourceUnit(sources)}，未提供来源明细行号；该SKU合计待收 ${available} ${sourceUnit(sources)}，无法确定各退款单的实收数量，暂停自动分配。`
     if (number(line.good) && number(line.bad) && sources.length > 1) return '同一SKU同时回传良品和次品，且存在多个退款来源；需确认各退款单分别收到的品质与数量。'
   }
   return '本次回传未满足自动分配条件。请核对原THK明细行、商品、品质和数量，明确各退款来源；未分配部分未入账。'
@@ -58,7 +62,8 @@ export function allocationError(parcel, receipt, allocations) {
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index], rows = allocations.filter(a => a.line_index === index)
     const good = rows.reduce((n, a) => n + number(a.good_qty), 0), bad = rows.reduce((n, a) => n + number(a.bad_qty), 0)
-    if (good !== number(line.good) || bad !== number(line.bad)) return `原回传第 ${index + 1} 行需分配良品 ${number(line.good)} 件、次品 ${number(line.bad)} 件；当前分配 ${good} / ${bad} 件`
+    const unit = sourceUnit(eligibleSources(parcel, receipt, line))
+    if (good !== number(line.good) || bad !== number(line.bad)) return `原回传第 ${index + 1} 行需分配良品 ${number(line.good)} ${unit}、次品 ${number(line.bad)} ${unit}；当前分配 ${good} / ${bad} ${unit}`
     for (const row of rows) {
       const qty = number(row.good_qty) + number(row.bad_qty)
       if (![number(row.good_qty), number(row.bad_qty)].every(n => Number.isInteger(n) && n >= 0)) return '分配数量必须是非负整数'
@@ -81,7 +86,7 @@ export function allocationOutcome(parcel, planId) {
   for (const event of events) {
     const audit = allocationMetadata(event)
     const row = (audit.rows || []).find(row => String(row.plan_id) === String(planId))
-    if (row) return `最近一次按规则分配 ${number(row.assigned)} 件${number(row.assigned) === 0 ? '（本次未分配到实收）' : ''} · 分配后待退回 ${number(row.remaining)} 件 · 规则版本 ${audit.policy_revision}`
+    if (row) { const unit = sourceUnit((parcel.members || []).filter(m => String(m.plan_id) === String(planId))); return `最近一次按规则分配 ${number(row.assigned)} ${unit}${number(row.assigned) === 0 ? '（本次未分配到实收）' : ''} · 分配后待退回 ${number(row.remaining)} ${unit} · 规则版本 ${audit.policy_revision}` }
   }
   return ''
 }

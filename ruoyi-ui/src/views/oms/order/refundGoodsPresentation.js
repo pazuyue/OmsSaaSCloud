@@ -10,7 +10,7 @@ export function completionBlockers(plans) {
     const prefix = `退回计划 #${p.id}：`
     if (Number((p.actual || {}).pending_review_count) > 0 || pendingReviews(p).length) blockers.push(prefix + '有回传待人工核对，未计入实收和库存')
     if (Number(p.accepted_quantity) !== Number(p.posted_quantity)) blockers.push(prefix + '有已确认实收尚未入账')
-    if (remaining(p)) blockers.push(prefix + `仍有 ${remaining(p)} 件待退回或差异处理`)
+    if (remaining(p)) blockers.push(prefix + `仍有 ${remaining(p)} ${p.stock_unit || '库存单位'}待退回或差异处理`)
     if (activeDocuments(p).length || (!p.actual && p.state !== 'STOPPED' && p.state !== 'CLOSED')) blockers.push(prefix + '仍有未结束的退回安排')
   })
   return blockers

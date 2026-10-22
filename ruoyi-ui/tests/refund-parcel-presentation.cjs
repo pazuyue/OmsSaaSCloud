@@ -10,7 +10,7 @@ vm.runInNewContext(babel.transformSync(fs.readFileSync(path.join(root, 'refundPa
   configFile: false, babelrc: false, plugins: [require.resolve('@babel/plugin-transform-modules-commonjs')]
 }).code, context)
 const h = context.exports
-const members = [2, 1, 1].map((quantity, i) => ({ id: i + 11, task_id: i + 101, plan_id: i + 21, refund_id: i + 14, return_sn: 'THK1', sku_sn: 'A', quantity, accepted_quantity: 0, posted_quantity: 0 }))
+const members = [2, 1, 1].map((quantity, i) => ({ id: i + 11, task_id: i + 101, plan_id: i + 21, refund_id: i + 14, return_sn: 'THK1', sku_sn: 'A', stock_unit: '件', quantity, accepted_quantity: 0, posted_quantity: 0 }))
 const receipt = { state: 'WAIT_ALLOCATION', quantity: 3, payload: JSON.stringify({ ticketSn: 'THK1', lines: [{ sku: 'A', lineNo: '', good: 3, bad: 0 }] }) }
 const parcel = { members, receipts: [receipt], warehouse_document: { return_sn: 'THK1', cancel_state: 'NONE' } }
 assert.equal(h.parcelScope(parcel).planned, 4)

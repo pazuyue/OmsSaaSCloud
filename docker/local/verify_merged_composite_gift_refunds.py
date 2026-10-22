@@ -201,11 +201,11 @@ class Acceptance(original.Acceptance):
             page.on('pageerror', lambda e: errors.append(str(e)))
             page.goto(BASE + '/oms-order/businessRefunds?id=' + str(self.c['refunds']['kit']['id']), wait_until='networkidle')
             dialog = page.get_by_role('dialog', name='业务退款详情 · 退货退款', exact=True)
-            dialog.get_by_role('tab', name='退回与包裹', exact=True).click()
+            dialog.get_by_role('tab', name='退货与入库', exact=True).click()
             dialog.get_by_role('button', name='查看包裹及处理实收', exact=True).last.click()
             parcel = page.locator('.refund-parcel-drawer')
             expect(parcel.get_by_text('合包退回 · 4 张退款单', exact=True)).to_be_visible()
-            expect(parcel).to_contain_text('共同退货入库单 ' + self.c['return_sn'])
+            expect(parcel).to_contain_text(self.c['return_sn'])
             expect(parcel).to_contain_text('TEST_MERGED_' + self.c['case_id'])
             page.screenshot(path=str(OUT / 'shared-return-parcel.png'), full_page=True, animations='disabled')
             assert not errors, errors
