@@ -15,6 +15,18 @@ public class OrderFulfillmentAdjustmentService {
     @Resource private com.oms.inventory.service.impl.rule.AllocationReservationService locks;
     private static final ObjectMapper JSON=new ObjectMapper();
     private String json(Object value){try{return JSON.writeValueAsString(value);}catch(Exception e){throw new IllegalArgumentException("截单快照无法序列化");}}
+    @SuppressWarnings("unchecked") @Transactional(readOnly=true,timeout=10)
+    public Map<String,Object> receipt(String rawCompany,String request){require(rawCompany!=null&&rawCompany.matches("[A-Za-z0-9_-]{1,50}")&&request!=null&&request.matches("[A-Za-z0-9_-]{1,64}"),"公司或库存请求编号无效");List<String> rows=jdbc.queryForList("SELECT receipt_json FROM oms_order_fulfillment_adjustment WHERE company_code=? AND request_id=?",String.class,rawCompany.toUpperCase(Locale.ROOT),request);Map<String,Object> missing=new LinkedHashMap<>();missing.put("state","MISSING");missing.put("request_id",request);if(rows.isEmpty())return missing;try{return JSON.readValue(rows.get(0),Map.class);}catch(Exception e){throw new IllegalArgumentException("原库存回执格式无效");}}
+    /** One bounded, company-scoped read of already committed receipts; never executes a cancellation. */
+    @SuppressWarnings("unchecked") @Transactional(readOnly=true,timeout=10)
+    public List<Map<String,Object>> receiptBatch(String rawCompany,Collection<String> requests){
+        require(rawCompany!=null&&rawCompany.matches("[A-Za-z0-9_-]{1,50}")&&requests!=null&&requests.size()<=200,"库存回执批量范围无效");
+        Set<String> ids=new TreeSet<>();for(String request:requests){require(request!=null&&request.matches("[A-Za-z0-9_-]{1,64}"),"库存回执请求编号无效");ids.add(request);}if(ids.isEmpty())return Collections.emptyList();
+        List<Object> args=new ArrayList<>();args.add(rawCompany.toUpperCase(Locale.ROOT));args.addAll(ids);List<Map<String,Object>> result=new ArrayList<>();
+        for(Map<String,Object> row:jdbc.queryForList("SELECT request_id,receipt_json,create_time FROM oms_order_fulfillment_adjustment WHERE company_code=? AND request_id IN ("+String.join(",",Collections.nCopies(ids.size(),"?"))+") ORDER BY request_id",args.toArray())){
+            try{Map<String,Object> receipt=JSON.readValue(s(row,"receipt_json"),Map.class);require(s(row,"request_id").equals(s(receipt,"request_id")),"库存回执身份不一致");receipt.put("recorded_at",row.get("create_time")==null?null:row.get("create_time").toString());result.add(receipt);}catch(java.io.IOException invalid){throw new IllegalArgumentException("库存回执格式无效");}}
+        return result;
+    }
     @SuppressWarnings("unchecked") @Transactional(rollbackFor=Exception.class,timeout=30,isolation=Isolation.READ_COMMITTED)
     public Map<String,Object> apply(String rawCompany,Map<String,Object> command){
         require(rawCompany!=null&&rawCompany.matches("[A-Za-z0-9_-]{1,50}"),"公司无效");String company=rawCompany.toUpperCase(Locale.ROOT),request=s(command,"request_id"),mode=s(command,"mode"),tid=s(command,"platform_tid");long channel=n(command,"channel_id");
@@ -26,6 +38,7 @@ public class OrderFulfillmentAdjustmentService {
         String digest=com.oms.common.util.AllocationDigest.hash(command);
         List<Map<String,Object>> old=jdbc.queryForList("SELECT * FROM oms_order_fulfillment_adjustment WHERE company_code=? AND request_id=?",company,request);
         if(!old.isEmpty()){require(digest.equals(s(old.get(0),"payload_hash")),"同一截单库存请求内容变化");try{return JSON.readValue(s(old.get(0),"receipt_json"),Map.class);}catch(Exception e){throw new IllegalArgumentException("截单回执损坏");}}
+        Map<String,Long> logicalReleased=new TreeMap<>(),allocationReleased=new TreeMap<>(),publicWarehouseReleased=new TreeMap<>();
         Set<Long> seen=new HashSet<>();long released=0;Map<Long,Long> terminated=new HashMap<>();
         for(Map<String,Object> line:lines){long id=n(line,"allocation_id"),qty=n(line,"quantity");require(id>0&&qty>0&&seen.add(id),"截单来源重复或数量无效");
             List<Map<String,Object>> rows=jdbc.queryForList("SELECT * FROM oms_order_warehouse_allocation WHERE company_code=? AND channel_id=? AND platform_tid=? AND id=? FOR UPDATE",company,channel,tid,id);require(rows.size()==1,"截单来源不属于本订单");Map<String,Object> a=rows.get(0);
@@ -35,10 +48,11 @@ public class OrderFulfillmentAdjustmentService {
                 Map<String,Object> before=jdbc.queryForMap("SELECT * FROM wms_inventory_batch WHERE company_code=? AND id=? FOR UPDATE",company,a.get("batch_id"));
                 require(jdbc.update("UPDATE wms_inventory_batch SET zp_available_number=zp_available_number+?,zp_lock_number=zp_lock_number-?,version=version+1 WHERE company_code=? AND id=? AND zp_lock_number>=?",qty,qty,company,a.get("batch_id"),qty)==1,"批次占用不足");
                 require(jdbc.update("UPDATE wms_inventory SET zp_available_number=zp_available_number+?,zp_lock_number=zp_lock_number-?,version=version+1 WHERE company_code=? AND store_code=? AND sku_sn=? AND zp_lock_number>=?",qty,qty,company,a.get("store_code"),a.get("sku_sn"),qty)==1,"仓库占用不足");
-                OrderWarehouseAllocationService.journal(jdbc,before,-qty,"ORDER_UNLOCK",request);
+                OrderWarehouseAllocationService.journal(jdbc,before,-qty,"ORDER_UNLOCK",request);publicWarehouseReleased.merge(s(a,"sku_sn"),qty,Long::sum);
             }
             jdbc.update("UPDATE oms_order_warehouse_allocation SET released_quantity=released_quantity+?,status=IF(outbound_quantity=0, 'RELEASED','OCCUPIED') WHERE company_code=? AND id=?",qty,company,id);
-            if("TERMINATE".equals(mode)){releaseSource(company,n(a,"stock_source_id"),qty);terminated.merge(n(a,"demand_id"),qty,Long::sum);}released+=qty;
+            allocationReleased.merge(s(a,"sku_sn"),qty,Long::sum);
+            if("TERMINATE".equals(mode)){releaseSource(company,n(a,"stock_source_id"),qty);logicalReleased.merge(s(a,"sku_sn"),qty,Long::sum);terminated.merge(n(a,"demand_id"),qty,Long::sum);}released+=qty;
         }
         if("REDUCE".equals(mode)){
             require(lines.isEmpty()&&!finish&&command.get("demands") instanceof List,"换品需求调整参数无效");
@@ -49,14 +63,14 @@ public class OrderFulfillmentAdjustmentService {
                 require(qty<=n(d,"demand_quantity")-n(d,"cancelled_quantity")-n(d,"outbound_quantity"),"换品数量超过未发需求");
                 require(jdbc.queryForObject("SELECT COUNT(*) FROM oms_order_warehouse_allocation WHERE company_code=? AND demand_id=? AND status='OCCUPIED' AND quantity-released_quantity-outbound_quantity>0",Long.class,company,d.get("id"))==0,"原商品仍有分仓占用，请先完成仓库撤回与核对");
                 long remaining=Math.min(qty,n(d,"reserved_quantity")-n(d,"outbound_quantity"));
-                for(Map<String,Object> source:jdbc.queryForList("SELECT * FROM oms_order_stock_source WHERE company_code=? AND demand_id=? AND reserved=1 ORDER BY id FOR UPDATE",company,d.get("id"))){long release=Math.min(remaining,n(source,"quantity")-n(source,"outbound_quantity"));if(release>0){releaseSource(company,n(source,"id"),release);remaining-=release;}}
+                for(Map<String,Object> source:jdbc.queryForList("SELECT * FROM oms_order_stock_source WHERE company_code=? AND demand_id=? AND reserved=1 ORDER BY id FOR UPDATE",company,d.get("id"))){long release=Math.min(remaining,n(source,"quantity")-n(source,"outbound_quantity"));if(release>0){releaseSource(company,n(source,"id"),release);logicalReleased.merge(s(source,"sku_sn"),release,Long::sum);remaining-=release;}}
                 require(remaining==0,"逻辑预占来源数量不一致");terminated.put(n(d,"id"),qty);released+=qty;
             }
             require(!oids.isEmpty(),"缺少换品需求");
         }
         if(finish){
             require(jdbc.queryForObject("SELECT COUNT(*) FROM oms_order_warehouse_allocation WHERE company_code=? AND channel_id=? AND platform_tid=? AND quantity-released_quantity-outbound_quantity>0 AND status='OCCUPIED'",Long.class,company,channel,tid)==0,"还有未确认截停的仓库占用");
-            for(Map<String,Object> d:demands)for(Map<String,Object> source:jdbc.queryForList("SELECT * FROM oms_order_stock_source WHERE company_code=? AND demand_id=? AND reserved=1 FOR UPDATE",company,d.get("id"))){long qty=n(source,"quantity")-n(source,"outbound_quantity");if(qty>0)releaseSource(company,n(source,"id"),qty);}
+            for(Map<String,Object> d:demands)for(Map<String,Object> source:jdbc.queryForList("SELECT * FROM oms_order_stock_source WHERE company_code=? AND demand_id=? AND reserved=1 FOR UPDATE",company,d.get("id"))){long qty=n(source,"quantity")-n(source,"outbound_quantity");if(qty>0){releaseSource(company,n(source,"id"),qty);logicalReleased.merge(s(source,"sku_sn"),qty,Long::sum);}}
         }
         List<Map<String,Object>> result=new ArrayList<>();
         for(Map<String,Object> d:demands){Map<String,Object> now=jdbc.queryForMap("SELECT * FROM oms_order_stock_demand WHERE company_code=? AND id=? FOR UPDATE",company,d.get("id"));long cancelled=finish?n(now,"demand_quantity")-n(now,"outbound_quantity"):n(now,"cancelled_quantity")+terminated.getOrDefault(n(d,"id"),0L);
@@ -66,6 +80,10 @@ public class OrderFulfillmentAdjustmentService {
             jdbc.update("INSERT INTO oms_order_stock_event(company_code,demand_id,action,quantity,message) VALUES (?,?,'FULFILLMENT_ADJUST',?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity),message=VALUES(message)",company,d.get("id"),terminated.getOrDefault(n(d,"id"),0L),request+"："+(finish?"终止剩余需求":"REPLAN".equals(mode)?"撤回分仓，保留逻辑预占":"终止指定未发数量"));
         }
         Map<String,Object> receipt=new LinkedHashMap<>();receipt.put("request_id",request);receipt.put("state","COMPLETED");receipt.put("mode",mode);receipt.put("quantity",released);receipt.put("lines",result);
+        // Versioned immutable receipt facts: warehouse allocation and logical reservation are different layers, never additive.
+        List<Map<String,Object>> effects=new ArrayList<>();Set<String> affected=new TreeSet<>();affected.addAll(logicalReleased.keySet());affected.addAll(allocationReleased.keySet());
+        for(String sku:affected){Map<String,Object> effect=new LinkedHashMap<>();effect.put("sku_sn",sku);effect.put("logical_reservation_released",logicalReleased.getOrDefault(sku,0L));effect.put("warehouse_allocation_released",allocationReleased.getOrDefault(sku,0L));effect.put("public_warehouse_lock_released",publicWarehouseReleased.getOrDefault(sku,0L));effects.add(effect);}
+        receipt.put("stock_effects",effects);receipt.put("effect_schema_version",1);receipt.put("confirmed_at",java.time.LocalDateTime.now().toString());
         LuckyBagStock.reconcile(jdbc,company,channel,tid);jdbc.update("INSERT INTO oms_order_fulfillment_adjustment(company_code,request_id,payload_hash,receipt_json) VALUES (?,?,?,?)",company,request,digest,json(receipt));return receipt;
     }
     private void releaseSource(String company,long sourceId,long qty){

@@ -31,6 +31,9 @@ public class TmallClient {
         params.put("sign",sign(params,secret));
         return post("https://eco.taobao.com/router/rest",params);
     }
+    public JsonNode apiFiles(String key,String secret,String token,String method,Map<String,String> args,Map<String,byte[]> files){
+        Map<String,String> params=new TreeMap<>(args);params.put("method",method);params.put("app_key",key);params.put("format","json");params.put("v","2.0");params.put("sign_method","md5");params.put("timestamp",LocalDateTime.now(ZoneId.of("Asia/Shanghai")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));if(token!=null)params.put("session",token);params.put("sign",sign(params,secret));return post("https://eco.taobao.com/router/rest",params,files);
+    }
     public static String sign(Map<String,String> params,String secret) {
         StringBuilder input=new StringBuilder(secret);
         new TreeMap<>(params).forEach((k,v)->{if(!"sign".equals(k)&&v!=null&&!v.isEmpty())input.append(k).append(v);});input.append(secret);
@@ -41,15 +44,16 @@ public class TmallClient {
         catch(Exception e){throw new IllegalStateException("摘要算法不可用");}
     }
     public static String encode(String value) { try{return URLEncoder.encode(value,"UTF-8");}catch(Exception e){throw new IllegalStateException(e);} }
-    protected JsonNode post(String url,Map<String,String> params) {
+    protected JsonNode post(String url,Map<String,String> params) {return post(url,params,Collections.emptyMap());}
+    protected JsonNode post(String url,Map<String,String> params,Map<String,byte[]> files) {
         for(String field:Arrays.asList("session","client_secret","refresh_token","code","sign")){String value=params.get(field);if(value!=null&&value.length()>=4)transport().forbidden.add(value);}
         HttpURLConnection connection=null;
         try {
             connection=(HttpURLConnection)new URL(url).openConnection();connection.setInstanceFollowRedirects(false);
             connection.setConnectTimeout(5000);connection.setReadTimeout(15000);connection.setRequestMethod("POST");connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+            String boundary="OMS"+UUID.randomUUID().toString().replace("-","");connection.setRequestProperty("Content-Type",files.isEmpty()?"application/x-www-form-urlencoded;charset=UTF-8":"multipart/form-data; boundary="+boundary);
             StringJoiner body=new StringJoiner("&");params.forEach((k,v)->body.add(encode(k)+"="+encode(v)));
-            byte[] bytes=body.toString().getBytes(StandardCharsets.UTF_8);connection.setFixedLengthStreamingMode(bytes.length);
+            byte[] bytes=files.isEmpty()?body.toString().getBytes(StandardCharsets.UTF_8):multipart(params,files,boundary);connection.setFixedLengthStreamingMode(bytes.length);
             try(OutputStream out=connection.getOutputStream()){transport().sent=true;out.write(bytes);}
             int status=connection.getResponseCode();transport().httpStatus=status;
             InputStream stream=status>=400?connection.getErrorStream():connection.getInputStream();
@@ -69,4 +73,13 @@ public class TmallClient {
         } catch(Failure e){throw e;} catch(Exception e){throw new Failure("TRANSPORT_OR_RESPONSE_ERROR",true);}
         finally {if(connection!=null)connection.disconnect();}
     }
+    static byte[] multipart(Map<String,String> params,Map<String,byte[]> files,String boundary){
+        if(!boundary.matches("[A-Za-z0-9]{1,80}"))throw new IllegalArgumentException("上传边界无效");
+        try{ByteArrayOutputStream out=new ByteArrayOutputStream();
+            for(Map.Entry<String,String> e:params.entrySet()){if(!e.getKey().matches("[A-Za-z_][A-Za-z0-9_]{0,63}"))throw new IllegalArgumentException("上传字段无效");out.write(("--"+boundary+"\r\nContent-Disposition: form-data; name=\""+e.getKey()+"\"\r\n\r\n"+e.getValue()+"\r\n").getBytes(StandardCharsets.UTF_8));}
+            for(Map.Entry<String,byte[]> e:files.entrySet()){if(!e.getKey().matches("[a-z_]{1,64}")||e.getValue()==null||e.getValue().length>512000)throw new IllegalArgumentException("凭证图片大小或字段无效");byte[] bytes=e.getValue();String type=bytes.length>3&&(bytes[0]&255)==255&&(bytes[1]&255)==216?"jpeg":bytes.length>6&&bytes[0]=='G'&&bytes[1]=='I'&&bytes[2]=='F'?"gif":bytes.length>8&&(bytes[0]&255)==137&&bytes[1]=='P'&&bytes[2]=='N'&&bytes[3]=='G'?"png":"";if(type.isEmpty())throw new IllegalArgumentException("凭证仅支持JPG、GIF、PNG图片");out.write(("--"+boundary+"\r\nContent-Disposition: form-data; name=\""+e.getKey()+"\"; filename=\"proof."+type+"\"\r\nContent-Type: image/"+type+"\r\n\r\n").getBytes(StandardCharsets.UTF_8));out.write(bytes);out.write("\r\n".getBytes(StandardCharsets.UTF_8));}
+            out.write(("--"+boundary+"--\r\n").getBytes(StandardCharsets.UTF_8));if(out.size()>1048576)throw new IllegalArgumentException("凭证请求超出限制");return out.toByteArray();
+        }catch(IOException e){throw new IllegalArgumentException("凭证请求编码失败");}
+    }
+
 }

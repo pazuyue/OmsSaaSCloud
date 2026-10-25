@@ -1,0 +1,23 @@
+package com.oms.order.service;
+import org.junit.jupiter.api.*;
+import java.util.*;
+import com.ruoyi.common.core.domain.R;
+import static com.oms.order.service.OrderValues.*;
+import static com.oms.order.service.RefundValues.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class RefundSupplementContinuationTest {
+    RefundGoodsServiceTest f;long plan;RefundAutoReturns auto;
+    @BeforeAll static void start(){RefundGoodsServiceTest.start();}
+    @BeforeEach void setup(){f=new RefundGoodsServiceTest();f.setup();plan=f.create(1);f.f.db.update("UPDATE oms_refund_return_plan SET parcel_state='NEED_CHECK',parcel_issue=? WHERE id=?",encode(m("code","LOGISTICS_CHANGED")),plan);auto=new RefundAutoReturns();auto.refunds=f.f.refunds;auto.returns=f.goods.returns;}
+    @AfterEach void close(){f.cleanup();}
+    Map<String,Object> parcel(long refund){return m("id",8,"warehouse_document",m("id",9,"dispatch_state","ACCEPTED","cancel_state","NONE"),"members",Collections.singletonList(m("refund_id",refund,"plan_id",plan,"active",1)),"receipts",Collections.singletonList(m("id",7,"document_id",9,"state","WAIT_ALLOCATION")));}
+    @Test void onlyLogisticsMetadataIssuesAllowOriginalWarehouseSource(){assertTrue(RefundAllocationContext.receiptIssueAllowsOriginalSource(null));assertTrue(RefundAllocationContext.receiptIssueAllowsOriginalSource(m("code","LOGISTICS_CHANGED")));assertFalse(RefundAllocationContext.receiptIssueAllowsOriginalSource(m("code","APPEND_AFTER_RECEIPT")));assertFalse(RefundAllocationContext.receiptIssueAllowsOriginalSource(m("code","RULE_BLOCKED")));}
+    @Test void logisticsChangedPlanStillRefreshesItsBoundOriginalThk(){when(auto.returns.parcels(eq("VERIFY"),eq(f.refund),anyString())).thenReturn(R.ok(Collections.singletonList(parcel(f.refund))));when(auto.returns.detail(eq("VERIFY"),eq(plan),anyString())).thenReturn(R.ok(m("id",9,"quantity",1,"accepted_quantity",1,"posted_quantity",1,"documents",Collections.singletonList(m("id",9,"receipt_state","COMPLETED","cancel_state","NONE")))));f.goods.refresh("VERIFY",f.refund);assertEquals(1,number(f.plan(plan),"accepted_quantity"));assertEquals(1,number(f.plan(plan),"posted_quantity"));assertEquals("NEED_CHECK",f.plan(plan).get("parcel_state"));verify(auto.returns,times(1)).parcels(eq("VERIFY"),eq(f.refund),anyString());}
+    @Test void anotherRefundMembershipCannotSupplyThisPlanReceipt(){when(auto.returns.parcels(eq("VERIFY"),eq(f.refund),anyString())).thenReturn(R.ok(Collections.singletonList(parcel(f.refund+99))));f.goods.refresh("VERIFY",f.refund);verify(auto.returns,never()).detail(anyString(),anyLong(),anyString());assertEquals(0,number(f.plan(plan),"accepted_quantity"));}
+    @Test void pendingOriginalReceiptIsReevaluatedWithCurrentVersionsAndExecutedOnlyWhenReady(){when(auto.returns.parcels(eq("VERIFY"),eq(f.refund),anyString())).thenReturn(R.ok(Collections.singletonList(parcel(f.refund))));when(auto.returns.evaluateAutomatic(eq("VERIFY"),eq(f.refund),eq(8L),eq(7L),anyMap(),anyString())).thenReturn(R.ok(m("status","READY","parcel_version",3,"policy_revision",4)),R.ok(m("status","APPLIED")));auto.resumeRecordedReceipts("VERIFY",f.refund,m("auto_allocate",1));org.mockito.ArgumentCaptor<Map<String,Object>> args=org.mockito.ArgumentCaptor.forClass(Map.class);verify(auto.returns,times(2)).evaluateAutomatic(eq("VERIFY"),eq(f.refund),eq(8L),eq(7L),args.capture(),anyString());assertEquals(false,args.getAllValues().get(0).get("execute"));assertEquals(true,args.getAllValues().get(1).get("execute"));assertEquals(3,args.getAllValues().get(1).get("parcel_version"));assertEquals(4,args.getAllValues().get(1).get("policy_revision"));}
+    @Test void ambiguousReceiptNeverGetsForcedAllocation(){when(auto.returns.parcels(eq("VERIFY"),eq(f.refund),anyString())).thenReturn(R.ok(Collections.singletonList(parcel(f.refund))));when(auto.returns.evaluateAutomatic(anyString(),anyLong(),anyLong(),anyLong(),anyMap(),anyString())).thenReturn(R.ok(m("status","MANUAL")));auto.resumeRecordedReceipts("VERIFY",f.refund,m("auto_allocate",1));verify(auto.returns,times(1)).evaluateAutomatic(anyString(),anyLong(),anyLong(),anyLong(),anyMap(),anyString());}
+    @Test void appendAfterReceiptIssuesRemainManual(){f.f.db.update("UPDATE oms_refund_return_plan SET parcel_issue=? WHERE id=?",encode(m("code","APPEND_AFTER_RECEIPT")),plan);auto.resumeRecordedReceipts("VERIFY",f.refund,m("auto_allocate",1));verifyNoInteractions(auto.returns);}
+    @Test void disabledAutoAllocationNeverRetriesARecordedReceipt(){auto.resumeRecordedReceipts("VERIFY",f.refund,m("auto_allocate",0));verifyNoInteractions(auto.returns);}
+}

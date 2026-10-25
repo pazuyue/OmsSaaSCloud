@@ -1,0 +1,84 @@
+{
+  "key": "01",
+  "title": "平台普通换货完整自动流程",
+  "case_id": "2026102423590601",
+  "created": "2026-10-24 23:59:07",
+  "sku": "EXAUTO_2026102423590601A",
+  "target_sku": "EXAUTO_2026102423590601B",
+  "channel_name": "[换货自动验收01] 平台普通换货完整自动流程 20261024235906",
+  "seller": "EXAUTO_2026102423590601",
+  "platform_tid": "9862026102423590601",
+  "platform_oid": "986202610242359060101",
+  "warehouses": [
+    {
+      "code": "EXAUTO_2026102423590601V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 138
+    }
+  ],
+  "quantity": 2,
+  "claims": [],
+  "refunds": {},
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 111,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXAUTO_2026102423590601A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXAUTO_2026102423590601A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXAUTO_2026102423590601V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 300,
+        "store": "EXAUTO_2026102423590601V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 250,
+  "order_id": 166,
+  "order_sn": "SO667aa558efe642c99d9b3f64a5215137",
+  "prepared": true,
+  "target_ready": true,
+  "original_shipment_id": 116,
+  "original_shipment_sn": "XSae6f9b31e5f54ffa9fde7eaa439f428b",
+  "original_shipment_line_id": 175,
+  "original_shipped": true,
+  "authorized": true
+}

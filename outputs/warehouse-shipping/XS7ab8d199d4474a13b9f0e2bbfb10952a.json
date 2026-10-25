@@ -1,0 +1,58 @@
+{
+  "shipment_id": 108,
+  "shipment_sn": "XS7ab8d199d4474a13b9f0e2bbfb10952a",
+  "order_id": 158,
+  "external_order": "SIMOUT_ae5faa6944284331b4ea",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 4,
+  "message_id": "SIM_COMPLETE_XS7ab8d199d4474a13b9f0e2bbfb10952a",
+  "package_code": "SIMPKG_XS7ab8d199d4474a13b9f0e2bbfb10952a",
+  "express_code": "TEST-SF-XS7ab8d199d4474a13b9f0e2bbfb10952a",
+  "outbound_time": "2026-10-24 19:04:17",
+  "plans": [
+    {
+      "id": 147,
+      "sku_sn": "RR20261024185730C06A",
+      "quantity": 1,
+      "platform_oid": "8620261024185730061",
+      "store_code": "RR20261024185730C06V",
+      "batch_code": "AFB_RR20261024185730C06A_RR20261024185730C06V"
+    },
+    {
+      "id": 148,
+      "sku_sn": "RR20261024185730C06B",
+      "quantity": 1,
+      "platform_oid": "8620261024185730062",
+      "store_code": "RR20261024185730C06V",
+      "batch_code": "AFB_RR20261024185730C06B_RR20261024185730C06V"
+    },
+    {
+      "id": 149,
+      "sku_sn": "RR20261024185730C06C",
+      "quantity": 1,
+      "platform_oid": "8620261024185730063",
+      "store_code": "RR20261024185730C06V",
+      "batch_code": "AFB_RR20261024185730C06C_RR20261024185730C06V"
+    },
+    {
+      "id": 150,
+      "sku_sn": "RR20261024185730C06D",
+      "quantity": 1,
+      "platform_oid": "8620261024185730064",
+      "store_code": "RR20261024185730C06V",
+      "batch_code": "AFB_RR20261024185730C06D_RR20261024185730C06V"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS7ab8d199d4474a13b9f0e2bbfb10952a</deliveryOrderCode><deliveryOrderId>SIMOUT_ae5faa6944284331b4ea</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS7ab8d199d4474a13b9f0e2bbfb10952a</outBizCode><totalOrderLines>4</totalOrderLines><orderConfirmTime>2026-10-24 19:04:17</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>147</orderLineNo><itemCode>RR20261024185730C06A</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C06A_RR20261024185730C06V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>148</orderLineNo><itemCode>RR20261024185730C06B</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C06B_RR20261024185730C06V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>149</orderLineNo><itemCode>RR20261024185730C06C</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C06C_RR20261024185730C06V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>150</orderLineNo><itemCode>RR20261024185730C06D</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C06D_RR20261024185730C06V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS7ab8d199d4474a13b9f0e2bbfb10952a</packageCode><expressCode>TEST-SF-XS7ab8d199d4474a13b9f0e2bbfb10952a</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>RR20261024185730C06A</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C06B</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C06C</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C06D</itemCode><quantity>1</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS7ab8d199d4474a13b9f0e2bbfb10952a",
+    "quantity": 4,
+    "status": "SHIPPED",
+    "shipped_quantity": 4,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS7ab8d199d4474a13b9f0e2bbfb10952a",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

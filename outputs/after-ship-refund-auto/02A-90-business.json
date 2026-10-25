@@ -1,0 +1,312 @@
+{
+  "id": 90,
+  "company_code": "QM",
+  "refund_sn": "TKc5748fed048646b6a3bf15d6ade6cf24",
+  "platform_refund_id": 91,
+  "channel_id": 84,
+  "refund_id": "8820261023150323021",
+  "order_id": 139,
+  "order_sn": "SOd9044b520413403fa3ca538a6e4fd57e",
+  "original_platform_order_id": 223,
+  "platform_tid": "872026102315032302",
+  "platform_oid": "8720261023150323021",
+  "state": "NEEDS_REVIEW",
+  "review_state": "PENDING",
+  "purpose": "UNKNOWN",
+  "goods_action": "UNKNOWN",
+  "goods_state": "WAIT_REVIEW",
+  "funds_state": "NONE",
+  "approved_version": null,
+  "approved_hash": null,
+  "approved_snapshot": {},
+  "refund_fee": 20.0,
+  "cancelled_quantity": 0,
+  "cancel_line_id": null,
+  "cancel_quantity": 0,
+  "cancel_command": null,
+  "cutoff_id": null,
+  "review_reason": "",
+  "review_evidence": "",
+  "review_by": "",
+  "reviewed_at": null,
+  "problem_code": "",
+  "problem_message": "",
+  "control_version": 1,
+  "next_attempt": null,
+  "lease_token": null,
+  "lease_until": null,
+  "create_time": "2026-10-23 15:12:14",
+  "update_time": "2026-10-23 15:12:14",
+  "shared_return": 0,
+  "platform_context": {},
+  "platform_checked_at": null,
+  "initial_fulfillment_stage": "SHIPPED",
+  "initial_fulfillment_snapshot": {
+    "lines": [
+      {
+        "stage": "SHIPPED",
+        "sku_sn": "AF20261023150323C02AA",
+        "sources": [
+          {
+            "status": "SHIPPED",
+            "quantity": 1,
+            "store_code": "AF20261023150323C02AV1",
+            "shipment_id": 87,
+            "shipment_sn": "XS4c50cfcde0a54d72b5305183e2afa2e9",
+            "order_line_id": 203,
+            "dispatch_state": "ACCEPTED",
+            "refund_scope_id": 90,
+            "shared_shipment": false,
+            "result_uncertain": false,
+            "shipment_line_id": 123,
+            "shipped_quantity": 1,
+            "suggested_action": "CHECK_PACKAGE",
+            "cancelled_quantity": 0,
+            "remaining_quantity": 0,
+            "unconfirmed_outbound": 0,
+            "other_unshipped_quantity": 0
+          }
+        ],
+        "quantity": 1,
+        "bundle_id": null,
+        "goods_name": "[自动仅退款验收02A] 小额20元边界",
+        "stock_unit": "件",
+        "order_line_id": 203,
+        "refund_scope_id": 90,
+        "shipped_quantity": 1,
+        "cancelled_quantity": 0,
+        "unshipped_quantity": 0
+      }
+    ],
+    "stage": "SHIPPED",
+    "truncated": false,
+    "uncertain": false,
+    "quantity_unit": "实际商品单位，套装与福袋按原履约组件分别核对",
+    "shipped_quantity": 1,
+    "required_quantity": 1,
+    "unshipped_quantity": 0,
+    "warehouse_pending_quantity": 0
+  },
+  "platform": {
+    "id": 91,
+    "company_code": "QM",
+    "channel_id": 84,
+    "refund_id": "8820261023150323021",
+    "platform_tid": "872026102315032302",
+    "platform_oid": "8720261023150323021",
+    "seller_nick": "AF20261023150323C02A",
+    "platform_status": "WAIT_SELLER_AGREE",
+    "dispute_type": "REFUND",
+    "source_phase": "AFTER_SALE",
+    "special_type": "",
+    "refund_fee": 20.0,
+    "platform_quantity": 1,
+    "reason": "[自动仅退款验收02A] 小额20元边界",
+    "source_modified": "2026-10-23 15:34:32",
+    "refund_version": "2",
+    "jdp_modified": "2026-10-23 15:34:32",
+    "source_hash": "7b7fee718b36ed0adbe0a72310055946c93e180c3b67459fbebf41c5618c897f",
+    "source_state": "VALID",
+    "source_error": "",
+    "conversion_state": "SUCCESS",
+    "conversion_error": "",
+    "business_refund_id": 90,
+    "version": 2,
+    "last_sync": "2026-10-23 15:34:35",
+    "create_time": "2026-10-23 15:12:12",
+    "semantic_hash": "109121a4c9f17294b4f7fb5253f709cb615945f1703f354e18caedccefeec9ff",
+    "intake_version": 3,
+    "conversion_requested": 0,
+    "source_kind": "JDP",
+    "return_logistics": {
+      "carrier_name": "SF",
+      "waybill": "AFRET_20261023150323_02A",
+      "address": "",
+      "source": "PLATFORM"
+    }
+  },
+  "automatic_flow": {
+    "state": "MANUAL",
+    "last_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+    "policy_revision": 1,
+    "next_attempt": "2026-10-23 15:39:37"
+  },
+  "events": [
+    {
+      "id": 381,
+      "action": "PLATFORM_UPDATE",
+      "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+      "actor": "admin",
+      "create_time": "2026-10-23 15:34:35"
+    },
+    {
+      "id": 360,
+      "action": "CONVERT",
+      "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+      "actor": "队列转单",
+      "create_time": "2026-10-23 15:12:14"
+    }
+  ],
+  "lines": [
+    {
+      "id": 203,
+      "platform_oid": "8720261023150323021",
+      "sku_sn": "AF20261023150323C02AA",
+      "goods_name": "[自动仅退款验收02A] 小额20元边界",
+      "quantity": 1,
+      "cancelled_quantity": 0,
+      "reserved_quantity": 1,
+      "business_type": "SALE",
+      "exchange_id": null,
+      "stock_reference": "",
+      "bundle_id": null,
+      "component_quantity": 0,
+      "gift_plan_id": null,
+      "stocked_bundle_snapshot": null,
+      "platform_spec": ""
+    }
+  ],
+  "has_purchase_return": 0,
+  "has_gift_return": 0,
+  "purchase_return_pending": 0,
+  "missing_purchase_document": 0,
+  "gift_pending": false,
+  "return_progress": {
+    "return_quantity": 0,
+    "accepted_quantity": 0,
+    "posted_quantity": 0,
+    "waived_quantity": 0,
+    "parcel_issues": 0,
+    "parcel_waiting": 0
+  },
+  "gift_assessment_required": false,
+  "sales_context": {
+    "line": {
+      "quantity": 1,
+      "adjustment": "0.00",
+      "sales_price": "100.00",
+      "platform_oid": "8720261023150323021",
+      "sales_amount": "100.00",
+      "goods_payment": "100.00",
+      "item_discount": "0.00",
+      "discount_total": null,
+      "payment_source": "平台分摊实付（已核对不含运费）",
+      "divided_payment": "100.00",
+      "platform_payable": null,
+      "platform_payment": "100.00",
+      "payment_difference": null,
+      "order_discount_share": null,
+      "calculated_goods_payment": null
+    },
+    "source_modified": "2026-10-23 15:12:00",
+    "buyer_freight": "0.00"
+  },
+  "shipments": [
+    {
+      "shipment_id": 87,
+      "shipment_sn": "XS4c50cfcde0a54d72b5305183e2afa2e9",
+      "business_type": "SALE",
+      "exchange_id": null,
+      "status": "SHIPPED",
+      "shipment_line_id": 123,
+      "order_line_id": 203,
+      "sku_sn": "AF20261023150323C02AA",
+      "goods_name": "[自动仅退款验收02A] 小额20元边界",
+      "quantity": 1,
+      "shipped_quantity": 1,
+      "store_code": "AF20261023150323C02AV1",
+      "batch_id": 208,
+      "platform_oid": "8720261023150323021"
+    }
+  ],
+  "fulfillment": {
+    "stage": "SHIPPED",
+    "required_quantity": 1,
+    "shipped_quantity": 1,
+    "unshipped_quantity": 0,
+    "warehouse_pending_quantity": 0,
+    "uncertain": false,
+    "truncated": false,
+    "quantity_unit": "实际商品单位，套装与福袋按原履约组件分别核对",
+    "lines": [
+      {
+        "refund_scope_id": 90,
+        "order_line_id": 203,
+        "sku_sn": "AF20261023150323C02AA",
+        "goods_name": "[自动仅退款验收02A] 小额20元边界",
+        "quantity": 1,
+        "cancelled_quantity": 0,
+        "bundle_id": null,
+        "stock_unit": "件",
+        "shipped_quantity": 1,
+        "unshipped_quantity": 0,
+        "sources": [
+          {
+            "refund_scope_id": 90,
+            "order_line_id": 203,
+            "shipment_line_id": 123,
+            "shipment_id": 87,
+            "shipment_sn": "XS4c50cfcde0a54d72b5305183e2afa2e9",
+            "status": "SHIPPED",
+            "store_code": "AF20261023150323C02AV1",
+            "quantity": 1,
+            "shipped_quantity": 1,
+            "cancelled_quantity": 0,
+            "dispatch_state": "ACCEPTED",
+            "unconfirmed_outbound": 0,
+            "other_unshipped_quantity": 0,
+            "remaining_quantity": 0,
+            "result_uncertain": false,
+            "suggested_action": "CHECK_PACKAGE",
+            "shared_shipment": false
+          }
+        ],
+        "stage": "SHIPPED"
+      }
+    ]
+  },
+  "fulfillment_stage": "SHIPPED",
+  "goods_tasks": [],
+  "bundles": [],
+  "parcel_issues": [],
+  "parcel_followups": [],
+  "progress_context": {
+    "plans": [],
+    "plans_truncated": false
+  },
+  "platform_interaction": {
+    "execution_supported": true,
+    "mode": "PLATFORM_OPERATIONS",
+    "operations": [],
+    "observations": [
+      {
+        "id": 182,
+        "source_modified": "2026-10-23 15:34:32",
+        "jdp_modified": "2026-10-23 15:34:32",
+        "outcome": "UPDATED",
+        "create_time": "2026-10-23 15:34:35",
+        "platform_status": "WAIT_SELLER_AGREE",
+        "refund_fee": 20.0,
+        "refund_version": "2"
+      },
+      {
+        "id": 98,
+        "source_modified": "2026-10-23 15:12:10",
+        "jdp_modified": "2026-10-23 15:12:10",
+        "outcome": "NEW",
+        "create_time": "2026-10-23 15:12:12",
+        "platform_status": "WAIT_SELLER_AGREE",
+        "refund_fee": 20.0,
+        "refund_version": "1"
+      }
+    ],
+    "message": "支持提交平台售后操作。请先主动刷新平台权限和可用操作；本地审核、接口返回与最终资金结果分别记录。"
+  },
+  "capability": {
+    "platform_payment": true,
+    "platform_agree": true,
+    "platform_refuse": true,
+    "warehouse_return": true,
+    "message": "本地审核确认业务方案；平台操作另行提交，按店铺授权及当前可用操作校验，实际退款成功以平台结果为准。"
+  }
+}

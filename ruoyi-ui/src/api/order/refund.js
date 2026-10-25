@@ -2,6 +2,7 @@ import request from '@/utils/request'
 const root = '/order/refunds'
 export const refundList = (business, params) => request({ url: `${root}/${business ? 'business' : 'platform'}`, params })
 export const refundDetail = (business, id) => request({ url: `${root}/${business ? 'business' : 'platform'}/${id}` })
+export const refundAmountRecords = (id, params) => request({ url: `${root}/business/${id}/amount-records`, params })
 export const convertRefund = id => request({ url: `${root}/platform/${id}/convert`, method: 'post' })
 export const refundSnapshot = (id, snapshot) => request({ url: `${root}/platform/${id}/snapshots/${snapshot}` })
 export const refundReview = (id, data) => request({ url: `${root}/business/${id}/review`, method: 'post', data })
@@ -53,3 +54,6 @@ export const refundReturnRules=params=>request({url:`${root}/parcel-configs`,par
 export const evaluateRefundReceipt=(id,parcel,event,data)=>request({url:`${root}/business/${id}/parcels/${parcel}/receipts/${event}/automatic`,method:"post",data})
 
 export const createRefundBundleReturn=(id,data)=>request({url:`${root}/business/${id}/goods/bundle-plans`,method:'post',data})
+
+export const refundDisposition = id => request({url:`${root}/business/${id}/disposition`})
+export const retryRefundGoodsTask = (id,task) => request({url:`${root}/business/${id}/goods/tasks/${task}/retry`,method:"post"})

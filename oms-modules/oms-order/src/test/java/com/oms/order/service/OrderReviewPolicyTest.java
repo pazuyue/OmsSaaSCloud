@@ -56,4 +56,18 @@ class OrderReviewPolicyTest {
         Map<String,Object> row=order(null,"RESERVED");OrderReviewPolicy.decorate(row);
         assertEquals("WAIT_REVIEW",row.get("business_status"));assertEquals(false,row.get("release_eligible"));
     }
+
+    @Test void zeroEffectiveDemandCannotBecomeShippedOrExposeReviewAndAllocation(){
+        Map<String,Object> row=order("PENDING","RESERVED");row.put("demand_quantity",1);row.put("cancelled_quantity",1);row.put("shipped_quantity",0);
+        OrderReviewPolicy.decorate(row);
+        assertNotEquals("SHIPPED",row.get("business_status"));assertEquals(false,row.get("review_required"));
+        for(String key:Arrays.asList("can_review","can_hold","can_resume","can_allocate","release_eligible"))assertEquals(false,row.get(key),key);
+        assertEquals(Collections.singletonList("订单没有剩余可履约商品"),row.get("release_blocks"));
+    }
+
+    @Test void alreadyShippedAndCanceledRemainderNeverReenterReview(){
+        Map<String,Object> row=order("PENDING","RESERVED");row.put("demand_quantity",3);row.put("cancelled_quantity",2);row.put("shipped_quantity",1);
+        OrderReviewPolicy.decorate(row);assertEquals("SHIPPED",row.get("business_status"));assertEquals(false,row.get("can_review"));assertEquals(false,row.get("review_required"));
+        row.put("cancelled_quantity",1);OrderReviewPolicy.decorate(row);assertEquals("PART_SHIPPED",row.get("business_status"));assertEquals(true,row.get("can_review"));
+    }
 }

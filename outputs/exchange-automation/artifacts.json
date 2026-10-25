@@ -1,0 +1,17 @@
+[
+  {
+    "module": "oms-modules/oms-order",
+    "jar": "oms-order.jar",
+    "sha256": "1ab6e838ab7716fd29fd387cd507a5ea8146ddd4bdb81c07288d60a7d6e65ba0"
+  },
+  {
+    "module": "oms-modules/oms-supplychain",
+    "jar": "oms-supplychain.jar",
+    "sha256": "420a1ab77266ac75a51c44344d44c714d23b5fd7f79561efc98c2f6e00aea0be"
+  },
+  {
+    "module": "ruoyi-modules/ruoyi-system",
+    "jar": "ruoyi-modules-system.jar",
+    "sha256": "384a8f725ca49188ace10a1751f02cac48f98c8ba246ac95ee82f8055df726e3"
+  }
+]

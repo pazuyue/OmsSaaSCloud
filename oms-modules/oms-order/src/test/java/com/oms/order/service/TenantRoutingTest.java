@@ -53,6 +53,13 @@ class TenantRoutingTest {
         MockHttpServletRequest request=new MockHttpServletRequest("GET","/orderStock/internal/demands");request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");filter().doFilter(request,new MockHttpServletResponse(),(req,res)->assertEquals("second",DynamicDataSourceContextHolder.peek()));
         request.setParameter("company_code","UNKNOWN");MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(request,rejected,(req,res)->fail("unknown internal company"));assertEquals(503,rejected.getStatus());assertNull(DynamicDataSourceContextHolder.peek());
     }
+    @Test void refundPlatformInternalCallsRequireExplicitTrustedCompanyWithoutLoginFallback() throws Exception {
+        for(String path:Arrays.asList("/refundPlatform/internal/capabilities","/refundPlatform/internal/12/capability","/refundPlatform/internal/12/rate-keys","/refundPlatform/internal/12/call")){
+            MockHttpServletRequest request=new MockHttpServletRequest(path.endsWith("/call")?"POST":"GET",path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");java.util.concurrent.atomic.AtomicBoolean called=new java.util.concurrent.atomic.AtomicBoolean();
+            filter().doFilter(request,new MockHttpServletResponse(),(req,res)->{called.set(true);assertEquals("second",DynamicDataSourceContextHolder.peek());assertEquals("BETA",req.getParameter("company_code"));});assertTrue(called.get());assertNull(DynamicDataSourceContextHolder.peek());
+            request.removeHeader(SecurityConstants.FROM_SOURCE);MockHttpServletResponse denied=new MockHttpServletResponse();filter().doFilter(request,denied,(req,res)->fail("public request cannot override its login company"));assertEquals(400,denied.getStatus());
+        }
+    }
     @Test void giftCatalogInternalCallsUseTrustedCompanyAndPublicCannotOverride() throws Exception {
         for(String path:Arrays.asList("/giftCatalog/internal/references","/orderCatalog/internal/gift-protection","/orderCatalog/internal/gift-protection/refresh")){
             MockHttpServletRequest request=new MockHttpServletRequest("POST",path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");java.util.concurrent.atomic.AtomicBoolean called=new java.util.concurrent.atomic.AtomicBoolean();

@@ -31,6 +31,8 @@ def menus():
     execute(f"INSERT IGNORE INTO sys_role_menu(role_id,menu_id) SELECT DISTINCT r.role_id,{menu} FROM sys_role_menu r JOIN sys_menu m ON m.menu_id=r.menu_id WHERE m.perms IN ('order:order:list','order:pull:config','order:source:config','order:refund:config','order:refund:sync','order:exchange:config','order:exchange:sync')")
     # Retain permission nodes but remove the duplicate navigation entry.
     execute(f"UPDATE sys_menu SET visible='1' WHERE parent_id={parent} AND path='refundSettings'")
+    from configure_order_business_settings import install as unified_settings
+    unified_settings()
     print('Unified intake navigation installed; company and operation permissions remain independent')
 
 

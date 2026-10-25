@@ -1,0 +1,798 @@
+{
+  "pass": true,
+  "order": {
+    "id": 151,
+    "company_code": "QM",
+    "order_sn": "SO3c4bbe2730894fceb8bbbb61e6496d5b",
+    "channel_id": 96,
+    "platform_order_id": 235,
+    "platform_tid": "872026102414573905",
+    "owner_code": null,
+    "status": "VOIDED",
+    "inventory_status": "RELEASED",
+    "payment": 100.0,
+    "receiver_name": "自动仅退款验收 04",
+    "receiver_phone": "TEST-MASKED",
+    "receiver_address": "北京市 北京市 验收区  本地测试地址，无实际配送",
+    "oaid": "",
+    "create_time": "2026-10-24 15:02:37",
+    "update_time": "2026-10-24 16:15:57",
+    "stock_attempt_status": "DONE",
+    "stock_attempt_at": "2026-10-24 15:02:37",
+    "stock_error": "",
+    "reserved_at": "2026-10-24 15:02:37",
+    "review_status": "PENDING",
+    "review_by": "admin",
+    "review_at": "2026-10-24 15:02:38",
+    "review_reason": "退款取消后的剩余需求待核对",
+    "review_policy": "MANUAL",
+    "control_version": 10,
+    "manual_hold": 0,
+    "hold_reason": "",
+    "hold_by": "",
+    "hold_at": null,
+    "void_reason": "退款 TK9a289213763e48fcb1c76e935f9ae8d9 原取消回执已确认；修正原订单结束履约状态，不重复释放库存",
+    "void_by": "退款状态修复",
+    "void_requested_at": null,
+    "void_at": "2026-10-24 16:15:57",
+    "void_error": "",
+    "allocation_status": "NONE",
+    "allocation_quantity": 0,
+    "allocation_error": "",
+    "allocation_at": "2026-10-24 15:02:40",
+    "issue_synced_at": null,
+    "locked_reserved_quantity": 0,
+    "public_reserved_quantity": 0,
+    "issue_sync_error": "",
+    "review_decision": "HUMAN_APPROVED",
+    "review_evaluated_at": "2026-10-24 15:02:37",
+    "cutoff_state": "COMPLETED",
+    "cutoff_mode": "REPLAN",
+    "cutoff_id": 14,
+    "business_type": "SALE",
+    "exchange_id": null,
+    "source_order_id": null,
+    "source_platform_order_id": null,
+    "stock_reference": "",
+    "refund_block_reason": "",
+    "exchange_block_reason": "",
+    "gift_plan_id": null,
+    "gift_block_reason": "",
+    "auto_execution_mode": "MANUAL",
+    "auto_enabled": "1",
+    "auto_replenish": "0",
+    "update_version": 2,
+    "update_state": "COMPLETED",
+    "update_categories": "",
+    "update_summary": "平台信息已同步",
+    "change_pending": 0,
+    "platform_status": "WAIT_SELLER_SEND_GOODS",
+    "fulfillment_block_reason": "",
+    "next_retry_at": null,
+    "channel_name": "[自动仅退款验收04] 仓库已接单未出库截单 20261024145739",
+    "allow_public_stock": 1,
+    "shop_error": "",
+    "allocation_enabled": "1",
+    "allocation_allow_partial": "1",
+    "cancelled_quantity": 1,
+    "demand_quantity": 1,
+    "reserved_quantity": 0,
+    "pending_quantity": 0,
+    "sku_count": 0,
+    "inventory_reason": "退款分项取消指定未发需求",
+    "lines": [
+      {
+        "id": 216,
+        "company_code": "QM",
+        "order_id": 151,
+        "platform_oid": "8720261024145739051",
+        "sku_sn": "AF20261024145739C04A",
+        "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+        "quantity": 1,
+        "payment": 100.0,
+        "reserved_quantity": 0,
+        "inventory_reason": "退款分项取消指定未发需求",
+        "inventory_reason_code": "",
+        "cancelled_quantity": 1,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "",
+        "source_line_id": null,
+        "source_shipment_line_id": null,
+        "fulfillment_round": 1,
+        "bundle_id": null,
+        "component_quantity": 0,
+        "stocked_bundle_snapshot": null,
+        "gift_plan_id": null,
+        "refund_block_reason": "",
+        "exchange_sn": null,
+        "outer_sku_id": "AF20261024145739C04A",
+        "platform_spec": "",
+        "manual_sku_sn": null,
+        "manual_match_by": null,
+        "manual_match_at": null,
+        "manual_match_reason": null,
+        "pending_quantity": 0,
+        "stock_sources": [],
+        "stock_snapshot": {
+          "basis": "RESERVATION_ATTEMPT",
+          "observed_at": "2026-10-24T15:02:37.390",
+          "sku_demand_quantity": 1,
+          "company_available": 100,
+          "warehouse_public_free": 100,
+          "channel_available": 99,
+          "channel_quota": 100,
+          "channel_quota_reserved": 0,
+          "channel_locked_taken": 0,
+          "public_needed": 1,
+          "allow_public_stock": true,
+          "public_quota_capacity": 100
+        },
+        "shipped_quantity": 0,
+        "logical_active_quantity": 0,
+        "oms_goods_name": "[验收测试] 分仓策略、上限与预览",
+        "current_goods": {
+          "id": 276,
+          "sku_sn": "AF20261024145739C04A",
+          "goods_sn": "AF20261024145739C04A",
+          "barcode_sn": null,
+          "goods_name": "[验收测试] 分仓策略、上限与预览",
+          "is_fd": 0,
+          "is_package": 0,
+          "is_gift": 0,
+          "color_name": "红色",
+          "size_name": "大码"
+        },
+        "lineage": [
+          {
+            "id": 216,
+            "platform_oid": "8720261024145739051",
+            "sku_sn": "AF20261024145739C04A",
+            "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+            "quantity": 1,
+            "cancelled_quantity": 1,
+            "business_type": "SALE",
+            "exchange_id": null,
+            "source_line_id": null,
+            "source_shipment_line_id": null,
+            "exchange_sn": null,
+            "exchange_phase": null,
+            "current_goods": {
+              "id": 276,
+              "sku_sn": "AF20261024145739C04A",
+              "goods_sn": "AF20261024145739C04A",
+              "barcode_sn": null,
+              "goods_name": "[验收测试] 分仓策略、上限与预览",
+              "is_fd": 0,
+              "is_package": 0,
+              "is_gift": 0,
+              "color_name": "红色",
+              "size_name": "大码"
+            },
+            "oms_goods_name": "[验收测试] 分仓策略、上限与预览",
+            "shipments": [
+              {
+                "order_line_id": 216,
+                "shipment_line_id": 138,
+                "shipped_quantity": 0,
+                "quantity": 1,
+                "shipment_id": 101,
+                "shipment_sn": "XSa6e02ec83006416aa2612e4576b0e844",
+                "status": "VOIDED"
+              }
+            ]
+          }
+        ],
+        "exchange_generation": 0,
+        "was_replaced": false,
+        "shipments": [
+          {
+            "order_line_id": 216,
+            "shipment_line_id": 138,
+            "shipped_quantity": 0,
+            "quantity": 1,
+            "shipment_id": 101,
+            "shipment_sn": "XSa6e02ec83006416aa2612e4576b0e844",
+            "status": "VOIDED"
+          }
+        ],
+        "issues": [],
+        "locked_reserved_quantity": 0,
+        "public_reserved_quantity": 0,
+        "issue_evidence": null
+      }
+    ],
+    "bundles": [],
+    "bundle_count": 0,
+    "bundle_sets": 0,
+    "lucky_bag_quantity": 0,
+    "after_sales_shipments": [],
+    "receipt_review_pending_count": 0,
+    "receipt_review_lookup_failed": false,
+    "receipt_review_shipments": [],
+    "shipments": [
+      {
+        "store_code": "AF20261024145739C04V1",
+        "packaged_quantity": 0,
+        "package_count": 0,
+        "outbound_unconfirmed_count": 0,
+        "gift_block_reason": "",
+        "refund_block_reason": "",
+        "business_type": "SALE",
+        "exchange_id": null,
+        "fulfillment_round": 1,
+        "exchange_sn": null,
+        "business_owner_sn": "SO3c4bbe2730894fceb8bbbb61e6496d5b",
+        "id": 101,
+        "shipment_sn": "XSa6e02ec83006416aa2612e4576b0e844",
+        "order_id": 151,
+        "order_sn": "SO3c4bbe2730894fceb8bbbb61e6496d5b",
+        "channel_id": 96,
+        "platform_tid": "872026102414573905",
+        "stock_reference": "",
+        "generation_no": 1,
+        "owner_code": "SAASQM01",
+        "real_store_code": "TW201",
+        "real_store_name": "青木WMS001",
+        "quantity": 1,
+        "cancelled_quantity": 1,
+        "status": "VOIDED",
+        "create_time": "2026-10-24 15:02:40",
+        "created_by": "admin",
+        "cancelled_at": "2026-10-24 15:03:27",
+        "receiver_province": "北京",
+        "carrier_code": "SF",
+        "carrier_name": "顺丰快递",
+        "warehouse_carrier_code": "sf",
+        "carrier_match_status": "MATCHED",
+        "carrier_match_mode": "AUTO",
+        "carrier_match_reason": "按仓库、省份优先及默认顺序匹配",
+        "carrier_attempt_at": "2026-10-24 15:02:40",
+        "carrier_matched_at": "2026-10-24 15:02:40",
+        "carrier_matched_by": "admin",
+        "control_version": 4,
+        "virtual_outbound_state": "NONE",
+        "virtual_outbound_error": null,
+        "virtual_outbound_quantity": null,
+        "virtual_outbound_request_id": null,
+        "virtual_outbound_completed_at": null,
+        "wms_dispatch_state": "CANCELED",
+        "wms_external_order": "SIMOUT_1e114015ffc344668d56",
+        "wms_error": "",
+        "wms_query_message": "",
+        "wms_query_at": null,
+        "wms_attempts": 1,
+        "wms_submitted_at": "2026-10-24 15:02:42",
+        "wms_updated_at": "2026-10-24 15:03:26",
+        "wms_warehouse_status": "",
+        "channel_name": "[自动仅退款验收04] 仓库已接单未出库截单 20261024145739",
+        "order_status": "VOIDED",
+        "manual_hold": 0,
+        "review_status": "PENDING",
+        "change_pending": 0,
+        "platform_status": "WAIT_SELLER_SEND_GOODS",
+        "fulfillment_block_reason": "",
+        "shipped_quantity": 0,
+        "wms_fulfillment_state": "CANCELED",
+        "wms_progress_message": "",
+        "fulfillment_block": "来源订单已停止履约",
+        "can_match_carrier": false,
+        "can_dispatch": false,
+        "can_query_warehouse": false,
+        "unpacked_quantity": 0,
+        "can_register_package": false,
+        "can_reconcile_receipts": false,
+        "can_virtual_outbound": false,
+        "can_retry_virtual_outbound": false,
+        "can_query_virtual_outbound": false,
+        "outbound_mode": 1,
+        "platform_shipping_reportable_quantity": 0,
+        "platform_shipping_mode": "OFF",
+        "platform_shipping_state": "NONE",
+        "platform_shipping_success_quantity": 0,
+        "platform_shipping_failed_packages": 0,
+        "platform_shipping_unknown_packages": 0,
+        "receipt_review_pending_count": 0,
+        "receipt_review_lookup_failed": false
+      }
+    ],
+    "dispatching_count": 0,
+    "warehouse_accepted_quantity": 0,
+    "pending_carrier_count": 0,
+    "pending_virtual_void": 0,
+    "shipment_count": 1,
+    "shipment_quantity": 0,
+    "shipped_quantity": 0,
+    "shipment_blocks_void": 0,
+    "warehouse_allocations": [],
+    "allocation_rule": {
+      "strategy": "FEWEST_SHIPMENTS",
+      "execution_mode": "MANUAL",
+      "auto_replenish": 0,
+      "max_virtual_warehouses": 0,
+      "max_shipments": 0,
+      "min_first_allocation_percent": 0,
+      "enabled": 1,
+      "allow_multi": 1,
+      "allow_partial": 1,
+      "allow_split_sku": 1,
+      "allow_bundle_split": 0,
+      "allow_bundle_partial_components": 0,
+      "owner_code": "SAASQM01",
+      "warehouse_order": [
+        "AF20261024145739C04V1"
+      ],
+      "province_priorities": {
+        "北京": [
+          "AF20261024145739C04V1"
+        ]
+      },
+      "rule_revision": 1,
+      "receiver_province": "北京市",
+      "resolved_order": [
+        "AF20261024145739C04V1"
+      ]
+    },
+    "exchange_total_count": 0,
+    "exchange_active_count": 0,
+    "exchange_completed_count": 0,
+    "exchange_closed_count": 0,
+    "after_sales_lines": [],
+    "exchange_records": [],
+    "review_assessment": {
+      "facts": {
+        "id": 151,
+        "skus": [
+          "AF20261024145739C04A"
+        ],
+        "status": "WAIT_ALLOCATION",
+        "payment": "100.00",
+        "quantity": 1,
+        "stock_error": "",
+        "invalid_lines": 0,
+        "ledger_errors": 0,
+        "change_pending": 0,
+        "platform_status": "WAIT_SELLER_SEND_GOODS",
+        "processing_hash": "0db895e95f5eddfa60d128ee46ab2fb26a928b3829bd9aadd5abed36ffc9dbc9",
+        "business_order_id": 151,
+        "conversion_status": "SUCCESS",
+        "reserved_quantity": 1,
+        "manual_match_count": 0,
+        "refund_block_reason": "",
+        "exchange_block_reason": "",
+        "fulfillment_block_reason": ""
+      },
+      "checks": [
+        {
+          "code": "BASE",
+          "title": "基础履约条件",
+          "detail": "交易状态、来源版本及订单基础数据符合条件",
+          "result": "PASS"
+        },
+        {
+          "code": "MODE",
+          "title": "店铺审单方式",
+          "detail": "店铺配置为人工审核",
+          "result": "MANUAL"
+        },
+        {
+          "code": "MANUAL_MATCH",
+          "title": "人工匹配需复核",
+          "detail": "未命中",
+          "result": "PASS"
+        },
+        {
+          "code": "AMOUNT",
+          "title": "实付金额达到阈值",
+          "detail": "实付 100.00；阈值 ≥ 0.00",
+          "result": "DISABLED"
+        },
+        {
+          "code": "QUANTITY",
+          "title": "商品总件数达到阈值",
+          "detail": "总件数 1；阈值 ≥ 0",
+          "result": "DISABLED"
+        },
+        {
+          "code": "SKU",
+          "title": "指定SKU复核",
+          "detail": "未命中",
+          "result": "DISABLED"
+        },
+        {
+          "code": "STOCK",
+          "title": "库存审核条件",
+          "detail": "不限制逻辑预占进度；已预占 1 / 1 件",
+          "result": "PASS"
+        }
+      ],
+      "policy": {
+        "mode": "MANUAL",
+        "review_skus": [],
+        "amount_enabled": 0,
+        "stock_condition": "ANY",
+        "amount_threshold": "0.00",
+        "quantity_enabled": 0,
+        "quantity_threshold": 0,
+        "manual_match_required": 1
+      },
+      "summary": "店铺配置为人工审核",
+      "decision": "MANUAL_REQUIRED",
+      "rule_revision": 0
+    },
+    "review_events": [
+      {
+        "action": "HUMAN_APPROVE",
+        "decision": "HUMAN_APPROVED",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:38",
+        "assessment": {
+          "note": "分仓规则迭代验收",
+          "previous_decision": "MANUAL_REQUIRED",
+          "original_assessment": {
+            "facts": {
+              "id": 151,
+              "skus": [
+                "AF20261024145739C04A"
+              ],
+              "status": "WAIT_ALLOCATION",
+              "payment": "100.00",
+              "quantity": 1,
+              "stock_error": "",
+              "invalid_lines": 0,
+              "ledger_errors": 0,
+              "change_pending": 0,
+              "platform_status": "WAIT_SELLER_SEND_GOODS",
+              "processing_hash": "0db895e95f5eddfa60d128ee46ab2fb26a928b3829bd9aadd5abed36ffc9dbc9",
+              "business_order_id": 151,
+              "conversion_status": "SUCCESS",
+              "reserved_quantity": 1,
+              "manual_match_count": 0,
+              "refund_block_reason": "",
+              "exchange_block_reason": "",
+              "fulfillment_block_reason": ""
+            },
+            "checks": [
+              {
+                "code": "BASE",
+                "title": "基础履约条件",
+                "detail": "交易状态、来源版本及订单基础数据符合条件",
+                "result": "PASS"
+              },
+              {
+                "code": "MODE",
+                "title": "店铺审单方式",
+                "detail": "店铺配置为人工审核",
+                "result": "MANUAL"
+              },
+              {
+                "code": "MANUAL_MATCH",
+                "title": "人工匹配需复核",
+                "detail": "未命中",
+                "result": "PASS"
+              },
+              {
+                "code": "AMOUNT",
+                "title": "实付金额达到阈值",
+                "detail": "实付 100.00；阈值 ≥ 0.00",
+                "result": "DISABLED"
+              },
+              {
+                "code": "QUANTITY",
+                "title": "商品总件数达到阈值",
+                "detail": "总件数 1；阈值 ≥ 0",
+                "result": "DISABLED"
+              },
+              {
+                "code": "SKU",
+                "title": "指定SKU复核",
+                "detail": "未命中",
+                "result": "DISABLED"
+              },
+              {
+                "code": "STOCK",
+                "title": "库存审核条件",
+                "detail": "不限制逻辑预占进度；已预占 1 / 1 件",
+                "result": "PASS"
+              }
+            ],
+            "policy": {
+              "mode": "MANUAL",
+              "review_skus": [],
+              "amount_enabled": 0,
+              "stock_condition": "ANY",
+              "amount_threshold": "0.00",
+              "quantity_enabled": 0,
+              "quantity_threshold": 0,
+              "manual_match_required": 1
+            },
+            "summary": "店铺配置为人工审核",
+            "decision": "MANUAL_REQUIRED",
+            "rule_revision": 0
+          }
+        }
+      },
+      {
+        "action": "AUTO_REVIEW",
+        "decision": "MANUAL_REQUIRED",
+        "operator_name": "系统审单",
+        "create_time": "2026-10-24 15:02:37",
+        "assessment": {
+          "facts": {
+            "id": 151,
+            "skus": [
+              "AF20261024145739C04A"
+            ],
+            "status": "WAIT_ALLOCATION",
+            "payment": "100.00",
+            "quantity": 1,
+            "stock_error": "",
+            "invalid_lines": 0,
+            "ledger_errors": 0,
+            "change_pending": 0,
+            "platform_status": "WAIT_SELLER_SEND_GOODS",
+            "processing_hash": "0db895e95f5eddfa60d128ee46ab2fb26a928b3829bd9aadd5abed36ffc9dbc9",
+            "business_order_id": 151,
+            "conversion_status": "SUCCESS",
+            "reserved_quantity": 1,
+            "manual_match_count": 0,
+            "refund_block_reason": "",
+            "exchange_block_reason": "",
+            "fulfillment_block_reason": ""
+          },
+          "checks": [
+            {
+              "code": "BASE",
+              "title": "基础履约条件",
+              "detail": "交易状态、来源版本及订单基础数据符合条件",
+              "result": "PASS"
+            },
+            {
+              "code": "MODE",
+              "title": "店铺审单方式",
+              "detail": "店铺配置为人工审核",
+              "result": "MANUAL"
+            },
+            {
+              "code": "MANUAL_MATCH",
+              "title": "人工匹配需复核",
+              "detail": "未命中",
+              "result": "PASS"
+            },
+            {
+              "code": "AMOUNT",
+              "title": "实付金额达到阈值",
+              "detail": "实付 100.00；阈值 ≥ 0.00",
+              "result": "DISABLED"
+            },
+            {
+              "code": "QUANTITY",
+              "title": "商品总件数达到阈值",
+              "detail": "总件数 1；阈值 ≥ 0",
+              "result": "DISABLED"
+            },
+            {
+              "code": "SKU",
+              "title": "指定SKU复核",
+              "detail": "未命中",
+              "result": "DISABLED"
+            },
+            {
+              "code": "STOCK",
+              "title": "库存审核条件",
+              "detail": "不限制逻辑预占进度；已预占 1 / 1 件",
+              "result": "PASS"
+            }
+          ],
+          "policy": {
+            "mode": "MANUAL",
+            "review_skus": [],
+            "amount_enabled": 0,
+            "stock_condition": "ANY",
+            "amount_threshold": "0.00",
+            "quantity_enabled": 0,
+            "quantity_threshold": 0,
+            "manual_match_required": 1
+          },
+          "summary": "店铺配置为人工审核",
+          "decision": "MANUAL_REQUIRED",
+          "rule_revision": 0
+        }
+      }
+    ],
+    "business_status": "VOIDED",
+    "review_required": false,
+    "system_hold_reason": "",
+    "processing_status": "VOIDED",
+    "can_review": false,
+    "can_hold": false,
+    "can_resume": false,
+    "release_eligible": false,
+    "release_blocks": [
+      "订单已作废"
+    ],
+    "can_allocate": false,
+    "can_cutoff": false,
+    "can_void": false,
+    "pending_allocation_quantity": 0,
+    "unshipped_quantity": 0,
+    "can_generate_shipments": false,
+    "can_reserve": false,
+    "stock_message": "订单已作废，销售需求已取消，逻辑预占已释放",
+    "logical_inventory_status": "RELEASED",
+    "logical_outbound_quantity": 0,
+    "logical_active_quantity": 0,
+    "effective_demand_quantity": 0,
+    "warehouse_required_quantity": 0,
+    "warehouse_occupied_quantity": 0,
+    "warehouse_outbound_quantity": 0,
+    "warehouse_inventory_status": "NOT_OCCUPIED",
+    "issues": [],
+    "issue_count": 0,
+    "issue_sku_count": 0,
+    "issue_history": [],
+    "issue_events": [],
+    "auto_allocation": {
+      "state": "MANUAL",
+      "reason": "当前为手动分仓",
+      "execution_mode": "MANUAL",
+      "auto_replenish": 0,
+      "enabled": 1
+    },
+    "document": {
+      "lines": [
+        {
+          "quantity": 1,
+          "adjustment": "0.00",
+          "sales_price": "100.00",
+          "platform_oid": "8720261024145739051",
+          "sales_amount": "100.00",
+          "goods_payment": "100.00",
+          "item_discount": "0.00",
+          "discount_total": null,
+          "payment_source": "平台分摊实付（已核对不含运费）",
+          "divided_payment": "100.00",
+          "platform_payable": null,
+          "platform_payment": "100.00",
+          "payment_difference": null,
+          "order_discount_share": null,
+          "calculated_goods_payment": null
+        }
+      ],
+      "issues": [],
+      "created": "2026-10-24 15:01:51",
+      "payment": "100.00",
+      "currency": "CNY",
+      "end_time": "",
+      "pay_time": "2026-10-24 15:01:51",
+      "adjustment": "0.00",
+      "promotions": [],
+      "check_state": "INCOMPLETE",
+      "differences": [],
+      "seller_memo": "",
+      "consign_time": "",
+      "invoice_name": "",
+      "invoice_type": "",
+      "sales_amount": "100.00",
+      "buyer_freight": "0.00",
+      "buyer_message": "",
+      "goods_payment": "100.00",
+      "item_discount": "0.00",
+      "discount_total": "0.00",
+      "invoice_status": "",
+      "invoice_tax_no": "",
+      "order_discount": "0.00",
+      "schema_version": 1,
+      "line_difference": "0.00",
+      "source_modified": "2026-10-24 15:01:51",
+      "platform_payable": null,
+      "metadata_modified": "2026-10-24 15:01:51",
+      "calculated_payable": "100.00",
+      "payment_difference": "0.00",
+      "platform_adjustment": null,
+      "discount_share_difference": null,
+      "platform_divided_difference": "0.00"
+    },
+    "internal_notes": [],
+    "refund_amounts": {
+      "succeeded": 100.0,
+      "pending": 0.0
+    },
+    "purchase_returns": [],
+    "logs": [
+      {
+        "action": "REFUND_ORDER_COMPLETE",
+        "result": "SUCCESS",
+        "message": "退款 TK9a289213763e48fcb1c76e935f9ae8d9 原取消回执已确认；修正原订单结束履约状态，不重复释放库存",
+        "operator_name": "退款状态修复",
+        "create_time": "2026-10-24 16:15:57"
+      },
+      {
+        "action": "CUTOFF_COMPLETE",
+        "result": "SUCCESS",
+        "message": "撤回确认完成，逻辑预占保留，请人工确认重新分仓",
+        "operator_name": "退款分项截单",
+        "create_time": "2026-10-24 15:03:27"
+      },
+      {
+        "action": "CUTOFF_REQUEST",
+        "result": "PENDING",
+        "message": "撤回重新发货：退款 TK9a289213763e48fcb1c76e935f9ae8d9 撤回原发货安排；保留其他商品需求",
+        "operator_name": "退款分项截单",
+        "create_time": "2026-10-24 15:03:25"
+      },
+      {
+        "action": "WMS_DISPATCH",
+        "result": "SUCCESS",
+        "message": "XSa6e02ec83006416aa2612e4576b0e844：仓库已确认接收，等待出库回传",
+        "operator_name": "仓库任务",
+        "create_time": "2026-10-24 15:02:43"
+      },
+      {
+        "action": "WMS_SUBMIT",
+        "result": "SUCCESS",
+        "message": "XSa6e02ec83006416aa2612e4576b0e844：已提交仓库下发任务，快递与明细快照已固定",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:42"
+      },
+      {
+        "action": "WAREHOUSE_ALLOCATE",
+        "result": "SUCCESS",
+        "message": "已分仓 1 / 1 件；等待下发仓库",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:40"
+      },
+      {
+        "action": "SHIPMENT_CREATE",
+        "result": "SUCCESS",
+        "message": "生成 1 张发货单，新增 1 件；已尝试按店铺规则匹配快递",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:40"
+      },
+      {
+        "action": "CARRIER_MATCH",
+        "result": "SUCCESS",
+        "message": "XSa6e02ec83006416aa2612e4576b0e844：顺丰快递（SF）；按仓库、省份优先及默认顺序匹配",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:40"
+      },
+      {
+        "action": "REVIEW_APPROVE",
+        "result": "SUCCESS",
+        "message": "分仓规则迭代验收",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:39"
+      },
+      {
+        "action": "REVIEW_PENDING",
+        "result": "MANUAL_REQUIRED",
+        "message": "店铺配置为人工审核",
+        "operator_name": "系统审单",
+        "create_time": "2026-10-24 15:02:37"
+      },
+      {
+        "action": "CONVERT",
+        "result": "SUCCESS",
+        "message": "已生成业务订单；逻辑预占状态：逻辑预占完成",
+        "operator_name": "订单任务",
+        "create_time": "2026-10-24 15:02:37"
+      },
+      {
+        "action": "DEMAND_REGISTER",
+        "result": "SUCCESS",
+        "message": "已匹配商品销售需求已登记",
+        "operator_name": "订单任务",
+        "create_time": "2026-10-24 15:02:37"
+      },
+      {
+        "action": "RETRY",
+        "result": "PENDING",
+        "message": "已提交人工转单重试",
+        "operator_name": "admin",
+        "create_time": "2026-10-24 15:02:30"
+      }
+    ]
+  },
+  "refund_and_stock_unchanged": true,
+  "approval_history_unchanged": true
+}

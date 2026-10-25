@@ -1,0 +1,21 @@
+{
+  "backend_regressions": 250,
+  "frontend_groups": [
+    "order-business-settings",
+    "order-intake",
+    "refund-return-rules",
+    "refund-settings",
+    "workspace-navigation",
+    "refund-execution",
+    "refunds",
+    "business-refund-list",
+    "platform-documents",
+    "exchange-workbench",
+    "order-messaging"
+  ],
+  "frontend_build": "PASS",
+  "order_build": "PASS",
+  "deployment": "local Docker, order service healthy; frontend published",
+  "database_change": "navigation metadata only; existing operation permission nodes and role grants preserved",
+  "browser_report": "acceptance.json"
+}

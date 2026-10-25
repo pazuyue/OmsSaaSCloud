@@ -1,0 +1,533 @@
+{
+  "available": true,
+  "id": 7,
+  "order_id": 148,
+  "lines": [
+    {
+      "id": 213,
+      "company_code": "QM",
+      "order_id": 148,
+      "platform_oid": "",
+      "sku_sn": "AF20261023150323C09G",
+      "goods_name": "[自动仅退款验收09] 关联赠品G",
+      "quantity": 1,
+      "payment": 0.0,
+      "reserved_quantity": 1,
+      "inventory_reason": "",
+      "inventory_reason_code": "",
+      "cancelled_quantity": 0,
+      "business_type": "SALE",
+      "exchange_id": null,
+      "stock_reference": "GIFT:7:1",
+      "source_line_id": null,
+      "source_shipment_line_id": null,
+      "fulfillment_round": 1,
+      "bundle_id": null,
+      "component_quantity": 0,
+      "stocked_bundle_snapshot": null,
+      "gift_plan_id": 7,
+      "refund_block_reason": "",
+      "shipped_quantity": 1,
+      "gift_parent_sku": "AF20261023150323C09G",
+      "gift_parent_name": "[自动仅退款验收09] 关联赠品G",
+      "gift_parent_quantity": 1,
+      "gift_parent_unit": "件",
+      "eligible_quantity": 0,
+      "projected_eligible_quantity": 0,
+      "cancel_required": 0,
+      "return_required": 0,
+      "unarranged_quantity": 0,
+      "returned_quantity": 1,
+      "waived_quantity": 0,
+      "return_plans": [
+        {
+          "id": 62,
+          "refund_id": 101,
+          "quantity": 1,
+          "posted_quantity": 1,
+          "accepted_quantity": 1,
+          "waived_quantity": 0,
+          "state": "CLOSED",
+          "control_version": 7,
+          "order_line_id": 213,
+          "actual": {
+            "id": 62,
+            "lines": [
+              {
+                "id": 45,
+                "posted": 1,
+                "sku_sn": "AF20261023150323C09G",
+                "bad_qty": 0,
+                "event_id": 45,
+                "good_qty": 1,
+                "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+                "batch_code": "AFRET_20261023150323_09_1",
+                "message_id": "AF_RETEST_20261023150323_09_30_FINAL",
+                "create_time": "2026-10-23T16:38:48",
+                "source_log_id": 710
+              }
+            ],
+            "events": [
+              {
+                "id": 45,
+                "state": "POSTED",
+                "quantity": 1,
+                "last_error": "",
+                "message_id": "AF_RETEST_20261023150323_09_30_FINAL",
+                "create_time": "2026-10-23T16:38:48",
+                "final_confirmation": 1
+              }
+            ],
+            "grades": {
+              "bad_qty": 0,
+              "good_qty": 1,
+              "posted_qty": 1
+            },
+            "sku_sn": "AF20261023150323C09G",
+            "plan_id": 62,
+            "reviews": [],
+            "attempts": 1,
+            "order_sn": "SO74b8297c06194d2481a920900f8445c4",
+            "quantity": 1,
+            "documents": [
+              {
+                "id": 62,
+                "sku_sn": "AF20261023150323C09G",
+                "attempts": 1,
+                "quantity": 1,
+                "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+                "ticket_id": 196,
+                "generation": 1,
+                "last_error": "",
+                "owner_code": "SAASQM01",
+                "store_code": "AF20261023150323C09V1",
+                "cancel_mode": "",
+                "create_time": "2026-10-23T16:38:38",
+                "cancel_actor": "",
+                "cancel_state": "NONE",
+                "cancelled_at": null,
+                "cancel_reason": "",
+                "receipt_state": "COMPLETED",
+                "dispatch_state": "ACCEPTED",
+                "external_order": "SIMIN_0cf5130f34c343f6ae96",
+                "return_address": "[自动仅退款验收] 测试退回地址",
+                "return_contact": "TEST-AUTO-REFUND",
+                "control_version": 3,
+                "posted_quantity": 1,
+                "real_store_code": "TW201",
+                "shared_document": true,
+                "warehouse_status": "FULFILLED",
+                "accepted_quantity": 1,
+                "cancelled_quantity": 0
+              }
+            ],
+            "parcel_id": 30,
+            "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+            "refund_id": 101,
+            "refund_sn": "TK119591f192174c10bb428bb50600376f",
+            "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+            "ticket_id": 196,
+            "unit_cost": 10,
+            "generation": 1,
+            "last_error": "",
+            "owner_code": "SAASQM01",
+            "store_code": "AF20261023150323C09V1",
+            "cancel_mode": "",
+            "create_time": "2026-10-23T16:38:38",
+            "lease_until": null,
+            "cancel_actor": "",
+            "cancel_state": "NONE",
+            "cancelled_at": null,
+            "company_code": "QM",
+            "payload_hash": "DEE7B63B5D35F1CD5C23B3DB106A8EDD4AB9A1A5AC01AFCE03F02E982ECBB978",
+            "platform_tid": "872026102315032310",
+            "progress_ack": 3,
+            "cancel_reason": "",
+            "connection_id": 10,
+            "receipt_state": "COMPLETED",
+            "dispatch_state": "ACCEPTED",
+            "document_count": 1,
+            "external_order": "SIMIN_0cf5130f34c343f6ae96",
+            "external_owner": "VC00001",
+            "notify_pending": 0,
+            "parcel_version": 7,
+            "control_version": 2,
+            "posted_quantity": 1,
+            "real_store_code": "TW201",
+            "shared_document": true,
+            "request_quantity": 1,
+            "warehouse_status": "FULFILLED",
+            "accepted_quantity": 1,
+            "progress_revision": 3,
+            "rejected_receipts": [],
+            "cancelled_quantity": 0,
+            "external_warehouse": "VC00001",
+            "warehouse_document": {
+              "id": 11,
+              "attempts": 1,
+              "quantity": 2,
+              "parcel_id": 30,
+              "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+              "ticket_id": 196,
+              "generation": 1,
+              "last_error": "",
+              "create_time": "2026-10-23T16:38:38",
+              "cancel_state": "NONE",
+              "company_code": "QM",
+              "dispatch_state": "ACCEPTED",
+              "external_order": "SIMIN_0cf5130f34c343f6ae96",
+              "control_version": 3,
+              "warehouse_status": "FULFILLED"
+            },
+            "warehouse_quantity": 2,
+            "original_shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+            "parcel_pending_count": 0,
+            "pending_review_count": 0
+          }
+        }
+      ],
+      "pending_assessment": false,
+      "sources": [
+        {
+          "id": 135,
+          "company_code": "QM",
+          "shipment_id": 98,
+          "allocation_id": 135,
+          "order_line_id": 213,
+          "platform_oid": "",
+          "sku_sn": "AF20261023150323C09G",
+          "goods_name": "[自动仅退款验收09] 关联赠品G",
+          "store_code": "AF20261023150323C09V1",
+          "batch_id": 219,
+          "source_type": "PUBLIC_EXTRA",
+          "stock_source_id": 155,
+          "quantity": 1,
+          "shipped_quantity": 1,
+          "cancelled_quantity": 0,
+          "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+          "shipment_status": "SHIPPED"
+        }
+      ],
+      "needs_cutoff": false,
+      "stock_shortage": false,
+      "gift_state": "RETURNED",
+      "next_action": "无需处理"
+    }
+  ],
+  "triggers": [
+    {
+      "id": 100,
+      "refund_sn": "TKb1b95612c0d0458993629554063e8efe",
+      "purpose": "DIFFERENCE",
+      "funds_state": "SUCCESS",
+      "review_state": "APPROVED",
+      "control_version": 3
+    },
+    {
+      "id": 101,
+      "refund_sn": "TK119591f192174c10bb428bb50600376f",
+      "purpose": "CANCEL",
+      "funds_state": "SUCCESS",
+      "review_state": "APPROVED",
+      "control_version": 6
+    }
+  ],
+  "pending": false,
+  "scope_note": "",
+  "block_reason": "",
+  "effective_basis": [
+    {
+      "sku_sn": "AF20261023150323C09A",
+      "payment": 0.0,
+      "quantity": 0,
+      "platform_oid": "8720261023150323101",
+      "difference_refund": 20.0
+    }
+  ],
+  "projected_basis": [
+    {
+      "sku_sn": "AF20261023150323C09A",
+      "payment": 0.0,
+      "quantity": 0,
+      "platform_oid": "8720261023150323101",
+      "difference_refund": 20.0
+    }
+  ],
+  "snapshot": {
+    "gifts": [
+      {
+        "sku_sn": "AF20261023150323C09G",
+        "payment": 0,
+        "quantity": 1,
+        "line_kind": "GIFT",
+        "goods_name": "验收赠品G",
+        "sales_unit": "件",
+        "platform_oid": ""
+      }
+    ],
+    "trace": [
+      {
+        "name": "[自动仅退款验收09] 买A赠G 20261023150323_09",
+        "rules": [
+          {
+            "key": "AFG",
+            "name": "买A一件赠G一件",
+            "gifts": [
+              {
+                "sku_sn": "AF20261023150323C09G",
+                "quantity": 1,
+                "goods_name": "验收赠品G",
+                "sales_unit": "件"
+              }
+            ],
+            "reason": "满足赠送条件",
+            "matched": true,
+            "basis_amount": 100,
+            "granted_count": 1,
+            "basis_quantity": 1,
+            "requested_count": 1,
+            "condition_matched": true
+          }
+        ],
+        "reason": "命中，停止后续策略组",
+        "matched": true,
+        "group_id": 13,
+        "priority": 1,
+        "shop_group_id": 11,
+        "shop_group_name": "[自动仅退款验收09] 独立店铺组 20261023150323_09"
+      }
+    ],
+    "groups": [
+      {
+        "id": 13,
+        "name": "[自动仅退款验收09] 买A赠G 20261023150323_09",
+        "policy": {
+          "rules": [
+            {
+              "cap": 1,
+              "key": "AFG",
+              "name": "买A一件赠G一件",
+              "skus": [
+                "AF20261023150323C09A"
+              ],
+              "stop": true,
+              "type": "PRODUCT",
+              "gifts": [
+                {
+                  "sku_sn": "AF20261023150323C09G",
+                  "quantity": 1,
+                  "goods_name": "验收赠品G",
+                  "sales_unit": "件"
+                }
+              ],
+              "tiers": [],
+              "amount": 0,
+              "minimum": 1,
+              "max_count": 1,
+              "quota_tracked": true
+            }
+          ],
+          "channels": [
+            93
+          ],
+          "end_time": "2026-11-22 15:30:08",
+          "start_time": "2026-10-22 15:30:08",
+          "allow_waive": true,
+          "catalog_token": "e5eab9310688425390029f51543ffcf2",
+          "pause_pending": true,
+          "shipped_policy": "RETURN",
+          "shortage_policy": "WAIT",
+          "cross_group_stack": false,
+          "difference_affects_amount": false
+        },
+        "enabled": 1,
+        "priority": 1,
+        "revision": 1,
+        "updated_by": "admin",
+        "update_time": "2026-10-23 15:30:08",
+        "company_code": "QM",
+        "shop_group_id": 11,
+        "shop_group_name": "[自动仅退款验收09] 独立店铺组 20261023150323_09",
+        "shop_group_revision": 1
+      }
+    ],
+    "entitlements": [
+      {
+        "policy": {
+          "rules": [
+            {
+              "cap": 1,
+              "key": "AFG",
+              "name": "买A一件赠G一件",
+              "skus": [
+                "AF20261023150323C09A"
+              ],
+              "stop": true,
+              "type": "PRODUCT",
+              "gifts": [
+                {
+                  "sku_sn": "AF20261023150323C09G",
+                  "quantity": 1,
+                  "goods_name": "验收赠品G",
+                  "sales_unit": "件"
+                }
+              ],
+              "tiers": [],
+              "amount": 0,
+              "minimum": 1,
+              "max_count": 1,
+              "quota_tracked": true
+            }
+          ],
+          "channels": [
+            93
+          ],
+          "end_time": "2026-11-22 15:30:08",
+          "start_time": "2026-10-22 15:30:08",
+          "allow_waive": true,
+          "catalog_token": "e5eab9310688425390029f51543ffcf2",
+          "pause_pending": true,
+          "shipped_policy": "RETURN",
+          "shortage_policy": "WAIT",
+          "cross_group_stack": false,
+          "difference_affects_amount": false
+        },
+        "sku_sn": "AF20261023150323C09G",
+        "group_id": 13,
+        "quantity": 1,
+        "rule_key": "AFG",
+        "rule_name": "买A一件赠G一件",
+        "goods_name": "验收赠品G",
+        "group_name": "[自动仅退款验收09] 买A赠G 20261023150323_09",
+        "sales_unit": "件"
+      }
+    ]
+  },
+  "parents": [
+    {
+      "sku_sn": "AF20261023150323C09G",
+      "payment": 0,
+      "quantity": 1,
+      "line_kind": "GIFT",
+      "goods_name": "[自动仅退款验收09] 关联赠品G",
+      "sales_unit": "件",
+      "platform_oid": "",
+      "stock_reference": "GIFT:7:1",
+      "gift_plan_id": 7,
+      "eligible_quantity": 0,
+      "shipped_keep_quantity": 0
+    }
+  ],
+  "order_status": "WAIT_ALLOCATION",
+  "control_version": 137,
+  "events": [
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:40:06"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:39:32"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:39:32"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:39:32"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:38:49"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:38:49"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:38:38"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:36:17"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:36:17"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:35:01"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 16:34:59"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:35:23"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:28"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:25"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:24"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:16"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:13"
+    },
+    {
+      "action": "ASSESS",
+      "message": "已重新核对赠品资格及售后累计处理数量",
+      "actor": "系统赠品核对",
+      "create_time": "2026-10-23 15:30:12"
+    }
+  ]
+}

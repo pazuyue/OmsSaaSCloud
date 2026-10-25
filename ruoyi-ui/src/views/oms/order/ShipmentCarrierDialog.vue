@@ -13,7 +13,7 @@
       <p v-else class="hint">按店铺启用的快递规则重新尝试；已经确认快递的单据保留现有选择。</p>
       <p v-if="saving" class="hint">已处理 {{ results.length }} / {{ items.length }} 张发货单</p>
       <el-table v-if="results.length" key="results" :data="results" :max-height="380" class="summary"><el-table-column label="发货单" min-width="290"><template slot-scope="s">{{ s.row.shipment_sn || (items.find(i => i.id === s.row.id) || {}).shipment_sn }}</template></el-table-column><el-table-column label="结果" width="100"><template slot-scope="s"><el-tag size="small" :type="s.row.success ? 'success' : s.row.unconfirmed || s.row.not_submitted ? 'warning' : 'danger'">{{ s.row.success ? '成功' : s.row.unconfirmed ? '待核对' : s.row.not_submitted ? '未提交' : '失败' }}</el-tag></template></el-table-column><el-table-column label="说明" prop="message" min-width="250" /></el-table>
-      <router-link v-hasPermi="['order:pull:config']" class="settings-link" to="/oms-order/settings?tab=carrier-rules" @click.native="visible=false">查看快递规则</router-link>
+      <router-link v-hasPermi="['order:pull:config']" class="settings-link" to="/oms-order/businessSettings?tab=carrier-rules" @click.native="visible=false">查看快递规则</router-link>
     </div>
     <span slot="footer"><el-button :disabled="saving" @click="visible=false">{{ results.length ? '关闭' : '取消' }}</el-button><el-button v-if="!results.length" type="primary" :loading="saving" :disabled="loading || !items.length || (mode === 'MANUAL' && (!carrier || !reason))" @click="submit">{{ mode === 'MANUAL' ? '确认快递' : '开始匹配' }}</el-button></span>
   </el-dialog>

@@ -7,7 +7,7 @@
       <el-form-item label="平台修改时间"><el-date-picker v-model="range" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" /></el-form-item>
       <el-form-item><el-button type="primary" @click="search">查询</el-button><el-button @click="reset">重置公共条件</el-button><el-button :disabled="!filters.platformTid" @click="related()">查看原单关联</el-button></el-form-item>
     </el-form>
-    <p class="hint">切换类型保留以上查询条件；各类单据的状态与转单结果分别展示。接入配置与同步任务在<router-link to="/oms-order/management">订单与售后接入</router-link>维护。</p>
+    <p class="hint">切换类型保留以上查询条件；各类单据的状态与转单结果分别展示。接入规则在<router-link to="/oms-order/businessSettings">业务设置</router-link>维护，补拉和进度在<router-link to="/oms-order/syncTasks">同步任务</router-link>查看。</p>
     <el-alert v-if="deniedType" title="没有所选类型的查看权限，已展示可访问的单据类型。" type="warning" :closable="false" />
     <el-tabs v-if="types.length" v-model="active" @tab-click="tabChanged"><el-tab-pane v-for="t in types" :key="t" :label="names[t]" :name="t" /></el-tabs>
     <keep-alive :max="3"><component v-if="active" :is="components[active]" :key="active" v-bind="childProps" ref="list" @related="related($event)" /></keep-alive>

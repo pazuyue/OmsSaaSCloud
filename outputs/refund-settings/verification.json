@@ -1,0 +1,47 @@
+{
+  "checks": [
+    "paged overview batches local settings and exposes no credentials",
+    "saved automation and payment remain disabled",
+    "refund list provides a visible settings button and paged shop overview",
+    "refund detail opens the current shop directly and retains return-to-refund context",
+    "unsaved tab changes can be canceled or discarded; payment blockers name the missing requirements",
+    "authorization and warehouse rules use the same page; warehouse changes update preview and have a discard guard",
+    "browser-only save fixture submits automation without overwriting intake switches",
+    "disabled shop remains viewable and cannot save automatic execution rules"
+  ],
+  "overview_20_ms": [
+    61.3,
+    55.5,
+    61.9
+  ],
+  "browser_errors": [],
+  "browser_mocked_save_count": 1,
+  "actual_settings_unchanged": true,
+  "protected_stock_unchanged": true,
+  "vendor_address_requests_on_open": 0,
+  "real_financial_or_warehouse_execution": false,
+  "regressions": {
+    "order_refund_and_tenant_routing_tests": 245,
+    "channel_platform_tests": 82,
+    "frontend_groups": [
+      "refund-settings",
+      "refund-execution",
+      "order-intake",
+      "refund-return-rules",
+      "refunds",
+      "business-refund-list",
+      "workspace-navigation"
+    ],
+    "frontend_lint": "passed",
+    "production_build": "passed",
+    "menu_migration_repeatable": true
+  },
+  "local_deployment": {
+    "services": [
+      "channel",
+      "order"
+    ],
+    "frontend_published": true,
+    "entry": "/oms-order/afterSaleRules/settings"
+  }
+}

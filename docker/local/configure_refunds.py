@@ -106,6 +106,10 @@ def install_order(db):
     column(db, 'oms_platform_refund', 'semantic_hash', "CHAR(64) NOT NULL DEFAULT ''")
     column(db, 'oms_refund_sync', 'source_key', "VARCHAR(64) NOT NULL DEFAULT ''")
     column(db, 'oms_refund_sync', 'seller_nick', "VARCHAR(200) NOT NULL DEFAULT ''")
+    from configure_refund_execution import install_order as execution
+    execution(db)
+    from pathlib import Path
+    execute((Path(__file__).parent/'migrations/20261024_refund_money_authorization.sql').read_text(encoding='utf-8'),db)
     from configure_order_intake import install as intake
     intake(db)
     from configure_refund_goods import install_order as goods

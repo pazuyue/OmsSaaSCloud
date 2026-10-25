@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="店铺审单规则" :visible.sync="visible" width="min(1040px, 96vw)" top="5vh" append-to-body :close-on-click-modal="false">
+  <configuration-panel :embedded="embedded" :read-only="readOnly" title="店铺审单规则" :visible.sync="visible" width="min(1040px, 96vw)" top="5vh" append-to-body :close-on-click-modal="false">
     <div v-loading="loading" class="review-layout">
       <div class="shop-summary"><div><strong>{{ shop.channel_name }}</strong><span class="muted">渠道 ID：{{ shop.channel_id }}</span></div><el-tag size="small" type="info">{{ revision ? '规则 v' + revision : '尚未配置' }}</el-tag></div>
       <template v-if="policy">
@@ -36,16 +36,17 @@
       </template>
     </div>
     <span slot="footer"><el-button :disabled="saving" @click="visible=false">取消</el-button><el-button type="primary" :loading="saving" :disabled="loading || !policy" @click="save">保存审单规则</el-button></span>
-  </el-dialog>
+  </configuration-panel>
 </template>
 <script>
+import configurationEditor from './configurationEditor'
 import { reviewConfig, saveReviewConfig } from '@/api/order'
-export default {
+export default { mixins: [configurationEditor],
   data() { return { visible: false, loading: false, saving: false, shop: {}, policy: null, originalPolicy: null, skuEnabled: false, revision: 0 } },
-  computed: { manualCount() { return this.policy ? Number(this.policy.manual_match_required) + Number(this.policy.amount_enabled) + Number(this.policy.quantity_enabled) + Number(this.skuEnabled) : 0 } },
+  computed: { editorState() { return this.policy ? { policy: this.policy, skuEnabled: this.skuEnabled } : null }, manualCount() { return this.policy ? Number(this.policy.manual_match_required) + Number(this.policy.amount_enabled) + Number(this.policy.quantity_enabled) + Number(this.skuEnabled) : 0 } },
   methods: {
     async open(shop) { this.shop = shop; this.policy = null; this.visible = true; this.loading = true; try { const r = (await reviewConfig(shop.channel_id)).data; this.revision = r.revision; this.originalPolicy = { ...r.policy, review_skus: [...r.policy.review_skus] }; this.policy = { ...r.policy, amount_threshold: Number(r.policy.amount_threshold) || undefined, quantity_threshold: Number(r.policy.quantity_threshold) || undefined, review_skus: [...r.policy.review_skus] }; this.skuEnabled = this.policy.review_skus.length > 0 } finally { this.loading = false } },
-    async save() { if (this.saving || !this.policy) return; let policy = { ...this.originalPolicy, mode: 'MANUAL' }; if (this.policy.mode === 'AUTO') { if (this.policy.amount_enabled && !(Number(this.policy.amount_threshold) > 0)) return this.$message.warning('请填写大于 0 的实付金额阈值'); if (this.policy.quantity_enabled && !(Number(this.policy.quantity_threshold) >= 1)) return this.$message.warning('请填写至少 1 件的商品件数阈值'); if (this.skuEnabled && !this.policy.review_skus.length) return this.$message.warning('请至少添加一个需要复核的内部 SKU'); policy = { ...this.policy, amount_threshold: this.policy.amount_threshold || 0, quantity_threshold: this.policy.quantity_threshold || 0, review_skus: this.skuEnabled ? this.policy.review_skus : [] } } this.saving = true; try { await saveReviewConfig({ channel_id: this.shop.channel_id, revision: this.revision, policy }); this.visible = false; this.$message.success('审单规则已保存'); this.$emit('changed') } finally { this.saving = false } }
+    async save() { if (this.saving || this.readOnly || !this.policy) return; let policy = { ...this.originalPolicy, mode: 'MANUAL' }; if (this.policy.mode === 'AUTO') { if (this.policy.amount_enabled && !(Number(this.policy.amount_threshold) > 0)) return this.$message.warning('请填写大于 0 的实付金额阈值'); if (this.policy.quantity_enabled && !(Number(this.policy.quantity_threshold) >= 1)) return this.$message.warning('请填写至少 1 件的商品件数阈值'); if (this.skuEnabled && !this.policy.review_skus.length) return this.$message.warning('请至少添加一个需要复核的内部 SKU'); policy = { ...this.policy, amount_threshold: this.policy.amount_threshold || 0, quantity_threshold: this.policy.quantity_threshold || 0, review_skus: this.skuEnabled ? this.policy.review_skus : [] } } this.saving = true; try { await saveReviewConfig({ channel_id: this.shop.channel_id, revision: this.revision, policy }); this.visible = false; this.$message.success('审单规则已保存'); this.$emit('changed') } finally { this.saving = false } }
   }
 }
 </script>

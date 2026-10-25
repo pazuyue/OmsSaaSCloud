@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "refund_id": 121,
+  "sku": "RR20261024185730C08A",
+  "amount_composition": [
+    20,
+    80,
+    100,
+    0
+  ],
+  "related_refund_id": 118,
+  "related_reads_after_click": 1,
+  "on_demand": true,
+  "page_errors": [],
+  "write_requests": [],
+  "stock_unchanged": true,
+  "refunds_unchanged": true,
+  "checks": [
+    "Completed amount shows other20 + current80 = cumulative100, remaining0",
+    "zero occupation hidden; pending limit still80",
+    "all actual tasks RETURN shows return stock completed",
+    "click20 reads scoped prior refund and opens correct business detail",
+    "older refund uses other80 instead of mislabeling the later80 as earlier"
+  ]
+}

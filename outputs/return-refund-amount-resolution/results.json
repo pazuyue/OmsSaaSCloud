@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "run_id": "20261024203745",
+  "order_sn": "SOb0fa1b2c3d4e4c50908833ab80e37064",
+  "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=165",
+  "refunds": {
+    "prior": {
+      "refund_id": "8920261024203745081",
+      "amount": "20",
+      "oid": "8620261024203745081",
+      "quantity": 1,
+      "returns": false,
+      "source_sequence": 1,
+      "injected": true,
+      "id": 126,
+      "refund_sn": "TKd21d7c49f0204063928822f88b8a9ea6",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=126"
+    },
+    "target": {
+      "refund_id": "8920261024203745082",
+      "amount": "80.00",
+      "oid": "8620261024203745081",
+      "quantity": 1,
+      "returns": true,
+      "source_sequence": 3,
+      "injected": true,
+      "id": 127,
+      "refund_sn": "TK3436e3c6902146dba119722a2a2482d8",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=127",
+      "buyer_sent": true,
+      "buyer_sent_at": "2026-10-24T20:40:02.556012"
+    }
+  },
+  "scenario": "先自动退差价20，申请退货退款100被拦住；模拟买家协商将平台申请修改为80，来源同步后自动审核、合包退货入库、退款80，累计100",
+  "manual_review_events": 0,
+  "manual_refund_actions": false,
+  "flow_retry_called": false,
+  "before": {
+    "requested": 100,
+    "other_confirmed": 20,
+    "limit": 80
+  },
+  "after": {
+    "target_paid": 80,
+    "cumulative_paid": 100
+  },
+  "stock_before": {
+    "company": [
+      [
+        "RR20261024203745C08A",
+        "99",
+        "99",
+        "0",
+        "0"
+      ],
+      [
+        "RR20261024203745C08G",
+        "99",
+        "99",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "RR20261024203745C08V",
+        "RR20261024203745C08A",
+        "99",
+        "99",
+        "0"
+      ],
+      [
+        "RR20261024203745C08V",
+        "RR20261024203745C08G",
+        "99",
+        "99",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "RR20261024203745C08A",
+        "99",
+        "0",
+        "0",
+        "99",
+        "0"
+      ],
+      [
+        "RR20261024203745C08G",
+        "99",
+        "0",
+        "0",
+        "99",
+        "0"
+      ]
+    ]
+  },
+  "stock_after": {
+    "company": [
+      [
+        "RR20261024203745C08A",
+        "100",
+        "100",
+        "0",
+        "0"
+      ],
+      [
+        "RR20261024203745C08G",
+        "100",
+        "100",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "RR20261024203745C08V",
+        "RR20261024203745C08A",
+        "100",
+        "100",
+        "0"
+      ],
+      [
+        "RR20261024203745C08V",
+        "RR20261024203745C08G",
+        "100",
+        "100",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "RR20261024203745C08A",
+        "99",
+        "0",
+        "0",
+        "99",
+        "0"
+      ],
+      [
+        "RR20261024203745C08G",
+        "99",
+        "0",
+        "0",
+        "99",
+        "0"
+      ]
+    ]
+  },
+  "pay_requests": "126\t1\n127\t1",
+  "original_122_unchanged": true,
+  "platform_mode": "SIMULATION",
+  "warehouse_environment": "TEST",
+  "vendor_pay_requests": [
+    {
+      "refund_id": "8920261024203745081",
+      "vendor_pay_requests": 1
+    },
+    {
+      "refund_id": "8920261024203745082",
+      "vendor_pay_requests": 1
+    }
+  ],
+  "warehouse_stock_verified": true,
+  "channel_quota_unchanged": true
+}

@@ -1,0 +1,31 @@
+{
+  "refund": {
+    "id": 121,
+    "state": "COMPLETED",
+    "review_state": "APPROVED",
+    "review_by": "自动售后规则",
+    "refund_fee": 80.0,
+    "goods_state": "DONE",
+    "funds_state": "SUCCESS",
+    "control_version": 8
+  },
+  "amount_context": {
+    "scope": "PLATFORM_SUBORDER",
+    "original_goods_payment": 100.0,
+    "payment_source": "平台分摊实付（已核对不含运费）",
+    "authoritative": true,
+    "reliable": true,
+    "original_quantity": 1,
+    "requested_goods_payment": 100.0,
+    "requested_payment_note": "申请数量覆盖原子单全部商品，金额不含买家运费",
+    "current_confirmed": 80.0,
+    "confirmed_total": 100.0,
+    "other_confirmed": 20.0,
+    "other_occupied": 0.0,
+    "current_limit": 80.0,
+    "remaining_unpaid": 0.0,
+    "issue": "",
+    "note": "金额按本平台子订单统计；本次上限扣除其他退款，累计已退包含本单成功金额。实际审核、付款时重新校验。"
+  },
+  "stock": "RR20261024185730C08A\t100\t100\t0\t0\nRR20261024185730C08G\t100\t100\t0\t0"
+}

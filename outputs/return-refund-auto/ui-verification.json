@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Fresh composite case: each refund owns exactly its purchased components and corresponding gifted kit/bag components",
+    "Fresh missing-gift case: new supplemental logistics retained, original parcel not overwritten, actual receipt and stock independently completed",
+    "Retained money cases: difference20 + return80 totals100, over-remaining100 stays unpaid, response-loss case completes without a second payment",
+    "New settings and consumed exact-refund authorization are visible; merchant authorization remains distinct from automatic refund review/payment"
+  ],
+  "page_errors": [],
+  "write_requests": [],
+  "stock_and_quotas_unchanged": true,
+  "refund_states_unchanged": true
+}

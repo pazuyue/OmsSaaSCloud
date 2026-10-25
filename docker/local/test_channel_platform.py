@@ -14,20 +14,28 @@ def main():
     cache=Path.home()/'.cache/oms-local'
     from configure_exchanges import install_channel
     install_channel(DB)
+    from configure_refund_execution import install_channel as refund_channel
+    refund_channel(DB)
     from configure_platform_log_center import install
     install(DB)
     relative=Path('oms-modules/oms-channel/src')
     shutil.copytree(ROOT/relative,cache/'source'/relative,dirs_exist_ok=True)
     env=dict(os.environ,CHANNEL_TEST_URL=test_jdbc_url(DB),INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'],JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64',TZ='Asia/Shanghai')
-    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-channel','-Dtest=ChannelPlatformTest,TmallClientTest,ExchangePlatformTest,PlatformLogTest','test']
+    command=[str(HERE/'tools/apache-maven-3.9.9/bin/mvn'),'-B','-f',str(cache/'source/pom.xml'),'-Plocal-docker','-Dmaven.repo.local='+str(cache/'m2'),'-pl','oms-modules/oms-channel','-Dtest=RefundPlatformServiceTest,ChannelPlatformTest,TmallClientTest,ExchangePlatformTest,PlatformLogTest','test']
     with (HERE/'logs/channel-platform-tests.log').open('w') as log: result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
     if result.returncode: raise SystemExit(result.returncode)
     count=0
+    suites={'RefundPlatformServiceTest','ChannelPlatformTest','TmallClientTest','ExchangePlatformTest','PlatformLogTest'}
+    seen=set()
     for report in (cache/'source/oms-modules/oms-channel/target/surefire-reports').glob('TEST-*.xml'):
         data=ET.parse(report).getroot().attrib
+        suite=data['name'].split('.')[-1]
+        if suite not in suites:continue
+        seen.add(suite)
         assert int(data.get('skipped',0))==int(data['errors'])==int(data['failures'])==0,data
         count+=int(data['tests'])
-    assert count>=29,count
+    assert seen==suites,seen
+    assert count>=39,count
     execute('DROP DATABASE '+DB)
     print(f'PASS channel platform: {count} tests; isolated schema removed')
 

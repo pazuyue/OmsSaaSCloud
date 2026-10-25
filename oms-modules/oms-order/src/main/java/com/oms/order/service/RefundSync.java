@@ -14,6 +14,10 @@ import static com.oms.order.service.RefundValues.*;
 @Service public class RefundSync {
     @Resource RefundService refunds;
     @Resource RefundGoodsService goods;
+    @Resource RefundGoodsTasks goodsTasks;
+    @Resource RefundPlatformExecution platformExecution;
+    @Resource RefundFlowAutomation flow;
+    @Resource RefundApiSupplement apiSupplement;
     @Resource RefundReturnAutoCreate autoCreate;
     @Resource RefundParcelAutomation parcelAutomation;
     @Resource ConfiguredPushReader reader;
@@ -51,7 +55,7 @@ import static com.oms.order.service.RefundValues.*;
         });
         if(!submitted){active.remove(key);requested.remove(key);}return submitted;
     }
-    void run(String company){if(autoCreate!=null)autoCreate.scan(company);if(goods!=null)goods.scan(company);for(Map<String,Object> c:repo().db().query("SELECT channel_id FROM oms_refund_config c WHERE company_code=? AND ((auto_convert=1 AND EXISTS(SELECT 1 FROM oms_platform_refund p WHERE p.company_code=c.company_code AND p.channel_id=c.channel_id AND p.conversion_state='WAITING' AND p.source_state='VALID')) OR (enabled=1 AND next_run<=NOW()) OR EXISTS(SELECT 1 FROM oms_refund_sync t WHERE t.company_code=c.company_code AND t.channel_id=c.channel_id AND t.state IN ('PENDING','RUNNING','RETRY') AND t.next_attempt<=NOW())) ORDER BY next_run,channel_id LIMIT 10",ROW,company))shop(company,number(c,"channel_id"));if(parcelAutomation!=null)parcelAutomation.scan(company);if(repo().gifts()!=null)repo().gifts().scan(company);}
+    void run(String company){if(apiSupplement!=null)apiSupplement.scan(company);if(flow!=null)flow.scan(company);if(platformExecution!=null)platformExecution.scan(company);if(goodsTasks!=null)goodsTasks.scan(company);if(autoCreate!=null)autoCreate.scan(company);if(goods!=null)goods.scan(company);for(Map<String,Object> c:repo().db().query("SELECT channel_id FROM oms_refund_config c WHERE company_code=? AND ((auto_convert=1 AND EXISTS(SELECT 1 FROM oms_platform_refund p WHERE p.company_code=c.company_code AND p.channel_id=c.channel_id AND p.conversion_state='WAITING' AND p.source_state='VALID')) OR (enabled=1 AND next_run<=NOW()) OR EXISTS(SELECT 1 FROM oms_refund_sync t WHERE t.company_code=c.company_code AND t.channel_id=c.channel_id AND t.state IN ('PENDING','RUNNING','RETRY') AND t.next_attempt<=NOW())) ORDER BY next_run,channel_id LIMIT 10",ROW,company))shop(company,number(c,"channel_id"));if(parcelAutomation!=null)parcelAutomation.scan(company);if(repo().gifts()!=null)repo().gifts().scan(company);}
     void fence(String company,long channel,String lease){require(!repo().db().query("SELECT channel_id FROM oms_refund_config WHERE company_code=? AND channel_id=? AND lease_token=? AND lease_until>NOW() FOR UPDATE",ROW,company,channel,lease).isEmpty(),"退款同步租约已失效");}
     boolean claim(String company,long channel,String lease){return repo().db().update("UPDATE oms_refund_config SET lease_token=?,lease_until=DATE_ADD(NOW(),INTERVAL 90 SECOND) WHERE company_code=? AND channel_id=? AND (lease_until IS NULL OR lease_until<NOW())",lease,company,channel)==1;}
     void release(String company,long channel,String lease){repo().db().update("UPDATE oms_refund_config SET lease_token=NULL,lease_until=NULL WHERE company_code=? AND channel_id=? AND lease_token=?",company,channel,lease);}

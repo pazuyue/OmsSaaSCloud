@@ -1,0 +1,25 @@
+{
+  "scope": [
+    "platform automatic review/agree/return/QC/receive/allocate/carrier/WMS/consign/final platform confirmation",
+    "shared return parcels across exchange and refund, 120 second collection, per-source allocation",
+    "authorized internal after-sale exchange and unshipped replacement",
+    "continuous exchange with original source and replacement rounds",
+    "configuration, actionable manual handling, retained new test data"
+  ],
+  "constraints": [
+    "no changes to existing shop switches, global jobs or existing queue policies",
+    "new schema comments in Chinese; no historical backfill",
+    "all automatic target steps audited separately from merchant authorization",
+    "bounded event-driven MQ continuations, original commands for unknown results",
+    "preserve existing refund and inventory regression"
+  ],
+  "status": {
+    "research": "complete",
+    "schema": "implemented_test_schema_only",
+    "automation": "implemented_regression_in_progress",
+    "shared_parcels": "implemented_regression_in_progress",
+    "ui": "implemented_build_passed",
+    "regression": "focused_129_passed_before_latest_read_model_changes",
+    "retained_acceptance": "pending"
+  }
+}

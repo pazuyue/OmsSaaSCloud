@@ -1,0 +1,707 @@
+{
+  "main_cases": 10,
+  "variants": 11,
+  "fully_passed": 0,
+  "failed": 9,
+  "partial": 1,
+  "grouped_status": {
+    "01": "FAIL",
+    "02": "FAIL",
+    "03": "FAIL",
+    "04": "FAIL",
+    "05": "FAIL",
+    "06": "FAIL",
+    "07": "FAIL",
+    "08": "FAIL",
+    "09": "FAIL",
+    "10": "PARTIAL"
+  },
+  "retained_orders": 12,
+  "retained_refunds": 15,
+  "actual_stock_assertions": [
+    "01: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "02A: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "02B: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "03: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "04: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "05: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "06: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "07: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "08: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "09: actual stock, reservation, prior money-only refund and target automatic stop verified",
+    "10: actual stock, reservation, prior money-only refund and target automatic stop verified"
+  ],
+  "stocks": {
+    "01": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C01A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C01V1",
+          "AF20261023150323C01A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C01A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "02A": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C02AA",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C02AV1",
+          "AF20261023150323C02AA",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C02AA",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "02B": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C02BA",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C02BV1",
+          "AF20261023150323C02BA",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C02BA",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "03": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C03A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C03V1",
+          "AF20261023150323C03A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C03A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "04": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C04RA",
+          "100",
+          "100",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C04RV1",
+          "AF20261023150323C04RA",
+          "100",
+          "100",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C04RA",
+          "100",
+          "0",
+          "0",
+          "100",
+          "0"
+        ]
+      ]
+    },
+    "05": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C05A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C05V1",
+          "AF20261023150323C05A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C05A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "06": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C06A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C06V1",
+          "AF20261023150323C06A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C06A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "07": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C07A",
+          "98",
+          "98",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C07V1",
+          "AF20261023150323C07A",
+          "98",
+          "98",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C07A",
+          "98",
+          "0",
+          "0",
+          "98",
+          "0"
+        ]
+      ]
+    },
+    "08": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C08A",
+          "99",
+          "97",
+          "2",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C08V1",
+          "AF20261023150323C08A",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "AF20261023150323C08V2",
+          "AF20261023150323C08A",
+          "99",
+          "97",
+          "2"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C08A",
+          "97",
+          "2",
+          "0",
+          "99",
+          "2"
+        ]
+      ]
+    },
+    "09": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C09A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ],
+        [
+          "AF20261023150323C09G",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C09V1",
+          "AF20261023150323C09A",
+          "99",
+          "99",
+          "0"
+        ],
+        [
+          "AF20261023150323C09V1",
+          "AF20261023150323C09G",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C09A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ],
+        [
+          "AF20261023150323C09G",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "10": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C10A",
+          "99",
+          "99",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C10V1",
+          "AF20261023150323C10A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C10A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    }
+  },
+  "browser_cases": [
+    {
+      "case": "01",
+      "refund_sn": "TK3b0a57846d294a55bff0b73abe037ba5",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=89"
+    },
+    {
+      "case": "02A",
+      "refund_sn": "TKc5748fed048646b6a3bf15d6ade6cf24",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=90"
+    },
+    {
+      "case": "02B",
+      "refund_sn": "TKbd111011261c4e1ca4b8b1180d36077d",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=91"
+    },
+    {
+      "case": "03",
+      "refund_sn": "TK4a2be31802d2436a8976588283767fa6",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=93"
+    },
+    {
+      "case": "04",
+      "refund_sn": "TK8687b2c4edd0480c95e966f05fb9027d",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=98"
+    },
+    {
+      "case": "05",
+      "refund_sn": "TKc260e827fb334b4c995b5236d57579a5",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=95"
+    },
+    {
+      "case": "06",
+      "refund_sn": "TK76316157b87446898236bc9768e86e8a",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=96"
+    },
+    {
+      "case": "07",
+      "refund_sn": "TK333f5e1eb7fd4f89bb684fa0aacf0dd5",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=97"
+    },
+    {
+      "case": "08",
+      "refund_sn": "TKc991690ca9644f07a582750d9113fb2f",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=99"
+    },
+    {
+      "case": "09",
+      "refund_sn": "TK119591f192174c10bb428bb50600376f",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=101"
+    },
+    {
+      "case": "10",
+      "refund_sn": "TKda1cf6ab742d40b8a0192f48e63db95a",
+      "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=103"
+    }
+  ],
+  "browser_errors": [],
+  "browser_writes": [],
+  "automatic_intake_schedule_tested": false,
+  "unreached_steps": [
+    "actual small-refund auto-decision",
+    "case05 simultaneous cutoff/outbound race",
+    "case06 carrier intercept",
+    "case07 automatic return creation, warehouse return dispatch, partial receipts",
+    "case08 cross-physical-warehouse branch",
+    "case09 subsequent return, gift recovery and final refund",
+    "case10 explicit cumulative money limit rule"
+  ],
+  "case04_blocker": "SIMULATION PAY changes status but retains refund_version/modified, causing SOURCE_CONFLICT; cancellation stock effects succeeded"
+}

@@ -1,0 +1,16 @@
+{
+  "order_health": "healthy",
+  "key_refunds_verified": [
+    "01",
+    "04",
+    "07",
+    "09",
+    "10"
+  ],
+  "gift_recovery_complete": true,
+  "test_totals": {
+    "order": 284,
+    "channel": 84,
+    "frontend_groups": 11
+  }
+}

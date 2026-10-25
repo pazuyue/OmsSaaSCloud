@@ -12,7 +12,7 @@ final class RefundProgressContext {
         long id = number(refund,"id");
         List<Map<String,Object>> plans = repository.db().query(
             "SELECT p.id,p.gift_plan_id,p.sku_sn,ol.goods_name,p.quantity,p.accepted_quantity,p.posted_quantity,p.waived_quantity," +
-            "p.state,p.qc_state,p.parcel_state,p.parcel_resolution,p.auto_dispatch_state,p.auto_dispatch_message,p.last_error,p.create_time," +
+            "p.state,p.qc_state,p.parcel_state,"+RefundReturnSummary.parcelPending("p")+" parcel_receipt_pending,p.parcel_resolution,p.auto_dispatch_state,p.auto_dispatch_message,p.last_error,p.create_time," +
             "IF(ol.stocked_bundle_snapshot IS NULL,'件','套') stock_unit,p.result_json " +
             "FROM oms_refund_return_plan p LEFT JOIN oms_order_shipment_line sl ON sl.company_code=p.company_code AND sl.id=p.shipment_line_id " +
             "LEFT JOIN oms_order_line ol ON ol.company_code=sl.company_code AND ol.id=sl.order_line_id " +
@@ -56,7 +56,7 @@ final class RefundProgressContext {
         List<Map<String,Object>> operations = repository.db().query(
             "SELECT id,request_id,action,state,source_version,platform_version,fee,reason,actor,error_code,result_message,create_time " +
             "FROM oms_refund_operation WHERE company_code=? AND refund_id=? ORDER BY id DESC LIMIT 30", ROW,company,id);
-        refund.put("platform_interaction",m("execution_supported",false,"mode","SOURCE_SYNC","operations",operations,"observations",observations,
-            "message","同意退款、同意退货、拒绝退款需在平台处理；OMS当前同步平台结果，本地审核不会向平台提交这些操作。"));
+        refund.put("platform_interaction",m("execution_supported",true,"mode","PLATFORM_OPERATIONS","operations",operations,"observations",observations,
+            "message","支持提交平台售后操作。请先主动刷新平台权限和可用操作；本地审核、接口返回与最终资金结果分别记录。"));
     }
 }

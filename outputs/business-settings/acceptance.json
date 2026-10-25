@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "paged local overview exposes no credentials",
+    "one business settings entry and independent task entry",
+    "all sixteen store sections render inline without nested dialogs or automatic writes",
+    "section switching reuses shop summary and loads only the requested editor",
+    "section navigation preserves changes on cancel and discards only with confirmation",
+    "ordinary order editor participates in store and section navigation guards",
+    "old entry routes preserve shop and task context through redirects",
+    "company sources and carrier warehouse coverage have independent shared-data sections",
+    "embedded save refreshes its revision and leaves intake configuration separate",
+    "disabled shop is visible but cannot save automation",
+    "restricted permission fixture hides unauthorized sections and blocks direct section routes"
+  ],
+  "overview_20_ms": [
+    46.3,
+    50.1,
+    44.8
+  ],
+  "browser_errors": [],
+  "mocked_saves": 1,
+  "real_configuration_writes": 0,
+  "vendor_address_requests": 0,
+  "configuration_unchanged": true,
+  "protected_stock_unchanged": true
+}

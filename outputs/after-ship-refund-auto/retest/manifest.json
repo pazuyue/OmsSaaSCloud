@@ -1,0 +1,3660 @@
+{
+  "run_id": "20261023150323",
+  "cases": {
+    "01": {
+      "key": "01",
+      "title": "小额10元免退货",
+      "case_id": "20261023150323_01",
+      "created": "2026-10-23 15:03:43",
+      "sku": "AF20261023150323C01A",
+      "seller": "AF20261023150323C01",
+      "channel_name": "[自动仅退款验收01] 小额10元免退货 20261023150323",
+      "platform_tid": "872026102315032301",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C01V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 109
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323011",
+          "amount": "10.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:03:58",
+          "intake_task_id": 36,
+          "id": 89,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=89",
+          "refund_sn": "TK3b0a57846d294a55bff0b73abe037ba5",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 195,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323011",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 83,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C01A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C01V1",
+            "AF20261023150323C01A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C01A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 222,
+      "order_id": 138,
+      "order_sn": "SO783597ce072845f88384cce428819eac",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C01V1",
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=138",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C01V1",
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "02A": {
+      "key": "02A",
+      "title": "小额20元边界",
+      "case_id": "20261023150323_02A",
+      "created": "2026-10-23 15:12:00",
+      "sku": "AF20261023150323C02AA",
+      "seller": "AF20261023150323C02A",
+      "channel_name": "[自动仅退款验收02A] 小额20元边界 20261023150323",
+      "platform_tid": "872026102315032302",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C02AV1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 110
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323021",
+          "amount": "20.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:12:10",
+          "intake_task_id": 40,
+          "id": 90,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=90",
+          "refund_sn": "TKc5748fed048646b6a3bf15d6ade6cf24",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 208,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323021",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 84,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02AA",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02AV1",
+            "AF20261023150323C02AA",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02AA",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 223,
+      "order_id": 139,
+      "order_sn": "SOd9044b520413403fa3ca538a6e4fd57e",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02AV1",
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=139",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02AV1",
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "02B": {
+      "key": "02B",
+      "title": "小额20.01元超限",
+      "case_id": "20261023150323_02B",
+      "created": "2026-10-23 15:12:19",
+      "sku": "AF20261023150323C02BA",
+      "seller": "AF20261023150323C02B",
+      "channel_name": "[自动仅退款验收02B] 小额20.01元超限 20261023150323",
+      "platform_tid": "872026102315032303",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C02BV1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 111
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323031",
+          "amount": "20.01",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:12:28",
+          "intake_task_id": 44,
+          "id": 91,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=91",
+          "refund_sn": "TKbd111011261c4e1ca4b8b1180d36077d",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 209,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323031",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 85,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02BA",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02BV1",
+            "AF20261023150323C02BA",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02BA",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 224,
+      "order_id": 140,
+      "order_sn": "SOb7e503c9feab468fb382fd8d58252d8e",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02BV1",
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=140",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02BV1",
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "未命中小额免退规则（子单累计 20.01 元，上限 20.00 元），且本次不是剩余实付全额 100.00 元，请人工确认货物范围",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "PARTIAL",
+      "before_fix_finding": "20.01元未自动付款，库存未变化；当前没有20元小额规则，无法证明是命中阈值保护",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "03": {
+      "key": "03",
+      "title": "先退10再退15累计超限",
+      "case_id": "20261023150323_03",
+      "created": "2026-10-23 15:12:37",
+      "sku": "AF20261023150323C03A",
+      "seller": "AF20261023150323C03",
+      "channel_name": "[自动仅退款验收03] 先退10再退15累计超限 20261023150323",
+      "platform_tid": "872026102315032304",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C03V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 112
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "prior": {
+          "refund_id": "8820261023150323041",
+          "amount": "10",
+          "setup_only": true,
+          "injected_at": "2026-10-23 15:12:46",
+          "intake_task_id": 49,
+          "id": 92,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=92",
+          "refund_sn": "TK0cd5755588244a628312f6b1047ccae0",
+          "setup_description": "平台成功退款前置；通过业务API确认货物保留，不计为自动审批通过",
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 221
+        },
+        "target": {
+          "refund_id": "8820261023150323042",
+          "amount": "15.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:12:51",
+          "intake_task_id": 50,
+          "id": 93,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=93",
+          "refund_sn": "TK4a2be31802d2436a8976588283767fa6",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 223,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323041",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 86,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C03A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C03V1",
+            "AF20261023150323C03A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C03A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 225,
+      "order_id": 141,
+      "order_sn": "SO9203b06a9baf4261b94e128374183620",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C03V1",
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=141",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C03V1",
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "未命中小额免退规则（子单累计 25.00 元，上限 20.00 元），且本次不是剩余实付全额 90.00 元，请人工确认货物范围",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "PARTIAL_WITH_MANUAL_SETUP"
+    },
+    "04": {
+      "key": "04",
+      "title": "仓库已接单未出库截单",
+      "case_id": "20261023150323_04R",
+      "created": "2026-10-23 15:17:36",
+      "sku": "AF20261023150323C04RA",
+      "seller": "AF20261023150323C04R",
+      "channel_name": "[自动仅退款验收04-复验] 仓库确认接单未出库 20261023150323",
+      "platform_tid": "872026102315032395",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C04RV1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 119
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323951",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:17:52",
+          "intake_task_id": 90,
+          "id": 98,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=98",
+          "refund_sn": "TK8687b2c4edd0480c95e966f05fb9027d",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "driver_sequence": 6,
+          "observation": {
+            "business_state": "BLOCKED",
+            "review_state": "STALE",
+            "goods_action": "MIXED",
+            "goods_state": "DONE",
+            "funds_state": "NONE",
+            "fulfillment_stage": "UNSHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "平台来源资料异常，请先核对来源",
+            "plans": [],
+            "platform_operations": "CANCEL_FEEDBACK\tUNKNOWN\t平台返回未能确认操作结果，先查询原退款\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+          }
+        }
+      },
+      "slot": "95",
+      "platform_oid": "8720261023150323951",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 92,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04RV1",
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04RA",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 231,
+      "order_id": 147,
+      "order_sn": "SOc495d35aa79248eeae1abdbd596f02c0",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "99",
+            "1",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04RV1",
+            "AF20261023150323C04RA",
+            "100",
+            "99",
+            "1"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04RA",
+            "99",
+            "1",
+            "0",
+            "100",
+            "1"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=147",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04RV1",
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": false,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "partial_success": [
+        "自动确认取消范围",
+        "仓库撤回确认",
+        "未发数量取消",
+        "库存占用释放",
+        "平台审核请求",
+        "模拟平台付款请求"
+      ],
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "自动截单和库存释放已完成；模拟平台付款接口返回成功，但状态变化未推进版本，触发同版本内容冲突，资金最终结果未确认",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "05": {
+      "key": "05",
+      "title": "截单竞争期间实际出库",
+      "case_id": "20261023150323_05",
+      "created": "2026-10-23 15:13:15",
+      "sku": "AF20261023150323C05A",
+      "seller": "AF20261023150323C05",
+      "channel_name": "[自动仅退款验收05] 截单竞争期间实际出库 20261023150323",
+      "platform_tid": "872026102315032306",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C05V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 114
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323061",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:13:24",
+          "intake_task_id": 63,
+          "id": 95,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=95",
+          "refund_sn": "TKc260e827fb334b4c995b5236d57579a5",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_NOT_RECEIVED",
+          "state_fixture_task": 224,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323061",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 88,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C05A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C05V1",
+            "AF20261023150323C05A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C05A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 227,
+      "order_id": 143,
+      "order_sn": "SOdddd740137da48099e7296994dbde1a7",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C05A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C05V1",
+            "AF20261023150323C05A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C05A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=143",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C05A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C05V1",
+            "AF20261023150323C05A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C05A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "retest_receipts": {
+        "28_FINAL": {
+          "quantity": {
+            "AF20261023150323C05A": 1
+          },
+          "partial": false,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C05A",
+                "99",
+                "99",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C05V1",
+                "AF20261023150323C05A",
+                "99",
+                "99",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C05A",
+                "99",
+                "0",
+                "0",
+                "99",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        }
+      },
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "06": {
+      "key": "06",
+      "title": "在途仅退款物流拦截",
+      "case_id": "20261023150323_06",
+      "created": "2026-10-23 15:13:32",
+      "sku": "AF20261023150323C06A",
+      "seller": "AF20261023150323C06",
+      "channel_name": "[自动仅退款验收06] 在途仅退款物流拦截 20261023150323",
+      "platform_tid": "872026102315032307",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C06V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 115
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323071",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:13:42",
+          "intake_task_id": 71,
+          "id": 96,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=96",
+          "refund_sn": "TK76316157b87446898236bc9768e86e8a",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_NOT_RECEIVED",
+          "state_fixture_task": 237,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323071",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 89,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C06A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C06V1",
+            "AF20261023150323C06A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C06A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 228,
+      "order_id": 144,
+      "order_sn": "SOcadbc9235a4f4915a964412a3a96b89e",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C06A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C06V1",
+            "AF20261023150323C06A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C06A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=144",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C06A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C06V1",
+            "AF20261023150323C06A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C06A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "retest_receipts": {
+        "31_FINAL": {
+          "quantity": {
+            "AF20261023150323C06A": 1
+          },
+          "partial": false,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C06A",
+                "99",
+                "99",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C06V1",
+                "AF20261023150323C06A",
+                "99",
+                "99",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C06A",
+                "99",
+                "0",
+                "0",
+                "99",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        }
+      },
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "07": {
+      "key": "07",
+      "title": "已签收两件仅退款实际退货",
+      "case_id": "20261023150323_07",
+      "created": "2026-10-23 15:13:51",
+      "sku": "AF20261023150323C07A",
+      "seller": "AF20261023150323C07",
+      "channel_name": "[自动仅退款验收07] 已签收两件仅退款实际退货 20261023150323",
+      "platform_tid": "872026102315032308",
+      "quantity": 2,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C07V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 116
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323081",
+          "amount": "200.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:14:00",
+          "intake_task_id": 80,
+          "id": 97,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=97",
+          "refund_sn": "TK333f5e1eb7fd4f89bb684fa0aacf0dd5",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 238,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323081",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 90,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C07A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C07V1",
+            "AF20261023150323C07A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C07A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 229,
+      "order_id": 145,
+      "order_sn": "SO1f28cb5a40304f66b861d10851241971",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "98",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C07V1",
+            "AF20261023150323C07A",
+            "98",
+            "98",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "0",
+            "0",
+            "98",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=145",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "98",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C07V1",
+            "AF20261023150323C07A",
+            "98",
+            "98",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "0",
+            "0",
+            "98",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "retest_receipts": {
+        "29_PART": {
+          "quantity": {
+            "AF20261023150323C07A": 1
+          },
+          "partial": true,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C07A",
+                "98",
+                "98",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C07V1",
+                "AF20261023150323C07A",
+                "98",
+                "98",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C07A",
+                "98",
+                "0",
+                "0",
+                "98",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        },
+        "29_FINAL": {
+          "quantity": {
+            "AF20261023150323C07A": 1
+          },
+          "partial": false,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C07A",
+                "99",
+                "99",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C07V1",
+                "AF20261023150323C07A",
+                "99",
+                "99",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C07A",
+                "98",
+                "0",
+                "0",
+                "98",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        }
+      },
+      "retest_partial_verified": true,
+      "partial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C07A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C07V1",
+            "AF20261023150323C07A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "0",
+            "0",
+            "98",
+            "0"
+          ]
+        ]
+      },
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "08": {
+      "key": "08",
+      "title": "三件商品已发一件未发两件",
+      "case_id": "20261023150323_08",
+      "created": "2026-10-23 15:14:11",
+      "sku": "AF20261023150323C08A",
+      "seller": "AF20261023150323C08",
+      "channel_name": "[自动仅退款验收08] 三件商品已发一件未发两件 20261023150323",
+      "platform_tid": "872026102315032309",
+      "quantity": 3,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C08V1",
+          "quantity": 1,
+          "package_count": 1,
+          "id": 117
+        },
+        {
+          "code": "AF20261023150323C08V2",
+          "quantity": 99,
+          "package_count": 1,
+          "id": 118
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323091",
+          "amount": "300.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:29:50",
+          "intake_task_id": 155,
+          "id": 99,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=99",
+          "refund_sn": "TKc991690ca9644f07a582750d9113fb2f",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "PART_SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_NOT_RECEIVED",
+          "state_fixture_task": 246,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "PART_SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323091",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 91,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C08A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C08V1",
+            "AF20261023150323C08A",
+            "1",
+            "1",
+            "0"
+          ],
+          [
+            "AF20261023150323C08V2",
+            "AF20261023150323C08A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C08A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 230,
+      "order_id": 146,
+      "order_sn": "SOeac9bc91380c458dbc13c1d10b006ada",
+      "prepared": true,
+      "setup_replan": "仅测试前置：原分仓采用最少发货单，仅选V2；按区域顺序重新分仓以覆盖V1/V2。原发货单和撤回记录保留。",
+      "partial_setup": "两个虚拟仓、同一实体仓的部分出库；已出库1件、仓库待出库2件",
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C08A",
+            "99",
+            "97",
+            "2",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C08V1",
+            "AF20261023150323C08A",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C08V2",
+            "AF20261023150323C08A",
+            "99",
+            "97",
+            "2"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C08A",
+            "97",
+            "2",
+            "0",
+            "99",
+            "2"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=146",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C08A",
+            "99",
+            "97",
+            "2",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C08V1",
+            "AF20261023150323C08A",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C08V2",
+            "AF20261023150323C08A",
+            "99",
+            "97",
+            "2"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C08A",
+            "97",
+            "2",
+            "0",
+            "99",
+            "2"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "retest_receipts": {
+        "27_FINAL": {
+          "quantity": {
+            "AF20261023150323C08A": 1
+          },
+          "partial": false,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C08A",
+                "99",
+                "99",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C08V1",
+                "AF20261023150323C08A",
+                "0",
+                "0",
+                "0"
+              ],
+              [
+                "AF20261023150323C08V2",
+                "AF20261023150323C08A",
+                "99",
+                "99",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C08A",
+                "99",
+                "0",
+                "0",
+                "99",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        }
+      },
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "TARGET_STEPS_VERIFIED"
+    },
+    "09": {
+      "key": "09",
+      "title": "先退差价20再退剩余80含赠品",
+      "case_id": "20261023150323_09",
+      "created": "2026-10-23 15:30:05",
+      "sku": "AF20261023150323C09A",
+      "seller": "AF20261023150323C09",
+      "channel_name": "[自动仅退款验收09] 先退差价20再退剩余80含赠品 20261023150323",
+      "platform_tid": "872026102315032310",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C09V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 120
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "prior": {
+          "refund_id": "8820261023150323101",
+          "amount": "20",
+          "setup_only": true,
+          "injected_at": "2026-10-23 15:30:16",
+          "intake_task_id": 167,
+          "id": 100,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=100",
+          "refund_sn": "TKb1b95612c0d0458993629554063e8efe",
+          "setup_description": "平台成功退款前置；通过业务API确认货物保留，不计为自动审批通过",
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 252
+        },
+        "target": {
+          "refund_id": "8820261023150323102",
+          "amount": "80.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:30:25",
+          "intake_task_id": 168,
+          "id": 101,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=101",
+          "refund_sn": "TK119591f192174c10bb428bb50600376f",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 260,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323101",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 93,
+      "configured": true,
+      "stock_ready": true,
+      "gift": "AF20261023150323C09G",
+      "gift_group": 13,
+      "gift_scope": 11,
+      "gift_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C09A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C09A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 232,
+      "order_id": 148,
+      "order_sn": "SO74b8297c06194d2481a920900f8445c4",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C09A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09A",
+            "99",
+            "99",
+            "0"
+          ],
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09G",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C09A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=148",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C09A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09A",
+            "99",
+            "99",
+            "0"
+          ],
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09G",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C09A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "平台资金与货物处理均已完成",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "retest_receipts": {
+        "30_FINAL": {
+          "quantity": {
+            "AF20261023150323C09A": 1,
+            "AF20261023150323C09G": 1
+          },
+          "partial": false,
+          "stock_before": {
+            "company_columns": [
+              "sku",
+              "total",
+              "available",
+              "reserved",
+              "allocated"
+            ],
+            "company": [
+              [
+                "AF20261023150323C09A",
+                "99",
+                "99",
+                "0",
+                "0"
+              ],
+              [
+                "AF20261023150323C09G",
+                "99",
+                "99",
+                "0",
+                "0"
+              ]
+            ],
+            "warehouse_columns": [
+              "store",
+              "sku",
+              "actual",
+              "available",
+              "locked"
+            ],
+            "warehouse": [
+              [
+                "AF20261023150323C09V1",
+                "AF20261023150323C09A",
+                "99",
+                "99",
+                "0"
+              ],
+              [
+                "AF20261023150323C09V1",
+                "AF20261023150323C09G",
+                "99",
+                "99",
+                "0"
+              ]
+            ],
+            "channel_columns": [
+              "sku",
+              "available",
+              "reserved",
+              "allocated",
+              "quota",
+              "quota_reserved"
+            ],
+            "channel": [
+              [
+                "AF20261023150323C09A",
+                "99",
+                "0",
+                "0",
+                "99",
+                "0"
+              ],
+              [
+                "AF20261023150323C09G",
+                "99",
+                "0",
+                "0",
+                "99",
+                "0"
+              ]
+            ]
+          },
+          "duplicate_callback_sent": true
+        }
+      },
+      "before_fix_status": "FAIL",
+      "before_fix_finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "target_retest_complete": true,
+      "automation_acceptance": "PARTIAL_WITH_MANUAL_SETUP"
+    },
+    "10": {
+      "key": "10",
+      "title": "先退差价20再申请100超额",
+      "case_id": "20261023150323_10",
+      "created": "2026-10-23 15:30:35",
+      "sku": "AF20261023150323C10A",
+      "seller": "AF20261023150323C10",
+      "channel_name": "[自动仅退款验收10] 先退差价20再申请100超额 20261023150323",
+      "platform_tid": "872026102315032311",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C10V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 121
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "prior": {
+          "refund_id": "8820261023150323111",
+          "amount": "20",
+          "setup_only": true,
+          "injected_at": "2026-10-23 15:30:43",
+          "intake_task_id": 185,
+          "id": 102,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=102",
+          "refund_sn": "TKf20da4e4785142c890aed1ef3425bd33",
+          "setup_description": "平台成功退款前置；通过业务API确认货物保留，不计为自动审批通过",
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 264
+        },
+        "target": {
+          "refund_id": "8820261023150323112",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:30:50",
+          "intake_task_id": 190,
+          "id": 103,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=103",
+          "refund_sn": "TKda1cf6ab742d40b8a0192f48e63db95a",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "SHIPPED",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          },
+          "simulated_goods_status": "BUYER_RECEIVED",
+          "state_fixture_task": 269,
+          "prior_observations": [
+            {
+              "business_state": "NEEDS_REVIEW",
+              "review_state": "PENDING",
+              "goods_action": "UNKNOWN",
+              "goods_state": "WAIT_REVIEW",
+              "funds_state": "NONE",
+              "fulfillment_stage": "SHIPPED",
+              "flow_state": "MANUAL",
+              "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+              "plans": [],
+              "platform_operations": ""
+            }
+          ]
+        }
+      },
+      "platform_oid": "8720261023150323111",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 94,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C10A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C10V1",
+            "AF20261023150323C10A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C10A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 233,
+      "order_id": 149,
+      "order_sn": "SOfb58f66c98bc402baa9b630e46aec5ea",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C10V1",
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=149",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C10V1",
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "PASS",
+      "finding": "本子单原实付 100.00 元，其他已退或已审核占用 20.00 元，剩余可退 80.00 元，本次申请超过剩余金额",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "logistics_fixture": "平台退款源明确模拟已收货/未收货；实际出库均使用签名TEST仓库回执。未接真实承运商轨迹。",
+      "retest_source_ready": true,
+      "retest_sequence": 10,
+      "retest_rules_ready": true,
+      "before_fix_status": "PARTIAL",
+      "before_fix_finding": "超额申请未自动付款；停止原因是用途/货物方案待审核，未证明按剩余80元识别累计超额",
+      "target_retest_complete": true,
+      "automation_acceptance": "PARTIAL_WITH_MANUAL_SETUP"
+    }
+  },
+  "target_rules": {
+    "small_money_cumulative_limit": 20,
+    "auto_payment_limit": 500
+  },
+  "protected": {
+    "merged_stock": {
+      "company": [
+        {
+          "sku": "RF20261022113125A",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 1,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022113125B",
+          "total": 47,
+          "reserved": 0,
+          "allocated": 1,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125D",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022113125R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022113125S",
+          "total": 9,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 9
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022113125A",
+          "actual": 48,
+          "locked": 1,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022113125B",
+          "actual": 47,
+          "locked": 1,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125D",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125S",
+          "actual": 9,
+          "locked": 0,
+          "available": 9
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022113125P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022113125R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 152,
+        "available": 148,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "preceding_stock": "RF20261022102630A\t46\t0\t0\t46\t15\nRF20261022102630B\t49\t0\t2\t47\t19\nRF20261022102630D\t48\t0\t2\t46\t16\nRF20261022102630P\t0\t0\t0\t0\t1\nRF20261022102630R\t0\t0\t0\t0\t1\nRF20261022102630S\t9\t0\t0\t9\t8",
+    "maximum_existing_channel": 82,
+    "queues": "EXCHANGE_CONVERT\tRUNNING\t1\nEXCHANGE_PULL\tRUNNING\t1\nORDER_CONVERT\tRUNNING\t2\nORDER_PULL\tRUNNING\t2\nPRODUCT_BIND\tRUNNING\t1\nPRODUCT_PULL\tRUNNING\t2\nREFUND_API_DETAIL\tRUNNING\t1\nREFUND_API_PULL\tRUNNING\t1\nREFUND_CONVERT\tRUNNING\t1\nREFUND_FLOW\tRUNNING\t1\nREFUND_GOODS\tRUNNING\t1\nREFUND_PLATFORM\tRUNNING\t1\nREFUND_PULL\tRUNNING\t1\nSALES_DOCUMENT\tRUNNING\t2",
+    "jobs": "1\t1\t0/10 * * * * ?\n2\t1\t0/15 * * * * ?\n3\t1\t0/20 * * * * ?\n4\t1\t1 0/30 * * * ?\n5\t1\t0/10 * * * * ?\n6\t1\t0/5 * * * * ?\n7\t1\t1/5 * * * * ?\n8\t1\t2/5 * * * * ?\n9\t0\t0/30 * * * * ?\n10\t1\t0/15 * * * * ?\n11\t1\t0/30 * * * * ?\n12\t1\t4/5 * * * * ?\n13\t1\t0/10 * * * * ?\n14\t1\t0/30 * * * * ?\n15\t0\t0 20 1 * * ?\n16\t1\t0/10 * * * * ?\n17\t1\t0 * * * * ?\n18\t1\t0/10 * * * * ?\n19\t0\t0/15 * * * * ?\n20\t0\t0/15 * * * * ?",
+    "old_settings_hash": "667a6c476298a70a66c8588f2a9e564e7d43a20e0f039ec87e7d99f9e75ad360"
+  },
+  "setup_attempts": [
+    {
+      "key": "04",
+      "title": "仓库已接单未出库截单",
+      "case_id": "20261023150323_04",
+      "created": "2026-10-23 15:12:59",
+      "sku": "AF20261023150323C04A",
+      "seller": "AF20261023150323C04",
+      "channel_name": "[自动仅退款验收04] 仓库已接单未出库截单 20261023150323",
+      "platform_tid": "872026102315032305",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261023150323C04V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 113
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261023150323051",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-23 15:13:06",
+          "intake_task_id": 56,
+          "id": 94,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=94",
+          "refund_sn": "TK72e5e512004e4f00bf4e07e688b27274",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "observation": {
+            "business_state": "NEEDS_REVIEW",
+            "review_state": "PENDING",
+            "goods_action": "UNKNOWN",
+            "goods_state": "WAIT_REVIEW",
+            "funds_state": "NONE",
+            "fulfillment_stage": "UNKNOWN",
+            "flow_state": "MANUAL",
+            "flow_message": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+            "plans": [],
+            "platform_operations": ""
+          }
+        }
+      },
+      "platform_oid": "8720261023150323051",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 87,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04V1",
+            "AF20261023150323C04A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 226,
+      "order_id": 142,
+      "order_sn": "SOadfde6748c4e435d87a6012559081c5e",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04A",
+            "100",
+            "99",
+            "1",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04V1",
+            "AF20261023150323C04A",
+            "100",
+            "99",
+            "1"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04A",
+            "99",
+            "1",
+            "0",
+            "100",
+            "1"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=142",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04A",
+            "100",
+            "99",
+            "1",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04V1",
+            "AF20261023150323C04A",
+            "100",
+            "99",
+            "1"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04A",
+            "99",
+            "1",
+            "0",
+            "100",
+            "1"
+          ]
+        ]
+      },
+      "inventory_unchanged": true,
+      "status": "FAIL",
+      "finding": "请确认退款用途与货物范围；不以少量退款或原因关键词判断差价",
+      "downstream_not_reached": [
+        "本地自动审批后的平台审核/付款",
+        "货物方案自动创建及后续仓库流程"
+      ],
+      "finished": true,
+      "setup_issue": "首次前置未等待仓库受理，发货下发仍PENDING；不作为仓库已接单场景的有效验收。保留全部记录。"
+    }
+  ],
+  "initial_gaps": [
+    "小额免退货自动审批及累计阈值",
+    "实际出库后自动确认取消购买和货物方案",
+    "仅退款自动创建退回安排"
+  ],
+  "not_implemented": [],
+  "production_code_modified": true
+}

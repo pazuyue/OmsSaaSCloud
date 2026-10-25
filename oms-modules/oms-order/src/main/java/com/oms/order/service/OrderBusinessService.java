@@ -52,7 +52,7 @@ public class OrderBusinessService {
         }
         if(!updateState.isEmpty()){require(Arrays.asList("WAITING","PROCESSING","ERROR","COMPLETED").contains(updateState),"订单更新状态无效");where+=" AND p.update_state=?";args.add(updateState);}
         if(!documentStatus.isEmpty()){require(Arrays.asList("WAIT_REVIEW","WAIT_ALLOCATION","PART_ALLOCATED","WAIT_CARRIER","WAIT_DISPATCH","DISPATCHING","PART_DISPATCHED","WAREHOUSE_PROCESSING","PART_SHIPPED","SHIPPED","CUTTING","CLOSED","VOIDING","VOIDED").contains(documentStatus),"业务状态无效");where+=" AND ("+OrderReviewPolicy.businessStatusSql()+")=?";args.add(documentStatus);}
-        if(!review.isEmpty()){require(Arrays.asList("PENDING","APPROVED").contains(review),"审单状态无效");where+=" AND o.review_status=?";args.add(review);}
+        if(!review.isEmpty()){require(Arrays.asList("PENDING","APPROVED").contains(review),"审单状态无效");where+=" AND o.review_status=?";args.add(review);if("PENDING".equals(review))where+=" AND o.status='WAIT_ALLOCATION' AND EXISTS(SELECT 1 FROM oms_order_line rl WHERE rl.company_code=o.company_code AND rl.order_id=o.id AND rl.business_type='SALE' AND rl.quantity-rl.cancelled_quantity>(SELECT COALESCE(SUM(rs.shipped_quantity),0) FROM oms_order_shipment_line rs WHERE rs.company_code=rl.company_code AND rs.order_line_id=rl.id))";}
         if(!processing.isEmpty()){require(Arrays.asList("NORMAL","HELD").contains(processing),"处理状态无效");String blocked="(o.manual_hold=1 OR o.refund_block_reason<>'' OR o.exchange_block_reason<>'' OR p.change_pending=1 OR p.fulfillment_block_reason<>'' OR p.platform_status<>'WAIT_SELLER_SEND_GOODS')";where+=" AND o.status='WAIT_ALLOCATION' AND "+("HELD".equals(processing)?blocked:"NOT "+blocked);}
         if(channel!=null){where+=" AND o.channel_id=?";args.add(channel);}
         if(number!=null&&!number.trim().isEmpty()){where+=" AND (o.order_sn=? OR o.platform_tid=? OR EXISTS(SELECT 1 FROM oms_order_shipment fs WHERE fs.company_code=o.company_code AND fs.order_id=o.id AND (fs.shipment_sn=? OR EXISTS(SELECT 1 FROM oms_order_shipment_package fp WHERE fp.company_code=fs.company_code AND fp.shipment_id=fs.id AND fp.express_code=?))) OR EXISTS(SELECT 1 FROM oms_exchange fx WHERE fx.company_code=o.company_code AND fx.order_id=o.id AND (fx.exchange_sn=? OR fx.dispute_id=?)))";for(int lookup=0;lookup<6;lookup++)args.add(number.trim());}
@@ -124,7 +124,7 @@ public class OrderBusinessService {
                 require(configs.get(0).get("lease_until")==null||time(text(configs.get(0),"lease_until")).isBefore(LocalDateTime.now()),"店铺正在处理，请稍后刷新结果");
                 Map<String,Object> platform=repository.db().query("SELECT change_pending,platform_status,fulfillment_block_reason,refund_block_reason,exchange_block_reason,business_order_id,conversion_status FROM oms_platform_order WHERE company_code=? AND id=? FOR UPDATE",ROW,company,initial.get(0).get("platform_order_id")).get(0);
                 Map<String,Object> order=repository.db().query("SELECT * FROM oms_order WHERE company_code=? AND id=? FOR UPDATE",ROW,company,id).get(0);
-                require("WAIT_ALLOCATION".equals(text(order,"status")),"订单已停止履约，不能重新预占");
+                require("WAIT_ALLOCATION".equals(text(order,"status")),"订单已停止履约，不能重新预占");OrderReviewPolicy.requireRemaining(repository,company,id);
                 require(number(order,"manual_hold")==0,"订单已人工挂起，请先解除挂起");String block=OrderReviewPolicy.systemBlock(platform);require(block.isEmpty(),block);
                 require(number(platform,"change_pending")==0,"平台关键交易信息已变化，预占暂停，待订单更新处理");
                 require(number(platform,"business_order_id")==id&&"SUCCESS".equals(text(platform,"conversion_status")),"业务订单关联状态不一致，请核对来源订单");
@@ -156,9 +156,9 @@ public class OrderBusinessService {
         if(voided){row.put("pending_quantity",0);Object lines=row.get("lines");if(lines instanceof List)for(Object line:(List<?>)lines)((Map<String,Object>)line).put("pending_quantity",0);}
 
         boolean held="HELD".equals(text(row,"processing_status"));
-        row.put("can_generate_shipments","WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&"APPROVED".equals(text(row,"review_status"))&&Arrays.asList("PART","FULL").contains(text(row,"allocation_status"))&&number(row,"shipment_quantity")<number(row,"allocation_quantity"));
+        row.put("can_generate_shipments",!OrderReviewPolicy.noRemaining(row)&&"WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&"APPROVED".equals(text(row,"review_status"))&&Arrays.asList("PART","FULL").contains(text(row,"allocation_status"))&&number(row,"shipment_quantity")<number(row,"allocation_quantity"));
         boolean changed=number(row,"change_pending")!=0,done="RESERVED".equals(text(row,"inventory_status"));String attempt=text(row,"stock_attempt_status");
-        row.put("can_reserve","WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&!changed&&!done&&!Arrays.asList("QUEUED","PROCESSING").contains(attempt));
+        row.put("can_reserve",!OrderReviewPolicy.noRemaining(row)&&"WAIT_ALLOCATION".equals(text(row,"status"))&&!held&&!changed&&!done&&!Arrays.asList("QUEUED","PROCESSING").contains(attempt));
         String message=held?(number(row,"manual_hold")==1?"人工挂起："+text(row,"hold_reason"):text(row,"system_hold_reason")):changed?"平台关键交易信息已变化，后续预占暂停，待订单更新处理":!text(row,"stock_error").isEmpty()?text(row,"stock_error"):done?"全部商品已完成逻辑预占":!text(row,"inventory_reason").isEmpty()?text(row,"inventory_reason"):"未完成的SKU等待足量逻辑预占";
         row.put("stock_message",voided?"订单已作废，销售需求已取消，逻辑预占已释放":voiding?(text(row,"void_error").isEmpty()?"作废处理中，已停止履约，等待逻辑预占释放确认":text(row,"void_error")):message);
         if(voided||voiding||held||changed||done)row.put("next_retry_at",null);

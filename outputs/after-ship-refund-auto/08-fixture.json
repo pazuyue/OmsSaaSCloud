@@ -1,0 +1,99 @@
+{
+  "key": "08",
+  "title": "三件商品已发一件未发两件",
+  "case_id": "20261023150323_08",
+  "created": "2026-10-23 15:14:11",
+  "sku": "AF20261023150323C08A",
+  "seller": "AF20261023150323C08",
+  "channel_name": "[自动仅退款验收08] 三件商品已发一件未发两件 20261023150323",
+  "platform_tid": "872026102315032309",
+  "quantity": 3,
+  "warehouses": [
+    {
+      "code": "AF20261023150323C08V1",
+      "quantity": 1,
+      "package_count": 1,
+      "id": 117
+    },
+    {
+      "code": "AF20261023150323C08V2",
+      "quantity": 99,
+      "package_count": 1,
+      "id": 118
+    }
+  ],
+  "received": true,
+  "refunds": {},
+  "platform_oid": "8720261023150323091",
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 91,
+  "configured": true,
+  "stock_ready": true,
+  "initial_stock": {
+    "company_columns": [
+      "sku",
+      "total",
+      "available",
+      "reserved",
+      "allocated"
+    ],
+    "company": [
+      [
+        "AF20261023150323C08A",
+        "100",
+        "100",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse_columns": [
+      "store",
+      "sku",
+      "actual",
+      "available",
+      "locked"
+    ],
+    "warehouse": [
+      [
+        "AF20261023150323C08V1",
+        "AF20261023150323C08A",
+        "1",
+        "1",
+        "0"
+      ],
+      [
+        "AF20261023150323C08V2",
+        "AF20261023150323C08A",
+        "99",
+        "99",
+        "0"
+      ]
+    ],
+    "channel_columns": [
+      "sku",
+      "available",
+      "reserved",
+      "allocated",
+      "quota",
+      "quota_reserved"
+    ],
+    "channel": [
+      [
+        "AF20261023150323C08A",
+        "0",
+        "0",
+        "0",
+        "100",
+        "0"
+      ]
+    ]
+  },
+  "platform_id": 230,
+  "order_id": 146,
+  "order_sn": "SOeac9bc91380c458dbc13c1d10b006ada",
+  "prepared": true,
+  "setup_replan": "仅测试前置：原分仓采用最少发货单，仅选V2；按区域顺序重新分仓以覆盖V1/V2。原发货单和撤回记录保留。",
+  "partial_setup": "两个虚拟仓、同一实体仓的部分出库；已出库1件、仓库待出库2件"
+}

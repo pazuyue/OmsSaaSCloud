@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "original122_unchanged": true,
+  "write_requests": [],
+  "page_errors": [],
+  "checks": [
+    "show 100 requested, 20 previously paid, limit80 and excess20 before review",
+    "over-limit modal does not ask for unusable review fields and cannot submit",
+    "platform navigation closes review and does not submit any platform action",
+    "Corrected request shows automatic completion, current refund80 and cumulative100, no remaining conflict"
+  ]
+}

@@ -116,7 +116,9 @@ async function main() {
   pending[1].resolve({ data: { id: 22 } }); await second
   pending[0].resolve({ data: { id: 11 } }); await first
   assert.equal(ctx.row.id, 22)
-  assert.equal(loaded.length, 1)
+  const completedLoads = loaded.filter(([event]) => event === 'loaded')
+  assert.equal(completedLoads.length, 1, 'a stale request must not emit a successful loaded result')
+  assert.equal(completedLoads[0][1].id, 22, 'load-start events are distinct from the final current-order result')
 
   let giftReads = 0, detailReads = 0
   const detail = component('RefundDetail.vue', { '@/api/order/refund': { refundDetail: async (_, id) => { detailReads++; return { data: { id, order_id: 1 } } } } })

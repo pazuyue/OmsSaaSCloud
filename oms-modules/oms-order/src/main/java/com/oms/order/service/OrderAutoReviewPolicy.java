@@ -24,6 +24,7 @@ public final class OrderAutoReviewPolicy {
         if(!"SUCCESS".equals(text(facts,"conversion_status"))||number(facts,"business_order_id")!=number(facts,"id"))block="业务订单关联状态不一致";
         long required=number(facts,"quantity"),reserved=number(facts,"reserved_quantity");BigDecimal payment=null;try{payment=new BigDecimal(text(facts,"payment"));}catch(Exception ignored){}
         if(required<=0||reserved<0||reserved>required||payment==null||payment.signum()<0||number(facts,"invalid_lines")>0)block="订单商品、金额或逻辑预占数量异常，请人工核对";
+        if(required==0||facts.containsKey("shipped_quantity")&&required<=number(facts,"shipped_quantity"))block="订单没有剩余可履约商品，无需再审核";
         if(number(facts,"ledger_errors")>0||!text(facts,"stock_error").isEmpty())block="库存来源或预占处理异常，请核对具体原因，不能按普通缺货放行";
         check(checks,"BASE","基础履约条件",block.isEmpty()?"PASS":"BLOCKED",block.isEmpty()?"交易状态、来源版本及订单基础数据符合条件":block);
         boolean automatic="AUTO".equals(text(p,"mode"));check(checks,"MODE","店铺审单方式",automatic?"PASS":"MANUAL",automatic?"按规则自动审核":"店铺配置为人工审核");

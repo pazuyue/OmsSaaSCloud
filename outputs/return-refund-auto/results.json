@@ -1,0 +1,1727 @@
+{
+  "run_id": "20261024185730",
+  "rows": [
+    {
+      "case": "01",
+      "scenario": "普通商品全退",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730011",
+          "amount": "100",
+          "oid": "8620261024185730011",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 107,
+          "refund_sn": "TK91a2bfb31b0149d29e54470371ea7b7d",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=107",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:08:32.882787",
+          "completed_at": "2026-10-24T19:14:49.209452"
+        }
+      },
+      "order_sn": "SO0bb6098ca4df4f45839e723bf4712913",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=153",
+      "states": [
+        {
+          "id": 107,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C01A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C01V",
+            "RR20261024185730C01A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C01A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 107,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 107,
+          "request_id": "RPO1a168bee56f54305a37f7b9f49dea4df",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 107,
+          "request_id": "RPO1943cb25dc44441f8aa84c83f7d17b5c",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 107,
+          "request_id": "RPObda22a0913b14558af66bb5ba2e599ce",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "02",
+      "scenario": "买家延后提供返程运单",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730021",
+          "amount": "100",
+          "oid": "8620261024185730021",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 108,
+          "refund_sn": "TK1401d87968234ac9a2f029d949d9f07f",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=108",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:08:36.217087",
+          "completed_at": "2026-10-24T19:14:59.264440"
+        }
+      },
+      "order_sn": "SO4cfb2843b0214932b6833afaba1b2e77",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=154",
+      "states": [
+        {
+          "id": 108,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C02A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C02V",
+            "RR20261024185730C02A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C02A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 108,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 108,
+          "request_id": "RPO18ac1f50ffb64ea28d4d3ab25b50a799",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 108,
+          "request_id": "RPO3f68b744245948a298114800133437ec",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 108,
+          "request_id": "RPO3c52bdfd0b2d490cac85a57f48089eea",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "03",
+      "scenario": "三件购买仅退一件",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730031",
+          "amount": "100",
+          "oid": "8620261024185730031",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 110,
+          "refund_sn": "TK2a99607bf0be46b98a04cf140a3ba6f5",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=110",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:09:29.028560",
+          "completed_at": "2026-10-24T19:17:20.269778"
+        }
+      },
+      "order_sn": "SO6030df82dbc048358435abf4bfc402e0",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=155",
+      "states": [
+        {
+          "id": 110,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C03A",
+            "98",
+            "98",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C03V",
+            "RR20261024185730C03A",
+            "98",
+            "98",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C03A",
+            "97",
+            "0",
+            "0",
+            "97",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 110,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 110,
+          "request_id": "RPO913580ae55d9470794f10e91fafcd4ee",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 110,
+          "request_id": "RPOee07687375b04699904c11af14c8cd02",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 110,
+          "request_id": "RPO627d034dfad34a2caa74d100437d7d83",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "04",
+      "scenario": "主商品与赠品完整合退",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730041",
+          "amount": "100",
+          "oid": "8620261024185730041",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 109,
+          "refund_sn": "TKec07d72bbc2e4fab9827ddb1d49e3b82",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=109",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:08:38.833125",
+          "completed_at": "2026-10-24T19:15:57.738086"
+        }
+      },
+      "order_sn": "SObc17623abcdc42278471c2440e6558f0",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=156",
+      "states": [
+        {
+          "id": 109,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C04A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C04G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C04V",
+            "RR20261024185730C04A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C04V",
+            "RR20261024185730C04G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C04A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C04G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 109,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 109,
+          "request_id": "RPOef05e9bf87e243018cb1def0464384a3",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 109,
+          "request_id": "RPO2de47985aa024dab8bb56a75c04c2c03",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 109,
+          "request_id": "RPOe3611e8c99b14332a43f948fedf219f0",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "05",
+      "scenario": "主商品先实收、赠品待补收",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730151",
+          "amount": "100",
+          "oid": "8620261024185730151",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 3,
+          "injected": true,
+          "id": 123,
+          "refund_sn": "TKdc22d684e70f409babe87eaee4433a60",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=123",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:33:30.085908",
+          "completed_at": "2026-10-24T19:55:14.388214"
+        }
+      },
+      "order_sn": "SOabf3089bcb524023b62944c9fbb6e06b",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=163",
+      "states": [
+        {
+          "id": 123,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C15A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C15G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C15V",
+            "RR20261024185730C15A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C15V",
+            "RR20261024185730C15G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C15A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C15G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 123,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 123,
+          "request_id": "RPO935c136c325044baad3e8a46eae5d099",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 123,
+          "request_id": "RPO10bbfd922a1645ef88cf634b450cf765",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 123,
+          "request_id": "RPO1e8ddd2aea7842a6948450202e640ef5",
+          "policy_revision": 2
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": "主品先到、赠品缺少时停止付款；买家补充新运单后，仓库沿原共同THK补收指定赠品，自动退款。原运单与最新运单均保留，不静默覆盖原包裹；未测试另建补充THK模式。"
+    },
+    {
+      "case": "06",
+      "scenario": "四张退款最后加入后120秒合包",
+      "status": "PASS",
+      "refunds": {
+        "target1": {
+          "refund_id": "8920261024185730061",
+          "amount": "100",
+          "oid": "8620261024185730061",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 112,
+          "refund_sn": "TK0eeb7839328642e8b14c8d1aa391429e",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=112",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:10:32.121220",
+          "completed_at": "2026-10-24T19:18:12.916922"
+        },
+        "target2": {
+          "refund_id": "8920261024185730062",
+          "amount": "200",
+          "oid": "8620261024185730062",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 113,
+          "refund_sn": "TKb43f8dd420524428984e2f047fbeafd3",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=113",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:11:02.985459",
+          "completed_at": "2026-10-24T19:17:36.189736"
+        },
+        "target3": {
+          "refund_id": "8920261024185730063",
+          "amount": "300",
+          "oid": "8620261024185730063",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 114,
+          "refund_sn": "TKdcc57c72da9546aa90f94c8ec4edb6a1",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=114",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:13:07.819507",
+          "completed_at": "2026-10-24T19:17:21.894915"
+        },
+        "target4": {
+          "refund_id": "8920261024185730064",
+          "amount": "400",
+          "oid": "8620261024185730064",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 115,
+          "refund_sn": "TK19e2bc0276c343b69294e1ddaac3c68b",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=115",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:12:13.880596",
+          "completed_at": "2026-10-24T19:18:06.888385"
+        }
+      },
+      "order_sn": "SOce6783e337f94580b731397d4189b1d2",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=158",
+      "states": [
+        {
+          "id": 112,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 113,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 114,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 115,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C06A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C06B",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C06C",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C06D",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C06V",
+            "RR20261024185730C06A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C06V",
+            "RR20261024185730C06B",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C06V",
+            "RR20261024185730C06C",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C06V",
+            "RR20261024185730C06D",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C06A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C06B",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C06C",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C06D",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 1000.0,
+      "expected_paid": 1000,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 112,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 113,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 114,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 115,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 112,
+          "request_id": "RPO10c0d7fa59084ae0ba7437980c9d1923",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 112,
+          "request_id": "RPO5e03b763637e42a18473f8a1b41eedf0",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 112,
+          "request_id": "RPO440bd50103cd491882248e75a5b6033c",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 113,
+          "request_id": "RPOe6499e2aae3a44678ab799fa15a0e737",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 113,
+          "request_id": "RPOa8caffcbc4324b80ac4e1e7c649c2824",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 113,
+          "request_id": "RPOa168d3eef19040b4b43b3c3843508666",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 114,
+          "request_id": "RPO4b676b121a6e4af4984e29e7d80499f8",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 114,
+          "request_id": "RPO9a7fe6531fb047869be8677c311c44ac",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 114,
+          "request_id": "RPOd1a1412a9e474b12995eb76d6b8ed235",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 115,
+          "request_id": "RPO7abe55e43ce64d80ac1c02c05ea09fb5",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 115,
+          "request_id": "RPO5f28a985fd3144b1a670c08ff0218c89",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 115,
+          "request_id": "RPO15b602edec84443e979d98ea5cfc2827",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": "40\t2026-10-24 19:11:03\t2026-10-24 19:13:11\t2026-10-24 19:15:11\t2026-10-24 19:15:35\t120\t24\t4\t1",
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "07",
+      "scenario": "套装福袋及套装福袋赠品",
+      "status": "PASS",
+      "refunds": {
+        "target1": {
+          "refund_id": "8920261024185730171",
+          "amount": "200",
+          "oid": "8620261024185730171",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 124,
+          "refund_sn": "TK626163cad0724e79a88ed96841752b22",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=124",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:34:05.178634",
+          "completed_at": "2026-10-24T19:37:15.276099"
+        },
+        "target2": {
+          "refund_id": "8920261024185730172",
+          "amount": "100",
+          "oid": "8620261024185730172",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 125,
+          "refund_sn": "TK6d09eb25de934ed1b53009df0439f5a2",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=125",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:34:43.723660",
+          "completed_at": "2026-10-24T19:37:20.305077"
+        }
+      },
+      "order_sn": "SOafb9dbc75ec6484a8290297945bf8760",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=164",
+      "states": [
+        {
+          "id": 124,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 125,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C17A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17B",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17C",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17D",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17E",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17F",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17H",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17B",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17C",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17D",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17E",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17F",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17G",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17V",
+            "RR20261024185730C17H",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C17A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C17B",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C17C",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17D",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17E",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C17F",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C17G",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17H",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ],
+        "parent_channel": [
+          [
+            "RR20261024185730C17GK",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17GL",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C17K",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C17L",
+            "0",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 300.0,
+      "expected_paid": 300,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 124,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 125,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 124,
+          "request_id": "RPO47f3285e573b488dbabc907a672b7005",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 124,
+          "request_id": "RPO0752e6356b6c4000aca03fd875959dfe",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 124,
+          "request_id": "RPOee79684457ab45eea47bc635c55544c3",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 125,
+          "request_id": "RPO75642bc09faa486495042c0eb1cc6404",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 125,
+          "request_id": "RPOf1d4ebaeeaa749e98d0d77483e70e241",
+          "policy_revision": 2
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 125,
+          "request_id": "RPOce8692b2ca5847fcabad1ce319e6fe7e",
+          "policy_revision": 2
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": true,
+      "note": ""
+    },
+    {
+      "case": "08",
+      "scenario": "自动退差价20后退货退款80含赠",
+      "status": "PASS",
+      "refunds": {
+        "prior": {
+          "refund_id": "8920261024185730081",
+          "amount": "20",
+          "oid": "8620261024185730081",
+          "quantity": 1,
+          "returns": false,
+          "source_sequence": 1,
+          "injected": true,
+          "id": 118,
+          "refund_sn": "TKaddabca1d45c42928e8805c05e6a6579",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=118",
+          "completed_at": "2026-10-24T19:13:13.424842"
+        },
+        "target": {
+          "refund_id": "8920261024185730082",
+          "amount": "80",
+          "oid": "8620261024185730081",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 121,
+          "refund_sn": "TK6102b61b25584ca086f8bf05c11328f4",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=121",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:16:23.487794",
+          "completed_at": "2026-10-24T19:19:39.899784"
+        }
+      },
+      "order_sn": "SO9ea254cab05f452aad3eb25823faf00c",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=160",
+      "states": [
+        {
+          "id": 118,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "DIFFERENCE",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 121,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C08A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024185730C08G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C08V",
+            "RR20261024185730C08A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024185730C08V",
+            "RR20261024185730C08G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C08A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024185730C08G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 118,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 121,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 118,
+          "request_id": "RPO8b5979820d7c49faa68c92591991e338",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 118,
+          "request_id": "RPO26242c102ab34181bb2a00639ef4db9c",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 121,
+          "request_id": "RPO6550f788d5eb4d019a71a4775b164dc4",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 121,
+          "request_id": "RPO53184ceb64db4290a55c7c839fd71e21",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 121,
+          "request_id": "RPOf8e1265671ae49ce8b6e20995b7281ef",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "09",
+      "scenario": "自动退差价20后退货退款100超额保护",
+      "status": "PASS",
+      "refunds": {
+        "prior": {
+          "refund_id": "8920261024185730091",
+          "amount": "20",
+          "oid": "8620261024185730091",
+          "quantity": 1,
+          "returns": false,
+          "source_sequence": 1,
+          "injected": true,
+          "id": 119,
+          "refund_sn": "TK18b692039df54fdbaf837c91d4ead9ba",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=119",
+          "completed_at": "2026-10-24T19:13:16.776812"
+        },
+        "target": {
+          "refund_id": "8920261024185730092",
+          "amount": "100",
+          "oid": "8620261024185730091",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 1,
+          "injected": true,
+          "id": 122,
+          "refund_sn": "TK7060be00492d406a91a6941da82e74b4",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=122"
+        }
+      },
+      "order_sn": "SO5fb2fa30279c4630900c479c8c497ed6",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=161",
+      "states": [
+        {
+          "id": 119,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "DIFFERENCE",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        },
+        {
+          "id": 122,
+          "state": "NEEDS_REVIEW",
+          "review_by": "",
+          "purpose": "UNKNOWN",
+          "funds": "NONE",
+          "flow": [
+            "MANUAL",
+            "本子单原实付 100.00 元，其他已退或已审核占用 20.00 元，剩余可退 80.00 元，本次申请超过剩余金额"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C09A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C09V",
+            "RR20261024185730C09A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C09A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 20.0,
+      "expected_paid": 20,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 119,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        },
+        {
+          "refund_id": 122,
+          "oms_pay_requests": 0,
+          "vendor_pay_requests": 0,
+          "expected": 0
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 119,
+          "request_id": "RPOb9f12bc638214b23947871e53ba80c5e",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "PAY",
+          "refund_id": 119,
+          "request_id": "RPOf8c6175c294b4a6a9c8e5dfecbdf8f5f",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    },
+    {
+      "case": "10",
+      "scenario": "并发重复回传及付款响应丢失",
+      "status": "PASS",
+      "refunds": {
+        "target": {
+          "refund_id": "8920261024185730101",
+          "amount": "100",
+          "oid": "8620261024185730101",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 2,
+          "injected": true,
+          "id": 120,
+          "refund_sn": "TK6b55c052fab144ef88683c3f80753b7a",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=120",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T19:10:14.594153",
+          "completed_at": "2026-10-24T19:14:45.599975"
+        }
+      },
+      "order_sn": "SO9427eafba5864a899b1a83e8a0f870e5",
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=162",
+      "states": [
+        {
+          "id": 120,
+          "state": "COMPLETED",
+          "review_by": "自动售后规则",
+          "purpose": "CANCEL",
+          "funds": "SUCCESS",
+          "flow": [
+            "DONE",
+            "平台资金与货物处理均已完成"
+          ]
+        }
+      ],
+      "stock": {
+        "company": [
+          [
+            "RR20261024185730C10A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024185730C10V",
+            "RR20261024185730C10A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024185730C10A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "stock_ok": true,
+      "quota_unchanged": true,
+      "paid": 100.0,
+      "expected_paid": 100,
+      "manual_reviews": false,
+      "manual_review_events": 0,
+      "manual_platform_operations": false,
+      "payment_counts": [
+        {
+          "refund_id": 120,
+          "oms_pay_requests": 1,
+          "vendor_pay_requests": 1,
+          "expected": 1
+        }
+      ],
+      "operations": [
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "AGREE_RETURN",
+          "refund_id": 120,
+          "request_id": "RPO5df773ec55bc4483b67804b03c6fb2ab",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "SUCCESS",
+          "action": "REVIEW",
+          "refund_id": 120,
+          "request_id": "RPO24f97c1ae8e3417d817ac6ab7c2011a6",
+          "policy_revision": 3
+        },
+        {
+          "actor": "自动售后流程",
+          "state": "CLOSED",
+          "action": "PAY",
+          "refund_id": 120,
+          "request_id": "RPO12e3cadae5834bd98bb45b87ac312282",
+          "policy_revision": 3
+        }
+      ],
+      "merge_dispatch_evidence": null,
+      "gift_association_verified": null,
+      "note": ""
+    }
+  ],
+  "protection": {
+    "old_settings_unchanged": true,
+    "queues_unchanged": true,
+    "jobs_unchanged": true,
+    "old_merged_stock_unchanged": true,
+    "old_preceding_stock_unchanged": true
+  },
+  "retained": true,
+  "platform_mode": "SIMULATION",
+  "warehouse_environment": "TEST",
+  "manual_refund_actions": false,
+  "flow_retry_called": false,
+  "direct_business_or_stock_sql": false,
+  "intake_scope": "针对新测试退款号投递接入事件，未验全局定时拉取",
+  "authorization_scope": "08/09商家差价授权预先登记；两笔退款本地审核与平台付款均由自动流程执行"
+}

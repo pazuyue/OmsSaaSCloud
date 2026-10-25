@@ -1,0 +1,135 @@
+{
+  "key": "09",
+  "title": "自动退差价20后退货退款100超额保护",
+  "prefix": "RR20261024185730C09",
+  "case_id": "20261024185730_09",
+  "sku": "RR20261024185730C09A",
+  "seller": "RR20261024185730C09",
+  "channel_name": "[退货退款自动验收09] 自动退差价20后退货退款100超额保护 20261024185730",
+  "created": "2026-10-24 19:05:03",
+  "platform_tid": "862026102418573009",
+  "platform_oid": "8620261024185730091",
+  "quantity": 1,
+  "received": true,
+  "warehouses": [
+    {
+      "code": "RR20261024185730C09V",
+      "quantity": 0,
+      "package_count": 1,
+      "id": 133
+    }
+  ],
+  "refunds": {},
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 21,
+  "channel_id": 106,
+  "configured": true,
+  "physical_skus": [
+    "RR20261024185730C09A"
+  ],
+  "received_skus": [
+    "RR20261024185730C09A"
+  ],
+  "sales": [
+    {
+      "sku": "RR20261024185730C09A",
+      "quantity": 1,
+      "payment": 100,
+      "oid": "8620261024185730091"
+    }
+  ],
+  "initial_stock": {
+    "company": [
+      [
+        "RR20261024185730C09A",
+        "100",
+        "100",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "RR20261024185730C09V",
+        "RR20261024185730C09A",
+        "100",
+        "100",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "RR20261024185730C09A",
+        "0",
+        "0",
+        "0",
+        "100",
+        "0"
+      ]
+    ]
+  },
+  "source_order_ready": true,
+  "platform_id": 245,
+  "order_id": 161,
+  "order_sn": "SO5fb2fa30279c4630900c479c8c497ed6",
+  "prepared": true,
+  "shipment_ready": true,
+  "stock_before_refunds": {
+    "company": [
+      [
+        "RR20261024185730C09A",
+        "99",
+        "99",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "RR20261024185730C09V",
+        "RR20261024185730C09A",
+        "99",
+        "99",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "RR20261024185730C09A",
+        "99",
+        "0",
+        "0",
+        "99",
+        "0"
+      ]
+    ]
+  },
+  "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=161",
+  "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+  "refund_configured": true,
+  "small_rule_available": false,
+  "deployed_rules": {
+    "small_refund_enabled": 0,
+    "small_refund_limit": "0.00",
+    "auto_shipped_cancel": 0,
+    "auto_finish_return": 1,
+    "auto_full_cancel": 0,
+    "auto_agree_return": 1,
+    "auto_review": 1,
+    "auto_pay": 1,
+    "auto_cancel_feedback": 1,
+    "auto_intercept": 1,
+    "funds_owner": "OMS",
+    "payment_limit": "500.00",
+    "seller_address_id": "1",
+    "channel_id": 106,
+    "enabled": 1,
+    "revision": 2,
+    "api_sync": {
+      "enabled": 0,
+      "detail_counts": [],
+      "detail_errors": []
+    }
+  }
+}

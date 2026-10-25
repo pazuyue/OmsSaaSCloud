@@ -9,11 +9,37 @@ import javax.annotation.Resource;
 import java.util.*;
 
 @RestController @RequestMapping("/refunds") public class RefundController {
+    @Resource RefundConfiguration configuration;
+    @RequiresPermissions("order:refund:config") @GetMapping("/settings") public AjaxResult settings(@RequestParam Map<String,String> query){return AjaxResult.success(configuration.list(company(),query));}
+    @RequiresPermissions("order:refund:config") @GetMapping("/settings/{channel}") public AjaxResult setting(@PathVariable long channel){return AjaxResult.success(configuration.detail(company(),channel));}
+    @RequiresPermissions("order:refund:config") @PostMapping("/settings/{channel}/api-sync") public AjaxResult apiSync(@PathVariable long channel,@RequestBody Map<String,Object> body){String c=company();flow.saveApiSync(c,channel,body);sync.kick(c);return AjaxResult.success();}
     @Resource RefundService refunds;
+    @Resource SharedReturnWorkspace sharedReturns;
+    @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}/shared-returns/{plan}") public AjaxResult sharedReturn(@PathVariable long id,@PathVariable long plan){return AjaxResult.success(sharedReturns.report(company(),"REFUND",id,plan));}
+    @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/shared-returns/{plan}/{action}") public AjaxResult sharedReturnAction(@PathVariable long id,@PathVariable long plan,@PathVariable String action,@RequestBody Map<String,Object> body){return AjaxResult.success(sharedReturns.action(company(),"REFUND",id,plan,action,body,SecurityUtils.getLoginUser().getPermissions(),actor()));}
+    @Resource RefundPlatformExecution platformExecution;
+    @Resource RefundFlowAutomation flow;
+    @Resource RefundMoneyAuthorizations moneyAuthorizations;
+    @RequiresPermissions("order:refund:config") @GetMapping("/flow-configs/{channel}/money-authorizations") public AjaxResult moneyAuthorizations(@PathVariable long channel){return AjaxResult.success(moneyAuthorizations.list(company(),channel));}
+    @RequiresPermissions("order:refund:config") @PostMapping("/flow-configs/{channel}/money-authorizations") public AjaxResult createMoneyAuthorization(@PathVariable long channel,@RequestBody Map<String,Object> body){return AjaxResult.success(moneyAuthorizations.create(company(),channel,body,actor()));}
+    @RequiresPermissions("order:refund:config") @PostMapping("/flow-configs/{channel}/money-authorizations/{id}/revoke") public AjaxResult revokeMoneyAuthorization(@PathVariable long channel,@PathVariable long id,@RequestBody Map<String,Object> body){moneyAuthorizations.revoke(company(),channel,id,Long.parseLong(String.valueOf(body.get("control_version"))),actor());return AjaxResult.success();}
+    @RequiresPermissions("order:refund:config") @GetMapping("/flow-configs/{channel}/addresses") public AjaxResult flowAddresses(@PathVariable long channel){String c=company();catalog.validateShop(c,channel);return AjaxResult.success(platformExecution.addresses(c,channel,actor()));}
+    @RequiresPermissions("order:refund:config") @GetMapping("/flow-configs/{channel}") public AjaxResult flowPolicy(@PathVariable long channel){return AjaxResult.success(flow.policy(company(),channel));}
+    @RequiresPermissions("order:refund:config") @PostMapping("/flow-configs/{channel}") public AjaxResult saveFlow(@PathVariable long channel,@RequestBody Map<String,Object> body){String c=company();flow.save(c,channel,body,actor());sync.kick(c);return AjaxResult.success();}
+    @RequiresPermissions("order:refund:execute") @PostMapping("/business/{id}/flow/retry") public AjaxResult retryFlow(@PathVariable long id){String c=company();flow.retry(c,id);sync.kick(c);return AjaxResult.success();}
+
+    @RequiresPermissions("order:refund:query") @PostMapping("/business/{id}/platform/refresh") public AjaxResult refreshPlatform(@PathVariable long id){return AjaxResult.success(platformExecution.inspect(company(),id,actor()));}
+    @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}/platform/information/{action}") public AjaxResult platformInformation(@PathVariable long id,@PathVariable String action,@RequestParam Map<String,String> query){return AjaxResult.success(platformExecution.information(company(),id,action,query));}
+    @RequiresPermissions("order:refund:execute") @PostMapping("/business/{id}/platform/actions/{action}") public AjaxResult platformAction(@PathVariable long id,@PathVariable String action,@RequestBody Map<String,Object> body){return AjaxResult.success(platformExecution.submit(company(),id,action,body,actor()));}
+
     @Resource GiftService gifts;
     @Resource RefundSync sync;
     @Resource RefundWorkspace workspace;
     @Resource RefundGoodsService goods;
+    @Resource RefundGoodsTasks goodsTasks;
+    @Resource RefundDispositionService disposition;
+    @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}/disposition") public AjaxResult disposition(@PathVariable long id){return AjaxResult.success(disposition.report(company(),id));}
+    @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/tasks/{task}/retry") public AjaxResult retryGoodsTask(@PathVariable long id,@PathVariable long task){String c=company();goodsTasks.retry(c,id,task);sync.kick(c);return AjaxResult.success();}
     @Resource RefundReturnAutoCreate autoCreate;
     @Resource RefundBundleReturns bundleReturns;
     @Resource RefundParcelWorkspace parcels;
@@ -45,6 +71,7 @@ import java.util.*;
     @RequiresPermissions("order:refund:convert") @PostMapping("/platform/{id}/convert") public AjaxResult convert(@PathVariable long id){return AjaxResult.success(refunds.requestConvert(company(),id,actor()));}
     @RequiresPermissions("order:refund:list") @GetMapping("/business") public AjaxResult business(@RequestParam Map<String,String> q){return AjaxResult.success(refunds.businessList(company(),q));}
     @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}") public AjaxResult detail(@PathVariable long id){return AjaxResult.success(workspace.detail(company(),id));}
+    @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}/amount-records") public AjaxResult amountRecords(@PathVariable long id,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize){return AjaxResult.success(workspace.amountRecords(company(),id,pageNum,pageSize));}
     @RequiresPermissions("order:refund:review") @PostMapping("/business/{id}/review") public AjaxResult review(@PathVariable long id,@RequestBody Map<String,Object> body){String c=company();Object result=workspace.review(c,id,body,actor());sync.kick(c);parcelAutomation.process(c,id);return AjaxResult.success(result);}
     @RequiresPermissions("order:refund:goods") @PostMapping("/business/{id}/goods/auto-create/retry") public AjaxResult retryAutoCreate(@PathVariable long id,@RequestBody Map<String,Object> body){String c=company();autoCreate.retry(c,id,body);sync.kick(c);return AjaxResult.success();}
     @RequiresPermissions("order:refund:query") @GetMapping("/business/{id}/goods") public AjaxResult goods(@PathVariable long id){return AjaxResult.success(goods.report(company(),id));}

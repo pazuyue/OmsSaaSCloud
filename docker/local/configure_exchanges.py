@@ -4,6 +4,8 @@ from local_db import execute
 
 
 def install_order(db):
+    from configure_exchange_automation import install_order as install_flow
+    install_flow(db)
     execute("""CREATE TABLE IF NOT EXISTS oms_exchange_config (
       company_code VARCHAR(50) NOT NULL, channel_id BIGINT NOT NULL,
       enabled TINYINT NOT NULL DEFAULT 0, write_enabled TINYINT NOT NULL DEFAULT 0,

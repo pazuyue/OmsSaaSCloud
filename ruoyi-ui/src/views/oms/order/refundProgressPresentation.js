@@ -1,10 +1,11 @@
 import { label } from './refundLabels'
 import { money } from './orderAmounts'
+import { refundAmountConflict } from './refundAmountPresentation'
 
 const n = value => Number(value || 0)
 const yes = value => value === true || n(value) === 1
 const list = value => Array.isArray(value) ? value : []
-const unresolved = p => n(p.pending_count) > 0 || p.parcel_state === 'NEED_CHECK'
+const unresolved = p => n(p.pending_count) > 0 || yes(p.parcel_receipt_pending)
 
 export function confirmedRefundFee(refund) {
   const platform = refund.platform || {}
@@ -38,6 +39,15 @@ function goodsTrack(refund, gift) {
   if (n(progress.unposted_quantity)) return add('实收待入库', `已确认实收中还有 ${progressQuantity(progress, 'unposted_quantity')} 尚未入库。`, 25, 'manual', plans.find(p => n(p.accepted_quantity) > n(p.posted_quantity)))
   const closed = (refund.platform || {}).platform_status === 'CLOSED' && refund.funds_state !== 'SUCCESS'
   if (closed && (planned && (n(progress.remaining_quantity) || plans.some(p => n(p.active_documents))) || !gift && !planned && !['DONE', 'CANCELED'].includes(refund.goods_state))) return add('关闭后货物待处置', '平台申请已关闭，请核对原仓库安排、已实收入库和剩余商品处置；关闭申请不会撤销已入库库存。', 18)
+  if (!gift && refund.goods_action === 'MIXED') {
+    const scope = (...args) => { const track = add(...args); track.tab = 'current'; track.task.tab = 'current'; track.task.focus = 'fulfillment'; return track }
+    const pending = list(refund.goods_tasks).filter(row => !['DONE', 'CANCELED', 'WAIT_RETURN'].includes(row.state))
+    const manual = pending.find(row => row.state === 'MANUAL')
+    if (manual) return scope('分项货物处理待核对', manual.result_message || '请核对原商品、仓库及任务依据。', 22)
+    const cancellation = pending.find(row => row.action === 'CANCEL')
+    if (cancellation) return scope(cancellation.state === 'WAIT_WAREHOUSE' ? '等待原仓库截单确认' : cancellation.state === 'UNKNOWN' ? '核对原库存取消结果' : '正在取消指定未发数量', cancellation.result_message || '后台按原任务处理；仓库确认前保留占用，不影响其他商品需求。', 25, 'system')
+    if (pending.length) return scope('正在建立原来源退回安排', pending[0].result_message || '后台按已审核的各仓实际来源建立退回安排。', 35, 'system')
+  }
   if (planned) {
     const remaining = n(progress.remaining_quantity)
     if (remaining) {
@@ -68,7 +78,7 @@ function goodsTrack(refund, gift) {
   }
   if (gift) return { ...value, state: '无退回关联', detail: '本退款当前没有已关联的赠品退回安排。', complete: true }
   if (refund.goods_state === 'DONE' || refund.goods_state === 'CANCELED') {
-    return { ...value, state: refund.goods_state === 'CANCELED' ? '无需继续处理' : refund.goods_action === 'CANCEL' ? '取消已完成' : refund.goods_action === 'KEEP' ? '无需退回' : '已确认无需追回', detail: refund.goods_action === 'KEEP' ? '按已审核方案继续履约或无需追回商品。' : '以本退款已确认的货物处置方案为准。', complete: true, tone: 'success' }
+    return { ...value, state: refund.goods_state === 'CANCELED' ? '无需继续处理' : refund.goods_action === 'MIXED' ? '分项货物处理完成' : refund.goods_action === 'CANCEL' ? '取消已完成' : refund.goods_action === 'KEEP' ? '无需退回' : '已确认无需追回', detail: refund.goods_action === 'KEEP' ? '按已审核方案继续履约或无需追回商品。' : '以本退款已确认的货物处置方案为准。', complete: true, tone: 'success' }
   }
   if (refund.review_state !== 'APPROVED') return { ...value, state: '待确认方案', detail: '审核后明确取消、退回或无需追回。' }
   const auto = refund.return_auto || {}
@@ -117,9 +127,11 @@ export function refundProgress(refund, giftReport = null, giftError = '') {
   const confirmedFee = confirmedRefundFee(refund)
   const funds = { key: 'funds', title: '平台资金', state: fundsDone ? '平台已退款' : closed ? '申请已关闭' : '未确认退款成功', detail: fundsDone ? confirmedFee == null ? '已确认退款成功；具体金额请核对平台成功来源记录。' : `平台确认退款 ${money(confirmedFee)}；以平台资金结果为准。` : closed ? '当前没有平台退款成功结果。' : `申请金额 ${money(platform.refund_fee == null ? refund.refund_fee : platform.refund_fee)}，等待平台处理及同步确认。`, tone: fundsDone ? 'success' : 'info', complete: fundsDone || closed, tab: 'platform' }
   const tasks = []
+  const amountConflict = refundAmountConflict(refund)
+  if (amountConflict) tasks.push(task('amount', '申请金额超出可退额度', `本次申请 ${money(amountConflict.requested)}，可退上限 ${money(amountConflict.limit)}；请协商修改平台申请，或核对平台协商、拒绝操作。人工审核不能突破累计额度。`, 'current', '处理金额冲突', 4, { focus: 'amount-resolution' }))
   const sourceError = refund.problem_message || platform.source_error || platform.conversion_error
   if (sourceError) tasks.push(task('source', '退款资料或方案待核对', sourceError, 'approval', '核对方案与来源', 5))
-  if (!reviewDone && !closed) tasks.push(task('review', refund.review_state === 'STALE' ? '平台申请变化，方案待重审' : '本地退款方案待审核', '审核只确认本地方案，平台同意或拒绝结果单独跟踪。', 'approval', '核对审核方案', 10))
+  if (!reviewDone && !closed) tasks.push(task('review', refund.review_state === 'STALE' ? '平台申请变化，方案待重审' : '本地退款方案待审核', (refund.automatic_flow || {}).state === 'MANUAL' && refund.automatic_flow.last_message ? refund.automatic_flow.last_message : '审核只确认本地方案，平台同意或拒绝结果单独跟踪。', 'approval', '核对审核方案', 10))
   if (list(refund.parcel_issues).length) tasks.push(task('parcel', '退回包裹归属待核对', refund.parcel_issues[0].next_action, 'goods', '核对包裹归属', 15, { issue: true, plan_id: refund.parcel_issues[0].plan_id }))
   ;[purchase, gift, interaction].forEach(track => { if (track.task) tasks.push(track.task) })
   if (!funds.complete && !interaction.task) tasks.push(task('funds', purchase.complete && gift.complete ? '货物已处理，等待平台资金结果' : '等待平台退款结果', '资金结果由平台同步确认，请核对平台处理状态及最近同步时间。', 'platform', '查看平台结果', 80, { owner: 'platform' }))
@@ -136,5 +148,5 @@ export function refundProgress(refund, giftReport = null, giftError = '') {
 }
 
 export const ownerText = owner => ({ manual: '需要人工处理', system: '系统处理中', buyer: '等待买家', warehouse: '等待仓库', platform: '平台处理 / 等待同步' })[owner] || '待核对'
-export const operationText = action => ({ AGREE: '同意退款', AGREE_REFUND: '同意退款', AGREE_RETURN: '同意退货', REFUSE: '拒绝退款', REFUSE_REFUND: '拒绝退款', CONFIRM_RECEIVE: '确认收货退款', QUERY: '查询平台结果' })[action] || action || '操作类型未提供'
+export const operationText = action => ({ PAY_CODE: '请求退款验证码', REVIEW: '平台退款审核', PAY: '提交退款付款', NEGOTIATE_SUBMIT: '提交协商方案', REFUSE_RETURN: '拒绝退货', CANCEL_FEEDBACK: '回告取消发货', INTERCEPT: '申请在途拦截', INTERCEPT_FEEDBACK: '回告物流结果', RETURN_LOGISTICS: '回填退回物流', MESSAGE: '提交留言与凭证', AGREE: '同意退款', AGREE_REFUND: '同意退款', AGREE_RETURN: '同意退货', REFUSE: '拒绝退款', REFUSE_REFUND: '拒绝退款', CONFIRM_RECEIVE: '确认收货退款', QUERY: '查询平台结果' })[action] || action || '操作类型未提供'
 export const operationState = state => ({ PENDING: '待提交', RUNNING: '提交中', SENDING: '提交中', ACCEPTED: '平台已受理', SUCCESS: '操作返回成功', FAILED: '操作失败', UNKNOWN: '结果待确认', CLOSED: '已结束' })[state] || state || '结果未提供'

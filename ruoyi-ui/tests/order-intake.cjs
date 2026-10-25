@@ -26,7 +26,7 @@ async function main(){
  assert.deepEqual(Array.from(calls[1][1].refund_ids),['9007199254740993','9007199254740994'])
  assert.equal(calls[2][1].dispute_ids,'9007199254740993\n9007199254740994')
  assert.ok(calls.every(([,p])=>p.request_key==='SAME_REQUEST'))
- const source=fs.readFileSync(path.join(root,'management.vue'),'utf8');assert.ok(source.includes('IntakeTasks')&&source.includes('RefundSettings')&&source.includes('ExchangeSettings'));assert.ok(!source.includes('exchangeCapability'))
+ const source=fs.readFileSync(path.join(root,'management.vue'),'utf8');assert.ok(source.includes('syncTasksPath')&&source.includes('settingsLocation'));assert.ok(!source.includes('exchangeCapability'))
  console.log('PASS unified intake states, permissions presentation, retry routing and precise ID submission')
 }
 main().catch(e=>{console.error(e);process.exitCode=1})

@@ -34,6 +34,7 @@
             <template v-else>
               <div class="section-note">{{ form.merge_mode==='AUTO'?'按同一原平台订单、可信运单和退回仓自动归集；归集结束后按下发方式处理，单份安排也可下发。':'人工核实实际包裹并确认关联范围后，再按下发方式处理。' }}</div>
               <template v-if="form.merge_mode==='AUTO'">
+                <el-form-item label="与换货共同退回"><el-switch v-model="form.allow_exchange_merge" :active-value="1" :inactive-value="0" /><div class="hint">换货规则也须授权。按同店、同原平台订单、同运单、同接收仓及货主归集为一张THK；退款与换货分别实收入账，同SKU来源不明确时人工分配。</div></el-form-item>
                 <el-form-item label="可信物流来源" :error="fieldError('logistics_sources')"><el-checkbox-group v-model="form.logistics_sources"><el-checkbox label="PLATFORM">平台同步物流</el-checkbox><el-checkbox label="MANUAL">人工核实物流</el-checkbox></el-checkbox-group></el-form-item>
                 <el-form-item label="归集等待"><el-input-number v-model="form.collect_seconds" :min="0" :max="3600" :precision="0"/> 秒<div class="hint">从最后一次新增安排起等待；0 表示不等待。</div></el-form-item>
                 <el-form-item v-if="!Number(form.auto_dispatch)" label="适用退回仓" :error="fieldError('store_codes')"><el-select v-model="form.store_codes" multiple filterable clearable placeholder="未指定时使用默认退回仓"><el-option v-for="w in warehouses" :key="w.store_code" :value="w.store_code" :label="w.store_name+' · '+w.store_code" :disabled="!Number(w.usable)"/></el-select><div class="hint">{{ storeSummary }}</div></el-form-item>
@@ -70,7 +71,7 @@ import { refundParcelConfig, saveRefundParcelConfig } from '@/api/order/refund'
 import { mergeMode, applyMergeMode, dispatchStores, ruleFlow, ruleValidation } from './returnRulePresentation'
 export default {
   name: 'RefundParcelSettings', props: { readOnly: Boolean },
-  data: () => ({ error: '', editable: true, loading: false, saving: false, shop: {}, form: null, warehouses: [], sequence: 0, activeTab: 'arrangements', validation: null }),
+  data: () => ({ error: '', editable: true, loading: false, saving: false, shop: {}, form: null, warehouses: [], sequence: 0, activeTab: 'arrangements', validation: null, baseline: '' }),
   computed: {
     busy() { return this.loading || this.saving },
     selectedWarehouses() { if (!this.form) return []; const codes = new Set(Number(this.form.auto_dispatch) || Number(this.form.auto_enabled) ? dispatchStores(this.form) : []); if (Number(this.form.auto_create)) codes.add(this.form.create_store_code); return this.warehouses.filter(w => codes.has(w.store_code)) },
@@ -80,12 +81,12 @@ export default {
     dispatchHint() { if (!Number(this.form.auto_dispatch)) return '安排确认后由业务人员手动下发。创建方式和合包方式可以单独选择。'; return ({ NONE: '退回安排资料就绪后独立下发，不等待其他退款或合包。', MANUAL: '人工确认实际包裹范围后，后台自动下发仓库。', AUTO: '自动合包归集结束且范围无冲突后，后台统一下发仓库。' })[this.form.merge_mode] },
     receiptHint() { return ({ MANUAL: '仓库回传后，由业务人员确认各退款的实收归属。', STRICT: '按明确的商品来源严格匹配；无法唯一确定时转人工核对。', RULE: '优先匹配明确来源，其余满足条件的同 SKU 实收按退款申请时间分配。' })[this.form.allocation_mode] }
   },
-  watch: { busy(value) { this.$emit('busy', value) }, saving(value) { this.$emit('saving', value) } },
+  watch: { form: { deep: true, handler(value) { if (value) this.$emit('preview', value); this.$emit('dirty', !!value && !!this.baseline && JSON.stringify(value) !== this.baseline) } }, busy(value) { this.$emit('busy', value) }, saving(value) { this.$emit('saving', value) } },
   beforeDestroy() { this.sequence++ },
   methods: {
     fieldError(field) { return this.validation && this.validation.field === field ? this.validation.message : '' },
     allocationModeChanged() { if (this.form.allocation_mode !== 'RULE') this.form.allow_partial_allocation = 0 },
-    async open(shop) { const seq = ++this.sequence; this.shop = shop; this.form = null; this.error = ''; this.validation = null; this.activeTab = 'arrangements'; this.loading = true; try { const r = (await refundParcelConfig(shop.channel_id)).data; if (seq === this.sequence) { this.form = { auto_create: 0, auto_dispatch: 0, create_store_code: '', create_return_address: '', create_return_contact: '', ...r.policy, merge_mode: mergeMode(r.policy), allow_append: 0, auto_append: 0, auto_allocate: 0 }; this.warehouses = r.warehouses; this.editable = r.editable !== false } } catch (_) { if (seq === this.sequence) this.error = '退货规则加载失败，请重新加载' } finally { if (seq === this.sequence) this.loading = false } },
+    async open(shop) { const seq = ++this.sequence; this.shop = shop; this.baseline = ''; this.form = null; this.error = ''; this.validation = null; this.activeTab = 'arrangements'; this.loading = true; try { const r = (await refundParcelConfig(shop.channel_id)).data; if (seq === this.sequence) { this.form = { allow_exchange_merge: 0, auto_create: 0, auto_dispatch: 0, create_store_code: '', create_return_address: '', create_return_contact: '', ...r.policy, merge_mode: mergeMode(r.policy), allow_append: 0, auto_append: 0, auto_allocate: 0 }; this.warehouses = r.warehouses; this.editable = r.editable !== false; this.baseline = JSON.stringify(this.form); this.$emit('loaded', this.form); this.$emit('dirty', false) } } catch (_) { if (seq === this.sequence) this.error = '退货规则加载失败，请重新加载' } finally { if (seq === this.sequence) this.loading = false } },
     normalize() { applyMergeMode(this.form, this.form.merge_mode || mergeMode(this.form)); this.validation = null },
     usable(w) { return Number(w.usable) },
     async save() { if (this.saving || this.readOnly || !this.editable || !this.form) return; this.validation = ruleValidation(this.form, this.warehouses); if (this.validation) { this.activeTab = this.validation.tab; return }; const tab = this.activeTab; this.saving = true; try { await saveRefundParcelConfig(this.shop.channel_id, { ...this.form, store_codes: dispatchStores(this.form) }); this.$message.success('本店铺退货规则已保存'); this.$emit('changed', this.shop.channel_id); await this.open(this.shop); this.activeTab = tab } finally { this.saving = false } }

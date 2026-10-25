@@ -23,3 +23,8 @@ export const exchangeReturnReport = id => request({ url: `${root}/${id}/return` 
 export const exchangeControlReport = id => request({ url: `${root}/${id}/controls` })
 
 export const exchangeContinuationPreview = id => request({ url: `${root}/${id}/continuation-preview` })
+
+export const exchangeFlowConfig = channel => request({url: `${root}/flow-configs/${channel}`})
+export const saveExchangeFlowConfig = (channel,data) => request({url: `${root}/flow-configs/${channel}`,method: 'post',data})
+export const exchangeAutomaticFlow = id => request({url: `${root}/${id}/automatic-flow`})
+export const exchangeAutomaticRecheck = (id,data) => request({url: `${root}/${id}/automatic-flow/recheck`,method: 'post',data})

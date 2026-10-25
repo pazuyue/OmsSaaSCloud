@@ -29,7 +29,7 @@ public class OrderReviewService {
                 require(number(platform,"business_order_id")==id&&"SUCCESS".equals(text(platform,"conversion_status")),"订单关联状态不一致");
                 require("WAIT_ALLOCATION".equals(text(order,"status")),"当前业务阶段不允许此操作");
                 require(!"PROCESSING".equals(text(order,"stock_attempt_status")),"上次预占尚未确认完成，请等待重试核对后操作");
-                order.putAll(platform);result.put("order_sn",order.get("order_sn"));String message;
+                OrderReviewPolicy.requireRemaining(repository,company,id);order.putAll(platform);result.put("order_sn",order.get("order_sn"));String message;
                 if("approve".equals(action)){
                     require("PENDING".equals(text(order,"review_status")),"订单已审核，无需重复审核");String block=OrderReviewPolicy.systemBlock(order);require(block.isEmpty(),block);
                     require(!reason.isEmpty(),"请填写人工审核说明，原命中条件将保留");message=reason;

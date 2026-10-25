@@ -1,0 +1,83 @@
+{
+  "key": "07",
+  "title": "已签收两件仅退款实际退货",
+  "case_id": "20261023150323_07",
+  "created": "2026-10-23 15:13:51",
+  "sku": "AF20261023150323C07A",
+  "seller": "AF20261023150323C07",
+  "channel_name": "[自动仅退款验收07] 已签收两件仅退款实际退货 20261023150323",
+  "platform_tid": "872026102315032308",
+  "quantity": 2,
+  "warehouses": [
+    {
+      "code": "AF20261023150323C07V1",
+      "quantity": 100,
+      "package_count": 1,
+      "id": 116
+    }
+  ],
+  "received": true,
+  "refunds": {},
+  "platform_oid": "8720261023150323081",
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 90,
+  "configured": true,
+  "stock_ready": true,
+  "initial_stock": {
+    "company_columns": [
+      "sku",
+      "total",
+      "available",
+      "reserved",
+      "allocated"
+    ],
+    "company": [
+      [
+        "AF20261023150323C07A",
+        "100",
+        "100",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse_columns": [
+      "store",
+      "sku",
+      "actual",
+      "available",
+      "locked"
+    ],
+    "warehouse": [
+      [
+        "AF20261023150323C07V1",
+        "AF20261023150323C07A",
+        "100",
+        "100",
+        "0"
+      ]
+    ],
+    "channel_columns": [
+      "sku",
+      "available",
+      "reserved",
+      "allocated",
+      "quota",
+      "quota_reserved"
+    ],
+    "channel": [
+      [
+        "AF20261023150323C07A",
+        "0",
+        "0",
+        "0",
+        "100",
+        "0"
+      ]
+    ]
+  },
+  "platform_id": 229,
+  "order_id": 145,
+  "order_sn": "SO1f28cb5a40304f66b861d10851241971"
+}

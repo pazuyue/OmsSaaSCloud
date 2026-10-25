@@ -12,7 +12,7 @@ import static com.oms.order.service.RefundValues.*;
     @Resource RefundService refunds;
     @Resource RefundReturnClient returns;
     @Resource OrderCatalog catalog;
-    static Map<String,Object> defaults(){return m("auto_create",0,"create_store_code","","create_return_address","","create_return_contact","","revision",0,"enabled",1,"manual_enabled",1,"scope","SAME_ORDER","allow_append",0,"max_refunds",100,"max_quantity",0,"auto_enabled",0,"auto_append",0,"auto_dispatch",0,"auto_allocate",0,"allocation_mode","STRICT","allow_partial_allocation",0,"allocation_order","REFUND_CREATED","collect_seconds",120,"logistics_sources",Arrays.asList("PLATFORM","MANUAL"),"store_codes",Collections.emptyList());}
+    static Map<String,Object> defaults(){return m("allow_exchange_merge",0,"auto_create",0,"create_store_code","","create_return_address","","create_return_contact","","revision",0,"enabled",1,"manual_enabled",1,"scope","SAME_ORDER","allow_append",0,"max_refunds",100,"max_quantity",0,"auto_enabled",0,"auto_append",0,"auto_dispatch",0,"auto_allocate",0,"allocation_mode","STRICT","allow_partial_allocation",0,"allocation_order","REFUND_CREATED","collect_seconds",120,"logistics_sources",Arrays.asList("PLATFORM","MANUAL"),"store_codes",Collections.emptyList());}
     Map<String,Object> get(String c,long channel){return get(c,channel,false);}
     Map<String,Object> get(String c,long channel,boolean lock){List<Map<String,Object>> rows=refunds.repository.db().query("SELECT * FROM oms_refund_parcel_config WHERE company_code=? AND channel_id=?"+(lock?" FOR UPDATE":""),ROW,c,channel);Map<String,Object> p=defaults();if(!rows.isEmpty()){p.putAll(obj(rows.get(0).get("policy")));p.put("revision",rows.get(0).get("revision"));}p.put("channel_id",channel);return p;}
     static String mergeMode(Map<String,Object> p){return number(p,"enabled")!=1?"NONE":number(p,"auto_enabled")==1?"AUTO":"MANUAL";}
@@ -41,7 +41,7 @@ import static com.oms.order.service.RefundValues.*;
             if(!"TM".equals(text(shop,"channel_type"))||(!channel.isEmpty()&&!channel.equals(String.valueOf(id)))||(!keyword.isEmpty()&&!name.toLowerCase(Locale.ROOT).contains(keyword)&&!String.valueOf(id).contains(keyword)))continue;
             Map<String,Object> stored=policies.get(id),policy=defaults();if(stored!=null)policy.putAll(obj(stored.get("policy")));
             Map<String,Object> row=m("channel_id",id,"channel_name",name,"channel_type","TM","shop_enabled",shop.get("enabled"),"configured",stored!=null,"revision",stored==null?0:stored.get("revision"),"updated_by",stored==null?"":stored.get("updated_by"),"update_time",stored==null?null:stored.get("update_time"));
-            for(String key:Arrays.asList("auto_create","create_store_code","enabled","manual_enabled","scope","auto_enabled","auto_dispatch","collect_seconds","max_refunds","max_quantity","store_codes","allocation_mode","allow_partial_allocation","allocation_order"))row.put(key,policy.get(key));
+            for(String key:Arrays.asList("allow_exchange_merge","auto_create","create_store_code","enabled","manual_enabled","scope","auto_enabled","auto_dispatch","collect_seconds","max_refunds","max_quantity","store_codes","allocation_mode","allow_partial_allocation","allocation_order"))row.put(key,policy.get(key));
             row.put("merge_mode",mergeMode(policy));
             base.add(row);
         }
@@ -68,7 +68,7 @@ import static com.oms.order.service.RefundValues.*;
     static List<String> values(Map<String,Object> p,String key){Object raw=p.get(key);require(raw instanceof List,"配置列表无效："+key);List<String> out=new ArrayList<>();for(Object v:(List<?>)raw){String value=String.valueOf(v);require(!value.isEmpty()&&value.length()<=64&&!out.contains(value),"配置列表重复或无效："+key);out.add(value);}require(out.size()<=200,"配置列表过多");return out;}
     static long flag(Map<String,Object> p,String key){long n=number(p,key);require(n==0||n==1,"开关值无效："+key);return n;}
     public void save(String c,long channel,Map<String,Object> input,String actor){catalog.validateShop(c,channel);Map<String,Object> p=defaults();p.putAll(input);p.put("channel_id",channel);if(input.containsKey("merge_mode")){String mode=text(input,"merge_mode");require(Arrays.asList("NONE","MANUAL","AUTO").contains(mode),"合包方式无效");p.put("enabled",mode.equals("NONE")?0:1);p.put("manual_enabled",mode.equals("NONE")?0:1);p.put("auto_enabled",mode.equals("AUTO")?1:0);}
-        for(String k:Arrays.asList("auto_create","enabled","manual_enabled","allow_append","auto_enabled","auto_append","auto_dispatch","auto_allocate","allow_partial_allocation"))p.put(k,flag(p,k));
+        for(String k:Arrays.asList("allow_exchange_merge","auto_create","enabled","manual_enabled","allow_append","auto_enabled","auto_append","auto_dispatch","auto_allocate","allow_partial_allocation"))p.put(k,flag(p,k));
         require(Arrays.asList("MANUAL","STRICT","RULE").contains(text(p,"allocation_mode")),"实收分配方式无效");
         require("REFUND_CREATED".equals(text(p,"allocation_order")),"实收分配顺序无效");
         require(number(p,"allow_partial_allocation")==0||"RULE".equals(text(p,"allocation_mode")),"部分实收自动分配须选择按规则自动分配");
@@ -76,6 +76,7 @@ import static com.oms.order.service.RefundValues.*;
         require(number(p,"allow_append")==0&&number(p,"auto_append")==0,"当前适配未支持共同THK改单，不能开启下发后追加");
         require(Arrays.asList("SAME_ORDER","CROSS_ORDER_MANUAL").contains(text(p,"scope")),"合包范围无效");
         require(number(p,"max_refunds")>=1&&number(p,"max_refunds")<=100&&number(p,"max_quantity")>=0&&number(p,"max_quantity")<=100000000,"合包数量上限无效");
+        require(number(p,"allow_exchange_merge")==0||number(p,"auto_enabled")==1&&"SAME_ORDER".equals(text(p,"scope")),"与换货合包须启用同原订单自动合包");
         require(number(p,"auto_enabled")==0||number(p,"enabled")==1,"自动合包依赖允许合包退回");
         require(number(p,"auto_append")==0||(number(p,"auto_enabled")==1&&number(p,"allow_append")==1),"自动追加依赖自动合包和允许下发后追加");
         List<String> sources=values(p,"logistics_sources"),stores=values(p,"store_codes");if(stores.isEmpty()&&!text(p,"create_store_code").isEmpty()){stores=Collections.singletonList(text(p,"create_store_code"));p.put("store_codes",stores);}require(Arrays.asList("PLATFORM","MANUAL").containsAll(sources),"物流来源无效");

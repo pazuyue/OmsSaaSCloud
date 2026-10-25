@@ -32,4 +32,21 @@ class OrderAutoReviewServiceTest {
     @Test void sameSkuAcrossLinesCountsTotalPieces(){Map<String,Object> p=p();p.put("quantity_enabled",1);p.put("quantity_threshold",15);configure(p);db.update("INSERT INTO oms_order_line(company_code,order_id,platform_oid,sku_sn,goods_name,quantity,reserved_quantity,payment) VALUES ('VERIFY',?,'second','A','A',5,5,0)",fixture.id);Map<String,Object> preview=service.preview("VERIFY",fixture.id);assertEquals("MANUAL_REQUIRED",preview.get("decision"));assertEquals(15,number((Map<String,Object>)preview.get("facts"),"quantity"));}
     @Test void unchangedAssessmentDoesNotDuplicateEvents(){configure(p());db.update("UPDATE oms_order_line SET reserved_quantity=0");Map<String,Object> p=p();p.put("stock_condition","FULL_RESERVED");configure(p);evaluate();evaluate();assertEquals(1,n("SELECT COUNT(*) FROM oms_order_review_event"));}
     @Test void concurrentRechecksApproveOnce() throws Exception {configure(p());ExecutorService pool=Executors.newFixedThreadPool(2);try{List<Future<Boolean>> results=new ArrayList<>();for(int i=0;i<2;i++)results.add(pool.submit(()->{try{service.recheck("VERIFY",fixture.id,0,"test");return true;}catch(IllegalArgumentException e){return false;}}));int successes=0;for(Future<Boolean> f:results)if(f.get(10,TimeUnit.SECONDS))successes++;assertEquals(1,successes);assertEquals(1,n("SELECT COUNT(*) FROM oms_order_review_event"));}finally{pool.shutdownNow();}}
+    @Test void fullyCanceledOrderRejectsHumanReviewRecheckAndReservationEvenWithStaleWaitingStatus(){
+        db.update("UPDATE oms_order SET review_status='PENDING'");db.update("UPDATE oms_order_line SET cancelled_quantity=quantity,reserved_quantity=0");
+        OrderReviewService human=new OrderReviewService();ReflectionTestUtils.setField(human,"repository",repository);
+        Map<String,Object> body=fixture.row("orders",Arrays.asList(fixture.row("id",fixture.id,"control_version",0)),"reason","checked");
+        for(String action:Arrays.asList("approve","hold","resume")){Map<String,Object> result=human.apply("VERIFY",action,body,"tester").get(0);assertEquals(false,result.get("success"));assertTrue(result.get("message").toString().contains("没有剩余"));}
+        assertThrows(IllegalArgumentException.class,()->service.recheck("VERIFY",fixture.id,0,"tester"));assertEquals(0,n("SELECT COUNT(*) FROM oms_order_review_event"));
+        assertEquals("BLOCKED",service.preview("VERIFY",fixture.id).get("decision"));assertEquals(0,n("SELECT control_version FROM oms_order"));
+        OrderBusinessService business=new OrderBusinessService();ReflectionTestUtils.setField(business,"repository",repository);
+        assertEquals(false,business.retry("VERIFY",Collections.singletonList(fixture.id),"tester").get(0).get("submitted"));
+    }
+    @Test void partiallyCanceledOrderStillAllowsReviewOfRemainingDemand(){
+        db.update("UPDATE oms_order SET review_status='PENDING'");db.update("UPDATE oms_order_line SET cancelled_quantity=2,reserved_quantity=8");
+        OrderReviewService human=new OrderReviewService();ReflectionTestUtils.setField(human,"repository",repository);
+        assertEquals(true,human.apply("VERIFY","approve",fixture.row("orders",Arrays.asList(fixture.row("id",fixture.id,"control_version",0)),"reason","核对剩余8件"),"tester").get(0).get("success"));
+        assertEquals(2,n("SELECT cancelled_quantity FROM oms_order_line"));assertEquals(8,n("SELECT reserved_quantity FROM oms_order_line"));
+    }
+
 }

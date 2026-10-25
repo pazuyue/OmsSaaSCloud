@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Real pending case: shop/order/child IDs, original paid and current application visible; compact progress and review action work",
+    "Real completed 20+80 case: current refund80, child total100, remaining0; gifted item money is not added",
+    "Browser fixture for second refund pending: prior20, other occupied0, current limit80",
+    "Partial-quantity fixture: original3 paid300; one requested unit does not get an invented100 paid amount",
+    "Freight fixture: order106 includes freight6; child goods paid remains100",
+    "Kit/bag browser fixtures retain parent sales units and show the parent paid amount once"
+  ],
+  "page_errors": [],
+  "browser_writes": [],
+  "refund_states_unchanged": true,
+  "inventory_unchanged": true
+}

@@ -1,0 +1,58 @@
+{
+  "checks": [
+    "real completed refund has local fulfillment, platform interactions and separate final funds",
+    "merchant automation/payment/API supplement remain disabled",
+    "all five new queue types are registered; previous pause modes preserved",
+    "real browser: fulfillment appears once; confirmed money and platform actions are separate",
+    "browser fixture: independently confirm 3 unshipped cancellation units and 2 shipped return units; warehouse selector loads",
+    "browser fixture: current progress names the original warehouse cancellation wait",
+    "browser fixture: successful platform review and unknown payment remain distinct from confirmed money"
+  ],
+  "real_refund": "TKbf9a7606ecfc4f60bcd094acf43a2a61",
+  "browser_fixtures_only": [
+    "mixed partial warehouse scope",
+    "pending warehouse cancellation",
+    "unknown payment UI"
+  ],
+  "list_page_50_ms": [
+    21.2,
+    27.9,
+    36.9
+  ],
+  "writes": [],
+  "browser_errors": [],
+  "protected_stock_unchanged": true,
+  "real_platform_payment_tested": false,
+  "queues": [
+    {
+      "type": "REFUND_FLOW",
+      "mode": "RUNNING",
+      "state": "RUNNING",
+      "consumers": 1
+    },
+    {
+      "type": "REFUND_GOODS",
+      "mode": "RUNNING",
+      "state": "RUNNING",
+      "consumers": 1
+    },
+    {
+      "type": "REFUND_PLATFORM",
+      "mode": "RUNNING",
+      "state": "RUNNING",
+      "consumers": 1
+    },
+    {
+      "type": "REFUND_API_PULL",
+      "mode": "RUNNING",
+      "state": "RUNNING",
+      "consumers": 1
+    },
+    {
+      "type": "REFUND_API_DETAIL",
+      "mode": "RUNNING",
+      "state": "RUNNING",
+      "consumers": 1
+    }
+  ]
+}

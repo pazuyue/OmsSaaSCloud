@@ -11,7 +11,7 @@
         <el-table-column label="操作" width="100"><template slot-scope="s"><el-button type="text" @click="editCarrier(s.row)">编辑资料</el-button></template></el-table-column>
       </el-table>
     </template>
-    <template v-else>
+    <template v-else-if="!embedded">
       <div class="toolbar"><p class="hint">按发货单的实体仓和收货省份匹配；手工选择也须在店铺允许快递和仓库配送范围内。</p><el-button size="small" @click="load">刷新</el-button></div>
       <el-table :data="configs" empty-text="暂无已接入店铺">
         <el-table-column label="OMS 店铺" min-width="180"><template slot-scope="s">{{ s.row.channel_name }}<div class="hint">渠道 ID：{{ s.row.channel_id }}</div></template></el-table-column>
@@ -21,7 +21,7 @@
         <el-table-column label="操作" width="100"><template slot-scope="s"><el-button type="text" @click="editRule(s.row)">配置规则</el-button></template></el-table-column>
       </el-table>
     </template>
-    <el-dialog title="快递资料与仓库服务范围" :visible.sync="carrierVisible" width="min(980px, 96vw)" append-to-body :close-on-click-modal="false">
+    <el-dialog title="快递资料与仓库服务范围" :visible.sync="carrierVisible" :before-close="closeCarrier" width="min(980px, 96vw)" append-to-body :close-on-click-modal="false">
       <el-form v-if="carrier" label-width="120px">
         <el-form-item label="快递编码"><el-input v-model.trim="carrier.carrier_code" :disabled="carrier.revision > 0" maxlength="64" placeholder="1 至 64 位字母、数字、下划线或连字符" /></el-form-item>
         <el-form-item label="快递名称"><el-input v-model.trim="carrier.carrier_name" maxlength="100" placeholder="填写业务使用的快递名称" /></el-form-item>
@@ -35,9 +35,9 @@
           <el-button size="small" icon="el-icon-plus" @click="carrier.services.push({ owner_code: '', real_store_code: '', warehouse_carrier_code: '', provinces: [], excluded_provinces: [] })">添加仓库服务</el-button>
         </el-form-item>
       </el-form>
-      <span slot="footer"><el-button :disabled="saving" @click="carrierVisible=false">取消</el-button><el-button type="primary" :loading="saving" @click="saveMaster">保存快递资料</el-button></span>
+      <span slot="footer"><el-button :disabled="saving" @click="closeCarrier()">取消</el-button><el-button type="primary" :loading="saving" @click="saveMaster">保存快递资料</el-button></span>
     </el-dialog>
-    <el-dialog title="店铺快递匹配规则" :visible.sync="ruleVisible" width="min(980px, 96vw)" append-to-body :close-on-click-modal="false">
+    <configuration-panel :embedded="embedded" :read-only="readOnly" title="店铺快递匹配规则" :visible.sync="ruleVisible" width="min(980px, 96vw)" append-to-body :close-on-click-modal="false">
       <el-form v-if="rule" label-width="140px">
         <el-form-item label="店铺">{{ rule.channel_name }}</el-form-item>
         <el-form-item label="自动匹配"><el-switch v-model="rule.policy.enabled" :active-value="1" :inactive-value="0" /><p class="hint">开启后，新生成的发货单自动尝试匹配。修改规则后，待匹配单据可在发货单列表重新匹配。</p></el-form-item>
@@ -54,28 +54,33 @@
         </el-form-item>
       </el-form>
       <span slot="footer"><el-button :disabled="saving" @click="ruleVisible=false">取消</el-button><el-button type="primary" :loading="saving" @click="saveRule">保存匹配规则</el-button></span>
-    </el-dialog>
+    </configuration-panel>
   </div>
 </template>
 <script>
+import configurationEditor from './configurationEditor'
 import { carrierCatalog, carrierConfigs, saveCarrier, saveCarrierConfig } from '@/api/order'
 const clone = value => JSON.parse(JSON.stringify(value))
 export default {
+  mixins: [configurationEditor],
   props: { kind: { type: String, default: 'catalog' } },
   data() { return { loading: false, saving: false, error: '', carriers: [], configs: [], warehouses: [], provinces: [], carrierVisible: false, ruleVisible: false, carrier: null, rule: null, requestId: 0 } },
-  created() { this.load() },
+  created() { if (!this.embedded || this.kind === 'catalog') this.load() },
+  computed: { editorState() { return this.kind === 'rules' ? this.rule : this.carrier } },
   methods: {
-    async load() { const id = ++this.requestId; this.loading = true; this.error = ''; try { const [catalog, configs] = await Promise.all([carrierCatalog(), carrierConfigs()]); if (id !== this.requestId) return; this.carriers = catalog.data.carriers; this.configs = configs.data; this.provinces = catalog.data.provinces; this.warehouses = [...new Map(catalog.data.warehouses.map(s => [this.warehouseKey(s), s])).values()] } catch (_) { if (id === this.requestId) this.error = '快递设置加载失败，请刷新重试' } finally { if (id === this.requestId) this.loading = false } },
+    async open(shop) { this.editorBaseline = null; this.rule = null; await this.load(); if (!this.error) { const row = this.configs.find(c => String(c.channel_id) === String(shop.channel_id)); if (row) this.editRule(row); else this.error = '请先完成本店铺订单接入' } },
+    async load() { const id = ++this.requestId; this.loading = true; this.error = ''; try { const [catalog, configs] = await Promise.all([carrierCatalog(), this.kind === 'rules' ? carrierConfigs() : Promise.resolve({ data: [] })]); if (id !== this.requestId) return; this.carriers = catalog.data.carriers; this.configs = configs.data; this.provinces = catalog.data.provinces; this.warehouses = [...new Map(catalog.data.warehouses.map(s => [this.warehouseKey(s), s])).values()] } catch (_) { if (id === this.requestId) this.error = '快递设置加载失败，请刷新重试' } finally { if (id === this.requestId) this.loading = false } },
     warehouseKey(row) { return row.real_store_code ? JSON.stringify([row.owner_code, row.real_store_code]) : '' },
     setWarehouse(row, key) { const [owner, store] = key ? JSON.parse(key) : ['', '']; row.owner_code = owner; row.real_store_code = store },
     warehouseLabel(key) { const store = this.warehouses.find(s => this.warehouseKey(s) === key); if (store) return `${store.real_store_name || store.real_store_code}（${store.real_store_code}） / ${store.owner_name || store.owner_code}`; if (!key) return '全部允许仓'; const [owner, code] = JSON.parse(key); return `${code} / ${owner}（已停用或映射异常）` },
     carrierLabel(code) { const c = this.carriers.find(c => c.carrier_code === code); return c ? `${c.carrier_name}（${code}）${c.enabled ? '' : ' · 已停用'}` : `${code}（资料缺失）` },
-    editCarrier(row) { this.carrier = row ? clone(row) : { carrier_code: '', carrier_name: '', enabled: 1, services: [], revision: 0 }; this.carrierVisible = true },
-    editRule(row) { this.rule = clone(row); this.ruleVisible = true },
+    editCarrier(row) { this.carrier = row ? clone(row) : { carrier_code: '', carrier_name: '', enabled: 1, services: [], revision: 0 }; this.carrierVisible = true; this.$nextTick(this.acceptBaseline) },
+    editRule(row) { this.rule = clone(row); this.ruleVisible = true; this.$nextTick(this.acceptBaseline) },
     cleanRoutes() { this.rule.policy.routes.forEach(r => { r.carrier_order = r.carrier_order.filter(c => this.rule.policy.carrier_order.includes(c)) }) },
     move(rows, index, step) { const a = rows[index]; this.$set(rows, index, rows[index + step]); this.$set(rows, index + step, a) },
-    async saveMaster() { if (this.saving) return; if (!this.carrier.carrier_code || !this.carrier.carrier_name) return this.$message.warning('请填写快递编码和名称'); this.saving = true; try { await saveCarrier(this.carrier); this.carrierVisible = false; this.$message.success('快递资料已保存'); await this.load() } finally { this.saving = false } },
-    async saveRule() { if (this.saving) return; this.saving = true; try { await saveCarrierConfig({ channel_id: this.rule.channel_id, revision: this.rule.revision, policy: this.rule.policy }); this.ruleVisible = false; this.$message.success('快递规则已保存'); await this.load() } finally { this.saving = false } }
+    async closeCarrier(done) { if (this.saving) return; if (this.dirty) { try { await this.$confirm('快递资料有未保存修改，是否放弃？', '未保存修改', { type: 'warning' }) } catch (_) { return } } this.carrierVisible = false; this.carrier = null; this.editorBaseline = null; if (typeof done === 'function') done() },
+    async saveMaster() { if (this.saving || this.readOnly) return; if (!this.carrier.carrier_code || !this.carrier.carrier_name) return this.$message.warning('请填写快递编码和名称'); this.saving = true; try { await saveCarrier(this.carrier); this.carrierVisible = false; this.carrier = null; this.editorBaseline = null; this.$message.success('快递资料已保存'); await this.load() } finally { this.saving = false } },
+    async saveRule() { if (this.saving || this.readOnly) return; this.saving = true; try { await saveCarrierConfig({ channel_id: this.rule.channel_id, revision: this.rule.revision, policy: this.rule.policy }); this.ruleVisible = false; this.$message.success('快递规则已保存'); this.$emit('changed'); await this.load() } finally { this.saving = false } }
   }
 }
 </script>

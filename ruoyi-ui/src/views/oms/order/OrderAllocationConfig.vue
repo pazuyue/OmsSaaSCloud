@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="店铺分仓规则" :visible.sync="visible" width="min(1040px, 96vw)" top="5vh" append-to-body :close-on-click-modal="false">
+  <configuration-panel :embedded="embedded" :read-only="readOnly" title="店铺分仓规则" :visible.sync="visible" width="min(1040px, 96vw)" top="5vh" append-to-body :close-on-click-modal="false">
     <div v-loading="loading" class="allocation-layout">
       <div class="shop-summary"><div><strong>{{ shop.channel_name }}</strong><span class="muted">渠道 ID：{{ shop.channel_id }}</span></div><el-tag size="small" type="info">{{ revision ? '规则 v' + revision : '尚未配置' }}</el-tag></div>
       <template v-if="policy">
@@ -56,13 +56,14 @@
       </template>
     </div>
     <span slot="footer"><el-button :disabled="saving" @click="visible=false">取消</el-button><el-button type="primary" :disabled="loading || !policy" :loading="saving" @click="save">保存分仓规则</el-button></span>
-  </el-dialog>
+  </configuration-panel>
 </template>
 <script>
+import configurationEditor from './configurationEditor'
 import { allocationConfig, saveAllocationConfig } from '@/api/order'
-export default {
+export default { mixins: [configurationEditor],
   data() { return { visible: false, loading: false, saving: false, shop: {}, policy: null, revision: 0, stores: [], priorities: [], provinces: ['北京', '天津', '河北', '山西', '内蒙古', '辽宁', '吉林', '黑龙江', '上海', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '广西', '海南', '重庆', '四川', '贵州', '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆', '香港', '澳门', '台湾'] } },
-  computed: { owners() { return [...new Map(this.stores.map(s => [s.owner_code, s])).values()] }, available() { return this.stores.filter(s => s.owner_code === this.policy.owner_code) }, storesByCode() { return new Map(this.stores.map(store => [store.wms_simulation_code, store])) } },
+  computed: { editorState() { return this.policy ? { policy: this.policy, priorities: this.priorities } : null }, owners() { return [...new Map(this.stores.map(s => [s.owner_code, s])).values()] }, available() { return this.stores.filter(s => s.owner_code === this.policy.owner_code) }, storesByCode() { return new Map(this.stores.map(store => [store.wms_simulation_code, store])) } },
   methods: {
     async open(shop) { this.shop = shop; this.visible = true; this.loading = true; this.policy = null; try { const r = (await allocationConfig(shop.channel_id)).data; this.policy = { execution_mode: 'MANUAL', auto_replenish: 0, allow_bundle_split: 0, allow_bundle_partial_components: 0, strategy: 'FEWEST_SHIPMENTS', max_virtual_warehouses: 0, max_shipments: 0, min_first_allocation_percent: 0, ...r.policy, warehouse_order: [...r.policy.warehouse_order] }; this.stores = r.warehouses; this.revision = r.revision; this.priorities = Object.entries(r.policy.province_priorities).map(([province, stores]) => ({ province, stores: [...stores] })) } finally { this.loading = false } },
     storeLabel(store) { return `${store.wms_simulation_name}（${store.wms_simulation_code}） / ${store.real_store_name}（${store.real_store_code}）` },
@@ -73,7 +74,7 @@ export default {
     ownerChanged() { this.policy.warehouse_order = []; this.priorities = [] },
     cleanPriorities() { this.priorities.forEach(row => { row.stores = row.stores.filter(code => this.policy.warehouse_order.includes(code)) }) },
     move(rows, index, step) { const target = index + step; if (target < 0 || target >= rows.length) return; const item = rows.splice(index, 1)[0]; rows.splice(target, 0, item) },
-    async save() { if (this.saving || !this.policy) return; if (this.policy.enabled && (!this.policy.owner_code || !this.policy.warehouse_order.length)) return this.$message.warning('启用分仓前，请选择货主和至少一个允许的虚拟仓'); for (const key of ['max_virtual_warehouses', 'max_shipments', 'min_first_allocation_percent']) { if (!Number.isInteger(this.policy[key]) || this.policy[key] < 0 || this.policy[key] > 100) return this.$message.warning('请填写 0 到 100 的整数上限与首次满足比例，0 表示不额外限制') } const priorities = {}; for (const row of this.priorities) { if (!row.province || !row.stores.length) return this.$message.warning('请完整填写省份优先仓，或删除空白规则'); if (priorities[row.province]) return this.$message.warning('省份不能重复'); priorities[row.province] = row.stores } this.saving = true; try { await saveAllocationConfig({ channel_id: this.shop.channel_id, revision: this.revision, policy: { ...this.policy, province_priorities: priorities } }); this.visible = false; this.$message.success('分仓规则已保存'); this.$emit('changed') } finally { this.saving = false } }
+    async save() { if (this.saving || this.readOnly || !this.policy) return; if (this.policy.enabled && (!this.policy.owner_code || !this.policy.warehouse_order.length)) return this.$message.warning('启用分仓前，请选择货主和至少一个允许的虚拟仓'); for (const key of ['max_virtual_warehouses', 'max_shipments', 'min_first_allocation_percent']) { if (!Number.isInteger(this.policy[key]) || this.policy[key] < 0 || this.policy[key] > 100) return this.$message.warning('请填写 0 到 100 的整数上限与首次满足比例，0 表示不额外限制') } const priorities = {}; for (const row of this.priorities) { if (!row.province || !row.stores.length) return this.$message.warning('请完整填写省份优先仓，或删除空白规则'); if (priorities[row.province]) return this.$message.warning('省份不能重复'); priorities[row.province] = row.stores } this.saving = true; try { await saveAllocationConfig({ channel_id: this.shop.channel_id, revision: this.revision, policy: { ...this.policy, province_priorities: priorities } }); this.visible = false; this.$message.success('分仓规则已保存'); this.$emit('changed') } finally { this.saving = false } }
   }
 }
 </script>

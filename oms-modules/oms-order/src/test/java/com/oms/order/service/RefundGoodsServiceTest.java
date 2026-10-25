@@ -82,4 +82,5 @@ class RefundGoodsServiceTest {
         assertEquals(0,number(plan(id),"posted_quantity"));assertEquals("SUCCESS",detail.get("funds_state"));
     }
 
+ @Test void mixedScopeCannotCreateAnUnapprovedSeparateReturn(){f.db.update("UPDATE oms_refund SET goods_action='MIXED' WHERE id=?",refund);Map<String,Object> proposed=input(5);proposed.put("action","RETURN");IllegalArgumentException e=assertThrows(IllegalArgumentException.class,()->goods.create("VERIFY",refund,proposed,"test"));assertTrue(e.getMessage().contains("分项退回必须沿用已审核任务"));assertEquals(0,f.db.queryForObject("SELECT COUNT(*) FROM oms_refund_return_plan",Integer.class));verifyNoInteractions(goods.returns);}
 }

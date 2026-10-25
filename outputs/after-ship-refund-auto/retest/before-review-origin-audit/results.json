@@ -1,0 +1,747 @@
+{
+  "rows": [
+    {
+      "case": "01",
+      "scenario": "小额10元免退货",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C01V1",
+            "AF20261023150323C01A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C01A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=138",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=89",
+      "refund_sn": "TK3b0a57846d294a55bff0b73abe037ba5",
+      "operations": "REVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "02A",
+      "scenario": "小额20元边界",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02AV1",
+            "AF20261023150323C02AA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02AA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=139",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=90",
+      "refund_sn": "TKc5748fed048646b6a3bf15d6ade6cf24",
+      "operations": "REVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "02B",
+      "scenario": "小额20.01元超限",
+      "pass": true,
+      "business_state": "NEEDS_REVIEW",
+      "flow_state": "MANUAL",
+      "message": "未命中小额免退规则（子单累计 20.01 元，上限 20.00 元），且本次不是剩余实付全额 100.00 元，请人工确认货物范围",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C02BV1",
+            "AF20261023150323C02BA",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C02BA",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=140",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=91",
+      "refund_sn": "TKbd111011261c4e1ca4b8b1180d36077d",
+      "operations": ""
+    },
+    {
+      "case": "03",
+      "scenario": "先退10再退15累计超限",
+      "pass": true,
+      "business_state": "NEEDS_REVIEW",
+      "flow_state": "MANUAL",
+      "message": "未命中小额免退规则（子单累计 25.00 元，上限 20.00 元），且本次不是剩余实付全额 90.00 元，请人工确认货物范围",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C03V1",
+            "AF20261023150323C03A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C03A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=141",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=93",
+      "refund_sn": "TK4a2be31802d2436a8976588283767fa6",
+      "operations": ""
+    },
+    {
+      "case": "04",
+      "scenario": "仓库已接单未出库截单",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C04RV1",
+            "AF20261023150323C04RA",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C04RA",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=147",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=98",
+      "refund_sn": "TK8687b2c4edd0480c95e966f05fb9027d",
+      "operations": "CANCEL_FEEDBACK\tUNKNOWN\t平台返回未能确认操作结果，先查询原退款\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "05",
+      "scenario": "截单竞争期间实际出库",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C05A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C05V1",
+            "AF20261023150323C05A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C05A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=143",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=95",
+      "refund_sn": "TKc260e827fb334b4c995b5236d57579a5",
+      "operations": "INTERCEPT\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "06",
+      "scenario": "在途仅退款物流拦截",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C06A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C06V1",
+            "AF20261023150323C06A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C06A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=144",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=96",
+      "refund_sn": "TK76316157b87446898236bc9768e86e8a",
+      "operations": "INTERCEPT\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "07",
+      "scenario": "已签收两件仅退款实际退货",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C07A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C07V1",
+            "AF20261023150323C07A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C07A",
+            "98",
+            "0",
+            "0",
+            "98",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=145",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=97",
+      "refund_sn": "TK333f5e1eb7fd4f89bb684fa0aacf0dd5",
+      "operations": "REVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "08",
+      "scenario": "三件商品已发一件未发两件",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C08A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C08V1",
+            "AF20261023150323C08A",
+            "1",
+            "1",
+            "0"
+          ],
+          [
+            "AF20261023150323C08V2",
+            "AF20261023150323C08A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C08A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=146",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=99",
+      "refund_sn": "TKc991690ca9644f07a582750d9113fb2f",
+      "operations": "INTERCEPT\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "09",
+      "scenario": "先退差价20再退剩余80含赠品",
+      "pass": true,
+      "business_state": "COMPLETED",
+      "flow_state": "DONE",
+      "message": "平台资金与货物处理均已完成",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C09A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "AF20261023150323C09V1",
+            "AF20261023150323C09G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C09A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "AF20261023150323C09G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=148",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=101",
+      "refund_sn": "TK119591f192174c10bb428bb50600376f",
+      "operations": "REVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+    },
+    {
+      "case": "10",
+      "scenario": "先退差价20再申请100超额",
+      "pass": true,
+      "business_state": "NEEDS_REVIEW",
+      "flow_state": "MANUAL",
+      "message": "本子单原实付 100.00 元，其他已退或已审核占用 20.00 元，剩余可退 80.00 元，本次申请超过剩余金额",
+      "stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261023150323C10V1",
+            "AF20261023150323C10A",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261023150323C10A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=149",
+      "refund_url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=103",
+      "refund_sn": "TKda1cf6ab742d40b8a0192f48e63db95a",
+      "operations": ""
+    }
+  ],
+  "protection": {
+    "older_merged_stock_unchanged": true,
+    "older_preceding_stock_unchanged": true,
+    "old_settings_unchanged": true,
+    "queue_controls_unchanged": true,
+    "job_controls_unchanged": true
+  },
+  "retained": true,
+  "manual_target_review_or_pay": false,
+  "direct_stock_sql": false
+}

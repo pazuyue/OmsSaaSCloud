@@ -1,0 +1,96 @@
+{
+  "settings_sha256": "7e63aa33a3f417b2b4e617152c9cc864df66904de7f22f758207050a2dc2dcdf",
+  "stock": {
+    "company": [
+      {
+        "sku": "RF20261022113125A",
+        "total": 48,
+        "reserved": 0,
+        "allocated": 1,
+        "available": 47
+      },
+      {
+        "sku": "RF20261022113125B",
+        "total": 47,
+        "reserved": 0,
+        "allocated": 1,
+        "available": 46
+      },
+      {
+        "sku": "RF20261022113125D",
+        "total": 48,
+        "reserved": 0,
+        "allocated": 2,
+        "available": 46
+      },
+      {
+        "sku": "RF20261022113125P",
+        "total": 0,
+        "reserved": 0,
+        "allocated": 0,
+        "available": 0
+      },
+      {
+        "sku": "RF20261022113125R",
+        "total": 0,
+        "reserved": 0,
+        "allocated": 0,
+        "available": 0
+      },
+      {
+        "sku": "RF20261022113125S",
+        "total": 9,
+        "reserved": 0,
+        "allocated": 0,
+        "available": 9
+      }
+    ],
+    "warehouse": [
+      {
+        "sku": "RF20261022113125A",
+        "actual": 48,
+        "locked": 1,
+        "available": 47
+      },
+      {
+        "sku": "RF20261022113125B",
+        "actual": 47,
+        "locked": 1,
+        "available": 46
+      },
+      {
+        "sku": "RF20261022113125D",
+        "actual": 48,
+        "locked": 2,
+        "available": 46
+      },
+      {
+        "sku": "RF20261022113125S",
+        "actual": 9,
+        "locked": 0,
+        "available": 9
+      }
+    ],
+    "pools": [
+      {
+        "sku": "RF20261022113125P",
+        "consumed": 3,
+        "occupied": 0,
+        "available": 1
+      },
+      {
+        "sku": "RF20261022113125R",
+        "consumed": 3,
+        "occupied": 0,
+        "available": 1
+      }
+    ],
+    "totals": {
+      "total": 152,
+      "available": 148,
+      "allocated": 4,
+      "reserved": 0
+    }
+  },
+  "preceding_stock": "RF20261022102630A\t46\t0\t0\t46\t15\nRF20261022102630B\t49\t0\t2\t47\t19\nRF20261022102630D\t48\t0\t2\t46\t16\nRF20261022102630P\t0\t0\t0\t0\t1\nRF20261022102630R\t0\t0\t0\t0\t1\nRF20261022102630S\t9\t0\t0\t9\t8"
+}

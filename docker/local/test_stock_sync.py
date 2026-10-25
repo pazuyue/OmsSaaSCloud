@@ -10,7 +10,9 @@ def main():
  execute(f'CREATE TABLE IF NOT EXISTS {db}.t_channel LIKE qm_oms_saas_channel.t_channel')
  from configure_platform_log_center import install as logs
  from configure_exchanges import install_channel
- logs(db);install_channel(db);install(db);install_order("order_workspace_test")
+ logs(db);install_channel(db);
+ from configure_refund_execution import install_channel as refund_channel
+ refund_channel(db);install(db);install_order("order_workspace_test")
  from configure_refund_goods import install_order as refund_goods
  refund_goods('order_workspace_test')
  from configure_messaging import order,install as messages,management
@@ -33,7 +35,7 @@ def main():
  if '--messaging-only' in sys.argv:suites=['ProductPullMessageTest','MessageExceptionTest','DeadLetterCollectorTest','QueueDeadLettersTest','MessageDeliveryTest','QueueSupervisorTest','QueueControlStoreTest','QueueMetricsDiscoveryTest']
  if '--exchange-messaging' in sys.argv:suites=['PlatformRateIdentityTest','ExchangeIntakeMessageTest','ExchangeSyncTest','PlatformExchangeServiceTest','ExchangeServiceTest','ExchangePlatformTest','ProductPullMessageTest','RefundIntakeMessageTest','OrderIntakeMessageTest','OrderIntakeWorkspaceTest','MessageDeliveryTest','MessageExceptionTest','QueueControlStoreTest','QueueSupervisorTest','TenantRoutingTest']
  if '--exchange-intake-only' in sys.argv:suites=['ExchangeIntakeMessageTest']
- if '--refund-messaging' in sys.argv:suites=['RefundIntakeMessageTest','RefundServiceTest','RefundBusinessListTest','RefundPushReaderTest','RefundGoodsServiceTest','RefundReturnAutoCreateTest','RefundReturnDispatchAutomationTest','RefundParcelAutomationTest','RefundParcelPolicyTest','RefundSharedScopeTest','OrderIntakeMessageTest','OrderIntakeWorkspaceTest','MessageDeliveryTest','QueueControlStoreTest','QueueSupervisorTest','TenantRoutingTest']
+ if '--refund-messaging' in sys.argv:suites=['RefundWorkflowTest','RefundGoodsTasksTest','RefundFulfillmentTest','RefundPlatformExecutionTest','RefundIntakeMessageTest','RefundServiceTest','RefundBusinessListTest','RefundPushReaderTest','RefundGoodsServiceTest','RefundReturnAutoCreateTest','RefundReturnDispatchAutomationTest','RefundParcelAutomationTest','RefundParcelPolicyTest','RefundSharedScopeTest','OrderIntakeMessageTest','OrderIntakeWorkspaceTest','MessageDeliveryTest','QueueControlStoreTest','QueueSupervisorTest','TenantRoutingTest']
  if '--refund-intake-only' in sys.argv:suites=['RefundIntakeMessageTest']
  if '--intake-only' in sys.argv:suites=['OrderIntakeMessageTest']
  if '--order-messaging' in sys.argv:suites=['OrderIntakeMessageTest','OrderBackfillServiceTest','OrderRepositoryTest','OrderIntakeWorkspaceTest','OrderProcessorTest','OrderIntakePermissionTest','TmallOrderParserTest','OrderUpdateServiceTest','OrderProductMatchServiceTest','MessageDeliveryTest','QueueControlStoreTest']

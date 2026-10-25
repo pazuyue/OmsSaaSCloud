@@ -1,0 +1,12 @@
+{
+  "case": "07",
+  "before": {
+    "captured_at": "2026-10-24T19:34:44.873119",
+    "accepted_quantity": "0",
+    "pools": "RR20261024185730C17GL\t0\t0\t1\nRR20261024185730C17L\t0\t0\t1"
+  },
+  "after": "RR20261024185730C17GL\t0\t0\t1\nRR20261024185730C17L\t0\t0\t1",
+  "verified_at": "2026-10-24T20:22:11.777135",
+  "unchanged": true,
+  "meaning": "原购买福袋及赠品福袋仍各已消费1袋，退回组件未重复生成可售福袋"
+}

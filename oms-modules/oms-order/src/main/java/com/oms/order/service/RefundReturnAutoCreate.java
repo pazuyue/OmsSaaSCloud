@@ -17,7 +17,7 @@ import static com.oms.order.service.RefundValues.*;
     void enqueue(String c,long id){
         Map<String,Object> b=refunds.business(c,id,true),p=policies.get(c,number(b,"channel_id"));
         if(number(p,"auto_create")!=1||!"APPROVED".equals(text(b,"review_state"))||!"RETURN".equals(text(b,"goods_action"))||"DONE".equals(text(b,"goods_state")))return;
-        if(!"REFUND_AND_RETURN".equals(text(refunds.platform(c,number(b,"platform_refund_id"),false),"dispute_type")))return;
+        if(!Arrays.asList("REFUND","REFUND_AND_RETURN").contains(text(refunds.platform(c,number(b,"platform_refund_id"),false),"dispute_type")))return;
         r().db().update("INSERT INTO oms_refund_return_auto_task(company_code,refund_id,platform_version,policy_revision,policy) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE platform_version=VALUES(platform_version),policy_revision=VALUES(policy_revision),policy=VALUES(policy),state='PENDING',attempts=0,message='',plan_id=NULL,next_attempt=NOW(),lease_token=NULL,lease_until=NULL",c,id,b.get("approved_version"),p.get("revision"),encode(p));
         refunds.event(c,id,"RETURN_AUTO_QUEUED","已提交自动创建商品退回安排；采用店铺规则版本 "+p.get("revision"),"自动退回安排");
     }
@@ -45,6 +45,7 @@ import static com.oms.order.service.RefundValues.*;
         for(Long id:ids)process(c,id,enabledShops);
     }
     private boolean claim(String c,long id,String lease){return r().db().update("UPDATE oms_refund_return_auto_task SET lease_token=?,lease_until=DATE_ADD(NOW(),INTERVAL 90 SECOND),attempts=attempts+1 WHERE company_code=? AND refund_id=? AND state IN ('PENDING','RETRY') AND next_attempt<=NOW() AND (lease_until IS NULL OR lease_until<NOW())",lease,c,id)==1;}
+    void processOne(String c,long id){Map<String,Object> b=refunds.business(c,id,false);if(r().db().queryForObject("SELECT COUNT(*) FROM oms_refund_return_auto_task WHERE company_code=? AND refund_id=? AND state IN ('PENDING','RETRY') AND next_attempt<=NOW()",Long.class,c,id)>0){policies.catalog.validateShop(c,number(b,"channel_id"));process(c,id,Collections.singleton(number(b,"channel_id")));}}
     void process(String c,long id,Set<Long> enabledShops){
         String lease=token();if(!claim(c,id,lease))return;
         try{
@@ -85,7 +86,7 @@ import static com.oms.order.service.RefundValues.*;
     private void retryFailure(String c,long id,String lease){Map<String,Object> task=task(c,id,false);boolean exhausted=number(task,"attempts")>=5;finish(c,id,lease,exhausted?"MANUAL":"RETRY",exhausted?"自动创建多次未完成，请核对服务状态或人工创建退回安排":"库存或仓库服务暂不可用，稍后自动重试",null);}
     private void eligible(Map<String,Object> b,Map<String,Object> p,Map<String,Object> task){
         require("APPROVED".equals(text(b,"review_state"))&&number(b,"approved_version")==number(p,"version")&&number(task,"platform_version")==number(p,"version")&&"VALID".equals(text(p,"source_state")),"退款来源或审核版本已变化，请重新审核");
-        require("REFUND_AND_RETURN".equals(text(p,"dispute_type"))&&"RETURN".equals(text(b,"goods_action"))&&!Arrays.asList("DONE","CANCELED").contains(text(b,"goods_state"))&&!Arrays.asList("CLOSED","CANCELED").contains(text(b,"state"))&&!"CLOSED".equals(text(p,"platform_status")),"当前退款方案无需自动创建退回安排，请人工核对");
+        require(Arrays.asList("REFUND","REFUND_AND_RETURN").contains(text(p,"dispute_type"))&&"RETURN".equals(text(b,"goods_action"))&&!Arrays.asList("DONE","CANCELED").contains(text(b,"goods_state"))&&!Arrays.asList("CLOSED","CANCELED").contains(text(b,"state"))&&!"CLOSED".equals(text(p,"platform_status")),"当前退款方案无需自动创建退回安排，请人工核对");
     }
     private boolean hasPurchasePlan(String c,long id){return !r().db().queryForList("SELECT id FROM oms_refund_return_plan WHERE company_code=? AND refund_id=? AND gift_plan_id IS NULL LIMIT 1",c,id).isEmpty();}
     private List<Map<String,Object>> sources(String c,Map<String,Object> b){return r().db().query("SELECT sl.id,ol.bundle_id FROM oms_order_shipment s JOIN oms_order_shipment_line sl ON sl.company_code=s.company_code AND sl.shipment_id=s.id JOIN oms_order_line ol ON ol.company_code=sl.company_code AND ol.id=sl.order_line_id WHERE s.company_code=? AND s.order_id=? AND ol.platform_oid=? AND ol.gift_plan_id IS NULL AND ol.exchange_id IS NULL AND ol.business_type='SALE' AND s.business_type='SALE' AND s.exchange_id IS NULL AND sl.shipped_quantity>0 ORDER BY sl.id LIMIT 2",ROW,c,b.get("order_id"),b.get("platform_oid"));}

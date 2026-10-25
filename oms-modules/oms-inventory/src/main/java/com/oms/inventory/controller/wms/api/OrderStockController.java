@@ -10,6 +10,9 @@ import java.util.*;
 public class OrderStockController {
     @Resource private com.oms.inventory.service.impl.LuckyBagInventory luckyPools;
     @Resource private com.oms.inventory.service.impl.LuckyBagStock luckyStock;
+    @InnerAuth @PostMapping("/fulfillment-adjustments/receipts")
+    public R<List<Map<String,Object>>> adjustmentReceipts(@RequestParam("company_code") String c,@RequestBody List<String> requests){return R.ok(adjustments.receiptBatch(c,requests));}
+    @InnerAuth @GetMapping("/fulfillment-adjustment/{request}") public R<Map<String,Object>> adjustmentReceipt(@RequestParam("company_code") String c,@PathVariable String request){return R.ok(adjustments.receipt(c,request));}
     @InnerAuth @PostMapping("/lucky-claim") public R<Map<String,Object>> luckyClaim(@RequestParam("company_code") String company,@RequestBody Map<String,Object> input){String c=signalCompany(company);luckyPools.prepare(c,Collections.singletonList(com.oms.common.lucky.LuckyBagRules.text(input,"sku_sn")));return R.ok(luckyStock.claim(c,input));}
     @Resource private com.oms.inventory.service.impl.ExchangeStockLookup exchangeStock;
     @InnerAuth @PostMapping("/exchange-stock") public R<List<Map<String,Object>>> exchangeStock(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command){return R.ok(exchangeStock.lookup(signalCompany(company),command));}

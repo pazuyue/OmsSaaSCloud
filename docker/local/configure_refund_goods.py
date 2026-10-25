@@ -111,6 +111,8 @@ def install_supplychain(db):
 
     from configure_process import install_supplychain as process_schema
     process_schema(db)
+    from configure_exchange_automation import install_supplychain as exchange_flow_schema
+    exchange_flow_schema(db)
 
 
 def permissions():

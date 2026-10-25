@@ -1,0 +1,334 @@
+{
+  "run_id": "20261024145739",
+  "cases": {
+    "04": {
+      "key": "04",
+      "title": "仓库已接单未出库截单",
+      "case_id": "20261024145739_04",
+      "created": "2026-10-24 15:01:51",
+      "sku": "AF20261024145739C04A",
+      "seller": "AF20261024145739C04",
+      "channel_name": "[自动仅退款验收04] 仓库已接单未出库截单 20261024145739",
+      "platform_tid": "872026102414573905",
+      "quantity": 1,
+      "warehouses": [
+        {
+          "code": "AF20261024145739C04V1",
+          "quantity": 100,
+          "package_count": 1,
+          "id": 123
+        }
+      ],
+      "received": true,
+      "refunds": {
+        "target": {
+          "refund_id": "8820261024145739051",
+          "amount": "100.00",
+          "setup_only": false,
+          "injected_at": "2026-10-24 15:02:59",
+          "intake_task_id": 620,
+          "id": 105,
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=105",
+          "refund_sn": "TK9a289213763e48fcb1c76e935f9ae8d9",
+          "test_driver": "定向补拉该测试退款，定向唤醒该退款自动流程；全局Quartz保持暂停，未验定时接入",
+          "driver_sequence": 4,
+          "observation": {
+            "business_state": "COMPLETED",
+            "review_state": "APPROVED",
+            "goods_action": "MIXED",
+            "goods_state": "DONE",
+            "funds_state": "SUCCESS",
+            "fulfillment_stage": "UNSHIPPED",
+            "flow_state": "PENDING",
+            "flow_message": "已提交平台退款审核，审核成功不等于已经付款",
+            "plans": [],
+            "platform_operations": "CANCEL_FEEDBACK\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nREVIEW\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对\nPAY\tSUCCESS\t平台操作已返回；最终资金和物流结果分别核对"
+          }
+        }
+      },
+      "platform_oid": "8720261024145739051",
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 10,
+      "channel_id": 96,
+      "configured": true,
+      "stock_ready": true,
+      "initial_stock": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261024145739C04A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261024145739C04V1",
+            "AF20261024145739C04A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261024145739C04A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "platform_id": 235,
+      "order_id": 151,
+      "order_sn": "SO3c4bbe2730894fceb8bbbb61e6496d5b",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261024145739C04A",
+            "100",
+            "99",
+            "1",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261024145739C04V1",
+            "AF20261024145739C04A",
+            "100",
+            "99",
+            "1"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261024145739C04A",
+            "99",
+            "1",
+            "0",
+            "100",
+            "1"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?orderId=151",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "stock_after_refunds": {
+        "company_columns": [
+          "sku",
+          "total",
+          "available",
+          "reserved",
+          "allocated"
+        ],
+        "company": [
+          [
+            "AF20261024145739C04A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse_columns": [
+          "store",
+          "sku",
+          "actual",
+          "available",
+          "locked"
+        ],
+        "warehouse": [
+          [
+            "AF20261024145739C04V1",
+            "AF20261024145739C04A",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel_columns": [
+          "sku",
+          "available",
+          "reserved",
+          "allocated",
+          "quota",
+          "quota_reserved"
+        ],
+        "channel": [
+          [
+            "AF20261024145739C04A",
+            "100",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "status": "PASS",
+      "finished": true,
+      "finding": "自动取消1件，原回执确认释放逻辑预占1件；公司库存回到100，零预占及分仓占用"
+    }
+  },
+  "target_rules": {
+    "small_money_cumulative_limit": 20,
+    "auto_payment_limit": 500
+  },
+  "not_implemented": [
+    "小额免退货自动审批及累计阈值",
+    "实际出库后自动确认取消购买和货物方案",
+    "仅退款自动创建退回安排"
+  ],
+  "protected": {
+    "merged_stock": {
+      "company": [
+        {
+          "sku": "RF20261022113125A",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 1,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022113125B",
+          "total": 47,
+          "reserved": 0,
+          "allocated": 1,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125D",
+          "total": 48,
+          "reserved": 0,
+          "allocated": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125P",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022113125R",
+          "total": 0,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 0
+        },
+        {
+          "sku": "RF20261022113125S",
+          "total": 9,
+          "reserved": 0,
+          "allocated": 0,
+          "available": 9
+        }
+      ],
+      "warehouse": [
+        {
+          "sku": "RF20261022113125A",
+          "actual": 48,
+          "locked": 1,
+          "available": 47
+        },
+        {
+          "sku": "RF20261022113125B",
+          "actual": 47,
+          "locked": 1,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125D",
+          "actual": 48,
+          "locked": 2,
+          "available": 46
+        },
+        {
+          "sku": "RF20261022113125S",
+          "actual": 9,
+          "locked": 0,
+          "available": 9
+        }
+      ],
+      "pools": [
+        {
+          "sku": "RF20261022113125P",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        },
+        {
+          "sku": "RF20261022113125R",
+          "consumed": 3,
+          "occupied": 0,
+          "available": 1
+        }
+      ],
+      "totals": {
+        "total": 152,
+        "available": 148,
+        "allocated": 4,
+        "reserved": 0
+      }
+    },
+    "preceding_stock": "RF20261022102630A\t46\t0\t0\t46\t15\nRF20261022102630B\t49\t0\t2\t47\t19\nRF20261022102630D\t48\t0\t2\t46\t16\nRF20261022102630P\t0\t0\t0\t0\t1\nRF20261022102630R\t0\t0\t0\t0\t1\nRF20261022102630S\t9\t0\t0\t9\t8",
+    "maximum_existing_channel": 95,
+    "queues": "EXCHANGE_CONVERT\tRUNNING\t1\nEXCHANGE_PULL\tRUNNING\t1\nORDER_CONVERT\tRUNNING\t2\nORDER_PULL\tRUNNING\t2\nPRODUCT_BIND\tRUNNING\t1\nPRODUCT_PULL\tRUNNING\t2\nREFUND_API_DETAIL\tRUNNING\t1\nREFUND_API_PULL\tRUNNING\t1\nREFUND_CONVERT\tRUNNING\t1\nREFUND_FLOW\tRUNNING\t1\nREFUND_GOODS\tRUNNING\t1\nREFUND_PLATFORM\tRUNNING\t1\nREFUND_PULL\tRUNNING\t1\nSALES_DOCUMENT\tRUNNING\t2",
+    "jobs": "1\t1\t0/10 * * * * ?\n2\t1\t0/15 * * * * ?\n3\t1\t0/20 * * * * ?\n4\t1\t1 0/30 * * * ?\n5\t1\t0/10 * * * * ?\n6\t1\t0/5 * * * * ?\n7\t1\t1/5 * * * * ?\n8\t1\t2/5 * * * * ?\n9\t0\t0/30 * * * * ?\n10\t1\t0/15 * * * * ?\n11\t1\t0/30 * * * * ?\n12\t1\t4/5 * * * * ?\n13\t1\t0/10 * * * * ?\n14\t1\t0/30 * * * * ?\n15\t0\t0 20 1 * * ?\n16\t1\t0/10 * * * * ?\n17\t1\t0 * * * * ?\n18\t1\t0/10 * * * * ?\n19\t0\t0/15 * * * * ?\n20\t0\t0/15 * * * * ?",
+    "old_settings_hash": "a4299e097b93fcb0fe435fee7ae736477c0b123e24c9ec0276590fe237851803"
+  }
+}

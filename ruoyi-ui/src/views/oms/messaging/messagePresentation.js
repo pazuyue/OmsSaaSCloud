@@ -5,8 +5,8 @@ export function taskQuery(route, types) {
  return { type: types.some(t => t[0] === q.type) ? q.type : '', state: '', publish: '', keyword: q.event || '', problem: '', focus: ['OVERDUE', 'FAILED', 'PUBLISH', 'ACTIVE'].includes(q.focus) ? q.focus : '', pageNum: 1, pageSize: 20 }
 }
 export function alertTarget(row) {
- const service = ['SALES_DOCUMENT', 'ORDER_PULL', 'ORDER_CONVERT', 'REFUND_PULL', 'REFUND_CONVERT', 'EXCHANGE_PULL', 'EXCHANGE_CONVERT'].includes(row.business_type) ? 'order' : 'channel'
- if (!['PRODUCT_PULL', 'PRODUCT_BIND', 'SALES_DOCUMENT', 'ORDER_PULL', 'ORDER_CONVERT', 'REFUND_PULL', 'REFUND_CONVERT', 'EXCHANGE_PULL', 'EXCHANGE_CONVERT'].includes(row.business_type)) return null
+ const service = ['SALES_DOCUMENT', 'ORDER_PULL', 'ORDER_CONVERT', 'REFUND_PULL', 'REFUND_CONVERT', 'REFUND_FLOW', 'REFUND_GOODS', 'REFUND_PLATFORM', 'REFUND_API_PULL', 'REFUND_API_DETAIL', 'EXCHANGE_PULL', 'EXCHANGE_CONVERT', 'EXCHANGE_FLOW'].includes(row.business_type) ? 'order' : 'channel'
+ if (!['PRODUCT_PULL', 'PRODUCT_BIND', 'SALES_DOCUMENT', 'ORDER_PULL', 'ORDER_CONVERT', 'REFUND_PULL', 'REFUND_CONVERT', 'REFUND_FLOW', 'REFUND_GOODS', 'REFUND_PLATFORM', 'REFUND_API_PULL', 'REFUND_API_DETAIL', 'EXCHANGE_PULL', 'EXCHANGE_CONVERT', 'EXCHANGE_FLOW'].includes(row.business_type)) return null
  if (row.rule_code === 'DEAD_LETTER') return { dead: true }
  const focus = { OVERDUE: 'OVERDUE', FAILURE_RATE: 'FAILED', BACKLOG: 'ACTIVE', NO_CONSUMERS: 'ACTIVE' }[row.rule_code]
  return focus ? { path: '/monitor/messages', query: { service, type: row.business_type, focus } } : null

@@ -82,8 +82,21 @@ public class ChannelPlatformService {
         });
     }
     public Map<String,Object> detail(String company,long id) {
-        Map<String,Object> s=shop(company,id),result=map("channel_id",id,"channel_name",s.get("channel_name"),"channel_type",s.get("channel_type"));
+        Map<String,Object> s=shop(company,id);
         List<Map<String,Object>> rows=db.queryForList("SELECT b.*,a.name AS app_name,a.enabled AS app_enabled,a.app_key,a.redirect_uri,a.article_code,a.item_code,a.renewal_url,a.simulation_mode,(a.secret_cipher IS NOT NULL) AS secret_configured FROM channel_platform_binding b JOIN channel_platform_app a ON a.id=b.app_id AND a.company_code=b.company_code WHERE b.company_code=? AND b.channel_id=?",company,id);
+        return presentDetail(s,rows);
+    }
+    /** Two tenant-scoped local queries, shared capability presentation; no vendor request. */
+    List<Map<String,Object>> refundShopSummaries(String company) {
+        List<Map<String,Object>> shops=db.queryForList("SELECT channel_id,channel_name,channel_type,enabled,to_channel_enabled FROM t_channel WHERE UPPER(company_code)=UPPER(?) AND channel_type='TM' ORDER BY channel_id",company);
+        Map<Long,Map<String,Object>> bindings=new HashMap<>();
+        for(Map<String,Object> row:db.queryForList("SELECT b.*,a.name AS app_name,a.enabled AS app_enabled,a.app_key,a.redirect_uri,a.article_code,a.item_code,a.renewal_url,a.simulation_mode,(a.secret_cipher IS NOT NULL) AS secret_configured FROM channel_platform_binding b JOIN channel_platform_app a ON a.id=b.app_id AND a.company_code=b.company_code WHERE UPPER(b.company_code)=UPPER(?)",company))bindings.put(number(row.get("channel_id")),row);
+        List<Map<String,Object>> out=new ArrayList<>();
+        for(Map<String,Object> shop:shops){Map<String,Object> binding=bindings.get(number(shop.get("channel_id")));out.add(presentDetail(shop,binding==null?Collections.emptyList():Collections.singletonList(binding)));}
+        return out;
+    }
+    private Map<String,Object> presentDetail(Map<String,Object> s,List<Map<String,Object>> rows) {
+        Map<String,Object> result=map("channel_id",s.get("channel_id"),"channel_name",s.get("channel_name"),"channel_type",s.get("channel_type"));
         if(rows.isEmpty()){result.putAll(map("auth_label","待配置","service_label","未核验","availability","未绑定平台应用","can_authorize",false,"can_refresh",false));return result;}
         Map<String,Object> b=rows.get(0);boolean hasToken=!str(b,"token_cipher").isEmpty();
         boolean appReady=number(b.get("app_enabled"))==1&&!str(b,"app_key").isEmpty()&&!str(b,"redirect_uri").isEmpty()&&("1".equals(str(b,"secret_configured"))||Boolean.TRUE.equals(b.get("secret_configured")))&&secrets.ready();
@@ -136,9 +149,11 @@ public class ChannelPlatformService {
             require(number(b.get("app_id"))==number(s.get("app_id")),"应用已变更，请重新发起授权");
             require(!simulated(a),"模拟应用不接受真实平台授权回调");
             Map<String,String> args=credentials(a);args.put("grant_type","authorization_code");args.put("code",code);args.put("redirect_uri",str(a,"redirect_uri"));
-            JsonNode token=interactionLog.call("oauth.token.exchange",args,()->client.token(args));saveToken(company,id,b,a,token);return map("shop_id",b.get("expected_shop_id"),"authorization","verified");
+            JsonNode token=interactionLog.call("oauth.token.exchange",args,()->client.token(args));if("REFUND_PAYMENT".equals(str(s,"grant_role")))saveRefundPayment(company,id,b,token);else saveToken(company,id,b,a,token);return map("shop_id",b.get("expected_shop_id"),"authorization","verified");
         });return id;
     }
+    public String authorizeRefundPayment(String company,long id,long userId,String user){String url=authorize(company,id,userId,user);String state=url.substring(url.lastIndexOf("&state=")+7);require(db.update("UPDATE channel_oauth_state SET grant_role='REFUND_PAYMENT' WHERE state_hash=? AND company_code=? AND channel_id=? AND consumed=0",TmallClient.digest("SHA-256",state),company,id)==1,"退款授权状态未确认");return url;}
+    private void saveRefundPayment(String company,long id,Map<String,Object> binding,JsonNode token){String access=token.path("access_token").asText("");long expires=token.path("expires_in").asLong(0);require(!access.isEmpty()&&expires>0&&expires<315360000,"退款子账号授权有效期无效");require(token.path("sub_taobao_user_id").asText("").matches("[1-9][0-9]*"),"退款付款需要店铺子账号授权");require(str(binding,"seller_id").equals(token.path("taobao_user_id").asText("")),"退款子账号不属于当前授权店铺");db.update("INSERT INTO channel_refund_access(company_code,channel_id,updated_by) VALUES (?,?,'退款子账号授权') ON DUPLICATE KEY UPDATE updated_by=VALUES(updated_by)",company,id);db.update("UPDATE channel_refund_access SET payment_session_cipher=?,payment_expires_at=?,payment_sub_id=?,payment_app_id=?,payment_seller_id=?,revision=revision+1 WHERE company_code=? AND channel_id=?",secrets.encrypt(access),Timestamp.from(Instant.now().plusSeconds(expires)),token.path("sub_taobao_user_id").asText(),binding.get("app_id"),binding.get("seller_id"),company,id);}
     private Map<String,String> credentials(Map<String,Object> app) {Map<String,String> p=new HashMap<>();p.put("client_id",str(app,"app_key"));p.put("client_secret",secrets.decrypt(str(app,"secret_cipher")));return p;}
     public void simulate(String company,long id,String user) {
         interact(company,id,"SIMULATED_AUTHORIZATION",user,(b,a)->{
@@ -200,7 +215,7 @@ public class ChannelPlatformService {
             return map("item_code",a.get("item_code"),"deadline",deadline==null?null:deadline.toString());
         });
     }
-    public void disable(String company,long id,String user) {tx().execute(status->{Map<String,Object>b=one("SELECT * FROM channel_platform_binding WHERE company_code=? AND channel_id=? FOR UPDATE",company,id);require(!future(b.get("operation_until")),"店铺正在交互，请稍后停用");db.update("UPDATE channel_platform_binding SET token_cipher=NULL,refresh_cipher=NULL,token_expires_at=NULL,refresh_expires_at=NULL,auth_status='LOCAL_DISABLED' WHERE company_code=? AND channel_id=?",company,id);db.update("DELETE FROM channel_oauth_state WHERE company_code=? AND channel_id=?",company,id);audit(company,id,number(b.get("app_id")),"LOCAL_DISABLE",user,map("result","本地凭据已清除，平台侧撤销需在淘宝操作"));return null;});}
+    public void disable(String company,long id,String user) {tx().execute(status->{Map<String,Object>b=one("SELECT * FROM channel_platform_binding WHERE company_code=? AND channel_id=? FOR UPDATE",company,id);require(!future(b.get("operation_until")),"店铺正在交互，请稍后停用");db.update("UPDATE channel_platform_binding SET token_cipher=NULL,refresh_cipher=NULL,token_expires_at=NULL,refresh_expires_at=NULL,auth_status='LOCAL_DISABLED' WHERE company_code=? AND channel_id=?",company,id);db.update("UPDATE channel_refund_access SET payment_session_cipher=NULL,payment_expires_at=NULL,payment_sub_id='',payment_app_id=NULL,payment_seller_id=NULL,revision=revision+1 WHERE company_code=? AND channel_id=?",company,id);db.update("DELETE FROM channel_oauth_state WHERE company_code=? AND channel_id=?",company,id);audit(company,id,number(b.get("app_id")),"LOCAL_DISABLE",user,map("result","本地凭据已清除，平台侧撤销需在淘宝操作"));return null;});}
     /** Only bounded metadata enters the interaction log; credentials stay in this service. */
     public Map<String,Object> exchange(String company,long id,String method,Map<String,String> args,String operation,boolean write,Map<String,Object> context) {
         final java.util.concurrent.atomic.AtomicReference<Map<String,Object>> result=new java.util.concurrent.atomic.AtomicReference<>();

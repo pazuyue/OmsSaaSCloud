@@ -6,11 +6,17 @@ import static com.oms.order.service.OrderValues.*;
 /** Shared review/hold/release gates; stock progress never changes the review result. */
 public final class OrderReviewPolicy {
     private OrderReviewPolicy(){}
+    static boolean noRemaining(Map<String,Object> row){return row.containsKey("demand_quantity")&&number(row,"demand_quantity")>0&&number(row,"demand_quantity")<=number(row,"cancelled_quantity")+number(row,"shipped_quantity");}
+    static void requireRemaining(OrderRepository r,String company,long id){
+        Map<String,Object> totals=OrderFulfillmentLines.balance(r,company,id);long left=number(totals,"quantity")-number(totals,"cancelled")-number(totals,"shipped");
+        require(left>0,"订单没有剩余可履约商品，不能重新审核、预占或恢复履约");
+    }
     /** Public business stage; persisted status remains the fulfillment lifecycle guard. */
     public static String businessStatus(Map<String,Object> row){
         String status=text(row,"status");
         if(!"WAIT_ALLOCATION".equals(status))return status;
-        if(number(row,"demand_quantity")>0&&number(row,"shipped_quantity")>=number(row,"demand_quantity")-number(row,"cancelled_quantity"))return "SHIPPED";
+        long required=number(row,"demand_quantity")-number(row,"cancelled_quantity");
+        if(required>0&&number(row,"shipped_quantity")>=required)return "SHIPPED";
         if(number(row,"shipped_quantity")>0)return "PART_SHIPPED";
         if(!"APPROVED".equals(text(row,"review_status")))return "WAIT_REVIEW";
         if("FULL".equals(text(row,"allocation_status"))){
@@ -39,7 +45,7 @@ public final class OrderReviewPolicy {
         return "";
     }
     public static List<String> releaseBlocks(Map<String,Object> row){
-        List<String> reasons=new ArrayList<>();if("CUTTING".equals(text(row,"status"))){reasons.add("截单处理中，已停止新增履约");return reasons;}if(Arrays.asList("VOIDING","VOIDED").contains(text(row,"status"))){reasons.add("VOIDED".equals(text(row,"status"))?"订单已作废":"订单作废处理中");return reasons;}String system=systemBlock(row);if(!system.isEmpty())reasons.add(system);
+        List<String> reasons=new ArrayList<>();if("CUTTING".equals(text(row,"status"))){reasons.add("截单处理中，已停止新增履约");return reasons;}if(Arrays.asList("VOIDING","VOIDED").contains(text(row,"status"))){reasons.add("VOIDED".equals(text(row,"status"))?"订单已作废":"订单作废处理中");return reasons;}if(noRemaining(row)){reasons.add("订单没有剩余可履约商品");return reasons;}String system=systemBlock(row);if(!system.isEmpty())reasons.add(system);
         if(number(row,"manual_hold")==1)reasons.add("人工挂起："+text(row,"hold_reason"));
         if(!"APPROVED".equals(text(row,"review_status")))reasons.add("尚未审核通过");
         if(!"RESERVED".equals(text(row,"inventory_status"))&&!(number(row,"allocation_allow_partial")==1&&number(row,"reserved_quantity")>number(row,"allocation_quantity")))reasons.add("逻辑预占尚未全部完成");
@@ -50,11 +56,12 @@ public final class OrderReviewPolicy {
     public static void requireRelease(Map<String,Object> row){List<String> reasons=releaseBlocks(row);require(reasons.isEmpty(),String.join("；",reasons));}
     public static void decorate(Map<String,Object> row){
         row.put("business_status",businessStatus(row));
+        row.put("review_required",!noRemaining(row)&&!Arrays.asList("VOIDED","CLOSED","VOIDING").contains(text(row,"status")));
         String block=systemBlock(row);boolean manual=number(row,"manual_hold")==1;
         row.put("system_hold_reason",block);row.put("processing_status",Arrays.asList("VOIDING","VOIDED").contains(text(row,"status"))?text(row,"status"):manual||!block.isEmpty()?"HELD":"NORMAL");
-        row.put("can_review","PENDING".equals(text(row,"review_status"))&&block.isEmpty()&&"WAIT_ALLOCATION".equals(text(row,"status")));
-        row.put("can_hold",!manual&&"WAIT_ALLOCATION".equals(text(row,"status")));
-        row.put("can_resume",manual&&block.isEmpty()&&"WAIT_ALLOCATION".equals(text(row,"status")));
+        row.put("can_review",!noRemaining(row)&&"PENDING".equals(text(row,"review_status"))&&block.isEmpty()&&"WAIT_ALLOCATION".equals(text(row,"status")));
+        row.put("can_hold",!noRemaining(row)&&!manual&&"WAIT_ALLOCATION".equals(text(row,"status")));
+        row.put("can_resume",!noRemaining(row)&&manual&&block.isEmpty()&&"WAIT_ALLOCATION".equals(text(row,"status")));
         List<String> reasons=releaseBlocks(row);row.put("release_eligible",reasons.isEmpty());row.put("release_blocks",reasons);
         row.put("can_allocate",reasons.isEmpty()&&number(row,"allocation_enabled")==1);
     }

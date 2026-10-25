@@ -22,7 +22,7 @@ import static com.oms.messaging.MessageOutbox.*;
  final java.util.concurrent.ThreadPoolExecutor publishers=new java.util.concurrent.ThreadPoolExecutor(2,2,0,TimeUnit.SECONDS,new java.util.concurrent.ArrayBlockingQueue<>(12),r->{Thread t=new Thread(r,"mq-publisher");t.setDaemon(true);return t;},new java.util.concurrent.ThreadPoolExecutor.AbortPolicy());
  final java.util.concurrent.atomic.AtomicInteger rotation=new java.util.concurrent.atomic.AtomicInteger();
  QueueSupervisor supervisor(){return supervisors==null?null:supervisors.getIfAvailable();}
- boolean intake(String type){return Arrays.asList("ORDER_PULL","ORDER_CONVERT","REFUND_PULL","REFUND_CONVERT","EXCHANGE_PULL","EXCHANGE_CONVERT").contains(type);}
+ boolean intake(String type){return Arrays.asList("ORDER_PULL","ORDER_CONVERT","REFUND_PULL","REFUND_CONVERT","REFUND_API_PULL","REFUND_API_DETAIL","EXCHANGE_PULL","EXCHANGE_CONVERT").contains(type);}
  boolean enabled(String type){return supervisor()==null||supervisor().enabled(type);}
  Map<String,Object> policy(String type){return supervisor()==null?Collections.emptyMap():supervisor().policy(type);}
  long setting(String type,String key,long fallback){Map<String,Object> p=policy(type);return p.containsKey(key)?n(p,key):fallback;}

@@ -42,6 +42,27 @@ class RefundBusinessListTest {
         f.db.update("UPDATE oms_refund_return_plan SET result_json=NULL,posted_quantity=0 WHERE id=?",p);assertTrue((Boolean)rows(Collections.singletonMap("task","GIFT")).get(0).get("gift_pending"));
         f.db.update("UPDATE oms_refund_return_plan SET posted_quantity=1 WHERE id=?",p);assertTrue(rows(Collections.singletonMap("task","GIFT")).isEmpty());
     }
+    @Test @SuppressWarnings("unchecked") void completedSupplementKeepsWaybillEvidenceWithoutFalseReceiptTask(){
+        long id=refund(),p=plan("VERIFY",id,true,1,1,1);
+        f.db.update("UPDATE oms_refund_return_plan SET state='CLOSED',parcel_state='NEED_CHECK',parcel_issue=? WHERE id=?",encode(m("code","LOGISTICS_CHANGED","latest_waybill","SUPPLEMENT-1")),p);
+        Map<String,Object> detail=f.workspace.detail("VERIFY",id);
+        assertFalse((Boolean)detail.get("gift_pending"));assertEquals(0,number(object(detail,"gift_progress"),"pending_count"));assertEquals(0,number(object(detail,"gift_progress"),"parcel_issues"));
+        List<Map<String,Object>> context=(List<Map<String,Object>>)object(detail,"progress_context").get("plans");
+        assertEquals("NEED_CHECK",context.get(0).get("parcel_state"));assertEquals(0,number(context.get(0),"parcel_receipt_pending"));
+        assertTrue(rows(Collections.singletonMap("task","GIFT")).isEmpty());assertTrue(rows(Collections.singletonMap("task","ISSUE")).isEmpty());
+        assertEquals("SUPPLEMENT-1",obj(f.db.queryForObject("SELECT parcel_issue FROM oms_refund_return_plan WHERE id=?",String.class,p)).get("latest_waybill"));
+    }
+    @Test void incompleteOrAmbiguousSupplementStillNeedsReceiptReview(){
+        long id=refund(),p=plan("VERIFY",id,true,1,0,0);
+        f.db.update("UPDATE oms_refund_return_plan SET parcel_state='NEED_CHECK',parcel_issue=? WHERE id=?",encode(m("code","LOGISTICS_CHANGED")),p);
+        assertEquals(1,rows(Collections.singletonMap("task","GIFT")).size());assertEquals(1,rows(Collections.singletonMap("task","ISSUE")).size());
+        f.db.update("UPDATE oms_refund_return_plan SET state='CLOSED',accepted_quantity=1,posted_quantity=1,parcel_issue=? WHERE id=?",encode(m("code","APPEND_AFTER_RECEIPT")),p);
+        assertEquals(1,rows(Collections.singletonMap("task","GIFT")).size());assertEquals(1,rows(Collections.singletonMap("task","ISSUE")).size());
+        f.db.update("UPDATE oms_refund_return_plan SET parcel_issue=?,result_json=? WHERE id=?",encode(m("code","LOGISTICS_CHANGED")),encode(m("pending_review_count",1)),p);
+        assertEquals(1,rows(Collections.singletonMap("task","GIFT")).size());assertEquals(1,rows(Collections.singletonMap("task","ISSUE")).size());
+        f.db.update("UPDATE oms_refund_return_plan SET result_json=NULL,posted_quantity=0 WHERE id=?",p);
+        assertEquals(1,rows(Collections.singletonMap("task","GIFT")).size());assertEquals(1,rows(Collections.singletonMap("task","ISSUE")).size());
+    }
     @Test void timeAndStateFiltersUseServerPaginationAndValidateInput(){
         long first=refund(),second=refund();f.db.update("UPDATE oms_refund SET create_time='2026-10-20 23:59:59',funds_state='SUCCESS' WHERE id=?",first);f.db.update("UPDATE oms_refund SET create_time='2026-10-21 00:00:00' WHERE id=?",second);
         Map<String,String> query=new HashMap<>();query.put("createdFrom","2026-10-20");query.put("createdTo","2026-10-20");query.put("fundsState","SUCCESS");assertEquals(first,number(rows(query).get(0),"id"));assertEquals(1,number(f.refunds.businessList("VERIFY",query),"total"));
@@ -55,7 +76,23 @@ class RefundBusinessListTest {
     }
     @Test void databaseQueryCountDoesNotGrowWithPageSize(){
         refund();OrderRepository counted=spy(f.repo);f.refunds.repository=counted;rows(Collections.emptyMap());long single=mockingDetails(counted).getInvocations().stream().filter(call->call.getMethod().getName().equals("db")).count();
-        for(int i=0;i<24;i++)refund();clearInvocations(counted);assertEquals(25,rows(Collections.singletonMap("pageSize","50")).size());long many=mockingDetails(counted).getInvocations().stream().filter(call->call.getMethod().getName().equals("db")).count();assertEquals(single,many);assertTrue(many<=6,"page enrichment must stay batched");
+        for(int i=0;i<24;i++)refund();clearInvocations(counted);assertEquals(25,rows(Collections.singletonMap("pageSize","50")).size());long many=mockingDetails(counted).getInvocations().stream().filter(call->call.getMethod().getName().equals("db")).count();assertEquals(single,many);assertTrue(many<=9,"page enrichment must stay batched");
+    }
+
+    long logisticsOperation(String company,long refund,String action,String state,String status){return f.repo.insert("INSERT INTO oms_refund_operation(company_code,refund_id,request_id,action,state,source_version,platform_version,fee,reason,actor,request_json) VALUES (?,?,?,?,?,1,'1',1,'test','automatic',?)",company,refund,"LOGISTICS_"+UUID.randomUUID(),action,state,encode(m("logistic_status",status)));}
+    @Test void logisticsFiltersUseLatestOperationTenantAndCompletedScopeBeforePagination(){
+        long old=refund(),done=refund(),newer=refund();f.db.update("UPDATE oms_refund SET goods_action='INTERCEPT' WHERE company_code='VERIFY'");f.db.update("UPDATE oms_refund SET state='COMPLETED' WHERE id=?",done);
+        logisticsOperation("VERIFY",old,"INTERCEPT","SUCCESS","");logisticsOperation("VERIFY",old,"INTERCEPT","FAILED","");logisticsOperation("OTHER",old,"INTERCEPT","SUCCESS","");
+        Map<String,String> q=new HashMap<>();q.put("logisticsState","APPLY_FAILED");q.put("pageSize","1");assertEquals(1,number(f.refunds.businessList("VERIFY",q),"total"));Map<String,Object> row=rows(q).get(0);assertEquals(old,number(row,"id"));assertEquals("FAILED",object(object(row,"logistics_summary"),"application").get("state"));q.put("pageNum","2");assertTrue(rows(q).isEmpty());
+        q.clear();q.put("logisticsState","AWAIT_APPLY");assertEquals(newer,number(rows(q).get(0),"id"));q.put("includeCompletedLogistics","1");assertEquals(2,rows(q).size());assertTrue(rows(Collections.singletonMap("logisticsState","RESULT_UNKNOWN")).size()==2);
+        logisticsOperation("VERIFY",old,"INTERCEPT_FEEDBACK","SUCCESS","DELIVERY_INTERCEPT_SUCCESS");q.put("logisticsState","RESULT_UNKNOWN");assertEquals(2,rows(q).size());assertTrue(rows(q).stream().noneMatch(v->number(v,"id")==old));
+        logisticsOperation("VERIFY",old,"INTERCEPT_FEEDBACK","UNKNOWN","DELIVERY_INTERCEPT_FAILED");assertEquals(3,rows(q).size());assertEquals(0,number(f.refunds.businessList("OTHER",q),"total"));q.put("includeCompletedLogistics","2");assertThrows(IllegalArgumentException.class,()->rows(q));assertThrows(IllegalArgumentException.class,()->rows(Collections.singletonMap("logisticsState","SQL")));
+    }
+    @Test void missingWaybillFilterUsesChosenSourceAndWarehouseFacts(){
+        long id=refund(),p=plan("VERIFY",id,false,2,0,0);Map<String,String> q=Collections.singletonMap("logisticsState","WAIT_WAYBILL");assertEquals(1,rows(q).size());
+        f.db.update("UPDATE oms_refund_return_plan SET logistics_source='MANUAL',return_carrier='SF',return_waybill='RET-1' WHERE id=?",p);assertTrue(rows(q).isEmpty());
+        f.db.update("UPDATE oms_refund_return_plan SET return_waybill='',parcel_state='LINKED',result_json=? WHERE id=?",encode(m("documents",Arrays.asList(m("return_sn","THK-L")))),p);assertTrue(rows(q).isEmpty());assertEquals(1,rows(Collections.singletonMap("logisticsState","WAIT_RECEIVE")).size());
+        f.db.update("UPDATE oms_refund_return_plan SET accepted_quantity=2,posted_quantity=1 WHERE id=?",p);assertTrue(rows(Collections.singletonMap("logisticsState","WAIT_RECEIVE")).isEmpty());assertEquals(1,rows(Collections.singletonMap("logisticsState","UNPOSTED")).size());
     }
 
     @Test void refundOnlyReturnScenarioIncludesApprovedIntentBeforeAnyDocumentAndCompletedReceipt(){
@@ -93,11 +130,11 @@ class RefundBusinessListTest {
         long id=f.convert(f.ingest(f.source(1,"2.00","WAIT_SELLER_AGREE")));
         f.workspace.review("VERIFY",id,f.review(id,"DIFFERENCE","KEEP"),"test");
         Map<String,Object> detail=f.workspace.detail("VERIFY",id),interaction=object(detail,"platform_interaction");
-        assertEquals(false,interaction.get("execution_supported"));assertEquals("SOURCE_SYNC",interaction.get("mode"));
+        assertEquals(true,interaction.get("execution_supported"));assertEquals("PLATFORM_OPERATIONS",interaction.get("mode"));
         assertTrue(((List<?>)interaction.get("operations")).isEmpty());assertEquals("NONE",detail.get("funds_state"));
         Map<String,Object> observed=((List<Map<String,Object>>)interaction.get("observations")).get(0);
         assertEquals("WAIT_SELLER_AGREE",observed.get("platform_status"));assertFalse(observed.containsKey("payload"));
-        assertEquals(false,object(detail,"capability").get("platform_agree"));
+        assertEquals(true,object(detail,"capability").get("platform_agree"));
         f.db.update("INSERT INTO oms_refund_operation(company_code,refund_id,request_id,action,state,source_version,platform_version,fee,reason,actor) VALUES ('VERIFY',?,'PLATFORM_PROGRESS_TEST','AGREE','SUCCESS',1,'1',2,'isolated record fixture','test')",id);
         f.db.update("INSERT INTO oms_refund_operation(company_code,refund_id,request_id,action,state,source_version,platform_version,fee,reason,actor) VALUES ('OTHER',?,'FOREIGN_PLATFORM_PROGRESS','AGREE','SUCCESS',1,'1',999,'foreign fixture','test')",id);
         detail=f.workspace.detail("VERIFY",id);interaction=object(detail,"platform_interaction");

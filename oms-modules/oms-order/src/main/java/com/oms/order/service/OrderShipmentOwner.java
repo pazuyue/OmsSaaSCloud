@@ -11,7 +11,7 @@ final class OrderShipmentOwner {
     static void apply(OrderRepository repository,String company,Map<String,Object> shipment,Map<String,Object> order,Map<String,Object> platform,boolean locked) {
         if(repository.gifts()!=null)repository.gifts().guardCurrent(company,order);
         require(text(order,"gift_block_reason").isEmpty(),text(order,"gift_block_reason"));
-        if(!exchange(shipment))return;
+        if(!exchange(shipment)){RefundGuard.requireShipmentReady(repository,company,shipment);return;}
         require(text(order,"refund_block_reason").isEmpty(),text(order,"refund_block_reason"));
         Map<String,Object> e=repository.db().query("SELECT * FROM oms_exchange WHERE company_code=? AND id=? AND order_id=?"+(locked?" FOR UPDATE":""),ROW,company,shipment.get("exchange_id"),order.get("id")).stream().findFirst().orElseThrow(()->new IllegalArgumentException("换出发货单缺少所属换货单"));
         ExchangeFulfillment.planUnchanged(e);if(shipment.containsKey("stock_reference"))ExchangeRounds.guardShipment(e,shipment);

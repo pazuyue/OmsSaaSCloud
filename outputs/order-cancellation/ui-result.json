@@ -1,0 +1,17 @@
+{
+  "pass": true,
+  "checks": [
+    "Real order 151: terminal status, no approval/reservation/recheck, original audit history retained",
+    "Real canceled order selected in the list: batch approval disabled",
+    "Real order 152: terminal status, no approval/reservation/recheck, original audit history retained",
+    "Browser-only partial cancellation fixture: remaining2 can still be reviewed; no review submitted"
+  ],
+  "direct_approval_rejected": {
+    "id": 151,
+    "success": false,
+    "message": "当前业务阶段不允许此操作"
+  },
+  "browser_writes": [],
+  "page_errors": [],
+  "order_states_and_approval_history_unchanged": true
+}

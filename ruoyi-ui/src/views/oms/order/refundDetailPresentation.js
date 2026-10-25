@@ -14,7 +14,7 @@ export function refundApplication(refund) {
     quantity: platform.platform_quantity == null ? null : platform.platform_quantity,
     unit: kind === 'LUCKY_BAG' ? '袋' : kind === 'NORMAL' ? '件' : '套',
     kind, type_label: { NORMAL: '普通商品', STOCKED_BUNDLE: '实物组合单品', VIRTUAL_BUNDLE: '虚拟组合单品', LUCKY_BAG: '福袋' }[kind],
-    original_quantity: original.quantity == null ? null : original.quantity,
+    original_quantity: (refund.sales_context || {}).line && (refund.sales_context || {}).line.quantity != null ? refund.sales_context.line.quantity : original.quantity == null ? null : original.quantity,
     sales_spec: source.length ? source[0].platform_spec || '' : '',
     money: (refund.sales_context || {}).line || {},
     components: bundle ? bundle.components || [] : recipe.components || [],

@@ -11,6 +11,7 @@ import static com.oms.order.service.RefundValues.*;
     @Resource RefundService refunds;
     @Resource RefundParcelPolicy policy;
     @Resource OrderCatalog catalog;
+    static boolean receiptIssueAllowsOriginalSource(Object issue){return issue==null||"LOGISTICS_CHANGED".equals(text(obj(issue),"code"));}
     public Map<String,Object> context(String c,long channel,List<Long> plans){
         require(!plans.isEmpty()&&plans.size()<=100&&new HashSet<>(plans).size()==plans.size(),"退回来源范围无效");
         Map<String,Object> shop=catalog.channels(c).stream().filter(s->number(s,"channel_id")==channel).findFirst().orElseThrow(()->new IllegalArgumentException("店铺不属于当前公司"));
@@ -19,7 +20,7 @@ import static com.oms.order.service.RefundValues.*;
         require(rows.size()==plans.size(),"退回来源不属于当前店铺或公司");List<Map<String,Object>> priorities=new ArrayList<>();
         for(Map<String,Object> row:rows){String created="",basis="PLATFORM_CREATED";try{created=text(RefundValues.parse(text(row,"payload")),"created");if(!created.isEmpty())time(created);}catch(RuntimeException invalid){created="";}
             if(created.isEmpty()){created=text(row,"create_time").replace('T',' ');basis="OMS_CREATED_FALLBACK";}
-            boolean eligible=number(shop,"enabled")==1&&"APPROVED".equals(text(row,"review_state"))&&number(row,"approved_version")==number(row,"version")&&"VALID".equals(text(row,"source_state"))&&!"CLOSED".equals(text(row,"platform_status"))&&!"DONE".equals(text(row,"goods_state"))&&!Arrays.asList("CLOSED","RELEASED","STOPPED").contains(text(row,"plan_state"))&&number(row,"waived_quantity")==0&&row.get("parcel_issue")==null;
+            boolean eligible=number(shop,"enabled")==1&&"APPROVED".equals(text(row,"review_state"))&&number(row,"approved_version")==number(row,"version")&&"VALID".equals(text(row,"source_state"))&&!"CLOSED".equals(text(row,"platform_status"))&&!"DONE".equals(text(row,"goods_state"))&&!Arrays.asList("CLOSED","RELEASED","STOPPED").contains(text(row,"plan_state"))&&number(row,"waived_quantity")==0&&receiptIssueAllowsOriginalSource(row.get("parcel_issue"));
             priorities.add(m("plan_id",row.get("plan_id"),"refund_id",row.get("refund_id"),"refund_created",created,"priority_basis",basis,"eligible",eligible));}
         return m("policy",policy.get(c,channel),"priorities",priorities);
     }

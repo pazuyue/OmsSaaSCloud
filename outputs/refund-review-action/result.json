@@ -1,0 +1,14 @@
+{
+  "refund_id": 91,
+  "refund_sn": "TKbd111011261c4e1ca4b8b1180d36077d",
+  "checks": [
+    ".refund-progress .progress-heading: opens review directly, requires confirmation and cancels without saving",
+    ".refund-footer: opens review directly, requires confirmation and cancels without saving",
+    "Read-only detail navigation scrolls the selected content into the dialog viewport",
+    "Stale-plan UI fixture opens re-review without submitting a replacement plan",
+    "Read-only permission fixture can view the plan but cannot open its editor"
+  ],
+  "page_errors": [],
+  "browser_write_requests": [],
+  "refund_state_unchanged": true
+}

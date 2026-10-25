@@ -13,6 +13,8 @@ def install():
         SELECT 1 role_id UNION SELECT DISTINCT rm.role_id FROM sys_role_menu rm
         JOIN sys_menu m ON m.menu_id=rm.menu_id WHERE m.perms='order:pull:config'
       ) roles WHERE NOT EXISTS(SELECT 1 FROM sys_role_menu existing WHERE existing.role_id=roles.role_id AND existing.menu_id={menu})''')
+    from configure_order_business_settings import install as unified_settings
+    unified_settings()
     return menu
 
 

@@ -1,0 +1,107 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>退货退款自动流程 · 复测验收</title><style>body{font:15px/1.8 system-ui,"Microsoft YaHei",sans-serif;background:#f4f7fb;color:#273b53;margin:0}main{max-width:1440px;margin:28px auto;padding:0 20px}header,article{background:white;border:1px solid #e0e7f0;border-radius:10px;padding:24px;margin-bottom:20px}h1{font-size:25px}h2{font-size:19px}a{color:#1677d2;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-bottom:1px solid #e4eaf2;text-align:left;padding:10px;overflow-wrap:anywhere}th{background:#f5f8fc}.pass{color:#258464;font-weight:600}.protect{color:#a36c18;font-weight:600}.muted{font-size:13px;color:#75869c}pre{white-space:pre-wrap;font-size:12px}code{overflow-wrap:anywhere}.table-scroll{overflow:auto}@media(max-width:800px){main{padding:0 10px}header,article{padding:15px}table{min-width:680px}}</style><main><header><h1>退货退款自动流程：10条用例复测通过</h1><p class="pass">9条自动完成货物与资金闭环；1条累计超额保护通过。</p><p>批次 20261024185730。最终报告使用10张验收订单、16张退款（含差价前置）；另保留2张首轮问题订单、3张退款，未改写原审核或执行记录。</p><p>目标退款人工审核、人工建单、人工下发、人工付款、手工推进流程均为0。第08/09条事先登记商家差价业务授权，采用用途及实际审核、付款来源分别留证。</p><p>401条订单/售后回归、86条渠道接口回归及浏览器验收通过；浏览器无写请求、无脚本错误。已有店铺设置、受保护库存、队列开关及调度配置保持原样。</p><p class="muted">本地SIMULATION平台、TEST仓库。以定向退款号输入模拟来源事件，由真实消息消费者继续处理；未验全局定时接入及真实平台资金。</p><div class="table-scroll"><table><tr><th>用例</th><th>场景</th><th>结论</th><th>业务订单</th><th>退款单</th><th>累计已退</th></tr><tr><td>01</td><td>普通商品全退</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=153">SO0bb6098ca4df4f45839e723bf4712913</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=107">TK91a2bfb31b0149d29e54470371ea7b7d</a></td><td>¥100.00</td></tr><tr><td>02</td><td>买家延后提供返程运单</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=154">SO4cfb2843b0214932b6833afaba1b2e77</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=108">TK1401d87968234ac9a2f029d949d9f07f</a></td><td>¥100.00</td></tr><tr><td>03</td><td>三件购买仅退一件</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=155">SO6030df82dbc048358435abf4bfc402e0</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=110">TK2a99607bf0be46b98a04cf140a3ba6f5</a></td><td>¥100.00</td></tr><tr><td>04</td><td>主商品与赠品完整合退</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=156">SObc17623abcdc42278471c2440e6558f0</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=109">TKec07d72bbc2e4fab9827ddb1d49e3b82</a></td><td>¥100.00</td></tr><tr><td>05</td><td>主商品先实收、赠品待补收</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=163">SOabf3089bcb524023b62944c9fbb6e06b</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=123">TKdc22d684e70f409babe87eaee4433a60</a></td><td>¥100.00</td></tr><tr><td>06</td><td>四张退款最后加入后120秒合包</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=158">SOce6783e337f94580b731397d4189b1d2</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=112">TK0eeb7839328642e8b14c8d1aa391429e</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=113">TKb43f8dd420524428984e2f047fbeafd3</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=114">TKdcc57c72da9546aa90f94c8ec4edb6a1</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=115">TK19e2bc0276c343b69294e1ddaac3c68b</a></td><td>¥1000.00</td></tr><tr><td>07</td><td>套装福袋及套装福袋赠品</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=164">SOafb9dbc75ec6484a8290297945bf8760</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=124">TK626163cad0724e79a88ed96841752b22</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=125">TK6d09eb25de934ed1b53009df0439f5a2</a></td><td>¥300.00</td></tr><tr><td>08</td><td>自动退差价20后退货退款80含赠</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=160">SO9ea254cab05f452aad3eb25823faf00c</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=118">前笔差价20元 · TKaddabca1d45c42928e8805c05e6a6579</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=121">TK6102b61b25584ca086f8bf05c11328f4</a></td><td>¥100.00</td></tr><tr><td>09</td><td>自动退差价20后退货退款100超额保护</td><td class="protect">预期超额保护通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=161">SO5fb2fa30279c4630900c479c8c497ed6</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=119">前笔差价20元 · TK18b692039df54fdbaf837c91d4ead9ba</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=122">TK7060be00492d406a91a6941da82e74b4</a></td><td>¥20.00</td></tr><tr><td>10</td><td>并发重复回传及付款响应丢失</td><td class="pass">自动闭环通过</td><td><a href="http://127.0.0.1:8088/oms-order/business?view=business&amp;orderId=162">SO9427eafba5864a899b1a83e8a0f870e5</a></td><td><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=120">TK6b55c052fab144ef88683c3f80753b7a</a></td><td>¥100.00</td></tr></table></div></header><article><h2>本轮排查与修复</h2><ol><li>补齐退货退款本地方案自动审核；审核时原子预占实际发货来源，检查累计退款预算与明确数量。</li><li>增加指定退款号、金额和业务凭证的差价授权，保留商家授权与自动审核、付款的来源区别。</li><li>修复多笔退款同时追回不同赠品时的错误关联；按原独立商品策略限定归属，无法唯一归属的共同活动保留核对保护。</li><li>修复运单变化导致原THK补收被阻断的问题；原真实回传重新校验分配，待核对计划继续同步原实收，原运单不覆盖。</li><li>纠正库存断言：校验渠道配额账面值不增加；福袋组件可售可以随实物库存恢复，不将其误判为配额扩张。</li><li>修复已完成补收的进度误报：原THK已全量实收入库时，运单变更只保留为物流追溯，不再显示“实收待核对”；真实待分配、待入库或其他异常仍保留待办。</li></ol><p>首轮问题现场及原始回传保留于输出目录的initial-run和before-fix文件。原始数据：<a href="results.json">最终结果JSON</a> · <a href="ui-verification.json">浏览器核对</a> · <a href="backend-tests.json">后端回归</a></p></article><div class="table-scroll"><article id="case01"><h2>01 普通商品全退</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=107">TK91a2bfb31b0149d29e54470371ea7b7d</a></p><ul><li>107：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C01A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p><a href="01-completed.png">01-completed.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 107,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case02"><h2>02 买家延后提供返程运单</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=108">TK1401d87968234ac9a2f029d949d9f07f</a></p><ul><li>108：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C02A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 108,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case03"><h2>03 三件购买仅退一件</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=110">TK2a99607bf0be46b98a04cf140a3ba6f5</a></p><ul><li>110：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C03A</td><td>97 → 98</td><td>97 → 98</td><td>0 / 0</td><td>97 → 97</td><td>97 → 97</td></tr></table><p></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 110,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case04"><h2>04 主商品与赠品完整合退</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=109">TKec07d72bbc2e4fab9827ddb1d49e3b82</a></p><ul><li>109：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C04A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C04G</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 109,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case05"><h2>05 主商品先实收、赠品待补收</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=123">TKdc22d684e70f409babe87eaee4433a60</a></p><p>主品先到、赠品缺少时停止付款；买家补充新运单后，仓库沿原共同THK补收指定赠品，自动退款。原运单与最新运单均保留，不静默覆盖原包裹；未测试另建补充THK模式。</p><p>原运单：<code>RRRET_20261024185730_15</code>；补寄资料：<code>RRSUP_20261024185730_15</code></p><ul><li>123：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C15A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C15G</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p><a href="05-supplement-source-and-original-thk.png">05-supplement-source-and-original-thk.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 123,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case06"><h2>06 四张退款最后加入后120秒合包</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=112">TK0eeb7839328642e8b14c8d1aa391429e</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=113">TKb43f8dd420524428984e2f047fbeafd3</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=114">TKdcc57c72da9546aa90f94c8ec4edb6a1</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=115">TK19e2bc0276c343b69294e1ddaac3c68b</a></p><p>最后加入 2026-10-24 19:13:11；到期 2026-10-24 19:15:11；实际建单 2026-10-24 19:15:35。等待窗口 120 秒，到期后 24 秒建单；4张退款、1张共同入库单。</p><p class="muted">前置平台处理耗时影响了加入间隔；本轮按实际最后加入时间验证120秒等待，没有声称精确复现0/30/60/100秒的加入节奏。</p><ul><li>112：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>113：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>114：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>115：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C06A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C06B</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C06C</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C06D</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 112,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 113,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 114,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 115,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case07"><h2>07 套装福袋及套装福袋赠品</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=124">TK626163cad0724e79a88ed96841752b22</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=125">TK6d09eb25de934ed1b53009df0439f5a2</a></p><p>套装退款只关联赠品套装E/F，福袋退款只关联赠品福袋G/H。八个实际SKU各恢复100，虚拟父项不重复增加实物库存。福袋池仍保留已消费事实，未自动生成新的可售福袋。</p><a href="07-pool-verification.json">福袋池前后核对</a><ul><li>124：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>125：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C17A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C17B</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C17C</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>100 → 100</td><td>99 → 100</td></tr><tr><td>RR20261024185730C17D</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>100 → 100</td><td>99 → 100</td></tr><tr><td>RR20261024185730C17E</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C17F</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C17G</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>100 → 100</td><td>99 → 100</td></tr><tr><td>RR20261024185730C17H</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>100 → 100</td><td>99 → 100</td></tr></table><p><a href="07-target1-correct-gifts.png">07-target1-correct-gifts.png</a> <a href="07-target2-correct-gifts.png">07-target2-correct-gifts.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 124,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 125,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case08"><h2>08 自动退差价20后退货退款80含赠</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=118">前笔差价20元 · TKaddabca1d45c42928e8805c05e6a6579</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=121">TK6102b61b25584ca086f8bf05c11328f4</a></p><p>第一笔20元从待处理状态开始，采用事先登记的商家差价授权，审核及付款均由系统执行。授权登记是明确的业务依据，不代表系统凭金额或关键词识别差价。</p><ul><li>118：用途 差价；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>121：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C08A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr><tr><td>RR20261024185730C08G</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p><a href="08-merchant-authorization-separate-from-auto-review.png">08-merchant-authorization-separate-from-auto-review.png</a> <a href="08-prior20-target80.png">08-prior20-target80.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 118,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 121,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case09"><h2>09 自动退差价20后退货退款100超额保护</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=119">前笔差价20元 · TK18b692039df54fdbaf837c91d4ead9ba</a><br><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=122">TK7060be00492d406a91a6941da82e74b4</a></p><p>第一笔20元从待处理状态开始，采用事先登记的商家差价授权，审核及付款均由系统执行。授权登记是明确的业务依据，不代表系统凭金额或关键词识别差价。</p><p class="protect">第二笔100元超过剩余80元，自动转人工，未同意该退货申请、未付款。此处通过指金额保护符合预期，原轮未覆盖人工后续处理。</p><a href="../return-refund-amount-resolution/验收报告.html">超额转人工的页面修正与申请改80后的补充验收</a><ul><li>119：用途 差价；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li><li>122：用途 待确认；审核 尚未审核；业务 待核对；资金 本退款未付款</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C09A</td><td>99 → 99</td><td>99 → 99</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p><a href="09-over-remaining-protected.png">09-over-remaining-protected.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 119,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  },
+  {
+    &quot;refund_id&quot;: 122,
+    &quot;oms_pay_requests&quot;: 0,
+    &quot;vendor_pay_requests&quot;: 0,
+    &quot;expected&quot;: 0
+  }
+]</pre></details></article></div><div class="table-scroll"><article id="case10"><h2>10 并发重复回传及付款响应丢失</h2><p><a href="http://127.0.0.1:8088/oms-order/businessRefunds?id=120">TK6b55c052fab144ef88683c3f80753b7a</a></p><p>相同签名仓库回传并发发送3次，库存只增加1件。模拟平台付款已成功但响应丢失，原请求保持UNKNOWN记录，由查询确认最终成功；OMS与渠道各只有1笔付款请求。</p><ul><li>120：用途 取消购买；审核 自动售后规则；业务 处理完成；资金 平台退款成功</li></ul><p>人工退款审核事件：0；平台动作均来自自动售后流程。</p><table><tr><th>实际SKU</th><th>公司总库存</th><th>公司可用</th><th>预占 / 分配</th><th>渠道配额</th><th>渠道可售</th></tr><tr><td>RR20261024185730C10A</td><td>99 → 100</td><td>99 → 100</td><td>0 / 0</td><td>99 → 99</td><td>99 → 99</td></tr></table><p><a href="10-pay-response-loss-reconciled.png">10-pay-response-loss-reconciled.png</a></p><details><summary>付款幂等证据</summary><pre>[
+  {
+    &quot;refund_id&quot;: 120,
+    &quot;oms_pay_requests&quot;: 1,
+    &quot;vendor_pay_requests&quot;: 1,
+    &quot;expected&quot;: 1
+  }
+]</pre></details></article></div></main></html>

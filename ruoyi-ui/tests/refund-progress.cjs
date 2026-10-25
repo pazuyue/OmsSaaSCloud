@@ -34,6 +34,11 @@ assert.equal(progress.primary.gifts, true)
 progress = h.refundProgress({ ...done, purchase_progress: { ...done.purchase_progress, pending_count: 1 } }, gift)
 assert.match(progress.title, /实收待核对/)
 assert.equal(progress.complete, false, 'a late unresolved receipt reopens the visible progress')
+const completedSupplement = { ...done, progress_context: { plans: [...done.progress_context.plans.slice(0, 1), { ...done.progress_context.plans[1], state: 'CLOSED', parcel_state: 'NEED_CHECK', parcel_receipt_pending: 0 }] } }
+assert.equal(h.refundProgress(completedSupplement, gift).complete, true, 'a retained waybill change is not an outstanding receipt after full receipt and posting')
+const unresolvedSupplement = { ...completedSupplement, progress_context: { plans: [{ ...completedSupplement.progress_context.plans[1], parcel_receipt_pending: 1 }] } }
+assert.match(h.refundProgress(unresolvedSupplement, gift).title, /实收待核对/, 'unallocated or ambiguous receipt must still require review')
+assert.match(h.refundProgress({ ...completedSupplement, progress_context: { plans: [{ ...completedSupplement.progress_context.plans[1], pending_count: 1 }] } }, gift).title, /实收待核对/, 'a new unassigned receipt remains visible even after the original plan has posted')
 progress = h.refundProgress({ ...done, review_state: 'STALE', state: 'BLOCKED' }, gift)
 assert.equal(progress.primary.tab, 'approval')
 assert.match(progress.title, /方案待重审/)
@@ -76,7 +81,9 @@ async function routing() {
   const code = babel.transformSync(component.script.content, { configFile: false, babelrc: false, plugins: [require.resolve('@babel/plugin-transform-modules-commonjs')] }).code
   new Function('require', 'module', 'exports', code)(name => name === '@/api/order/refund' ? { refundSnapshot: async (...args) => { calls.push(args); return { data: { payload: '{}' } } } } : {}, module, module.exports)
   const methods = module.exports.default.methods
-  const context = { business: true, row: { id: 85, platform_refund_id: 901 }, $nextTick: async () => {}, $refs: { goods: { openPlan: async id => calls.push(id), openIssue: id => calls.push('issue' + id) } } }
+  const context = { business: true, row: { id: 85, platform_refund_id: 901, control_version: 9, purpose: 'UNKNOWN', goods_action: 'UNKNOWN' }, platform: { version: 4, dispute_type: 'REFUND' }, canReview: true, loading: false, $nextTick: async () => {}, $refs: { detailTabs: { $el: { scrollIntoView: () => calls.push('scroll-tabs') } }, goods: { openPlan: async id => calls.push(id), openIssue: id => calls.push('issue' + id) } } }
+  context.prepareReview = methods.prepareReview.bind(context)
+  context.locateTask = methods.locateTask.bind(context)
   await methods.snapshot.call(context, { id: 66 })
   assert.deepEqual(calls[0], [901, 66], 'business and platform refund IDs are distinct')
   await methods.locateTask.call(context, { tab: 'goods', plan_id: 43, gifts: true })
@@ -84,5 +91,26 @@ async function routing() {
   assert.equal(calls[1], 43)
   await methods.locateTask.call(context, { tab: 'platform' })
   assert.equal(context.detailTab, 'platform')
+  assert.equal(calls[2], 'scroll-tabs', 'viewing another progress track brings its content into the visible dialog area')
+  await methods.locateTask.call(context, { key: 'review', tab: 'approval' })
+  assert.equal(context.reviewVisible, true, 'the review task opens the form directly instead of only changing an offscreen tab')
+  assert.equal(context.form.control_version, 9)
+  assert.equal(context.form.platform_version, 4, 'adoption still uses the current source and business versions')
+  assert.equal(context.confirmed, false, 'opening a review must not submit or confirm it')
+  context.reviewVisible = false
+  await methods.openTask.call({ ...context, currentTask: { key: 'review', tab: 'approval' } })
+  assert.equal(context.reviewVisible, true, 'the footer action uses the same direct review behavior')
+  context.reviewVisible = false
+  context.canReview = false
+  await methods.locateTask.call(context, { key: 'review', tab: 'approval' })
+  assert.equal(context.reviewVisible, false, 'a user without review permission can inspect the plan but cannot open its editor')
+  assert.equal(context.detailTab, 'approval')
+  context.canReview = true
+  await methods.openProgressTrack.call(context, { key: 'review', tab: 'approval' })
+  assert.equal(context.reviewVisible, false, 'the track detail link remains a read-only navigation action')
 }
 routing().then(() => console.log('PASS refund progress, platform consent/funds separation, gift loading, stale plans and task navigation')).catch(error => { console.error(error); process.exitCode = 1 })
+
+const mixed = h.refundProgress({ ...done, goods_action: 'MIXED', goods_state: 'WAIT_ACTION', purchase_progress: {}, progress_context: {plans: []}, goods_tasks: [{action: 'CANCEL',state: 'WAIT_WAREHOUSE',result_message: '原仓截单处理中'}]}, gift)
+assert.equal(mixed.tracks.find(t => t.key === 'purchase').task.tab, 'current')
+assert.equal(mixed.tracks.find(t => t.key === 'purchase').task.focus, 'fulfillment')

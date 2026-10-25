@@ -1,0 +1,54 @@
+{
+  "tables": [
+    {
+      "table": "oms_refund_goods_task",
+      "documented_columns": 22,
+      "comment": "退款按原商品来源拆分的货物任务，支持同单未发取消与已发退回"
+    },
+    {
+      "table": "oms_refund_flow_policy",
+      "documented_columns": 7,
+      "comment": "店铺退款自动流程设置，接口能力开关与自动业务规则分开维护"
+    },
+    {
+      "table": "oms_refund_flow_task",
+      "documented_columns": 9,
+      "comment": "按退款单独调度的售后自动流程，不在公司扫描线程等待平台网络"
+    },
+    {
+      "table": "oms_refund_api_cursor",
+      "documented_columns": 13,
+      "comment": "普通退款官方接口增量同步，补足JDP对交易完成后售后的不保障范围"
+    },
+    {
+      "table": "oms_refund_api_item",
+      "documented_columns": 11,
+      "comment": "普通退款列表接入与完整详情任务，列表不逐条同步等待远程详情"
+    },
+    {
+      "table": "channel_refund_access",
+      "documented_columns": 14,
+      "comment": "店铺退款查询、业务操作与实际付款权限及子账号授权"
+    },
+    {
+      "table": "channel_refund_sim",
+      "documented_columns": 5,
+      "comment": "仅本地TEST模拟退款源，非官方平台退款数据"
+    },
+    {
+      "table": "channel_refund_command",
+      "documented_columns": 10,
+      "comment": "退款平台写请求幂等记录，不同退款独立执行"
+    }
+  ],
+  "indexes": {
+    "oms_order_shipment_line.refund_original_line": "company_code,order_line_id,id\t退款按原商品行批量查询各仓实发数量",
+    "oms_refund_goods_task.return_source": "company_code,shipment_line_id,state,id\t原发货来源退回额度校验，防止并发售后超占",
+    "oms_refund_operation.execution_scope": "company_code,refund_id,action,state,id\t检查原平台操作和付款幂等状态",
+    "oms_refund_api_item.shop_work": "company_code,channel_id,state,id\t店铺普通退款详情待处理及失败查询"
+  },
+  "original_source_explain": "1\tSIMPLE\toms_order_shipment_line\tNULL\tref\treceipt_once,shipment_lines,shipment_sku,refund_original_line\trefund_original_line\t210\tconst,const\t1\t100.00\tNULL",
+  "order_queue_concurrency": 15,
+  "queues": "EXCHANGE_CONVERT\t1\tRUNNING\nEXCHANGE_PULL\t1\tRUNNING\nORDER_CONVERT\t2\tRUNNING\nORDER_PULL\t2\tRUNNING\nPRODUCT_BIND\t1\tRUNNING\nPRODUCT_PULL\t2\tRUNNING\nREFUND_API_DETAIL\t1\tRUNNING\nREFUND_API_PULL\t1\tRUNNING\nREFUND_CONVERT\t1\tRUNNING\nREFUND_FLOW\t1\tRUNNING\nREFUND_GOODS\t1\tRUNNING\nREFUND_PLATFORM\t1\tRUNNING\nREFUND_PULL\t1\tRUNNING\nSALES_DOCUMENT\t2\tRUNNING",
+  "business_backfill": false
+}

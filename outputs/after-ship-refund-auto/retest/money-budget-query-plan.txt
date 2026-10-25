@@ -1,0 +1,5 @@
+Existing original_scope is reused; no duplicate index. Exact suborder seek, not a company-wide aggregate.
+1	SIMPLE	x	NULL	ref	identity_scope,platform_number,original_scope,convert_due,document_tid,document_modified,document_oid	original_scope	726	const,const,const,const	2	100.00	Using where; Using index
+1	SIMPLE	y	NULL	eq_ref	sn_scope,source_scope,work_scope,original_scope,platform_number,due	source_scope	210	qm_oms_saas_order.x.company_code,qm_oms_saas_order.x.id	1	100.00	NULL
+original_scope	company_code,channel_id,platform_tid,platform_oid,id
+自动规则JSON：小额免退开关及子单累计上限、发货后剩余全额取消、实收无差异自动结案、平台操作与付款上限；各开关默认关闭

@@ -1,0 +1,90 @@
+{
+  "regression_groups": [
+    {
+      "name": "退款接入、审核、分项履约和平台付款边界",
+      "tests": 210
+    },
+    {
+      "name": "退货、合包、入库及共用单据",
+      "tests": 355
+    },
+    {
+      "name": "库存事务、并发出库/取消、只读回执接口",
+      "tests": 105
+    },
+    {
+      "name": "渠道授权、平台协议、幂等及凭证上传",
+      "tests": 81
+    },
+    {
+      "name": "消息队列及关联流程",
+      "tests": 245
+    }
+  ],
+  "groups_overlap": true,
+  "frontend_test_groups": 10,
+  "backend_build": "passed",
+  "frontend_production_build": "passed",
+  "browser_acceptance": {
+    "checks": [
+      "real completed refund has local fulfillment, platform interactions and separate final funds",
+      "merchant automation/payment/API supplement remain disabled",
+      "all five new queue types are registered; previous pause modes preserved",
+      "real browser: fulfillment appears once; confirmed money and platform actions are separate",
+      "browser fixture: independently confirm 3 unshipped cancellation units and 2 shipped return units; warehouse selector loads",
+      "browser fixture: current progress names the original warehouse cancellation wait",
+      "browser fixture: successful platform review and unknown payment remain distinct from confirmed money"
+    ],
+    "real_refund": "TKbf9a7606ecfc4f60bcd094acf43a2a61",
+    "browser_fixtures_only": [
+      "mixed partial warehouse scope",
+      "pending warehouse cancellation",
+      "unknown payment UI"
+    ],
+    "list_page_50_ms": [
+      21.2,
+      27.9,
+      36.9
+    ],
+    "writes": [],
+    "browser_errors": [],
+    "protected_stock_unchanged": true,
+    "real_platform_payment_tested": false,
+    "queues": [
+      {
+        "type": "REFUND_FLOW",
+        "mode": "RUNNING",
+        "state": "RUNNING",
+        "consumers": 1
+      },
+      {
+        "type": "REFUND_GOODS",
+        "mode": "RUNNING",
+        "state": "RUNNING",
+        "consumers": 1
+      },
+      {
+        "type": "REFUND_PLATFORM",
+        "mode": "RUNNING",
+        "state": "RUNNING",
+        "consumers": 1
+      },
+      {
+        "type": "REFUND_API_PULL",
+        "mode": "RUNNING",
+        "state": "RUNNING",
+        "consumers": 1
+      },
+      {
+        "type": "REFUND_API_DETAIL",
+        "mode": "RUNNING",
+        "state": "RUNNING",
+        "consumers": 1
+      }
+    ]
+  },
+  "schema_report": "schema.json",
+  "live_inventory_receipt": "HTTP 200 / MISSING；只查询未执行调整",
+  "real_platform_financial_execution": false,
+  "merchant_automation_and_payment_default_enabled": false
+}

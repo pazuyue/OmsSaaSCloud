@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "01: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "02A: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "02B: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "03: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "04: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "05: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "06: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "07: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "08: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "09: stock, selling quota, original receipt deduplication and one-time payment verified",
+    "10: stock, selling quota, original receipt deduplication and one-time payment verified"
+  ],
+  "browser_errors": [],
+  "browser_writes": [],
+  "protection": {
+    "older_merged_stock_unchanged": true,
+    "older_preceding_stock_unchanged": true,
+    "old_settings_unchanged": true,
+    "queue_controls_unchanged": true,
+    "job_controls_unchanged": true
+  },
+  "channel_quota_policy": "Return receipts restore warehouse/public stock; consumed shop selling quota remains unchanged."
+}

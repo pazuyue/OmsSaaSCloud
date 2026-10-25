@@ -1,0 +1,682 @@
+{
+  "refunds": {
+    "96": {
+      "state": "COMPLETED",
+      "review_state": "APPROVED",
+      "review_by": "自动售后规则",
+      "control_version": 6,
+      "goods_state": "DONE",
+      "funds_state": "SUCCESS",
+      "events": [
+        {
+          "id": 459,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；申请内容未变，保留已审核方案；UPDATED",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:30"
+        },
+        {
+          "id": 450,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:38:14"
+        },
+        {
+          "id": 448,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:37:32"
+        },
+        {
+          "id": 447,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #61 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:37:32"
+        },
+        {
+          "id": 446,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:37:32"
+        },
+        {
+          "id": 431,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:35:30"
+        },
+        {
+          "id": 430,
+          "action": "RETURN_PARCEL",
+          "message": "自动关联；退回计划 #61 已关联退回包裹；同运单不合并退款，实收按商品来源处理；依据：同店铺、同原平台订单、同承运商运单、同退回仓；配置版本 1；凭证：PLATFORM / 平台退款 8820261023150323071 / 来源版本 3",
+          "actor": "自动合包",
+          "create_time": "2026-10-23 16:35:30"
+        },
+        {
+          "id": 427,
+          "action": "GOODS",
+          "message": "创建退回安排 #61：1 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 100.00；前次退款 0；剩余 100.00；买家收货状态 BUYER_NOT_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:35:21"
+        },
+        {
+          "id": 426,
+          "action": "REVIEW",
+          "message": "审核用途：CANCEL；货物方案：MIXED；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 100.00；前次退款 0；剩余 100.00；买家收货状态 BUYER_NOT_RECEIVED。本次未调用平台付款或修改库存。",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:35:19"
+        },
+        {
+          "id": 425,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:35:19"
+        },
+        {
+          "id": 399,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 16:33:04"
+        },
+        {
+          "id": 386,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 15:35:03"
+        },
+        {
+          "id": 367,
+          "action": "CONVERT",
+          "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+          "actor": "队列转单",
+          "create_time": "2026-10-23 15:13:46"
+        }
+      ]
+    },
+    "97": {
+      "state": "COMPLETED",
+      "review_state": "APPROVED",
+      "review_by": "自动售后规则",
+      "control_version": 7,
+      "goods_state": "DONE",
+      "funds_state": "SUCCESS",
+      "events": [
+        {
+          "id": 462,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；申请内容未变，保留已审核方案；UPDATED",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:40:38"
+        },
+        {
+          "id": 457,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:12"
+        },
+        {
+          "id": 441,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 440,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #59 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 439,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 420,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:34:33"
+        },
+        {
+          "id": 419,
+          "action": "RETURN_PARCEL",
+          "message": "自动关联；退回计划 #59 已关联退回包裹；同运单不合并退款，实收按商品来源处理；依据：同店铺、同原平台订单、同承运商运单、同退回仓；配置版本 1；凭证：PLATFORM / 平台退款 8820261023150323081 / 来源版本 3",
+          "actor": "自动合包",
+          "create_time": "2026-10-23 16:34:33"
+        },
+        {
+          "id": 418,
+          "action": "GOODS",
+          "message": "创建退回安排 #59：2 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 200.00；前次退款 0；剩余 200.00；买家收货状态 BUYER_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:34:24"
+        },
+        {
+          "id": 417,
+          "action": "REVIEW",
+          "message": "审核用途：CANCEL；货物方案：MIXED；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 200.00；前次退款 0；剩余 200.00；买家收货状态 BUYER_RECEIVED。本次未调用平台付款或修改库存。",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:22"
+        },
+        {
+          "id": 416,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:22"
+        },
+        {
+          "id": 400,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 16:33:04"
+        },
+        {
+          "id": 387,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 15:35:09"
+        },
+        {
+          "id": 368,
+          "action": "CONVERT",
+          "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+          "actor": "队列转单",
+          "create_time": "2026-10-23 15:14:06"
+        }
+      ]
+    },
+    "99": {
+      "state": "COMPLETED",
+      "review_state": "APPROVED",
+      "review_by": "自动售后规则",
+      "control_version": 6,
+      "goods_state": "DONE",
+      "funds_state": "SUCCESS",
+      "events": [
+        {
+          "id": 458,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；申请内容未变，保留已审核方案；UPDATED",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:14"
+        },
+        {
+          "id": 451,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:38:16"
+        },
+        {
+          "id": 438,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 437,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #57 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 436,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 413,
+          "action": "SCOPE_CANCEL",
+          "message": "任务 #2 已取消 2；库存请求 CFRGTdfcd4690997b4548a4d00833fb3a67c0",
+          "actor": "退款分项截单",
+          "create_time": "2026-10-23 16:34:02"
+        },
+        {
+          "id": 408,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:33:32"
+        },
+        {
+          "id": 407,
+          "action": "RETURN_PARCEL",
+          "message": "自动关联；退回计划 #57 已关联退回包裹；同运单不合并退款，实收按商品来源处理；依据：同店铺、同原平台订单、同承运商运单、同退回仓；配置版本 1；凭证：PLATFORM / 平台退款 8820261023150323091 / 来源版本 3",
+          "actor": "自动合包",
+          "create_time": "2026-10-23 16:33:32"
+        },
+        {
+          "id": 406,
+          "action": "GOODS",
+          "message": "创建退回安排 #57：1 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 300.00；前次退款 0；剩余 300.00；买家收货状态 BUYER_NOT_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:33:31"
+        },
+        {
+          "id": 405,
+          "action": "REVIEW",
+          "message": "审核用途：CANCEL；货物方案：MIXED；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 300.00；前次退款 0；剩余 300.00；买家收货状态 BUYER_NOT_RECEIVED。本次未调用平台付款或修改库存。",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:33:28"
+        },
+        {
+          "id": 404,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:33:28"
+        },
+        {
+          "id": 401,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 16:33:06"
+        },
+        {
+          "id": 388,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 15:35:17"
+        },
+        {
+          "id": 373,
+          "action": "CONVERT",
+          "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+          "actor": "队列转单",
+          "create_time": "2026-10-23 15:29:56"
+        }
+      ]
+    },
+    "101": {
+      "state": "COMPLETED",
+      "review_state": "APPROVED",
+      "review_by": "自动售后规则",
+      "control_version": 6,
+      "goods_state": "DONE",
+      "funds_state": "SUCCESS",
+      "events": [
+        {
+          "id": 461,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；申请内容未变，保留已审核方案；UPDATED",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:40:06"
+        },
+        {
+          "id": 460,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:32"
+        },
+        {
+          "id": 455,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "已有仓库单，沿用原单查询进度",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 454,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 453,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #60 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 452,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 435,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:17"
+        },
+        {
+          "id": 434,
+          "action": "RETURN_PARCEL",
+          "message": "自动关联；退回计划 #62 已关联退回包裹；同运单不合并退款，实收按商品来源处理；依据：同店铺、同原平台订单、同承运商运单、同退回仓；配置版本 1；凭证：PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+          "actor": "自动合包",
+          "create_time": "2026-10-23 16:36:17"
+        },
+        {
+          "id": 433,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #62：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:36:17"
+        },
+        {
+          "id": 429,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:35:30"
+        },
+        {
+          "id": 428,
+          "action": "RETURN_PARCEL",
+          "message": "自动关联；退回计划 #60 已关联退回包裹；同运单不合并退款，实收按商品来源处理；依据：同店铺、同原平台订单、同承运商运单、同退回仓；配置版本 1；凭证：PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+          "actor": "自动合包",
+          "create_time": "2026-10-23 16:35:30"
+        },
+        {
+          "id": 424,
+          "action": "GOODS",
+          "message": "创建退回安排 #60：1 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 100.00；前次退款 20.00；剩余 80.00；买家收货状态 BUYER_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:35:01"
+        },
+        {
+          "id": 423,
+          "action": "REVIEW",
+          "message": "审核用途：CANCEL；货物方案：MIXED；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 100.00；前次退款 20.00；剩余 80.00；买家收货状态 BUYER_RECEIVED。本次未调用平台付款或修改库存。",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:59"
+        },
+        {
+          "id": 422,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:59"
+        },
+        {
+          "id": 402,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 16:33:06"
+        },
+        {
+          "id": 390,
+          "action": "PLATFORM_UPDATE",
+          "message": "平台退款更新已保存；未覆盖已采用方案；UPDATED",
+          "actor": "admin",
+          "create_time": "2026-10-23 15:35:27"
+        },
+        {
+          "id": 376,
+          "action": "CONVERT",
+          "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+          "actor": "队列转单",
+          "create_time": "2026-10-23 15:30:28"
+        }
+      ]
+    }
+  },
+  "stocks": {
+    "06": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C06A",
+          "100",
+          "100",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C06V1",
+          "AF20261023150323C06A",
+          "100",
+          "100",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C06A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "07": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C07A",
+          "100",
+          "100",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C07V1",
+          "AF20261023150323C07A",
+          "100",
+          "100",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C07A",
+          "98",
+          "0",
+          "0",
+          "98",
+          "0"
+        ]
+      ]
+    },
+    "08": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C08A",
+          "100",
+          "100",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C08V1",
+          "AF20261023150323C08A",
+          "1",
+          "1",
+          "0"
+        ],
+        [
+          "AF20261023150323C08V2",
+          "AF20261023150323C08A",
+          "99",
+          "99",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C08A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    },
+    "09": {
+      "company_columns": [
+        "sku",
+        "total",
+        "available",
+        "reserved",
+        "allocated"
+      ],
+      "company": [
+        [
+          "AF20261023150323C09A",
+          "100",
+          "100",
+          "0",
+          "0"
+        ],
+        [
+          "AF20261023150323C09G",
+          "100",
+          "100",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse_columns": [
+        "store",
+        "sku",
+        "actual",
+        "available",
+        "locked"
+      ],
+      "warehouse": [
+        [
+          "AF20261023150323C09V1",
+          "AF20261023150323C09A",
+          "100",
+          "100",
+          "0"
+        ],
+        [
+          "AF20261023150323C09V1",
+          "AF20261023150323C09G",
+          "100",
+          "100",
+          "0"
+        ]
+      ],
+      "channel_columns": [
+        "sku",
+        "available",
+        "reserved",
+        "allocated",
+        "quota",
+        "quota_reserved"
+      ],
+      "channel": [
+        [
+          "AF20261023150323C09A",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ],
+        [
+          "AF20261023150323C09G",
+          "99",
+          "0",
+          "0",
+          "99",
+          "0"
+        ]
+      ]
+    }
+  }
+}

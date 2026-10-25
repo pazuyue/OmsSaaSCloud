@@ -8,6 +8,8 @@ import java.util.*;
 
 @FeignClient(contextId="orderWarehouseAllocationClient",name="oms-inventory",configuration=OrderShipmentWmsFeignConfig.class)
 public interface OrderWarehouseClient {
+    @PostMapping("/orderStock/internal/fulfillment-adjustments/receipts") R<List<Map<String,Object>>> adjustmentReceipts(@RequestParam("company_code") String company,@RequestBody List<String> requests,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @GetMapping("/orderStock/internal/fulfillment-adjustment/{request}") R<Map<String,Object>> adjustmentReceipt(@RequestParam("company_code") String company,@PathVariable("request") String request,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/exchange-stock") R<List<Map<String,Object>>> exchangeStock(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/return-basis") R<Map<String,Object>> returnBasis(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);
     @PostMapping("/orderStock/internal/fulfillment-adjustment") R<Map<String,Object>> adjust(@RequestParam("company_code") String company,@RequestBody Map<String,Object> command,@RequestHeader(SecurityConstants.FROM_SOURCE) String source);

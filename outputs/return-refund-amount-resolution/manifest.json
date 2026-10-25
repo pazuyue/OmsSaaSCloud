@@ -1,0 +1,307 @@
+{
+  "run_id": "20261024203745",
+  "cases": {
+    "08": {
+      "key": "08",
+      "slot": "08",
+      "title": "超额转人工后协商修改平台申请为80元",
+      "prefix": "RR20261024203745C08",
+      "case_id": "20261024203745_08",
+      "sku": "RR20261024203745C08A",
+      "seller": "RR20261024203745C08",
+      "channel_name": "[退货退款自动验收08] 超额转人工后协商修改平台申请为80元 20261024203745 08",
+      "created": "2026-10-24 20:37:45",
+      "platform_tid": "862026102420374508",
+      "platform_oid": "8620261024203745081",
+      "quantity": 1,
+      "received": true,
+      "warehouses": [
+        {
+          "code": "RR20261024203745C08V",
+          "quantity": 0,
+          "package_count": 1,
+          "id": 137
+        }
+      ],
+      "refunds": {
+        "prior": {
+          "refund_id": "8920261024203745081",
+          "amount": "20",
+          "oid": "8620261024203745081",
+          "quantity": 1,
+          "returns": false,
+          "source_sequence": 1,
+          "injected": true,
+          "id": 126,
+          "refund_sn": "TKd21d7c49f0204063928822f88b8a9ea6",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=126"
+        },
+        "target": {
+          "refund_id": "8920261024203745082",
+          "amount": "80.00",
+          "oid": "8620261024203745081",
+          "quantity": 1,
+          "returns": true,
+          "source_sequence": 3,
+          "injected": true,
+          "id": 127,
+          "refund_sn": "TK3436e3c6902146dba119722a2a2482d8",
+          "url": "http://127.0.0.1:8088/oms-order/businessRefunds?id=127",
+          "buyer_sent": true,
+          "buyer_sent_at": "2026-10-24T20:40:02.556012"
+        }
+      },
+      "owner_code": "SAASQM01",
+      "real_store_code": "TW201",
+      "connection_id": 22,
+      "channel_id": 110,
+      "configured": true,
+      "physical_skus": [
+        "RR20261024203745C08A",
+        "RR20261024203745C08G"
+      ],
+      "gift": "RR20261024203745C08G",
+      "received_skus": [
+        "RR20261024203745C08A",
+        "RR20261024203745C08G"
+      ],
+      "sales": [
+        {
+          "sku": "RR20261024203745C08A",
+          "quantity": 1,
+          "payment": 100,
+          "oid": "8620261024203745081"
+        }
+      ],
+      "gift_group": 20,
+      "gift_shop_group": 18,
+      "initial_stock": {
+        "company": [
+          [
+            "RR20261024203745C08A",
+            "100",
+            "100",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "100",
+            "100",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08A",
+            "100",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08G",
+            "100",
+            "100",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024203745C08A",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "0",
+            "0",
+            "0",
+            "100",
+            "0"
+          ]
+        ]
+      },
+      "source_order_ready": true,
+      "platform_id": 249,
+      "order_id": 165,
+      "order_sn": "SOb0fa1b2c3d4e4c50908833ab80e37064",
+      "prepared": true,
+      "shipment_ready": true,
+      "stock_before_refunds": {
+        "company": [
+          [
+            "RR20261024203745C08A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08A",
+            "99",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08G",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024203745C08A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "order_url": "http://127.0.0.1:8088/oms-order/business?view=business&orderId=165",
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false,
+      "deployed_rules": {
+        "auto_return_review": 1,
+        "return_review_limit": "500.00",
+        "auto_difference": 1,
+        "small_refund_enabled": 0,
+        "small_refund_limit": "0.00",
+        "auto_shipped_cancel": 0,
+        "auto_finish_return": 1,
+        "auto_full_cancel": 0,
+        "auto_agree_return": 1,
+        "auto_review": 1,
+        "auto_pay": 1,
+        "auto_cancel_feedback": 1,
+        "auto_intercept": 1,
+        "funds_owner": "OMS",
+        "payment_limit": "500.00",
+        "seller_address_id": "1",
+        "channel_id": 110,
+        "enabled": 1,
+        "revision": 2,
+        "api_sync": {
+          "enabled": 0,
+          "detail_counts": [],
+          "detail_errors": []
+        }
+      },
+      "difference_authorization": {
+        "id": 3,
+        "company_code": "QM",
+        "channel_id": 110,
+        "platform_tid": "862026102420374508",
+        "platform_oid": "8620261024203745081",
+        "refund_id": "8920261024203745081",
+        "amount": 20.0,
+        "purpose": "DIFFERENCE",
+        "reference_sn": "RR_DIFF_20261024203745_08",
+        "evidence": "[本地TEST商家协议] 此订单子单明确优惠补差20元，保留原购买商品及赠品；授权在退款接入前登记。",
+        "state": "ACTIVE",
+        "used_refund_id": null,
+        "expires_at": "2026-10-25T20:38:08",
+        "authorized_by": "admin",
+        "used_at": null,
+        "revoked_by": "",
+        "control_version": 1,
+        "create_time": "2026-10-24T20:38:08"
+      },
+      "stock_after_difference": {
+        "company": [
+          [
+            "RR20261024203745C08A",
+            "99",
+            "99",
+            "0",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "99",
+            "99",
+            "0",
+            "0"
+          ]
+        ],
+        "warehouse": [
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08A",
+            "99",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024203745C08V",
+            "RR20261024203745C08G",
+            "99",
+            "99",
+            "0"
+          ]
+        ],
+        "channel": [
+          [
+            "RR20261024203745C08A",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ],
+          [
+            "RR20261024203745C08G",
+            "99",
+            "0",
+            "0",
+            "99",
+            "0"
+          ]
+        ]
+      },
+      "corrected": true,
+      "receipts": {
+        "64_FINAL": {
+          "quantities": {
+            "RR20261024203745C08A": 1,
+            "RR20261024203745C08G": 1
+          },
+          "partial": false,
+          "sent_at": "2026-10-24T20:42:30.083314",
+          "concurrent_identical_callbacks": 1
+        }
+      },
+      "done": true
+    }
+  },
+  "scope": "new shops only; source-ID intake events, real MQ continuations; global scheduled intake not covered",
+  "connection_id": 22
+}

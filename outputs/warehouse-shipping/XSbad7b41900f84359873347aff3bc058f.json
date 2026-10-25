@@ -1,0 +1,90 @@
+{
+  "shipment_id": 114,
+  "shipment_sn": "XSbad7b41900f84359873347aff3bc058f",
+  "order_id": 164,
+  "external_order": "SIMOUT_5c598c3a30b343b3bcae",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 8,
+  "message_id": "SIM_COMPLETE_XSbad7b41900f84359873347aff3bc058f",
+  "package_code": "SIMPKG_XSbad7b41900f84359873347aff3bc058f",
+  "express_code": "TEST-SF-XSbad7b41900f84359873347aff3bc058f",
+  "outbound_time": "2026-10-24 19:28:43",
+  "plans": [
+    {
+      "id": 165,
+      "sku_sn": "RR20261024185730C17A",
+      "quantity": 1,
+      "platform_oid": "8620261024185730171",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17A_RR20261024185730C17V"
+    },
+    {
+      "id": 166,
+      "sku_sn": "RR20261024185730C17B",
+      "quantity": 1,
+      "platform_oid": "8620261024185730171",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17B_RR20261024185730C17V"
+    },
+    {
+      "id": 167,
+      "sku_sn": "RR20261024185730C17C",
+      "quantity": 1,
+      "platform_oid": "8620261024185730172",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17C_RR20261024185730C17V"
+    },
+    {
+      "id": 168,
+      "sku_sn": "RR20261024185730C17D",
+      "quantity": 1,
+      "platform_oid": "8620261024185730172",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17D_RR20261024185730C17V"
+    },
+    {
+      "id": 169,
+      "sku_sn": "RR20261024185730C17F",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17F_RR20261024185730C17V"
+    },
+    {
+      "id": 170,
+      "sku_sn": "RR20261024185730C17E",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17E_RR20261024185730C17V"
+    },
+    {
+      "id": 171,
+      "sku_sn": "RR20261024185730C17G",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17G_RR20261024185730C17V"
+    },
+    {
+      "id": 172,
+      "sku_sn": "RR20261024185730C17H",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "RR20261024185730C17V",
+      "batch_code": "AFB_RR20261024185730C17H_RR20261024185730C17V"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XSbad7b41900f84359873347aff3bc058f</deliveryOrderCode><deliveryOrderId>SIMOUT_5c598c3a30b343b3bcae</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XSbad7b41900f84359873347aff3bc058f</outBizCode><totalOrderLines>8</totalOrderLines><orderConfirmTime>2026-10-24 19:28:43</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>165</orderLineNo><itemCode>RR20261024185730C17A</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17A_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>166</orderLineNo><itemCode>RR20261024185730C17B</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17B_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>167</orderLineNo><itemCode>RR20261024185730C17C</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17C_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>168</orderLineNo><itemCode>RR20261024185730C17D</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17D_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>169</orderLineNo><itemCode>RR20261024185730C17F</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17F_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>170</orderLineNo><itemCode>RR20261024185730C17E</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17E_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>171</orderLineNo><itemCode>RR20261024185730C17G</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17G_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>172</orderLineNo><itemCode>RR20261024185730C17H</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_RR20261024185730C17H_RR20261024185730C17V</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XSbad7b41900f84359873347aff3bc058f</packageCode><expressCode>TEST-SF-XSbad7b41900f84359873347aff3bc058f</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>RR20261024185730C17A</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17B</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17C</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17D</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17F</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17E</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17G</itemCode><quantity>1</quantity></item><item><itemCode>RR20261024185730C17H</itemCode><quantity>1</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XSbad7b41900f84359873347aff3bc058f",
+    "quantity": 8,
+    "status": "SHIPPED",
+    "shipped_quantity": 8,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XSbad7b41900f84359873347aff3bc058f",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

@@ -1,0 +1,3125 @@
+{
+  "checks": [
+    "Real mixed case: canceled2 and returned1 remain separate; legacy release unknown; original shipment link uses its number",
+    "Real common THK: purchase1 + gift1 retain their own quantities; gift filter and parcel link work through read-only requests",
+    "Retained kit/bag case: nine original source rows preserve sales parent, gift identity and separate 件/套 units",
+    "Browser fixture: stopped task excluded by default, partial receipt, unposted bad goods, review and whole-parcel pending remain distinct",
+    "Browser fixture: waived2 remains separate from received1 and is not counted as stock received",
+    "Fresh automatically reviewed cancellation: original receipt confirms release1, not a derived task quantity"
+  ],
+  "browser_writes": [],
+  "page_errors": [],
+  "refund_states_unchanged": true,
+  "inventory_unchanged": true,
+  "real_reports": {
+    "85": {
+      "scope": "REFUND",
+      "refund_id": 85,
+      "order_id": 137,
+      "cancellations": [],
+      "returns": [
+        {
+          "sku_sn": "RF20261022113125A",
+          "goods_name": "[复合退货验收] sku",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": "[复合退货验收] 购买kit",
+          "parent_sku_sn": "RF20261022113125K",
+          "source_kind": "BUNDLE",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-43",
+          "plan_id": 43,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 2,
+          "accepted_quantity": 2,
+          "posted_quantity": 2,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 2,
+          "bad_quantity": 0,
+          "posted_good_quantity": 2,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_0",
+              "good_quantity": 2,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 43,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:07",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125B",
+          "goods_name": "[复合退货验收] b",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": "[复合退货验收] 购买kit",
+          "parent_sku_sn": "RF20261022113125K",
+          "source_kind": "BUNDLE",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-44",
+          "plan_id": 44,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_1",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 44,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:07",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125A",
+          "goods_name": "[复合退货验收] sku",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] kit",
+          "parent_sku_sn": "RF20261022113125K",
+          "source_kind": "BUNDLE",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-45",
+          "plan_id": 45,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 2,
+          "accepted_quantity": 2,
+          "posted_quantity": 2,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 2,
+          "bad_quantity": 0,
+          "posted_good_quantity": 2,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_0",
+              "good_quantity": 2,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 45,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125B",
+          "goods_name": "[复合退货验收] b",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] kit",
+          "parent_sku_sn": "RF20261022113125K",
+          "source_kind": "BUNDLE",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-46",
+          "plan_id": 46,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_1",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 46,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125S",
+          "goods_name": "[复合退货验收] stocked",
+          "stock_unit": "套",
+          "item_kind": "GIFT",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": "STOCKED_BUNDLE",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-47",
+          "plan_id": 47,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_3",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 47,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125B",
+          "goods_name": "[复合退货验收] b",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] random",
+          "parent_sku_sn": "RF20261022113125R",
+          "source_kind": "LUCKY_BAG",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-48",
+          "plan_id": 48,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_1",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 48,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125D",
+          "goods_name": "[复合退货验收] d",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] random",
+          "parent_sku_sn": "RF20261022113125R",
+          "source_kind": "LUCKY_BAG",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-49",
+          "plan_id": 49,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_2",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 49,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125A",
+          "goods_name": "[复合退货验收] sku",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] preset",
+          "parent_sku_sn": "RF20261022113125P",
+          "source_kind": "LUCKY_BAG",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-50",
+          "plan_id": 50,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_0",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 50,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "RF20261022113125D",
+          "goods_name": "[复合退货验收] d",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": "[复合退货验收] preset",
+          "parent_sku_sn": "RF20261022113125P",
+          "source_kind": "LUCKY_BAG",
+          "order_line_id": null,
+          "shipment_id": 85,
+          "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+          "original_store_code": "RF20261022113125V",
+          "key": "return-51",
+          "plan_id": 51,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "message_id": "MERGED_RETURN_20261022113125",
+              "batch_code": "MERGED_RETURN_20261022113125_2",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-22T11:42:28"
+            }
+          ],
+          "store_code": "RF20261022113125V",
+          "transport_state": "WAITING",
+          "return_waybill": "TEST_MERGED_20261022113125",
+          "parcel_id": 26,
+          "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 51,
+              "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+              "ticket_id": 177,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_b6c62b95b27b41d994f6",
+              "create_time": "2026-10-22T11:42:23"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-22 11:32:10",
+              "actor": "admin",
+              "state": "CONFIRMED",
+              "detail": "[验收] 原来源实物退回"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-22T11:42:23",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-22T11:42:28",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 MERGED_RETURN_20261022113125；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "NONE",
+          "auto_dispatch_message": "",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "TEST_MERGED_20261022113125",
+            "source": "MANUAL",
+            "registered_at": "2026-10-22T11:32:38",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 26,
+            "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+            "refund_count": 4,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "TEST-RF20261022113125",
+            "store_code": "RF20261022113125V",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        }
+      ],
+      "platform_operations": [],
+      "events": [
+        {
+          "id": 355,
+          "action": "GOODS_COMPLETE",
+          "message": "[验收] 原来源数量、仓库实收和入账已逐项核对；凭证：TEST-RF20261022113125；未凭结案操作调整库存",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:42:43"
+        },
+        {
+          "id": 318,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #51：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 317,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #50：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 316,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #49：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 315,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #48：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 314,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #47：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 313,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #46：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 312,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #45：2 件；不改写平台退款金额和原货物结案结果",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:10"
+        },
+        {
+          "id": 311,
+          "action": "GOODS",
+          "message": "创建退回安排 #44：1 件；依据：[验收] 原来源实物退回；凭证：TEST-RF20261022113125",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:07"
+        },
+        {
+          "id": 310,
+          "action": "GOODS",
+          "message": "创建退回安排 #43：2 件；依据：[验收] 原来源实物退回；凭证：TEST-RF20261022113125",
+          "actor": "admin",
+          "create_time": "2026-10-22 11:32:07"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "RETURN",
+      "logistics": {
+        "has_intercept": false,
+        "application": {},
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [
+          {
+            "id": 52,
+            "shipment_id": 85,
+            "express_code": "TEST-SF-XS440ec7455d5848a5bc46f7b57b0c8480",
+            "registered_at": "2026-10-22 11:31:59",
+            "shipment_sn": "XS440ec7455d5848a5bc46f7b57b0c8480",
+            "carrier_code": "SF",
+            "carrier_name": "顺丰快递",
+            "lines": [
+              {
+                "package_id": 52,
+                "quantity": 4,
+                "shipment_line_id": 106,
+                "sku_sn": "RF20261022113125A",
+                "goods_name": "[复合退货验收] sku",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312501",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 2,
+                "shipment_line_id": 107,
+                "sku_sn": "RF20261022113125B",
+                "goods_name": "[复合退货验收] b",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312501",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 108,
+                "sku_sn": "RF20261022113125A",
+                "goods_name": "[复合退货验收] sku",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312503",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 109,
+                "sku_sn": "RF20261022113125A",
+                "goods_name": "[复合退货验收] sku",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312504",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 110,
+                "sku_sn": "RF20261022113125B",
+                "goods_name": "[复合退货验收] b",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312503",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 111,
+                "sku_sn": "RF20261022113125B",
+                "goods_name": "[复合退货验收] b",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312504",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 2,
+                "shipment_line_id": 112,
+                "sku_sn": "RF20261022113125D",
+                "goods_name": "[复合退货验收] d",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312503",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 2,
+                "shipment_line_id": 113,
+                "sku_sn": "RF20261022113125D",
+                "goods_name": "[复合退货验收] d",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312504",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 2,
+                "shipment_line_id": 114,
+                "sku_sn": "RF20261022113125S",
+                "goods_name": "[复合退货验收] 购买stocked",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "9892026102211312502",
+                "gift_plan_id": null,
+                "stock_unit": "套",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": false,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 2,
+                "shipment_line_id": 115,
+                "sku_sn": "RF20261022113125A",
+                "goods_name": "[复合退货验收] sku",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 116,
+                "sku_sn": "RF20261022113125B",
+                "goods_name": "[复合退货验收] b",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 117,
+                "sku_sn": "RF20261022113125S",
+                "goods_name": "[复合退货验收] stocked",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "套",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 118,
+                "sku_sn": "RF20261022113125B",
+                "goods_name": "[复合退货验收] b",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 119,
+                "sku_sn": "RF20261022113125D",
+                "goods_name": "[复合退货验收] d",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 120,
+                "sku_sn": "RF20261022113125A",
+                "goods_name": "[复合退货验收] sku",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 52,
+                "quantity": 1,
+                "shipment_line_id": 121,
+                "sku_sn": "RF20261022113125D",
+                "goods_name": "[复合退货验收] d",
+                "store_code": "RF20261022113125V",
+                "platform_oid": "",
+                "gift_plan_id": 6,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              }
+            ],
+            "whole_package_covered": false
+          }
+        ],
+        "packages_truncated": false,
+        "returns": [
+          {
+            "plan_id": 43,
+            "mode": "RETURN",
+            "item_kind": "PURCHASE",
+            "sku_sn": "RF20261022113125A",
+            "goods_name": "[复合退货验收] sku",
+            "stock_unit": "件",
+            "quantity": 2,
+            "accepted_quantity": 2,
+            "posted_quantity": 2,
+            "documents": [
+              {
+                "id": 43,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 44,
+            "mode": "RETURN",
+            "item_kind": "PURCHASE",
+            "sku_sn": "RF20261022113125B",
+            "goods_name": "[复合退货验收] b",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 44,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 45,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125A",
+            "goods_name": "[复合退货验收] sku",
+            "stock_unit": "件",
+            "quantity": 2,
+            "accepted_quantity": 2,
+            "posted_quantity": 2,
+            "documents": [
+              {
+                "id": 45,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 46,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125B",
+            "goods_name": "[复合退货验收] b",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 46,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 47,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125S",
+            "goods_name": "[复合退货验收] stocked",
+            "stock_unit": "套",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 47,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 48,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125B",
+            "goods_name": "[复合退货验收] b",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 48,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 49,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125D",
+            "goods_name": "[复合退货验收] d",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 49,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 50,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125A",
+            "goods_name": "[复合退货验收] sku",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 50,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          },
+          {
+            "plan_id": 51,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "RF20261022113125D",
+            "goods_name": "[复合退货验收] d",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 51,
+                "return_sn": "THK5e2c05dcd97f48b2ac4d6b4fea4954d5",
+                "ticket_id": 177,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_b6c62b95b27b41d994f6",
+                "create_time": "2026-10-22T11:42:23"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "TEST_MERGED_20261022113125",
+              "source": "MANUAL",
+              "registered_at": "2026-10-22T11:32:38",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 26,
+              "parcel_sn": "RPKc2ebe726dac64a51b694504d6252e4a8",
+              "refund_count": 4,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "TEST-RF20261022113125",
+              "store_code": "RF20261022113125V",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "NONE",
+            "dispatch_message": ""
+          }
+        ],
+        "issues": [],
+        "platform_mode": "UNKNOWN",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    },
+    "97": {
+      "scope": "REFUND",
+      "refund_id": 97,
+      "order_id": 145,
+      "cancellations": [],
+      "returns": [
+        {
+          "sku_sn": "AF20261023150323C07A",
+          "goods_name": "[自动仅退款验收07] 已签收两件仅退款实际退货",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": "NORMAL",
+          "order_line_id": null,
+          "shipment_id": 93,
+          "shipment_sn": "XS96f7c6ff5ba040a1bb0706d711f113d4",
+          "original_store_code": "AF20261023150323C07V1",
+          "key": "return-59",
+          "plan_id": 59,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 2,
+          "accepted_quantity": 2,
+          "posted_quantity": 2,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 2,
+          "bad_quantity": 0,
+          "posted_good_quantity": 2,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK610b0be9c890440d8a3e68616aad7853",
+              "message_id": "AF_RETEST_20261023150323_07_29_FINAL",
+              "batch_code": "AFRET_20261023150323_07_0",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-23T16:37:45"
+            },
+            {
+              "return_sn": "THK610b0be9c890440d8a3e68616aad7853",
+              "message_id": "AF_RETEST_20261023150323_07_29_PART",
+              "batch_code": "AFRET_20261023150323_07_0",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-23T16:37:00"
+            }
+          ],
+          "store_code": "AF20261023150323C07V1",
+          "transport_state": "WAITING",
+          "return_waybill": "",
+          "parcel_id": 29,
+          "parcel_sn": "RPKcb9d34c8d867455091518b5fcfe7f43e",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 58,
+              "return_sn": "THK610b0be9c890440d8a3e68616aad7853",
+              "ticket_id": 193,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_f36c9d0cec5a4ac195f1",
+              "create_time": "2026-10-23T16:36:51"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-23 16:34:24",
+              "actor": "分项退回任务",
+              "state": "CONFIRMED",
+              "detail": "命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-23T16:36:51",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK610b0be9c890440d8a3e68616aad7853"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-23T16:37:45",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 AF_RETEST_20261023150323_07_29_FINAL；此时间为回传记录时间，非独立入账完成时间"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-23T16:37:00",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 AF_RETEST_20261023150323_07_29_PART；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "SENT",
+          "auto_dispatch_message": "仓库已接收退货单",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "AFRET_20261023150323_07",
+            "source": "PLATFORM",
+            "registered_at": "2026-10-23T16:34:32",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 29,
+            "parcel_sn": "RPKcb9d34c8d867455091518b5fcfe7f43e",
+            "refund_count": 1,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "PLATFORM / 平台退款 8820261023150323081 / 来源版本 3",
+            "store_code": "AF20261023150323C07V1",
+            "shared": false
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        }
+      ],
+      "platform_operations": [],
+      "events": [
+        {
+          "id": 457,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:12"
+        },
+        {
+          "id": 441,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 440,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #59 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 439,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:51"
+        },
+        {
+          "id": 420,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:34:33"
+        },
+        {
+          "id": 418,
+          "action": "GOODS",
+          "message": "创建退回安排 #59：2 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 200.00；前次退款 0；剩余 200.00；买家收货状态 BUYER_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:34:24"
+        },
+        {
+          "id": 416,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:22"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "MIXED",
+      "logistics": {
+        "has_intercept": false,
+        "application": {},
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [
+          {
+            "id": 59,
+            "shipment_id": 93,
+            "express_code": "TEST-SF-XS96f7c6ff5ba040a1bb0706d711f113d4",
+            "registered_at": "2026-10-23 15:13:58",
+            "shipment_sn": "XS96f7c6ff5ba040a1bb0706d711f113d4",
+            "carrier_code": "SF",
+            "carrier_name": "顺丰快递",
+            "lines": [
+              {
+                "package_id": 59,
+                "quantity": 2,
+                "shipment_line_id": 129,
+                "sku_sn": "AF20261023150323C07A",
+                "goods_name": "[自动仅退款验收07] 已签收两件仅退款实际退货",
+                "store_code": "AF20261023150323C07V1",
+                "platform_oid": "8720261023150323081",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              }
+            ],
+            "whole_package_covered": false
+          }
+        ],
+        "packages_truncated": false,
+        "returns": [
+          {
+            "plan_id": 59,
+            "mode": "RETURN",
+            "item_kind": "PURCHASE",
+            "sku_sn": "AF20261023150323C07A",
+            "goods_name": "[自动仅退款验收07] 已签收两件仅退款实际退货",
+            "stock_unit": "件",
+            "quantity": 2,
+            "accepted_quantity": 2,
+            "posted_quantity": 2,
+            "documents": [
+              {
+                "id": 58,
+                "return_sn": "THK610b0be9c890440d8a3e68616aad7853",
+                "ticket_id": 193,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_f36c9d0cec5a4ac195f1",
+                "create_time": "2026-10-23T16:36:51"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "AFRET_20261023150323_07",
+              "source": "PLATFORM",
+              "registered_at": "2026-10-23T16:34:32",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 29,
+              "parcel_sn": "RPKcb9d34c8d867455091518b5fcfe7f43e",
+              "refund_count": 1,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "PLATFORM / 平台退款 8820261023150323081 / 来源版本 3",
+              "store_code": "AF20261023150323C07V1",
+              "shared": false
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "SENT",
+            "dispatch_message": "仓库已接收退货单"
+          }
+        ],
+        "issues": [],
+        "platform_mode": "UNKNOWN",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    },
+    "99": {
+      "scope": "REFUND",
+      "refund_id": 99,
+      "order_id": 146,
+      "cancellations": [
+        {
+          "sku_sn": "AF20261023150323C08A",
+          "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": null,
+          "order_line_id": 210,
+          "key": "cancel-2",
+          "task_id": 2,
+          "state": "DONE",
+          "quantity": 2,
+          "canceled_quantity": 2,
+          "logical_released_quantity": null,
+          "receipt_confirmed": true,
+          "inventory_receipt": {
+            "request_id": "CFRGTdfcd4690997b4548a4d00833fb3a67c0",
+            "state": "COMPLETED",
+            "mode": "REDUCE",
+            "quantity": 2,
+            "stock_effects": null,
+            "recorded_at": "2026-10-23T16:34:02"
+          },
+          "receipt_request_id": "CFRGTdfcd4690997b4548a4d00833fb3a67c0",
+          "result_message": "指定未发数量已取消，原库存回执已确认；其他商品需求保留",
+          "warehouses": [
+            {
+              "shipment_id": 97,
+              "shipment_sn": "XS5bcd7d5b05954b41bb34d883c7fd515e",
+              "kind": "WAREHOUSE",
+              "warehouse_state": "CONFIRMED",
+              "state": "COMPLETED",
+              "last_error": "",
+              "scope": [
+                {
+                  "sku_sn": "AF20261023150323C08A",
+                  "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+                  "quantity": 2,
+                  "stock_unit": "件",
+                  "store_code": "AF20261023150323C08V2"
+                }
+              ],
+              "whole_scope": [
+                {
+                  "sku_sn": "AF20261023150323C08A",
+                  "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+                  "quantity": 2,
+                  "stock_unit": "件",
+                  "store_code": "AF20261023150323C08V2"
+                }
+              ],
+              "stock_receipt_confirmed": true,
+              "started_at": "2026-10-23 16:33:30",
+              "completed_at": "2026-10-23 16:33:30",
+              "actor": "退款分项截单"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "取消任务建立",
+              "time": "2026-10-23 16:33:28",
+              "actor": "已审核分项任务",
+              "state": "CONFIRMED",
+              "detail": "计划取消 2 件"
+            },
+            {
+              "title": "仓库截停原发货安排",
+              "time": "2026-10-23 16:33:30",
+              "actor": "退款分项截单",
+              "state": "CONFIRMED",
+              "detail": "完成时间为截单整体记录时间；撤回范围与本退款取消数量分别核对。"
+            },
+            {
+              "title": "本退款销售需求取消",
+              "time": "2026-10-23T16:34:02",
+              "actor": "库存原回执",
+              "state": "CONFIRMED",
+              "detail": "原请求确认取消 2 件"
+            },
+            {
+              "title": "逻辑预占释放",
+              "time": "2026-10-23T16:34:02",
+              "actor": "库存原回执",
+              "state": "UNKNOWN",
+              "detail": "本次释放数量未记录或原回执待核对；不按任务数量推算"
+            }
+          ]
+        }
+      ],
+      "returns": [
+        {
+          "sku_sn": "AF20261023150323C08A",
+          "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": "NORMAL",
+          "order_line_id": null,
+          "shipment_id": 96,
+          "shipment_sn": "XS0a2b95305ba4452daf86e39b8961b475",
+          "original_store_code": "AF20261023150323C08V1",
+          "key": "return-57",
+          "plan_id": 57,
+          "mode": "INTERCEPT",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THKcec0a4ef0d6b4a719e17498aac8224a4",
+              "message_id": "AF_RETEST_20261023150323_08_27_FINAL",
+              "batch_code": "AFRET_20261023150323_08_0",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-23T16:37:06"
+            }
+          ],
+          "store_code": "AF20261023150323C08V1",
+          "transport_state": "WAITING",
+          "return_waybill": "",
+          "parcel_id": 27,
+          "parcel_sn": "RPK04edb871e14d408cb5ccbe1e69b0092a",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 57,
+              "return_sn": "THKcec0a4ef0d6b4a719e17498aac8224a4",
+              "ticket_id": 192,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_f31baeda91c14161a03c",
+              "create_time": "2026-10-23T16:36:31"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-23 16:33:31",
+              "actor": "分项退回任务",
+              "state": "CONFIRMED",
+              "detail": "命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-23T16:36:31",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THKcec0a4ef0d6b4a719e17498aac8224a4"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-23T16:37:06",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 AF_RETEST_20261023150323_08_27_FINAL；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "SENT",
+          "auto_dispatch_message": "仓库已接收退货单",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "AFRET_20261023150323_08",
+            "source": "PLATFORM",
+            "registered_at": "2026-10-23T16:33:32",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 27,
+            "parcel_sn": "RPK04edb871e14d408cb5ccbe1e69b0092a",
+            "refund_count": 1,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "PLATFORM / 平台退款 8820261023150323091 / 来源版本 3",
+            "store_code": "AF20261023150323C08V1",
+            "shared": false
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        }
+      ],
+      "platform_operations": [
+        {
+          "id": 6,
+          "action": "INTERCEPT",
+          "state": "SUCCESS",
+          "actor": "自动售后流程",
+          "result_message": "平台操作已返回；最终资金和物流结果分别核对",
+          "create_time": "2026-10-23 16:35:21"
+        }
+      ],
+      "events": [
+        {
+          "id": 451,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:38:16"
+        },
+        {
+          "id": 438,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 437,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #57 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 436,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:31"
+        },
+        {
+          "id": 413,
+          "action": "SCOPE_CANCEL",
+          "message": "任务 #2 已取消 2；库存请求 CFRGTdfcd4690997b4548a4d00833fb3a67c0",
+          "actor": "退款分项截单",
+          "create_time": "2026-10-23 16:34:02"
+        },
+        {
+          "id": 408,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:33:32"
+        },
+        {
+          "id": 406,
+          "action": "GOODS",
+          "message": "创建退回安排 #57：1 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 300.00；前次退款 0；剩余 300.00；买家收货状态 BUYER_NOT_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:33:31"
+        },
+        {
+          "id": 404,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:33:28"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "MIXED",
+      "logistics": {
+        "has_intercept": true,
+        "application": {
+          "id": 6,
+          "state": "SUCCESS",
+          "actor": "自动售后流程",
+          "recorded_at": "2026-10-23 16:35:21",
+          "reason": "店铺自动流程：已采用审核方案；动作 INTERCEPT",
+          "message": "平台操作已返回；最终资金和物流结果分别核对"
+        },
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [
+          {
+            "id": 60,
+            "shipment_id": 96,
+            "express_code": "AFSF_XS0a2b95305ba4452daf86e39b8961b475",
+            "registered_at": "2026-10-23 15:26:48",
+            "shipment_sn": "XS0a2b95305ba4452daf86e39b8961b475",
+            "carrier_code": "SF",
+            "carrier_name": "顺丰快递",
+            "lines": [
+              {
+                "package_id": 60,
+                "quantity": 1,
+                "shipment_line_id": 132,
+                "sku_sn": "AF20261023150323C08A",
+                "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+                "store_code": "AF20261023150323C08V1",
+                "platform_oid": "8720261023150323091",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": true,
+                "intercept_covered": true
+              }
+            ],
+            "whole_package_covered": true
+          }
+        ],
+        "packages_truncated": false,
+        "returns": [
+          {
+            "plan_id": 57,
+            "mode": "INTERCEPT",
+            "item_kind": "PURCHASE",
+            "sku_sn": "AF20261023150323C08A",
+            "goods_name": "[自动仅退款验收08] 三件商品已发一件未发两件",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 57,
+                "return_sn": "THKcec0a4ef0d6b4a719e17498aac8224a4",
+                "ticket_id": 192,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_f31baeda91c14161a03c",
+                "create_time": "2026-10-23T16:36:31"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "AFRET_20261023150323_08",
+              "source": "PLATFORM",
+              "registered_at": "2026-10-23T16:33:32",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 27,
+              "parcel_sn": "RPK04edb871e14d408cb5ccbe1e69b0092a",
+              "refund_count": 1,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "PLATFORM / 平台退款 8820261023150323091 / 来源版本 3",
+              "store_code": "AF20261023150323C08V1",
+              "shared": false
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "SENT",
+            "dispatch_message": "仓库已接收退货单"
+          }
+        ],
+        "issues": [],
+        "platform_mode": "SIMULATION",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    },
+    "101": {
+      "scope": "REFUND",
+      "refund_id": 101,
+      "order_id": 148,
+      "cancellations": [],
+      "returns": [
+        {
+          "sku_sn": "AF20261023150323C09A",
+          "goods_name": "[自动仅退款验收09] 先退差价20再退剩余80含赠品",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": "NORMAL",
+          "order_line_id": null,
+          "shipment_id": 98,
+          "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+          "original_store_code": "AF20261023150323C09V1",
+          "key": "return-60",
+          "plan_id": 60,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+              "message_id": "AF_RETEST_20261023150323_09_30_FINAL",
+              "batch_code": "AFRET_20261023150323_09_0",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-23T16:38:48"
+            }
+          ],
+          "store_code": "AF20261023150323C09V1",
+          "transport_state": "WAITING",
+          "return_waybill": "",
+          "parcel_id": 30,
+          "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 61,
+              "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+              "ticket_id": 196,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_0cf5130f34c343f6ae96",
+              "create_time": "2026-10-23T16:38:38"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-23 16:35:01",
+              "actor": "分项退回任务",
+              "state": "CONFIRMED",
+              "detail": "命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-23T16:38:38",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK176a80dda1104b4c901f7c2ceffe5ad7"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-23T16:38:48",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 AF_RETEST_20261023150323_09_30_FINAL；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "SENT",
+          "auto_dispatch_message": "仓库已接收退货单",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "AFRET_20261023150323_09",
+            "source": "PLATFORM",
+            "registered_at": "2026-10-23T16:35:30",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 30,
+            "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+            "refund_count": 1,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+            "store_code": "AF20261023150323C09V1",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        },
+        {
+          "sku_sn": "AF20261023150323C09G",
+          "goods_name": "[自动仅退款验收09] 关联赠品G",
+          "stock_unit": "件",
+          "item_kind": "GIFT",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": "NORMAL",
+          "order_line_id": null,
+          "shipment_id": 98,
+          "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+          "original_store_code": "AF20261023150323C09V1",
+          "key": "return-62",
+          "plan_id": 62,
+          "mode": "RETURN",
+          "state": "CLOSED",
+          "quantity": 1,
+          "accepted_quantity": 1,
+          "posted_quantity": 1,
+          "remaining_quantity": 0,
+          "unposted_quantity": 0,
+          "waived_quantity": 0,
+          "good_quantity": 1,
+          "bad_quantity": 0,
+          "posted_good_quantity": 1,
+          "posted_bad_quantity": 0,
+          "pending_review_quantity": 0,
+          "parcel_pending": false,
+          "reviews": [],
+          "receipt_lines": [
+            {
+              "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+              "message_id": "AF_RETEST_20261023150323_09_30_FINAL",
+              "batch_code": "AFRET_20261023150323_09_1",
+              "good_quantity": 1,
+              "bad_quantity": 0,
+              "posted": 1,
+              "recorded_at": "2026-10-23T16:38:48"
+            }
+          ],
+          "store_code": "AF20261023150323C09V1",
+          "transport_state": "WAITING",
+          "return_waybill": "",
+          "parcel_id": 30,
+          "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+          "shared_document": true,
+          "documents": [
+            {
+              "id": 62,
+              "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+              "ticket_id": 196,
+              "generation": 1,
+              "dispatch_state": "ACCEPTED",
+              "receipt_state": "COMPLETED",
+              "cancel_state": "NONE",
+              "external_order": "SIMIN_0cf5130f34c343f6ae96",
+              "create_time": "2026-10-23T16:38:38"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "退回安排建立",
+              "time": "2026-10-23 16:36:17",
+              "actor": "自动售后流程",
+              "state": "CONFIRMED",
+              "detail": "已审核取消购买，按原赠品策略自动追回对应已发赠品"
+            },
+            {
+              "title": "退货入库单生成",
+              "time": "2026-10-23T16:38:38",
+              "actor": "仓库对接",
+              "state": "ACCEPTED",
+              "detail": "THK176a80dda1104b4c901f7c2ceffe5ad7"
+            },
+            {
+              "title": "仓库回传记录",
+              "time": "2026-10-23T16:38:48",
+              "actor": "仓库回传",
+              "state": "POSTED",
+              "detail": "原消息 AF_RETEST_20261023150323_09_30_FINAL；此时间为回传记录时间，非独立入账完成时间"
+            }
+          ],
+          "result_message": "",
+          "auto_dispatch_state": "SENT",
+          "auto_dispatch_message": "已有仓库单，沿用原单查询进度",
+          "return_logistics": {
+            "state": "BOUND",
+            "carrier": "SF",
+            "waybill": "AFRET_20261023150323_09",
+            "source": "PLATFORM",
+            "registered_at": "2026-10-23T16:35:30",
+            "time_kind": "PARCEL_REGISTERED",
+            "transport_state": "WAITING",
+            "parcel_id": 30,
+            "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+            "refund_count": 1,
+            "warehouse_environment": "TEST",
+            "source_conflict": false,
+            "latest_claimed_waybill": null,
+            "latest_claimed_carrier": null,
+            "evidence": "PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+            "store_code": "AF20261023150323C09V1",
+            "shared": true
+          },
+          "transport_display": "物流状态尚未更新，仓库已确认实收"
+        }
+      ],
+      "platform_operations": [],
+      "events": [
+        {
+          "id": 460,
+          "action": "GOODS_COMPLETE",
+          "message": "命中商家规则：购买商品及关联赠品全部实收、入账且无数量差异，自动结案；凭证：店铺规则版本 2；逐项原仓库实收和入账回执；未凭结案操作调整库存",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:39:32"
+        },
+        {
+          "id": 455,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "已有仓库单，沿用原单查询进度",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 454,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "仓库已接收退货单",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 453,
+          "action": "RETURN_DOCUMENT",
+          "message": "退回安排 #60 操作：下发仓库；原单与实收入账保留；",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 452,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "退回安排已就绪，正在按店铺规则下发仓库",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:38:38"
+        },
+        {
+          "id": 435,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:36:17"
+        },
+        {
+          "id": 433,
+          "action": "GIFT_RETURN",
+          "message": "创建赠品退回安排 #62：1 件；不改写平台退款金额和原货物结案结果",
+          "actor": "自动售后流程",
+          "create_time": "2026-10-23 16:36:17"
+        },
+        {
+          "id": 429,
+          "action": "RETURN_AUTO_DISPATCH",
+          "message": "正在等待合包归集结束",
+          "actor": "自动退货下发",
+          "create_time": "2026-10-23 16:35:30"
+        },
+        {
+          "id": 424,
+          "action": "GOODS",
+          "message": "创建退回安排 #60：1 件；依据：命中商家授权：已出库或部分出库，申请剩余商品实付全额取消购买；凭证：规则版本 2；原实付 100.00；前次退款 20.00；剩余 80.00；买家收货状态 BUYER_RECEIVED",
+          "actor": "分项退回任务",
+          "create_time": "2026-10-23 16:35:01"
+        },
+        {
+          "id": 422,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:34:59"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "MIXED",
+      "logistics": {
+        "has_intercept": false,
+        "application": {},
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [
+          {
+            "id": 61,
+            "shipment_id": 98,
+            "express_code": "TEST-SF-XS272aa59fc50d4f0288df52c0767f8a61",
+            "registered_at": "2026-10-23 15:30:15",
+            "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+            "carrier_code": "SF",
+            "carrier_name": "顺丰快递",
+            "lines": [
+              {
+                "package_id": 61,
+                "quantity": 1,
+                "shipment_line_id": 134,
+                "sku_sn": "AF20261023150323C09A",
+                "goods_name": "[自动仅退款验收09] 先退差价20再退剩余80含赠品",
+                "store_code": "AF20261023150323C09V1",
+                "platform_oid": "8720261023150323101",
+                "gift_plan_id": null,
+                "stock_unit": "件",
+                "item_kind": "PURCHASE",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              },
+              {
+                "package_id": 61,
+                "quantity": 1,
+                "shipment_line_id": 135,
+                "sku_sn": "AF20261023150323C09G",
+                "goods_name": "[自动仅退款验收09] 关联赠品G",
+                "store_code": "AF20261023150323C09V1",
+                "platform_oid": "",
+                "gift_plan_id": 7,
+                "stock_unit": "件",
+                "item_kind": "GIFT",
+                "in_refund_scope": true,
+                "intercept_covered": false
+              }
+            ],
+            "whole_package_covered": false
+          }
+        ],
+        "packages_truncated": false,
+        "returns": [
+          {
+            "plan_id": 60,
+            "mode": "RETURN",
+            "item_kind": "PURCHASE",
+            "sku_sn": "AF20261023150323C09A",
+            "goods_name": "[自动仅退款验收09] 先退差价20再退剩余80含赠品",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 61,
+                "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+                "ticket_id": 196,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_0cf5130f34c343f6ae96",
+                "create_time": "2026-10-23T16:38:38"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "AFRET_20261023150323_09",
+              "source": "PLATFORM",
+              "registered_at": "2026-10-23T16:35:30",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 30,
+              "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+              "refund_count": 1,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+              "store_code": "AF20261023150323C09V1",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "SENT",
+            "dispatch_message": "仓库已接收退货单"
+          },
+          {
+            "plan_id": 62,
+            "mode": "RETURN",
+            "item_kind": "GIFT",
+            "sku_sn": "AF20261023150323C09G",
+            "goods_name": "[自动仅退款验收09] 关联赠品G",
+            "stock_unit": "件",
+            "quantity": 1,
+            "accepted_quantity": 1,
+            "posted_quantity": 1,
+            "documents": [
+              {
+                "id": 62,
+                "return_sn": "THK176a80dda1104b4c901f7c2ceffe5ad7",
+                "ticket_id": 196,
+                "generation": 1,
+                "dispatch_state": "ACCEPTED",
+                "receipt_state": "COMPLETED",
+                "cancel_state": "NONE",
+                "external_order": "SIMIN_0cf5130f34c343f6ae96",
+                "create_time": "2026-10-23T16:38:38"
+              }
+            ],
+            "logistics": {
+              "state": "BOUND",
+              "carrier": "SF",
+              "waybill": "AFRET_20261023150323_09",
+              "source": "PLATFORM",
+              "registered_at": "2026-10-23T16:35:30",
+              "time_kind": "PARCEL_REGISTERED",
+              "transport_state": "WAITING",
+              "parcel_id": 30,
+              "parcel_sn": "RPK33506728cf2b4c76b6cdec6f365ebe5a",
+              "refund_count": 1,
+              "warehouse_environment": "TEST",
+              "source_conflict": false,
+              "latest_claimed_waybill": null,
+              "latest_claimed_carrier": null,
+              "evidence": "PLATFORM / 平台退款 8820261023150323102 / 来源版本 3",
+              "store_code": "AF20261023150323C09V1",
+              "shared": true
+            },
+            "transport_display": "物流状态尚未更新，仓库已确认实收",
+            "state": "CLOSED",
+            "dispatch_state": "SENT",
+            "dispatch_message": "已有仓库单，沿用原单查询进度"
+          }
+        ],
+        "issues": [],
+        "platform_mode": "UNKNOWN",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    },
+    "104": {
+      "scope": "REFUND",
+      "refund_id": 104,
+      "order_id": 150,
+      "cancellations": [
+        {
+          "sku_sn": "AF20261023164549C04A",
+          "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": null,
+          "order_line_id": 215,
+          "key": "cancel-8",
+          "task_id": 8,
+          "state": "DONE",
+          "quantity": 1,
+          "canceled_quantity": 1,
+          "logical_released_quantity": null,
+          "receipt_confirmed": true,
+          "inventory_receipt": {
+            "request_id": "CFRGTb6fda3357f234c11b038d9296429a072",
+            "state": "COMPLETED",
+            "mode": "REDUCE",
+            "quantity": 1,
+            "stock_effects": null,
+            "recorded_at": "2026-10-23T16:46:52"
+          },
+          "receipt_request_id": "CFRGTb6fda3357f234c11b038d9296429a072",
+          "result_message": "指定未发数量已取消，原库存回执已确认；其他商品需求保留",
+          "warehouses": [
+            {
+              "shipment_id": 100,
+              "shipment_sn": "XS11864f0761b94c12b8a101ee7c685f16",
+              "kind": "WAREHOUSE",
+              "warehouse_state": "CONFIRMED",
+              "state": "COMPLETED",
+              "last_error": "",
+              "scope": [
+                {
+                  "sku_sn": "AF20261023164549C04A",
+                  "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+                  "quantity": 1,
+                  "stock_unit": "件",
+                  "store_code": "AF20261023164549C04V1"
+                }
+              ],
+              "whole_scope": [
+                {
+                  "sku_sn": "AF20261023164549C04A",
+                  "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+                  "quantity": 1,
+                  "stock_unit": "件",
+                  "store_code": "AF20261023164549C04V1"
+                }
+              ],
+              "stock_receipt_confirmed": true,
+              "started_at": "2026-10-23 16:46:22",
+              "completed_at": "2026-10-23 16:46:22",
+              "actor": "退款分项截单"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "取消任务建立",
+              "time": "2026-10-23 16:46:20",
+              "actor": "已审核分项任务",
+              "state": "CONFIRMED",
+              "detail": "计划取消 1 件"
+            },
+            {
+              "title": "仓库截停原发货安排",
+              "time": "2026-10-23 16:46:22",
+              "actor": "退款分项截单",
+              "state": "CONFIRMED",
+              "detail": "完成时间为截单整体记录时间；撤回范围与本退款取消数量分别核对。"
+            },
+            {
+              "title": "本退款销售需求取消",
+              "time": "2026-10-23T16:46:52",
+              "actor": "库存原回执",
+              "state": "CONFIRMED",
+              "detail": "原请求确认取消 1 件"
+            },
+            {
+              "title": "逻辑预占释放",
+              "time": "2026-10-23T16:46:52",
+              "actor": "库存原回执",
+              "state": "UNKNOWN",
+              "detail": "本次释放数量未记录或原回执待核对；不按任务数量推算"
+            }
+          ]
+        }
+      ],
+      "returns": [],
+      "platform_operations": [
+        {
+          "id": 21,
+          "action": "CANCEL_FEEDBACK",
+          "state": "SUCCESS",
+          "actor": "自动售后流程",
+          "result_message": "平台操作已返回；最终资金和物流结果分别核对",
+          "create_time": "2026-10-23 16:46:54"
+        }
+      ],
+      "events": [
+        {
+          "id": 466,
+          "action": "SCOPE_CANCEL",
+          "message": "任务 #8 已取消 1；库存请求 CFRGTb6fda3357f234c11b038d9296429a072",
+          "actor": "退款分项截单",
+          "create_time": "2026-10-23 16:46:52"
+        },
+        {
+          "id": 464,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-23 16:46:20"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "MIXED",
+      "logistics": {
+        "has_intercept": false,
+        "application": {},
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [],
+        "packages_truncated": false,
+        "returns": [],
+        "issues": [],
+        "platform_mode": "UNKNOWN",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    },
+    "105": {
+      "scope": "REFUND",
+      "refund_id": 105,
+      "order_id": 151,
+      "cancellations": [
+        {
+          "sku_sn": "AF20261024145739C04A",
+          "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+          "stock_unit": "件",
+          "item_kind": "PURCHASE",
+          "parent_goods_name": null,
+          "parent_sku_sn": null,
+          "source_kind": null,
+          "order_line_id": 216,
+          "key": "cancel-9",
+          "task_id": 9,
+          "state": "DONE",
+          "quantity": 1,
+          "canceled_quantity": 1,
+          "logical_released_quantity": 1,
+          "receipt_confirmed": true,
+          "inventory_receipt": {
+            "request_id": "CFRGTac127ab8a60a4ed6aa90a476b5c00b16",
+            "state": "COMPLETED",
+            "mode": "REDUCE",
+            "quantity": 1,
+            "stock_effects": [
+              {
+                "sku_sn": "AF20261024145739C04A",
+                "logical_reservation_released": 1,
+                "warehouse_allocation_released": 0,
+                "public_warehouse_lock_released": 0
+              }
+            ],
+            "recorded_at": "2026-10-24T15:03:58"
+          },
+          "receipt_request_id": "CFRGTac127ab8a60a4ed6aa90a476b5c00b16",
+          "result_message": "指定未发数量已取消，原库存回执已确认；其他商品需求保留",
+          "warehouses": [
+            {
+              "shipment_id": 101,
+              "shipment_sn": "XSa6e02ec83006416aa2612e4576b0e844",
+              "kind": "WAREHOUSE",
+              "warehouse_state": "CONFIRMED",
+              "state": "COMPLETED",
+              "last_error": "",
+              "scope": [
+                {
+                  "sku_sn": "AF20261024145739C04A",
+                  "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+                  "quantity": 1,
+                  "stock_unit": "件",
+                  "store_code": "AF20261024145739C04V1"
+                }
+              ],
+              "whole_scope": [
+                {
+                  "sku_sn": "AF20261024145739C04A",
+                  "goods_name": "[自动仅退款验收04] 仓库已接单未出库截单",
+                  "quantity": 1,
+                  "stock_unit": "件",
+                  "store_code": "AF20261024145739C04V1"
+                }
+              ],
+              "stock_receipt_confirmed": true,
+              "started_at": "2026-10-24 15:03:25",
+              "completed_at": "2026-10-24 15:03:27",
+              "actor": "退款分项截单"
+            }
+          ],
+          "timeline": [
+            {
+              "title": "取消任务建立",
+              "time": "2026-10-24 15:03:23",
+              "actor": "已审核分项任务",
+              "state": "CONFIRMED",
+              "detail": "计划取消 1 件"
+            },
+            {
+              "title": "仓库截停原发货安排",
+              "time": "2026-10-24 15:03:27",
+              "actor": "退款分项截单",
+              "state": "CONFIRMED",
+              "detail": "完成时间为截单整体记录时间；撤回范围与本退款取消数量分别核对。"
+            },
+            {
+              "title": "本退款销售需求取消",
+              "time": "2026-10-24T15:03:58",
+              "actor": "库存原回执",
+              "state": "CONFIRMED",
+              "detail": "原请求确认取消 1 件"
+            },
+            {
+              "title": "逻辑预占释放",
+              "time": "2026-10-24T15:03:58",
+              "actor": "库存原回执",
+              "state": "CONFIRMED",
+              "detail": "1 件；不与分仓撤回数量相加"
+            }
+          ]
+        }
+      ],
+      "returns": [],
+      "platform_operations": [
+        {
+          "id": 24,
+          "action": "CANCEL_FEEDBACK",
+          "state": "SUCCESS",
+          "actor": "自动售后流程",
+          "result_message": "平台操作已返回；最终资金和物流结果分别核对",
+          "create_time": "2026-10-24 15:04:01"
+        }
+      ],
+      "events": [
+        {
+          "id": 471,
+          "action": "SCOPE_CANCEL",
+          "message": "任务 #9 已取消 1；库存请求 CFRGTac127ab8a60a4ed6aa90a476b5c00b16",
+          "actor": "退款分项截单",
+          "create_time": "2026-10-24 15:03:58"
+        },
+        {
+          "id": 469,
+          "action": "GOODS_SCOPE",
+          "message": "已确认分项货物方案，取消与退回按各自原来源执行",
+          "actor": "自动售后规则",
+          "create_time": "2026-10-24 15:03:23"
+        }
+      ],
+      "receipt_issue": "",
+      "truncated": false,
+      "goods_state": "DONE",
+      "goods_action": "MIXED",
+      "logistics": {
+        "has_intercept": false,
+        "application": {},
+        "reported_outcome": {},
+        "courier_query_supported": false,
+        "scope": "REFUND",
+        "original_packages": [],
+        "packages_truncated": false,
+        "returns": [],
+        "issues": [],
+        "platform_mode": "UNKNOWN",
+        "mode_basis": "CURRENT_CONFIGURATION",
+        "goods_done": true,
+        "funds_state": "SUCCESS",
+        "parcel_lookup_available": true
+      }
+    }
+  }
+}

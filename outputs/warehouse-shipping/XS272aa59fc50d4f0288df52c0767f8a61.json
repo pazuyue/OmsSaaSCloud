@@ -1,0 +1,42 @@
+{
+  "shipment_id": 98,
+  "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+  "order_id": 148,
+  "external_order": "SIMOUT_0a676d385b594f8e8dd0",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 2,
+  "message_id": "SIM_COMPLETE_XS272aa59fc50d4f0288df52c0767f8a61",
+  "package_code": "SIMPKG_XS272aa59fc50d4f0288df52c0767f8a61",
+  "express_code": "TEST-SF-XS272aa59fc50d4f0288df52c0767f8a61",
+  "outbound_time": "2026-10-23 15:30:14",
+  "plans": [
+    {
+      "id": 134,
+      "sku_sn": "AF20261023150323C09A",
+      "quantity": 1,
+      "platform_oid": "8720261023150323101",
+      "store_code": "AF20261023150323C09V1",
+      "batch_code": "AFB_AF20261023150323C09A_AF20261023150323C09V1"
+    },
+    {
+      "id": 135,
+      "sku_sn": "AF20261023150323C09G",
+      "quantity": 1,
+      "platform_oid": "",
+      "store_code": "AF20261023150323C09V1",
+      "batch_code": "AFB_AF20261023150323C09G_AF20261023150323C09V1"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS272aa59fc50d4f0288df52c0767f8a61</deliveryOrderCode><deliveryOrderId>SIMOUT_0a676d385b594f8e8dd0</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS272aa59fc50d4f0288df52c0767f8a61</outBizCode><totalOrderLines>2</totalOrderLines><orderConfirmTime>2026-10-23 15:30:14</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>134</orderLineNo><itemCode>AF20261023150323C09A</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_AF20261023150323C09A_AF20261023150323C09V1</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine><orderLine><orderLineNo>135</orderLineNo><itemCode>AF20261023150323C09G</itemCode><ownerCode>VC00001</ownerCode><batchCode>AFB_AF20261023150323C09G_AF20261023150323C09V1</batchCode><inventoryType>ZP</inventoryType><actualQty>1</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS272aa59fc50d4f0288df52c0767f8a61</packageCode><expressCode>TEST-SF-XS272aa59fc50d4f0288df52c0767f8a61</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>AF20261023150323C09A</itemCode><quantity>1</quantity></item><item><itemCode>AF20261023150323C09G</itemCode><quantity>1</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS272aa59fc50d4f0288df52c0767f8a61",
+    "quantity": 2,
+    "status": "SHIPPED",
+    "shipped_quantity": 2,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS272aa59fc50d4f0288df52c0767f8a61",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

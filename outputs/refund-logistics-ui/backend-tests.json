@@ -1,0 +1,192 @@
+{
+  "oms-order": {
+    "tests": 237,
+    "suites": [
+      {
+        "name": "com.oms.order.service.RefundLogisticsViewTest",
+        "tests": "10",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundDispositionServiceTest",
+        "tests": "9",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundServiceTest",
+        "tests": "22",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundSharedScopeTest",
+        "tests": "5",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundGoodsServiceTest",
+        "tests": "18",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundParcelPolicyTest",
+        "tests": "10",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundAllocationContextTest",
+        "tests": "3",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundSyncWakeupTest",
+        "tests": "3",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundReturnDispatchAutomationTest",
+        "tests": "17",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundReturnAutoCreateTest",
+        "tests": "21",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.ExchangeServiceTest",
+        "tests": "62",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundBusinessListTest",
+        "tests": "14",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundParcelAutomationTest",
+        "tests": "7",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.TenantRoutingTest",
+        "tests": "29",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.order.service.RefundParcelReviewTest",
+        "tests": "7",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      }
+    ]
+  },
+  "oms-supplychain": {
+    "tests": 142,
+    "suites": [
+      {
+        "name": "com.oms.supplychain.PurchaseWorkspaceTest",
+        "tests": "65",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.supplychain.service.wms.RefundParcelsTest",
+        "tests": "33",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.supplychain.service.wms.RefundReturnTest",
+        "tests": "9",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.supplychain.WmsLogQueryTest",
+        "tests": "10",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.supplychain.service.wms.ExchangeReturnTest",
+        "tests": "25",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      }
+    ]
+  },
+  "oms-channel": {
+    "tests": 85,
+    "suites": [
+      {
+        "name": "com.oms.channel.platform.ExchangePlatformTest",
+        "tests": "8",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.channel.platform.ChannelPlatformTest",
+        "tests": "36",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.channel.platform.PlatformLogTest",
+        "tests": "19",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.channel.platform.TmallClientTest",
+        "tests": "10",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.oms.channel.platform.RefundPlatformServiceTest",
+        "tests": "12",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0"
+      }
+    ]
+  }
+}

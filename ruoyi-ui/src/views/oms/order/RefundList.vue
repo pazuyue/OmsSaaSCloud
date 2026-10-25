@@ -8,7 +8,7 @@
       <el-form-item :label="business ? '处理状态' : '转单状态'"><el-select v-model="query.state" clearable><el-option v-for="v in states" :key="v" :value="v" :label="label(v)" /></el-select></el-form-item>
       <el-form-item><el-button type="primary" icon="el-icon-search" @click="search">查询</el-button><el-button @click="reset">{{ embedded?'清除本类筛选':'重置' }}</el-button></el-form-item>
     </el-form>
-    <div class="toolbar"><span>{{ business ? '审核用途与货物方案，保留原订单和执行依据' : '按店铺读取 jdp_tb_refund；补拉不改变自动游标' }}</span><div><el-button v-if="business" v-hasPermi="['order:refund:config']" size="small" @click="openReturnRules">退货规则</el-button><el-button v-if="!business" v-hasPermi="['order:refund:sync']" size="small" type="primary" @click="openSync">补拉退款</el-button><el-button v-hasPermi="['order:refund:sync']" size="small" @click="openTasks">同步任务</el-button><el-button size="small" icon="el-icon-refresh" @click="load">刷新</el-button></div></div>
+    <div class="toolbar"><span>{{ business ? '审核用途与货物方案，保留原订单和执行依据' : '按店铺读取 jdp_tb_refund；补拉不改变自动游标' }}</span><div><el-button v-if="business" v-hasPermi="['order:refund:config']" size="small" @click="openReturnRules">售后设置</el-button><el-button v-if="!business" v-hasPermi="['order:refund:sync']" size="small" type="primary" @click="openSync">补拉退款</el-button><el-button v-hasPermi="['order:refund:sync']" size="small" @click="openTasks">同步任务</el-button><el-button size="small" icon="el-icon-refresh" @click="load">刷新</el-button></div></div>
     <el-table v-loading="loading" :data="rows" empty-text="暂无退款记录；请检查退款接入设置或创建补拉任务">
       <el-table-column :label="business ? '业务退款 / 原订单' : '平台退款 / 原订单'" min-width="265"><template slot-scope="s"><el-button type="text" @click="open(s.row.id)">{{ business ? s.row.refund_sn : s.row.refund_id }}</el-button><el-tag v-if="business" size="mini">{{ label(s.row.dispute_type) }}</el-tag><el-tag v-if="business&&Number(s.row.shared_return)" size="mini" type="warning">合包退回</el-tag><div v-if="business">平台退款 {{ s.row.refund_id }}</div><div class="hint">平台订单 {{ s.row.platform_tid }}</div><div class="hint">平台子单 {{ s.row.platform_oid }}</div><div v-if="business" class="hint">OMS {{ s.row.order_sn }}</div></template></el-table-column>
       <el-table-column label="渠道 / 店铺" min-width="180"><template slot-scope="s">天猫 · {{ shop(s.row.channel_id) }}<div class="hint">渠道 ID {{ s.row.channel_id }}</div></template></el-table-column>
@@ -20,7 +20,7 @@
       <el-table-column label="操作" fixed="right" :width="embedded?220:business?310:140"><template slot-scope="s"><el-button v-if="business&&(s.row.parcel_issues||[]).length" v-hasPermi="['order:refund:goods']" type="text" @click="open(s.row.id,true)">处理合包问题</el-button><el-button v-hasPermi="['order:refund:query']" type="text" @click="open(s.row.id)">详情</el-button><el-button v-if="business&&Number(s.row.shared_return)" v-hasPermi="['order:refund:query']" type="text" @click="open(s.row.id,false,true)">查看退回包裹</el-button><el-button v-if="embedded" type="text" :disabled="!s.row.platform_tid" @click="$emit('related',s.row)">原单关联</el-button><el-button v-if="!business && !s.row.business_refund_id" v-hasPermi="['order:refund:convert']" type="text" @click="convert(s.row)">{{ s.row.conversion_state === 'FAILED' ? '重试转单' : '转单' }}</el-button></template></el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="load" />
-    <refund-detail ref="detail" :business="business" @changed="load" />
+    <refund-detail ref="detail" :channels="channels" :business="business" @changed="load" />
   </div>
 </template>
 <script>
@@ -34,9 +34,9 @@ export default { name: 'RefundList', components: { RefundDetail, MessageProgress
   label, shop(id) { const c = this.channels.find(c => Number(c.channel_id) === Number(id)); return c ? c.channel_name : `渠道 ${id}` }, problem(r) { return !!(r.problem_message || r.source_error || r.conversion_error || (r.parcel_issues||[]).length) },
   async load() { const seq=++this.sequence; this.loading = true; try { const r = (await (this.embedded?platformDocumentList('REFUND',{...this.query,...this.sharedFilters}):api.refundList(this.business,this.query))).data; if(seq===this.sequence){this.rows = r.rows; this.total = Number(r.total)} } finally { if(seq===this.sequence)this.loading = false } }, search() { this.query.pageNum = 1; this.load() }, reset() { this.query = initialQuery(); this.load() }, open(id,issue=false,parcel=false) { this.$refs.detail.open(id,issue,parcel) },
   async convert(r) { const result = (await api.convertRefund(r.id)).data; if (result.state === 'SUCCESS') this.$message.success('已转业务退款单'); else if(result.state==='PENDING')this.$message.success(result.message);else this.$message.warning(result.message || label(result.state)); await this.load() },
-  openReturnRules() { this.$router.push({path:'/oms-order/afterSaleRules/returns',query:this.query.channelId?{channelId:this.query.channelId}:{}}) },
-  openSync() { this.$router.push({path:'/oms-order/management',query:{kind:'REFUND',action:'backfill',...((this.embedded?this.sharedFilters.channelId:this.query.channelId)?{channelId:this.embedded?this.sharedFilters.channelId:this.query.channelId}:{})}}) },
-  openTasks() { this.$router.push({path:'/oms-order/management',query:{kind:'REFUND',tab:'tasks',...((this.embedded?this.sharedFilters.channelId:this.query.channelId)?{channelId:this.embedded?this.sharedFilters.channelId:this.query.channelId}:{})}}) }
+  openReturnRules() { this.$router.push({path:'/oms-order/businessSettings',query:this.query.channelId?{channelId:this.query.channelId}:{}}) },
+  openSync() { this.$router.push({path:'/oms-order/syncTasks',query:{kind:'REFUND',action:'backfill',...((this.embedded?this.sharedFilters.channelId:this.query.channelId)?{channelId:this.embedded?this.sharedFilters.channelId:this.query.channelId}:{})}}) },
+  openTasks() { this.$router.push({path:'/oms-order/syncTasks',query:{kind:'REFUND',tab:'tasks',...((this.embedded?this.sharedFilters.channelId:this.query.channelId)?{channelId:this.embedded?this.sharedFilters.channelId:this.query.channelId}:{})}}) }
 
 } }
 </script>

@@ -11,6 +11,11 @@ import java.util.*;
 @RestController @RequestMapping("/exchanges")
 public class ExchangeController {
     @Resource private ExchangeService exchanges;
+    @Resource private ExchangeFlowPolicy automaticPolicy;
+    @Resource private ExchangeFlowAutomation automaticFlow;
+    @Resource private SharedReturnWorkspace sharedReturns;
+    @RequiresPermissions("order:exchange:query") @GetMapping("/{id}/shared-return") public AjaxResult sharedReturn(@PathVariable long id){return AjaxResult.success(sharedReturns.report(company(),"EXCHANGE",id,id));}
+    @RequiresPermissions("order:exchange:execute") @PostMapping("/{id}/shared-return/{action}") public AjaxResult sharedAction(@PathVariable long id,@PathVariable String action,@RequestBody Map<String,Object> body){return AjaxResult.success(sharedReturns.action(company(),"EXCHANGE",id,id,action,body,SecurityUtils.getLoginUser().getPermissions(),SecurityUtils.getUsername()));}
     @Resource private ExchangeSync sync;
     @Resource private OrderCatalog catalog;
     @Resource private ExchangeFulfillment fulfillment;
@@ -27,6 +32,10 @@ public class ExchangeController {
     @RequiresPermissions("order:exchange:execute") @PostMapping("/{id}/return-documents/{document}/{action}") public AjaxResult returnDocument(@PathVariable long id,@PathVariable long document,@PathVariable String action,@RequestBody Map<String,Object> body){return AjaxResult.success(returnWorkspace.document(company(),id,document,action,body,SecurityUtils.getUsername()));}
     private String company(){return OrderValues.company(SecurityUtils.getLoginUser().getCompanyCode());}
     @RequiresPermissions("order:exchange:list") @GetMapping public TableDataInfo list(@RequestParam(defaultValue="") String number,@RequestParam(required=false) Long channelId,@RequestParam(defaultValue="") String state,@RequestParam(defaultValue="") String kind,@RequestParam(defaultValue="") String problem,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize){return exchanges.list(company(),number,channelId,state,kind,problem,pageNum,pageSize);}
+    @RequiresPermissions("order:exchange:config") @GetMapping("/flow-configs/{channel}") public AjaxResult flowConfig(@PathVariable long channel){return AjaxResult.success(automaticPolicy.read(company(),channel));}
+    @RequiresPermissions("order:exchange:config") @PostMapping("/flow-configs/{channel}") public AjaxResult flowSave(@PathVariable long channel,@RequestBody Map<String,Object> body){automaticPolicy.save(company(),channel,body,SecurityUtils.getUsername());return AjaxResult.success(automaticPolicy.read(company(),channel));}
+    @RequiresPermissions("order:exchange:query") @GetMapping("/{id}/automatic-flow") public AjaxResult automaticReport(@PathVariable long id){return AjaxResult.success(automaticFlow.report(company(),id));}
+    @RequiresPermissions("order:exchange:execute") @PostMapping("/{id}/automatic-flow/recheck") public AjaxResult automaticRecheck(@PathVariable long id,@RequestBody Map<String,Object> body){OrderValues.require(OrderValues.number(exchanges.detail(company(),id),"control_version")==OrderValues.number(body,"control_version"),"单据已变化，请刷新后重新评估");automaticFlow.retry(company(),id);return AjaxResult.success(automaticFlow.report(company(),id));}
     @RequiresPermissions("order:exchange:query") @GetMapping("/{id}") public AjaxResult detail(@PathVariable long id){return AjaxResult.success(workspace.detail(company(),id));}
     @RequiresPermissions("order:exchange:list") @GetMapping("/workbench") public AjaxResult workbench(@RequestParam(defaultValue="") String number,@RequestParam(required=false) Long channelId,@RequestParam(defaultValue="") String state,@RequestParam(defaultValue="") String kind,@RequestParam(defaultValue="") String problem,@RequestParam(defaultValue="ALL") String bucket,@RequestParam(defaultValue="") String phase,@RequestParam(defaultValue="1") int pageNum,@RequestParam(defaultValue="20") int pageSize){return AjaxResult.success(workspace.list(company(),number,channelId,state,kind,problem,bucket,pageNum,pageSize,phase));}
     @RequiresPermissions(value={"order:exchange:review","order:exchange:create"},logical=Logical.OR) @PostMapping("/goods-search") public AjaxResult goods(@RequestBody Map<String,Object> query){return AjaxResult.success(workspace.search(company(),query));}
