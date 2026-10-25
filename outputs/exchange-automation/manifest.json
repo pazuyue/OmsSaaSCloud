@@ -12854,12 +12854,12 @@
       "refund_configured": true,
       "small_rule_available": false,
       "last_progress": {
-        "at": "2026-10-25T09:47:19.363371",
+        "at": "2026-10-25T09:47:50.773562",
         "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f",
         "state": "PROCESSING",
-        "node": "RETURN",
-        "code": "WAIT_RETURN",
-        "message": "等待原退回商品完整实收入账；平台状态不代替仓库实际收货"
+        "node": "COLLECT",
+        "code": "COLLECTING",
+        "message": "共同退回正在等待最后新增来源后的归集期限，到期核对全部成员授权再统一下发"
       },
       "last_refund_progress": {
         "id": 130,

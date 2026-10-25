@@ -11,7 +11,8 @@ export function platformProgress(e = {}) {
   if (e.platform_operation === 'FAILED') return status('FAILED', name + '失败', '请核对平台交互日志及平台最新申请状态，再从本单继续处理。', 'danger')
   if (e.platform_operation === 'PENDING') return status('PENDING', name + '待执行', '处理请求已登记；登记请求不代表平台已接收或处理成功。')
   if (e.platform_operation === 'STOCK_WAIT') return status('STOCK_WAIT', '库存不足，尚未同意平台申请', '保留原申请数量，等待换出库存后继续原处理任务。', 'warning')
-  if (e.state === 'COMPLETED' && ['13', '5'].includes(String(e.platform_status))) return status('CONFIRMED', '平台已确认换出物流', '平台最新查询已确认换出发货状态；本次换货履约已完成。', 'success')
+  if (e.state === 'COMPLETED' && String(e.platform_status) === '5') return status('CONFIRMED', '平台换货成功', '平台已确认换货成功，本地实收实发已完成；平台最终结果与原操作记录分别保留。', 'success')
+  if (String(e.platform_status) === '13' && Number(e.platform_shipped_quantity) === Number(e.requested_quantity) && Number(e.requested_quantity) > 0 && Number(e.platform_packaged_quantity) === Number(e.requested_quantity)) return status('WAIT_FINAL', '已回传换出物流，待平台确认换货成功', '换出商品已实际出库并关联运单；卖家已发货仍需等待平台换货成功。')
   if (['CLOSED', 'CANCELED', 'REJECTED'].includes(e.state)) return status('ENDED', '本次处理已结束', '已执行的接口结果保留；结束 OMS 处理不代表平台已完成换货，请核对平台申请状态。')
   if (Number(e.fulfillment_hold)) return status('PAUSED', '履约已暂停', '暂停期间不提交新的换货物流，请先处理履约控制。', 'warning')
   if (Number(e.speed_exchange)) return status('MANUAL', '极速换货需在平台处理', '当前执行流程不支持极速换货，请人工核对平台申请。', 'warning')
@@ -26,5 +27,5 @@ export function platformProgress(e = {}) {
   if (packed !== shipped) return status('WAIT_PACKAGE', '待完整关联包裹与运单', `已出库 ${shipped} 件，已关联包裹 ${packed} 件，数量一致后才能回传。`, 'warning')
   if (Number(e.platform_tracking_count) !== 1) return status('MANUAL_TRACKING', '运单需人工核对', '当前回传支持一组快递与运单；请核对多运单在平台的处理方式，暂不提交。', 'warning')
   if (!Number(e.platform_write_enabled)) return status('WRITE_DISABLED', '待开启店铺换货写权限', '出库与包裹已齐备；请在换货接入设置中核对写操作开关。', 'warning')
-  return status('READY', '待回传换出物流', '出库与运单已齐备，尚未提交。请人工发起回传；仓库发货完成不会自动通知平台。', 'warning')
+  return status('READY', '待回传换出物流', '出库与运单已齐备，尚未提交。已授权的店铺自动流程会继续推进；也可在本单核对并处理。', 'warning')
 }
