@@ -28,6 +28,8 @@ def main():
                INVENTORY_TEST_PASSWORD=ENV['MYSQL_ROOT_PASSWORD'], JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64')
     out = ROOT / 'outputs/exchange-automation'
     names = [row['name'].split('.')[-1] for row in json.loads((out / 'regression.json').read_text())['suites']]
+    if 'ExchangeSyncTest' not in names:
+        names.append('ExchangeSyncTest')
     command = [str(HERE / 'tools/apache-maven-3.9.9/bin/mvn'), '-B', '-f', str(cache / 'source/pom.xml'),
                '-Plocal-docker', '-Dmaven.repo.local=' + str(cache / 'm2'), '-pl', ','.join(modules), '-am',
                '-Dtest=' + ','.join(names), '-Dsurefire.failIfNoSpecifiedTests=false', 'package']

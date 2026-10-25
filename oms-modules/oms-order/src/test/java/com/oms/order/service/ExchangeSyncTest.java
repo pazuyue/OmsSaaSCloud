@@ -20,6 +20,22 @@ class ExchangeSyncTest {
     @Test void idsAreReadOnlyDurableAndDuplicateSubmissionIsIdempotent(){response("9001");response("9002");long task=submit("9001,9002","request_001");assertEquals(task,submit("9001,9002","request_001"));String cursor=db.query("SELECT cursor_time FROM oms_exchange_config",ROW).get(0).get("cursor_time").toString();drain(task);Map<String,Object> t=sync.task("VERIFY",task);assertEquals("COMPLETED",t.get("state"));assertEquals(2,number(t,"new_count"));assertEquals(2,((List<?>)t.get("items")).size());assertEquals(cursor,db.query("SELECT cursor_time FROM oms_exchange_config",ROW).get(0).get("cursor_time"));verify(exchange,times(2)).call(eq("VERIFY"),eq(1L),eq("DETAIL"),anyMap());assertThrows(IllegalArgumentException.class,()->sync.task("OTHER",task));assertThrows(IllegalArgumentException.class,()->sync.retry("OTHER",task));}
     @Test void partialFailureRetainsSuccessAndRetryQueriesOnlyFailedApplication(){response("9001");when(exchange.call(eq("VERIFY"),eq(1L),eq("DETAIL"),argThat(m->m!=null&&"9002".equals(m.get("dispute_id"))))).thenThrow(new IllegalArgumentException("申请暂不可读"));long task=submit("9001,9002","request_002");drain(task);Map<String,Object> t=sync.task("VERIFY",task);assertEquals("RUNNING",t.get("state"));assertEquals(1,number(t,"new_count"));assertEquals(1,number(t,"failed_count"));response("9002");drain(task);t=sync.task("VERIFY",task);assertEquals("COMPLETED",t.get("state"));assertEquals(2,number(t,"new_count"));assertEquals(0,number(t,"failed_count"));verify(exchange,times(1)).call(eq("VERIFY"),eq(1L),eq("DETAIL"),argThat(m->m!=null&&"9001".equals(m.get("dispute_id"))));}
     @Test void sameRequestKeyCannotBeUsedForAnotherScope(){submit("9001","request_003");assertThrows(IllegalArgumentException.class,()->submit("9002","request_003"));}
+    @Test void concurrentRequestsOnExistingShopDoNotUpgradeDuplicateSharedLocks() throws Exception {
+        submit("9001","concurrent_seed");
+        concurrentSubmit(false);
+        assertEquals(4,db.queryForObject("SELECT COUNT(*) FROM oms_exchange_sync",Integer.class));
+        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM oms_exchange_config",Integer.class));
+    }
+    @Test void concurrentFirstRequestsKeepOneShopAndOneIdempotentTask() throws Exception {
+        concurrentSubmit(true);
+        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM oms_exchange_sync",Integer.class));
+        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM oms_exchange_config",Integer.class));
+    }
+    private void concurrentSubmit(boolean sameKey) throws Exception {
+        java.util.concurrent.ExecutorService pool=java.util.concurrent.Executors.newFixedThreadPool(3);
+        java.util.concurrent.CountDownLatch start=new java.util.concurrent.CountDownLatch(1);
+        try{List<java.util.concurrent.Future<Long>> futures=new ArrayList<>();for(int i=0;i<3;i++){final int index=i;futures.add(pool.submit(()->{start.await();return submit("9001","concurrent_request_"+(sameKey?0:index));}));}start.countDown();Set<Long> ids=new HashSet<>();for(java.util.concurrent.Future<Long> result:futures)ids.add(result.get(20,java.util.concurrent.TimeUnit.SECONDS));assertEquals(sameKey?1:3,ids.size());}finally{pool.shutdownNow();}
+    }
     @Test void timeValidationRejectsEqualityAndMoreThan31Days(){for(String end:Arrays.asList("2026-09-01 00:00:00","2026-10-02 00:00:01"))assertThrows(IllegalArgumentException.class,()->sync.submit("VERIFY",map("channel_id",1,"request_key","request_004","start_time","2026-09-01 00:00:00","end_time",end),"test"));}
     @Test void exhaustedAutomaticWindowCannotBeRecreatedAsANewTask(){submit("9001","request_006");db.update("UPDATE oms_exchange_config SET enabled=1,initial_time='2026-10-01 00:00:00',cursor_time='2026-10-01 00:00:00'");db.update("UPDATE oms_exchange_sync SET mode='AUTO',state='FAILED',start_time='2026-10-01 00:00:00',end_time='2026-10-02 00:00:00'");sync.shop("VERIFY",1);assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM oms_exchange_sync",Integer.class));verify(exchange,never()).call(anyString(),anyLong(),anyString(),anyMap());}
     @Test void scannerDoesNotCallPlatformOrConsumeFailedTask(){long task=submit("9001","request_005");sync.shop("VERIFY",1);assertEquals("PENDING",sync.task("VERIFY",task).get("state"));db.update("UPDATE oms_exchange_sync SET state='FAILED'");sync.shop("VERIFY",1);verify(exchange,never()).call(anyString(),anyLong(),anyString(),anyMap());}
