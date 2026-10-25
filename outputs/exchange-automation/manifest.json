@@ -12715,17 +12715,19 @@
           "dispute_id": "87202610242359060331",
           "target_sku": "EXAUTO_2026102423590603R3B",
           "index": 1,
-          "source_sequence": 1,
+          "source_sequence": 2,
           "id": 69,
-          "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f"
+          "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f",
+          "buyer_returned": true
         }
       ],
       "refunds": {
         "mixed": {
           "refund_id": "8820261024235906033",
           "amount": "5.00",
-          "source_sequence": 1,
-          "id": 130
+          "source_sequence": 2,
+          "id": 130,
+          "buyer_sent": true
         }
       },
       "owner_code": "SAASQM01",
@@ -12852,17 +12854,17 @@
       "refund_configured": true,
       "small_rule_available": false,
       "last_progress": {
-        "at": "2026-10-25T09:47:11.058801",
+        "at": "2026-10-25T09:47:19.363371",
         "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f",
-        "state": "APPROVED",
-        "node": "REVIEW",
-        "code": "",
-        "message": ""
+        "state": "PROCESSING",
+        "node": "RETURN",
+        "code": "WAIT_RETURN",
+        "message": "等待原退回商品完整实收入账；平台状态不代替仓库实际收货"
       },
       "last_refund_progress": {
         "id": 130,
-        "state": "NEEDS_REVIEW",
-        "review_state": "PENDING",
+        "state": "PROCESSING",
+        "review_state": "APPROVED",
         "funds_state": "NONE"
       }
     }
