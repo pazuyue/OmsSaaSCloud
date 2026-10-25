@@ -12710,8 +12710,24 @@
         }
       ],
       "quantity": 4,
-      "claims": [],
-      "refunds": {},
+      "claims": [
+        {
+          "dispute_id": "87202610242359060331",
+          "target_sku": "EXAUTO_2026102423590603R3B",
+          "index": 1,
+          "source_sequence": 1,
+          "id": 69,
+          "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f"
+        }
+      ],
+      "refunds": {
+        "mixed": {
+          "refund_id": "8820261024235906033",
+          "amount": "5.00",
+          "source_sequence": 1,
+          "id": 130
+        }
+      },
       "owner_code": "SAASQM01",
       "real_store_code": "TW201",
       "connection_id": 13,
@@ -12834,7 +12850,21 @@
       "flow_configured": true,
       "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
       "refund_configured": true,
-      "small_rule_available": false
+      "small_rule_available": false,
+      "last_progress": {
+        "at": "2026-10-25T09:47:11.058801",
+        "exchange_sn": "HH507a0a83741f4d119380cb69c8bf0f4f",
+        "state": "APPROVED",
+        "node": "REVIEW",
+        "code": "",
+        "message": ""
+      },
+      "last_refund_progress": {
+        "id": 130,
+        "state": "NEEDS_REVIEW",
+        "review_state": "PENDING",
+        "funds_state": "NONE"
+      }
     }
   },
   "boundary": "local SIMULATION platform, signed TEST WMS; global jobs and existing shop settings unchanged",
