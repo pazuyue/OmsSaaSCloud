@@ -12830,7 +12830,11 @@
             "0"
           ]
         ]
-      }
+      },
+      "flow_configured": true,
+      "source_key": "PS33255587e4c64f35895b6aef855f7eb9",
+      "refund_configured": true,
+      "small_rule_available": false
     }
   },
   "boundary": "local SIMULATION platform, signed TEST WMS; global jobs and existing shop settings unchanged",

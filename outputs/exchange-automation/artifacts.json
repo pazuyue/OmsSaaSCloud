@@ -2,7 +2,7 @@
   {
     "module": "oms-modules/oms-order",
     "jar": "oms-order.jar",
-    "sha256": "1ab6e838ab7716fd29fd387cd507a5ea8146ddd4bdb81c07288d60a7d6e65ba0"
+    "sha256": "c64cb2f870ab80d85e05eb4d0c4d5e5776171fe6eaa6fabd37a2fa47ea60747c"
   },
   {
     "module": "oms-modules/oms-supplychain",
