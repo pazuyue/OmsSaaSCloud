@@ -1,0 +1,89 @@
+{
+  "result": "PASS",
+  "document_sn": "DZ29190e8932304d07b9b9c8d3a3799d64",
+  "document_id": 195,
+  "transfer_sn": "DB4886221bb8c448a19e1f0be60da24da4",
+  "transfer_id": 13,
+  "checks": [
+    "原单检查完成但仍有调拨阻断，顶部明确解释不能调整，不隐藏处理原因",
+    "差额-2与关联调拨单号保留，待确认单据增加直接查看入口",
+    "通过只读精确单号查询打开正确调拨，保留来源库存检查回跳入口",
+    "从关联调拨返回原检查，不丢失单据上下文",
+    "后续复查预填原货主实仓、SKU与查询方式；取消后不新增检查任务"
+  ],
+  "js_errors": [],
+  "unexpected_mutations": [],
+  "stock_unchanged": true,
+  "warehouse_not_called": true,
+  "task_not_created": true,
+  "evidence": {
+    "state": "COMPLETED",
+    "row": {
+      "key": "WC_20261026105220_15\u001fWC_BATCH_pending\u001fZP",
+      "sku_sn": "WC_20261026105220_15",
+      "batch_code": "WC_BATCH_pending",
+      "inventory_type": "ZP",
+      "oms_physical": 10,
+      "oms_held": 2,
+      "wms_physical": 8,
+      "wms_frozen": 2,
+      "status": "WAITING_POST",
+      "sources": [
+        {
+          "store_code": "WCV_source_20261026105220",
+          "batch_id": 454,
+          "unit_cost": 2.5,
+          "physical": 10,
+          "free": 8
+        }
+      ],
+      "wms_unfrozen": 6,
+      "difference": -2,
+      "frozen_difference": 0,
+      "stock_unit": "件",
+      "goods_name": "[库存对账调拨TEST] pending"
+    },
+    "pending": [
+      {
+        "document_sn": "DB4886221bb8c448a19e1f0be60da24da4",
+        "reason": "调拨两侧有未结束执行或在途实收待确认",
+        "store_code": "WCV_source_20261026105220"
+      }
+    ],
+    "transfer_state": "ACTIVE",
+    "lines": [
+      {
+        "id": 14,
+        "company_code": "QM",
+        "transfer_id": 13,
+        "sku_sn": "WC_20261026105220_15",
+        "goods_name": "[库存对账调拨TEST] pending",
+        "source_batch_id": 454,
+        "batch_code": "WC_BATCH_pending",
+        "inventory_type": "ZP",
+        "unit_cost": 2.5,
+        "stock_unit": "件",
+        "quantity": 2,
+        "out_quantity": 0,
+        "in_quantity": 0,
+        "recovered_quantity": 0,
+        "released_quantity": 0,
+        "transit_quantity": 0
+      }
+    ],
+    "executions": [
+      {
+        "side": "OUT",
+        "dispatch_state": "ACCEPTED",
+        "receipt_final": 0,
+        "document_sn": "DBO750a75a761cf49889e0ea6fb9ce1736e"
+      },
+      {
+        "side": "IN",
+        "dispatch_state": "PENDING",
+        "receipt_final": 0,
+        "document_sn": "DBI40b3ebaa71d44a838790740287daad8e"
+      }
+    ]
+  }
+}

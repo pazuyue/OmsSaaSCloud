@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "http_status": 200,
+  "scenario_sections": 19,
+  "images": 10,
+  "javascript_errors": [],
+  "backend_tests": 310,
+  "business_scenarios": 19,
+  "base_scenarios": 8,
+  "browser_checks": 20,
+  "query_checks": 14,
+  "protected_baseline_unchanged": true
+}

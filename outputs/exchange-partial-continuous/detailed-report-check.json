@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "executed_cases": 8,
+  "planned_cases": 1,
+  "evidence_manifest_unchanged": true,
+  "http_status": 200,
+  "js_errors": [],
+  "checks": [
+    "stepwise expected and actual",
+    "before and after stock",
+    "inventory equations",
+    "stock timeline",
+    "case24 explicitly pending",
+    "case navigation",
+    "evidence toggles",
+    "mobile width"
+  ]
+}

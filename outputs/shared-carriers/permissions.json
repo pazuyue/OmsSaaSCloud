@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "username": "SCB_1793079876",
+      "role_id": 9,
+      "permissions": [
+        "warehouse:purchaseReturn:query"
+      ]
+    },
+    {
+      "username": "SCR_1793079876",
+      "role_id": 10,
+      "permissions": [
+        "common:carrier:query"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "scenario": "无公共配置权限的业务人员可查询快递选项",
+      "edit_denied": "('/order/sharedCarriers/standard/save', '没有访问权限，请联系管理员授权')",
+      "todo_retry_denied": true
+    },
+    {
+      "scenario": "公共只读人员可查询配置",
+      "edit_denied": "('/order/sharedCarriers/standard/save', '没有访问权限，请联系管理员授权')",
+      "todo_retry_denied": true
+    }
+  ]
+}

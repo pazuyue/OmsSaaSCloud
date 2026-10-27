@@ -1,0 +1,37 @@
+package com.oms.order.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
+import javax.annotation.Resource;
+import java.util.*;
+import static com.oms.order.service.OrderValues.*;
+
+/** Repair only unfinished metadata/notifications. This service has no inventory client. */
+@Service
+public class SharedCarrierWork {
+    @Resource private SharedCarrierService carriers;
+    @Resource private com.oms.common.carrier.CarrierBackground background;
+    @Resource private OrderCatalog catalog;
+    @Resource private OrderRepository repository;
+    @Resource private OrderPlatformShippingService shipping;
+    @Resource private com.oms.common.api.OrderWarehouseClient warehouse;
+    @SuppressWarnings("unchecked") public Map<String,Object> fact(String company,Map<String,Object> fact,String actor){require(fact.get("context") instanceof Map,"缺少物流事实转换上下文");Map<String,Object> ctx=new LinkedHashMap<>((Map<String,Object>)fact.get("context"));if("CHANNEL".equals(text(ctx,"system_type"))&&!text(ctx,"shop_id").isEmpty()){Map<String,Object> trusted=catalog.channels(company).stream().filter(s->String.valueOf(s.get("channel_id")).equals(text(ctx,"shop_id"))).findFirst().orElseThrow(()->new IllegalArgumentException("来源店铺不属于当前公司"));ctx.put("connection_id",text(trusted,"connection_id"));ctx.put("provider",SharedCarrierService.platform(text(trusted,"channel_type")));}Map<String,Object> result=carriers.convert(company,ctx);if(!Boolean.TRUE.equals(result.get("available")))result.put("todo_id",carriers.issue(company,fact,ctx,result,actor));return result;}
+    @SuppressWarnings("unchecked") public Map<String,Object> retry(String company,long id,long version,String actor){Map<String,Object> todo=carriers.todo(company,id);require(number(todo,"revision")==version,"待办已变化，请刷新");if("COMPLETED".equals(text(todo,"state")))return todo;Map<String,Object> check=carriers.revalidate(company,id,version,actor);require(Boolean.TRUE.equals(check.get("available")),text(check,"message"));String action=text(todo,"blocked_action");Map<String,Object> result;
+        if("PLATFORM_SHIPPING".equals(action)){long shipment=number(todo,"business_id");Map<String,Object> report=shipping.enqueue(company,shipment,actor);result=new LinkedHashMap<>();result.put("state","ENQUEUED");result.put("message","平台通知任务已生成或原任务已存在；未重新处理出库或库存");result.put("report",report);List<Map<String,Object>> tasks=repository.db().query("SELECT t.state FROM oms_order_platform_shipping_task t JOIN oms_order_shipment_package p ON p.company_code=t.company_code AND p.id=t.package_id WHERE t.company_code=? AND t.shipment_id=? AND p.package_code=?",ROW,company,shipment,todo.get("fact_id"));require(tasks.size()==1,"本包裹通知尚未生成，请回原单核对具体阻断原因");if(!"SUCCESS".equals(text(tasks.get(0),"state"))){carriers.audit(company,"todo",id,"RETRY_ENQUEUED",todo,result,actor);return result;}}
+        else if("RESOLVE_ACTUAL".equals(action)&&"SHIPMENT".equals(text(todo,"business_type"))){Map<String,Object> ctx=(Map<String,Object>)todo.get("context");List<Map<String,Object>> packs=repository.db().query("SELECT p.id FROM oms_order_shipment_package p JOIN oms_order_shipment s ON s.company_code=p.company_code AND s.id=p.shipment_id WHERE p.company_code=? AND p.shipment_id=? AND p.package_code=? AND p.warehouse_carrier_code=?",ROW,company,todo.get("business_id"),todo.get("fact_id"),ctx.get("external_code"));require(packs.size()==1,"原包裹物流事实已变化，请重新核对");repository.db().update("UPDATE oms_order_shipment_package SET standard_id=?,carrier_code=?,carrier_name=?,carrier_resolution_state='RESOLVED',carrier_resolution_json=? WHERE company_code=? AND id=?",check.get("standard_id"),check.get("standard_code"),check.get("standard_name"),encode(check),company,packs.get(0).get("id"));result=check;}
+        else if("RESOLVE_ACTUAL".equals(action)&&"PURCHASE_RETURN".equals(text(todo,"business_type"))){Map<String,Object> request=new LinkedHashMap<>();for(String key:Arrays.asList("business_type","business_id","fact_id"))request.put(key,todo.get(key));request.put("external_code",text((Map<String,Object>)todo.get("context"),"external_code"));result=data(warehouse.carrierFactRetry(company,request,com.ruoyi.common.core.constant.SecurityConstants.INNER));if(!Boolean.TRUE.equals(result.get("available")))return result;}
+        else {result=new LinkedHashMap<>();result.put("state","READY");result.put("message","关联校验通过。请回原单执行尚未下发的步骤；已提交执行保持原请求快照。");carriers.audit(company,"todo",id,"RETRY_REQUIRES_ORIGINAL_ACTION",todo,result,actor);return result;}
+        carriers.complete(company,id,actor,result);return result;
+    }
+    public Map<String,Object> sync(String company,Map<String,Object> input,String actor){Map<String,Object> scope=carriers.scope(input);String state="WMS".equals(text(scope,"system_type"))&&"QIMEN".equals(text(scope,"provider"))?"PENDING":"UNSUPPORTED";Map<String,Object> result=new LinkedHashMap<>();result.put("message","PENDING".equals(state)?"已排队查询奇门快递清单，未变更任何关联":"该连接尚无已接通且获授权的快递清单查询适配器，请导入正式快递清单");result.put("state",state);Map<String,Object> fields=new LinkedHashMap<>();fields.put("company_code",company);fields.putAll(scope);fields.put("state",state);fields.put("source_url","WMS".equals(text(scope,"system_type"))?"https://developer.alibaba.com/docs/api.htm?apiId=27530":"");fields.put("result_json",encode(result));fields.put("actor",actor);long id=repository.insert("INSERT INTO oms_carrier_sync("+String.join(",",fields.keySet())+") VALUES ("+String.join(",",Collections.nCopies(fields.size(),"?"))+")",fields.values().toArray());result.put("id",id);carriers.audit(company,"sync",id,"REQUEST",Collections.emptyMap(),scope,actor);return result;}
+    /** A claimed task makes the remote read outside business transactions. Results require explicit import confirmation. */
+    @Scheduled(fixedDelay=30000) public void synchronizeDirectory(){background.each("DIRECTORY",this::synchronizeCompany);}
+    @SuppressWarnings("unchecked") private void synchronizeCompany(String scope){
+        for(Map<String,Object> task:repository.db().query("SELECT * FROM oms_carrier_sync WHERE company_code=? AND state='PENDING' ORDER BY id LIMIT 2",ROW,scope)){
+            String company=text(task,"company_code");if(repository.db().update("UPDATE oms_carrier_sync SET state='RUNNING' WHERE company_code=? AND id=? AND state='PENDING'",company,task.get("id"))!=1)continue;
+            try{Map<String,Object> reply=data(warehouse.carrierDirectory(company,task,com.ruoyi.common.core.constant.SecurityConstants.INNER));require("SUCCESS".equals(text(reply,"state")),text(reply,"message"));Map<String,Object> input=new LinkedHashMap<>(task);input.put("rows",reply.get("rows"));input.put("evidence",task.get("source_url"));Map<String,Object> preview=carriers.apiPreview(company,input,text(task,"actor"));repository.db().update("UPDATE oms_carrier_sync SET state='SUCCESS',result_json=?,finish_time=NOW() WHERE company_code=? AND id=?",encode(preview),company,task.get("id"));}
+            catch(RuntimeException e){repository.db().update("UPDATE oms_carrier_sync SET state='FAILED',result_json=?,finish_time=NOW() WHERE company_code=? AND id=?",encode(Collections.singletonMap("message","快递清单查询未成功，请核对连接权限和接口支持；已有快递清单及关联保持原状")),company,task.get("id"));}
+        }
+        repository.db().update("UPDATE oms_carrier_sync SET state='FAILED',finish_time=NOW(),result_json='{\"message\":\"任务超时或服务中断，请重新发起查询，原配置保持不变\"}' WHERE company_code=? AND state='RUNNING' AND create_time<DATE_SUB(NOW(),INTERVAL 10 MINUTE)",scope);
+    }
+}

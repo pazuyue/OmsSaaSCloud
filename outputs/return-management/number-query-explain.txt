@@ -1,0 +1,2 @@
+1	PRIMARY	r	NULL	ref	source_part,group_scope,owner_scope,page_scope,channel_page,store_page	group_scope	268	const,const	105	100.00	Using where; Using index
+2	DEPENDENT SUBQUERY	n	NULL	ref	PRIMARY,number_scope,number_any,owner_scope	number_any	1424	qm_oms_saas_order.r.company_code,const,qm_oms_saas_order.r.view_kind,qm_oms_saas_order.r.group_key	1	100.00	Using index

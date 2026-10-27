@@ -24,7 +24,7 @@ final class WmsOutboundReceiptReviews {
             List<Map<String,Object>> incoming=new ArrayList<>(),existing=new ArrayList<>();
             for(WmsProtocol.OutboundPackage p:receipt.packages){
                 incoming.add(map("package_code",p.packageCode,"express_code",p.expressCode,"logistics_code",p.logisticsCode,"items",p.items));
-                existing.addAll(db.jdbc.queryForList("SELECT t.shipment_id,t.shipment_sn,p.package_code,p.express_code,p.logistics_code,p.lines_json FROM wms_outbound_receipt_package p JOIN wms_outbound_task t ON t.company_code=p.company_code AND t.id=p.task_id WHERE p.company_code=? AND ((p.task_id=? AND p.package_code=?) OR (UPPER(p.logistics_code)=? AND p.express_code=?))",company,receiptTask(company,id(row.get("id"))),p.packageCode,p.logisticsCode.toUpperCase(Locale.ROOT),p.expressCode));
+                existing.addAll(db.jdbc.queryForList("SELECT t.shipment_id,t.shipment_sn,p.package_code,p.express_code,p.logistics_code,p.lines_json FROM wms_outbound_receipt_package p JOIN wms_outbound_task t ON t.company_code=p.company_code AND t.id=p.task_id WHERE p.company_code=? AND ((p.task_id=? AND p.package_code=?) OR (p.logistics_code=? AND p.express_code=?))",company,receiptTask(company,id(row.get("id"))),p.packageCode,p.logisticsCode,p.expressCode));
             }
             for(Map<String,Object> p:existing)p.put("lines",db.json.readValue(text(p.remove("lines_json")),List.class));
             row.put("incoming_packages",incoming);row.put("existing_packages",existing);row.put("can_confirm_shared","WAIT_REVIEW".equals(row.get("state"))&&"WAYBILL_CONFLICT".equals(row.get("conflict_code")));

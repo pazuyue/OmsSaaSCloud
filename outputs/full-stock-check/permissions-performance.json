@@ -1,0 +1,62 @@
+{
+  "result": "PASS",
+  "reader": "FCR_1793091201",
+  "query_and_export_allowed": true,
+  "export_errors_are_json": true,
+  "empty_export_has_headers": true,
+  "mutations_denied": [
+    "/supplychain/warehouseControl/reconciliations",
+    "/supplychain/warehouseControl/reconciliations/34/control/stop",
+    "/supplychain/warehouseControl/reconciliations/34/control/retryFailed",
+    "/supplychain/warehouseControl/reconciliations/34/recheck",
+    "/supplychain/warehouseControl/reconciliations/34/adjustment"
+  ],
+  "no_task_created": true,
+  "no_warehouse_calls_for_reads": true,
+  "timings": [
+    {
+      "path": "/supplychain/warehouseControl/reconciliations",
+      "samples_ms": [
+        19.7,
+        28.1,
+        15.5,
+        15.2,
+        42.9
+      ],
+      "median_ms": 19.7
+    },
+    {
+      "path": "/supplychain/warehouseControl/reconciliations/34",
+      "samples_ms": [
+        14.7,
+        14.6,
+        14.4,
+        15.6,
+        17.0
+      ],
+      "median_ms": 14.7
+    },
+    {
+      "path": "/supplychain/warehouseControl/reconciliations/34/results?status=ABNORMAL&pageSize=20",
+      "samples_ms": [
+        40.3,
+        26.9,
+        29.4,
+        14.9,
+        16.9
+      ],
+      "median_ms": 26.9
+    }
+  ],
+  "scope": "本地19种商品任务，单用户抽样，包含网关认证；不作为大仓压测结论",
+  "limits": {
+    "discovery_inventory_rows": 100,
+    "sku_queries_per_round": 5,
+    "same_warehouse_query_concurrency": 1,
+    "result_page": 100,
+    "wms_page": 100,
+    "wms_rows_per_sku": 5000,
+    "manifest_skus": 20000,
+    "export_rows": 100000
+  }
+}

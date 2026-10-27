@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "checks": [
+    "真实空目录可填写已核对编码",
+    "下拉显示名称和编码，提交仓库编码",
+    "失败提示和重试恢复",
+    "仅按采购所属货主实仓查询，不使用供应商收货省份筛选",
+    "原拒收来源及本次数量保持正确",
+    "业务保存全部拦截，单据和库存未改变"
+  ],
+  "javascript_errors": [],
+  "unexpected_requests": [],
+  "catalog_requests": 4,
+  "intercepted_saves": 2,
+  "business_data_unchanged": true
+}

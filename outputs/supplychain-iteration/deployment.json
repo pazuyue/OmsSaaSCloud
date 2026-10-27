@@ -1,0 +1,14 @@
+[
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "54745c678b6b6510eb908f4f1c76d54d1d943894ff2b8698fc9dc3497d374edd",
+    "new_sha256": "8d161409d612932547daa33c7c5474b882a42c9c779dd6ad50c910ae8bba1a73",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-goods-administration",
+    "previous_sha256": "f219cc449c4473f1e16e79685d8d44061f60b718545e42af56618d132c6be126",
+    "new_sha256": "a4aa5bc25fdc489edb926755378818892be0086160b54a179f4e7d96442b48e8",
+    "sources_match_cache": true
+  }
+]

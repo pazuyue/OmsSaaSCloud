@@ -1,6 +1,7 @@
-"""Read-only final audit and retained, linked Chinese acceptance report."""
+"""Final audit, duplicate source intake and retained Chinese acceptance report."""
 import json
 import shutil
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from html import escape
@@ -46,6 +47,15 @@ def main():
         assert before == r.snapshot(c)
         c['duplicate_source_verified'] = True
         r.save()
+    for task in c.get('duplicate_source_tasks', []):
+        for attempt in range(60):
+            current = r.api('/order/exchanges/tasks/' + str(task['id']))
+            if current['state'] == 'COMPLETED':
+                assert int(current['new_count']) == 0 and int(current['updated_count']) == 0
+                break
+            if attempt == 59:
+                raise AssertionError('Duplicate source task not completed: ' + str(task['id']))
+            time.sleep(1)
     for key, c in sorted(r.data['cases'].items()):
         r.verify_stock(c)
         c['final_exchanges'] = [r.e(claim) for claim in c['claims']]
@@ -58,9 +68,16 @@ def main():
         if key == '12':
             e = c['final_exchanges'][0]
             assert int(e['fulfillment_round']) == 2
-            assert len(e['return_result']['documents']) == 1
+            c['return_documents'] = sql("SELECT return_sn,quantity,accepted_quantity,posted_quantity FROM wms_exchange_return WHERE company_code='QM' AND exchange_id=" + str(e['id']), SUPPLY)
+            assert sql("SELECT COUNT(*) FROM wms_exchange_return WHERE company_code='QM' AND exchange_id=" + str(e['id']), SUPPLY) == '1'
             assert c['old_round_stopped'] and c['continuation_requested']
             c['round_evidence'] = sql("SELECT round_no,state,quantity,reviewed_by FROM oms_exchange_round WHERE company_code='QM' AND exchange_id=" + str(e['id']) + ' ORDER BY round_no', ORDER)
+            assert sql("SELECT reviewed_by FROM oms_exchange_round WHERE company_code='QM' AND exchange_id=" + str(e['id']) + ' AND round_no=2', ORDER) == '自动换货规则'
+        if key in ['05', '06', '12']:
+            assert sql("SELECT COUNT(*) FROM oms_order WHERE company_code='QM' AND platform_order_id=" + str(c['platform_id']), ORDER) == '1'
+        if key == '05':
+            c['unshipped_review_evidence'] = sql("SELECT action,decision,operator_name FROM oms_order_review_event WHERE company_code='QM' AND order_id=" + str(c['order_id']) + " AND action='AUTO_EXCHANGE_APPROVE'", ORDER)
+            assert '自动换货规则' in c['unshipped_review_evidence']
         if key == '03':
             c['final_refund'] = r.api('/order/refunds/business/' + str(c['refunds']['mixed']['id']))
             assert c['final_refund']['state'] == 'COMPLETED'

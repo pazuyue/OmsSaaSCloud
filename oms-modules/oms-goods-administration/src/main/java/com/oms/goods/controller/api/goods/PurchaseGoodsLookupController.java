@@ -11,6 +11,17 @@ import java.util.*;
 public class PurchaseGoodsLookupController {
     @Resource private GoodsWorkspaceService workspace;
     @Resource private com.oms.goods.service.goods.impl.GoodsBundleService bundles;
+    @Resource private org.springframework.jdbc.core.JdbcTemplate jdbc;
+    @InnerAuth @PostMapping("/api/goods/purchaseLookupBatch")
+    public R<List<Map<String,Object>>> batch(@RequestBody List<String> skus,@RequestParam("company_code") String company){
+        if(company.trim().isEmpty()||skus==null||skus.isEmpty()||skus.size()>200)return R.fail("一次须查询1至200个采购SKU");
+        String c=company.trim().toUpperCase(Locale.ROOT);for(String sku:skus)if(sku==null||sku.isEmpty()||sku.length()>100)return R.fail("采购SKU无效");
+        List<Object> args=new ArrayList<>();args.add(c);args.addAll(skus);
+        List<Map<String,Object>> found=jdbc.queryForList("SELECT id,sku_sn,goods_name,goods_sn,barcode_sn,is_package FROM goods_sku_sn_info WHERE UPPER(company_code)=? AND sku_sn IN ("+String.join(",",Collections.nCopies(skus.size(),"?"))+")",args.toArray());
+        bundles.attach(c,found);
+        for(Map<String,Object> row:found){boolean valid=true;if(row.get("is_package")!=null&&Integer.parseInt(row.get("is_package").toString())==1){Object raw=row.get("bundle");Map<?,?> kit=raw instanceof Map?(Map<?,?>)raw:Collections.emptyMap();valid="STOCKED".equals(kit.get("inventory_mode"))&&"1".equals(String.valueOf(kit.get("enabled")));}row.put("stock_unit",row.get("is_package")!=null&&"1".equals(row.get("is_package").toString())?"套":"件");row.put("purchase_valid",valid);row.remove("bundle");}
+        return R.ok(found);
+    }
     @InnerAuth
     @PostMapping("/api/goods/purchaseLookup")
     public R<Map<String,Object>> lookup(@RequestBody Map<String,Object> filter,@RequestParam("company_code") String company){

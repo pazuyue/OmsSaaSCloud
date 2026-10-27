@@ -1,0 +1,180 @@
+{
+  "result": "PASS",
+  "checked_at": "2026-10-26T15:46:46.795805",
+  "checks": [
+    "真实API明确原实收10、本单已退2、其他单占7、来源余额1、恢复需3、缺口2、批次可用1及占用单号",
+    "窗口直接展示恢复3、可恢复1、缺口2；不足时审核按钮禁用，不弹出重复错误",
+    "占用单号可在新标签页打开原单详情，关闭后原恢复核对窗口保留",
+    "核对失败仅有一个窗口内错误，审核保持禁用，未把未知余额显示为0",
+    "处理后可主动刷新来源和库存，刷新成功清除上次查询错误，不调用WMS",
+    "模拟打开窗口后额度被占用：提交失败自动刷新最新缺口，保留窗口且只显示一个错误；提交已拦截",
+    "本单与占用单的状态、数量、版本、执行和申请、SKU库存及仓库交互数量全部未变"
+  ],
+  "source_check": {
+    "return_id": 36,
+    "return_sn": "CGTa03ce6afb2ca42ed92aed4916ebd9633",
+    "po_sn": "POde18bfcd75c3410aa21e060a79ba9f0d",
+    "control_version": 5,
+    "source_ok": false,
+    "inventory_checked": true,
+    "inventory_ok": false,
+    "can_approve": false,
+    "claimants_truncated": false,
+    "lines": [
+      {
+        "id": 40,
+        "source_key": "R87",
+        "ticket_sn": "CG092c34043a334b249c326f40bce8c29a",
+        "sku_sn": "PRF_20261026133606_09",
+        "goods_name": "[同单分次退仓TEST] 释放后原来源被其他退仓占用，恢复被阻止",
+        "stock_unit": "件",
+        "batch_code": "PRF_BATCH_restore_conflict_0",
+        "inventory_type": "ZP",
+        "quantity": 5,
+        "source_quantity": 10,
+        "posted_quantity": 2,
+        "store_code": "PRFV_complete_20261026133606",
+        "required_quantity": 3,
+        "own_posted_quantity": 2,
+        "other_claimed_quantity": 7,
+        "other_posted_quantity": 0,
+        "other_unexecuted_quantity": 7,
+        "source_available_quantity": 1,
+        "source_shortage_quantity": 2,
+        "inventory_known": true,
+        "claimants": [
+          {
+            "return_id": 38,
+            "return_sn": "CGT2474b31b62254db3b8ae1cd2c22bfafd",
+            "state": "APPROVED",
+            "dispatch_state": "ACCEPTED",
+            "source_key": "R87",
+            "inventory_type": "ZP",
+            "stock_unit": "件",
+            "quantity": 7,
+            "posted_quantity": 0,
+            "claimed_quantity": 7,
+            "unexecuted_claim_quantity": 7
+          }
+        ],
+        "batch_available_quantity": 1
+      }
+    ],
+    "inventory_groups": [
+      {
+        "sku_sn": "PRF_20261026133606_09",
+        "store_code": "PRFV_complete_20261026133606",
+        "batch_code": "PRF_BATCH_restore_conflict_0",
+        "inventory_type": "ZP",
+        "stock_unit": "件",
+        "required_quantity": 3,
+        "available_quantity": 1,
+        "inventory_known": true,
+        "shortage_quantity": 2
+      }
+    ],
+    "checked_at": "2026-10-26T15:46:42.653",
+    "message": "原入库来源已被其他退仓占用：PRF_20261026133606_09 本次恢复 3件，原来源可恢复 1件，缺口 2件。请核对占用单据。",
+    "request_id": 5,
+    "request_state": "REVIEW",
+    "actionable": true
+  },
+  "before": {
+    "36": {
+      "state": "CANCELED",
+      "quantity": 5,
+      "accepted_quantity": 2,
+      "posted_quantity": 2,
+      "control_version": 5,
+      "execution_requests": [
+        {
+          "id": 5,
+          "kind": "RESTORE",
+          "state": "REVIEW",
+          "from_execution_id": 9,
+          "execution_id": null,
+          "reason": "[TEST]供应商同意原CGT剩余数量继续退仓",
+          "actor": "admin",
+          "reviewed_by": "",
+          "create_time": "2026-10-26T13:37:39"
+        }
+      ],
+      "executions": [
+        9
+      ]
+    },
+    "38": {
+      "state": "APPROVED",
+      "quantity": 7,
+      "accepted_quantity": 0,
+      "posted_quantity": 0,
+      "control_version": 2,
+      "execution_requests": [],
+      "executions": [
+        15
+      ]
+    },
+    "stock": {
+      "totalStock": 8,
+      "availableStock": 1,
+      "allocatedStock": 7,
+      "reservedStock": 0,
+      "frozenStock": 0
+    },
+    "warehouse_calls": "4\t1314"
+  },
+  "after": {
+    "36": {
+      "state": "CANCELED",
+      "quantity": 5,
+      "accepted_quantity": 2,
+      "posted_quantity": 2,
+      "control_version": 5,
+      "execution_requests": [
+        {
+          "id": 5,
+          "kind": "RESTORE",
+          "state": "REVIEW",
+          "from_execution_id": 9,
+          "execution_id": null,
+          "reason": "[TEST]供应商同意原CGT剩余数量继续退仓",
+          "actor": "admin",
+          "reviewed_by": "",
+          "create_time": "2026-10-26T13:37:39"
+        }
+      ],
+      "executions": [
+        9
+      ]
+    },
+    "38": {
+      "state": "APPROVED",
+      "quantity": 7,
+      "accepted_quantity": 0,
+      "posted_quantity": 0,
+      "control_version": 2,
+      "execution_requests": [],
+      "executions": [
+        15
+      ]
+    },
+    "stock": {
+      "totalStock": 8,
+      "availableStock": 1,
+      "allocatedStock": 7,
+      "reservedStock": 0,
+      "frozenStock": 0
+    },
+    "warehouse_calls": "4\t1314"
+  },
+  "javascript_errors": [],
+  "intercepted_submissions": [
+    {
+      "path": "/prod-api/supplychain/purchaseReturns/36/restore/5/approve",
+      "body": {
+        "control_version": 5
+      }
+    }
+  ],
+  "note": "原单及额度来自真实只读API；额度变化的提交响应在浏览器中模拟，后台锁内拒绝通过真实事务回归验证；未停止、释放或审核原验收单"
+}

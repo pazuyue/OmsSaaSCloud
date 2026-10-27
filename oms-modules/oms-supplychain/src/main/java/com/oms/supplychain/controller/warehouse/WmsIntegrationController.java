@@ -16,6 +16,10 @@ import static com.oms.supplychain.service.wms.WmsStore.*;
 
 @RestController
 public class WmsIntegrationController {
+    @Resource private com.oms.supplychain.service.wms.PurchaseReturns purchaseReturns;
+    @Resource private PurchaseReturnReclaims purchaseReclaims;
+    @Resource private WarehouseTransfers warehouseTransfers;
+    @Resource private WarehouseReconciliation warehouseReconciliation;
     @Resource private WmsConnections connections;
     @Resource private WmsProcessService processes;
     @Resource private WmsInboundService inbound;
@@ -51,7 +55,7 @@ public class WmsIntegrationController {
     @PostMapping("/wmsCallback/{route}/{key}") public ResponseEntity<String> callback(@PathVariable String route,@PathVariable String key,@RequestBody String body,HttpServletRequest request){
         require(route.matches("[A-Za-z0-9_-]{1,64}")&&key.matches("[a-f0-9]{32}"),"无效回调地址");require(body.length()<=1024*1024,"回传报文超过1MB");
         Map<String,String> params=new TreeMap<>();request.getParameterMap().forEach((k,v)->{require(v.length==1,"回传参数不能重复");params.put(k,v[0]);});
-        return tenantRoutes.call(route,()->{String method=params.get("method");String result="taobao.qimen.storeprocess.confirm".equals(method)?processes.callback(route.toUpperCase(Locale.ROOT),key,params,body):"taobao.qimen.returnorder.confirm".equals(method)?(QimenReturnProtocol.refundDocument(body)?refundReturns:exchangeReturns).callback(route.toUpperCase(Locale.ROOT),key,params,body):Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);});
+        return tenantRoutes.call(route,()->{String method=params.get("method");String result="taobao.qimen.inventory.report".equals(method)?warehouseReconciliation.callback(route.toUpperCase(Locale.ROOT),key,params,body):QimenWarehouseControlProtocol.matches(body)&&Arrays.asList("taobao.qimen.entryorder.confirm","taobao.qimen.stockout.confirm").contains(method)?warehouseTransfers.callback(route.toUpperCase(Locale.ROOT),key,params,body):"taobao.qimen.entryorder.confirm".equals(method)&&QimenReclaimProtocol.matches(body)?purchaseReclaims.callback(route.toUpperCase(Locale.ROOT),key,params,body):Arrays.asList("taobao.qimen.stockout.confirm","stockout.confirm").contains(method)?purchaseReturns.callback(route.toUpperCase(Locale.ROOT),key,params,body):"taobao.qimen.storeprocess.confirm".equals(method)?processes.callback(route.toUpperCase(Locale.ROOT),key,params,body):"taobao.qimen.returnorder.confirm".equals(method)?(QimenReturnProtocol.refundDocument(body)?refundReturns:exchangeReturns).callback(route.toUpperCase(Locale.ROOT),key,params,body):Arrays.asList("deliveryorder.confirm","taobao.qimen.deliveryorder.confirm","jingdong.hufu.deliveryorder.confirm").contains(method)?outboundReceipts.callback(route.toUpperCase(Locale.ROOT),key,params,body):inbound.callback(route.toUpperCase(Locale.ROOT),key,params,body);return ResponseEntity.ok().header("Content-Type",result.startsWith("<")?"application/xml;charset=UTF-8":"application/json;charset=UTF-8").body(result);});
     }
     @ExceptionHandler(IllegalArgumentException.class) public AjaxResult invalid(IllegalArgumentException error){return AjaxResult.error(error.getMessage());}
 }

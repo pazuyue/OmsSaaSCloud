@@ -34,7 +34,8 @@ class Simulator:
         self.database=str(database);self.credentials=credentials
         with closing(sqlite3.connect(self.database)) as db, db:
             db.executescript('''CREATE TABLE IF NOT EXISTS documents(customer TEXT,kind TEXT,owner TEXT,warehouse TEXT,sn TEXT,external_id TEXT,body_hash TEXT,quantity INTEGER,status TEXT,created_at TEXT,PRIMARY KEY(customer,kind,owner,warehouse,sn));
-                CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,customer TEXT,kind TEXT,sn TEXT,action TEXT,body_hash TEXT,created_at TEXT);''')
+                CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,customer TEXT,kind TEXT,sn TEXT,action TEXT,body_hash TEXT,created_at TEXT);
+                CREATE TABLE IF NOT EXISTS inventory_stock(customer TEXT,owner TEXT,warehouse TEXT,sku TEXT,batch TEXT,quality TEXT,unfrozen INTEGER,frozen INTEGER,PRIMARY KEY(customer,owner,warehouse,sku,batch,quality));''')
 
     def handle(self,params,body):
         selected=next((c for c in self.credentials if c['app_key']==params.get('app_key') and c['customer_id']==params.get('customerId')),None)
@@ -50,14 +51,37 @@ class Simulator:
             method=params.get('method','');prefix='taobao.qimen.'
             if not method.startswith(prefix):raise ValueError('不支持的模拟方法')
             method=method[len(prefix):]
-            if method not in ('deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','returnorder.create','returnorder.query','order.cancel','storeprocess.create'):raise ValueError('不支持的模拟方法')
-            cancel=method=='order.cancel';process=method=='storeprocess.create' or cancel and root.findtext('orderType')=='CNJG';kind='process' if process else 'return' if method.startswith('return') or cancel and root.findtext('orderType') in ('HHRK','THRK') else 'entry' if method.startswith('entry') or cancel and root.findtext('orderType')=='CGRK' else 'delivery'
+            if method in ('inventory.query','stock.query'):
+                criteria=root.findall('criteriaList/criteria') if method=='inventory.query' else [root]
+                if not 1<=len(criteria)<=100:raise ValueError('库存查询条件无效')
+                records=[]
+                with closing(sqlite3.connect(self.database)) as db:
+                    db.row_factory=sqlite3.Row
+                    for criterion in criteria:
+                        owner=criterion.findtext('ownerCode','');warehouse=criterion.findtext('warehouseCode','');sku=criterion.findtext('itemCode','');batch=criterion.findtext('batchCode','')
+                        if not owner or not warehouse or not sku:raise ValueError('库存范围缺失')
+                        rows=db.execute('SELECT * FROM inventory_stock WHERE customer=? AND owner=? AND warehouse=? AND sku=?'+(' AND batch=?' if batch else '')+' ORDER BY batch,quality',(selected['customer_id'],owner,warehouse,sku,*([batch] if batch else []))).fetchall()
+                        records.extend(rows)
+                total=len(records)
+                if method=='stock.query':
+                    page=int(root.findtext('page','0'));size=int(root.findtext('pageSize','0'))
+                    if page<1 or not 1<=size<=100:raise ValueError('库存分页无效')
+                    records=records[(page-1)*size:page*size]
+                result=ET.fromstring(reply(True,'0','TEST库存快照，仅返回显式配置的仓库事实',{'totalCount':total} if method=='stock.query' else {}));items=ET.SubElement(result,'items')
+                for row in records:
+                    item=ET.SubElement(items,'item')
+                    for key,val in [('warehouseCode',row['warehouse']),('ownerCode',row['owner']),('itemCode',row['sku']),('batchCode',row['batch']),('inventoryType',row['quality']),('quantity',row['unfrozen']),('lockQuantity',row['frozen'])]:ET.SubElement(item,key).text=str(val)
+                return ET.tostring(result,encoding='unicode')
+            if method not in ('stockout.create','stockout.query','deliveryorder.create','deliveryorder.query','entryorder.create','entryorder.query','returnorder.create','returnorder.query','order.cancel','storeprocess.create'):raise ValueError('不支持的模拟方法')
+            cancel=method=='order.cancel';process=method=='storeprocess.create' or cancel and root.findtext('orderType')=='CNJG';kind='process' if process else 'return' if method.startswith('return') or cancel and root.findtext('orderType') in ('HHRK','THRK') else 'entry' if method.startswith('entry') or cancel and root.findtext('orderType') in ('CGRK','QTRK','DBRK') else 'delivery'
             create=method.endswith('.create');head=root if process else root.find(kind+'Order') if create else root
             if head is None:raise ValueError('模拟请求缺少单据头')
             number_field=kind+'OrderCode' if create or kind in ('entry','return') and not cancel else 'orderCode'
-            sn=head.findtext(number_field,'') or head.findtext('orderCode','');owner=head.findtext('ownerCode','');warehouse=head.findtext('warehouseCode','')
+            sn=head.findtext(number_field,'') or head.findtext('deliveryOrderCode','') or head.findtext('orderCode','');owner=head.findtext('ownerCode','');warehouse=head.findtext('warehouseCode','')
             if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',sn) or not owner or not warehouse:raise ValueError('模拟请求缺少有效单号、货主或仓库')
             total=0
+            if method.startswith('stockout') or cancel and root.findtext('orderType')=='CGTH':
+                if create and head.findtext('orderType') not in ('CGTH','DBCK'):raise ValueError('采购退仓须使用CGTH类型')
             if create and process:
                 if root.findtext('serviceType') not in ('1','2') or root.findtext('orderType')!='CNJG':raise ValueError('加工类型无效')
                 for group in ['materialitems','productitems']:
@@ -86,7 +110,7 @@ class Simulator:
                     old=db.execute('SELECT * FROM documents WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',key).fetchone()
                 elif create and old['body_hash']!=digest:return reply(False,'DUPLICATE','模拟单号已存在且商品快照不同',{kind+'OrderId':old['external_id']})
                 if old is None:return reply(False,'ORDER_NOT_FOUND','本地模拟仓库查无此单')
-                provided=(root.findtext(kind+'OrderId','') or root.findtext('orderId','')) if kind in ('entry','return') and not create and not cancel else root.findtext('orderId','') if not create else ''
+                provided=(root.findtext(kind+'OrderId','') or root.findtext('orderId','')) if kind in ('entry','return') and not create and not cancel else (root.findtext('deliveryOrderId','') or root.findtext('orderId','')) if not create else ''
                 if provided and provided!=old['external_id']:return reply(False,'IDENTITY_MISMATCH','模拟仓库单号不一致')
                 state='CANCELED' if cancel else old['status']
                 if cancel:db.execute('UPDATE documents SET status=? WHERE customer=? AND kind=? AND owner=? AND warehouse=? AND sn=?',(state,*key))

@@ -46,7 +46,7 @@ export default {
       detail: null, loading: false, error: false, tab: this.initialTab === 'sources' ? 'sources' : 'history', operation: '',
       rows: [], total: 0, rowsLoading: false, rowsError: false, query: { pageNum: 1, pageSize: 20 },
       selectedSource: null, orders: [], orderTotal: 0, ordersLoading: false, ordersError: false, orderQuery: { pageNum: 1, pageSize: 20, onlyOccupied: true },
-      operationNames: { RECEIVE: '入库', ADJUST: '库存调整', LOCK: '锁库', UNLOCK: '释放', CONSUME: '出库' },
+      operationNames: { TRANSFER_HOLD:'调拨原批次占用',TRANSFER_OUT:'调拨实际出库',TRANSFER_IN:'调拨目的入库',TRANSFER_RECOVER:'调拨收回原仓',TRANSFER_RELEASE:'调拨余量释放',COUNT_GAIN:'审核盘盈',COUNT_LOSS:'审核盘亏',RECEIVE: '入库', ADJUST: '库存调整', LOCK: '锁库', UNLOCK: '释放', CONSUME: '出库' },
       qualityTypes: [{ key: 'zp', label: '正品' }, { key: 'cp', label: '次品' }],
       sourceColumns: [{ key: 'originalQuantity', label: '原锁库' }, { key: 'remainingQuantity', label: '剩余锁定' }, { key: 'occupiedQuantity', label: '其中订单占用' }, { key: 'consumedQuantity', label: '已出库' }, { key: 'releasedQuantity', label: '已释放' }, { key: 'releasableQuantity', label: '可释放' }]
     }

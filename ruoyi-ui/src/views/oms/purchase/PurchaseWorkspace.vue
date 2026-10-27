@@ -6,8 +6,9 @@
     </div>
     <el-alert v-if="optionsError" title="关联资料加载失败，请刷新后重试" type="error" show-icon :closable="false" />
     <el-form class="filter-panel" size="small" :inline="true" @submit.native.prevent="search">
-      <el-form-item :label="kind === 'supplier' ? '供应商名称' : kind === 'purchase' ? '采购单号' : '出入库单号'">
+      <el-form-item :label="kind === 'supplier' ? '供应商名称' : kind === 'purchase' ? '采购单号' : kind === 'receipt' ? '到货单号' : '出入库单号'">
         <el-input v-if="kind === 'supplier'" v-model="query.keyword" clearable placeholder="模糊搜索供应商" @keyup.enter.native="search" />
+        <el-input v-else-if="kind === 'receipt'" v-model="query.noSn" clearable placeholder="完整到货单号" @keyup.enter.native="search" />
         <el-input v-else-if="kind === 'purchase'" v-model="query.poSn" clearable placeholder="输入完整采购单号" @keyup.enter.native="search" />
         <el-input v-else v-model="query.sn" clearable placeholder="输入完整出入库单号" @keyup.enter.native="search" />
       </el-form-item>
@@ -18,6 +19,8 @@
         <el-form-item label="业务类型"><el-select v-model="query.documentType" clearable placeholder="全部业务类型"><el-option v-for="t in choices.documentTypes || []" :key="t.code" :label="t.label" :value="t.code" /></el-select></el-form-item>
         <el-form-item label="方向"><el-select v-model="query.ticketType" clearable placeholder="全部方向"><el-option label="入库" :value="1" /><el-option label="出库" :value="2" /></el-select></el-form-item>
       </template>
+      <el-form-item v-if="kind!=='supplier'" label="仓库当前状态"><el-select v-model="query.warehouseState" clearable placeholder="全部状态"><el-option v-for="(label,key) in warehouseStates" :key="key" :value="key" :label="label" /></el-select></el-form-item>
+      <el-form-item v-if="kind!=='supplier'" label="最近交互结果"><el-select v-model="query.warehouseResult" clearable placeholder="全部结果"><el-option label="成功" value="SUCCESS" /><el-option label="失败" value="FAILED" /><el-option label="结果待确认" value="UNKNOWN" /></el-select></el-form-item>
       <el-form-item class="query-actions"><el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button><el-button @click="reset">重置</el-button><el-button type="text" @click="more = !more">{{ more ? '收起筛选' : '更多筛选' }}</el-button></el-form-item>
       <div v-if="more" class="advanced-filters">
         <el-form-item v-if="kind === 'purchase'" label="采购名称"><el-input v-model="query.keyword" placeholder="模糊搜索采购名称" clearable /></el-form-item>
@@ -38,7 +41,7 @@
     </el-form>
     <el-radio-group v-if="kind === 'ticket'" v-model="query.progress" class="progress-filters" size="small" @change="search"><el-radio-button label="">全部</el-radio-button><el-radio-button label="PROCESSING">处理中</el-radio-button><el-radio-button label="ATTENTION">待处理异常</el-radio-button><el-radio-button label="COMPLETE">已完成</el-radio-button><el-radio-button label="CLOSED">已关闭（部分收货）</el-radio-button><el-radio-button label="CANCELED">已取消</el-radio-button></el-radio-group>
     <div class="toolbar">
-      <el-button v-if="kind !== 'ticket' && can(kind, 'add')" type="primary" size="small" icon="el-icon-plus" @click="edit()">{{ kind === 'supplier' ? '新增供应商' : '新增采购' }}</el-button>
+      <el-button v-if="['supplier','purchase'].includes(kind) && can(kind, 'add')" type="primary" size="small" icon="el-icon-plus" @click="edit()">{{ kind === 'supplier' ? '新增供应商' : '新增采购' }}</el-button>
       <el-button v-if="can(kind, 'export')" size="small" icon="el-icon-download" @click="exportRows">导出筛选结果</el-button>
       <el-button-group v-if="kind === 'ticket'"><el-button size="small" :type="view === 'ticket' ? 'primary' : 'default'" :aria-pressed="view === 'ticket'" @click="changeView('ticket')">单据视图</el-button><el-button size="small" :type="view === 'line' ? 'primary' : 'default'" :aria-pressed="view === 'line'" @click="changeView('line')">商品明细</el-button></el-button-group>
       <el-button v-if="canWmsLogs" size="small" @click="$refs.wmsLogs.open()">仓库交互日志</el-button>
@@ -55,6 +58,13 @@
         <el-table-column label="所在地区" min-width="150" show-overflow-tooltip><template slot-scope="s">{{ [s.row.contactProvince, s.row.contactCity, s.row.contactArea].filter(Boolean).join(' / ') || '—' }}</template></el-table-column>
         <el-table-column label="状态" width="90"><template slot-scope="s"><el-tag :type="s.row.status === 2 ? 'success' : 'info'" size="small">{{ states(kind)[s.row.status] }}</el-tag></template></el-table-column>
         <el-table-column label="未完成采购" width="110"><template slot-scope="s"><el-button type="text" :disabled="!can('purchase', 'list')" @click="go('purchase', { supplierSn: s.row.supplierSn })">{{ s.row.openCount }}</el-button></template></el-table-column>
+      </template>
+      <template v-else-if="kind==='receipt'">
+        <el-table-column label="到货单 / 来源采购" min-width="280"><template slot-scope="{row}"><el-button type="text" @click="show('receipt',row)">{{ row.noSn }}</el-button><div class="muted">采购 {{ row.poSn }}</div><div class="muted">批次 {{ row.batchCode }}</div></template></el-table-column>
+        <el-table-column label="接收仓" min-width="190"><template slot-scope="{row}">{{ row.warehouseName }}<div class="muted">{{ row.ownerName }} / {{ row.realWarehouseName }}</div></template></el-table-column>
+        <el-table-column label="本批安排 / 实收 / 入账" min-width="170"><template slot-scope="{row}">{{ row.numberExpected }} / {{ row.confirmedQuantity }} / {{ row.postedQuantity }}</template></el-table-column>
+        <el-table-column label="当前状态" width="150"><template slot-scope="{row}">{{ documentState('receipt',row) }}</template></el-table-column>
+        <el-table-column label="预计到货" min-width="150"><template slot-scope="{row}">{{ date(row.expectedCallbackTime) }}</template></el-table-column>
       </template>
       <template v-else>
         <el-table-column v-if="kind === 'ticket'" label="业务类型 / 方向" width="125"><template slot-scope="s"><strong>{{ s.row.documentTypeLabel }}</strong><div><el-tag size="mini" :type="s.row.ticketType === 2 ? 'warning' : ''">{{ s.row.directionLabel }}</el-tag></div></template></el-table-column>
@@ -73,6 +83,7 @@
         <el-table-column v-if="kind === 'purchase'" label="预计到货" width="115"><template slot-scope="s">{{ date(s.row.expectedDate) }}</template></el-table-column>
         <el-table-column v-if="view === 'line'" label="差异 / 失败原因" min-width="160"><template slot-scope="s">{{ s.row.ticketType === 2 ? '待出库 ' + Math.max(0, s.row.numberExpected - s.row.numberActually) : s.row.receiptFinal ? '最终短收 ' + Math.max(0, s.row.numberExpected - s.row.numberActually) : '收货未结束' }}<div class="error-text">{{ s.row.errorInfo }}</div></template></el-table-column>
       </template>
+      <el-table-column v-if="kind!=='supplier'" label="仓库交互" min-width="235"><template slot-scope="{row}"><warehouse-interaction-cell :row="row" @open="show('ticket',$event)" /></template></el-table-column>
       <el-table-column v-if="kind === 'ticket'" label="最近更新时间" min-width="150"><template slot-scope="s">{{ parseTime(s.row.businessUpdatedTime) }}</template></el-table-column>
       <el-table-column label="操作" fixed="right" :width="kind === 'supplier' ? 170 : kind === 'ticket' ? 165 : 115"><template slot-scope="s">
         <el-button v-if="can(kind, 'query')" type="text" size="mini" @click="openRow(s.row)">详情</el-button>
@@ -122,7 +133,9 @@
     <el-drawer :title="detailTitle" :visible.sync="drawer" custom-class="purchase-detail-drawer" size="86%" append-to-body :wrapper-closable="false">
       <div v-loading="detailLoading" class="document-detail">
         <el-alert v-if="detailError" title="详情加载失败，请关闭后重试" type="error" :closable="false" />
-        <template v-if="document">
+        <return-document-detail v-if="document&&isReturnDocument" :key="document.sn" :sn="document.sn" :source-number="String($route.query.sourceNumber||'')" :warehouses="choices.warehouses" />
+        <procurement-detail v-else-if="document&&['purchase','receipt'].includes(detailKind)" :key="detailKind+document.id" :document="document" :kind="detailKind" :initial-tab="detailTab" :initial-difference-id="$route.query.differenceId||''" @show="show" @refresh="show(detailKind,document,true);load()" @approve="perform('approve','确认审核当前计划？')" @receipt="openReceipt" @close="reasonAction('close')" @cutoff="$refs.cutoff.open(detailKind,document)" @retry="retryProcurement" />
+        <template v-else-if="document">
           <div class="detail-heading"><h2>{{ document.poName || document.supplierName || document.noName || document.sourceLabel }}</h2><div class="detail-code"><span class="code">{{ document[codeKey(detailKind)] }}</span><el-button size="mini" type="text" @click="copy(document[codeKey(detailKind)])">复制单号</el-button></div></div>
           <div v-if="['purchase', 'receipt'].includes(detailKind)" class="status-summary">
             <div class="status-heading"><strong>{{ detailKind === 'purchase' ? '采购单状态' : '到货单状态' }}</strong><el-tag :type="document.stateNeedsReview ? 'danger' : stateColor(detailKind === 'purchase' ? document.poState : document.noState)">{{ documentState(detailKind, document) }}</el-tag></div>
@@ -198,17 +211,21 @@ import ReceiptBatches from './ReceiptBatches'
 import WmsInboundPanel from '../warehouse/WmsInboundPanel'
 import PurchaseCutoffDialog from './PurchaseCutoffDialog'
 import WmsLogs from '../warehouse/WmsLogs'
+import ReturnDocumentDetail from '../order/ReturnDocumentDetail'
+import ProcurementDetail from './ProcurementDetail'
+import WarehouseInteractionCell from './WarehouseInteractionCell'
 import { listInfo } from '@/api/goods/info'
 import { checkPermi } from '@/utils/permission'
 import { supplierRegionOptions } from '@/utils/supplierRegions'
-const routes = { supplier: 'supplier', purchase: 'poInfo', ticket: 'wmsTickets' }
+const routes = { supplier: 'supplier', purchase: 'poInfo', receipt: 'arrivals', ticket: 'wmsTickets' }
 const names = { supplier: '供应商', purchase: '采购单', receipt: '到货单', ticket: '出入库单' }
-const defaults = () => ({ pageNum: 1, pageSize: 10, keyword: '', supplierSn: '', companyName: '', state: null, poSn: '', noSn: '', sn: '', storeCode: '', ticketType: null, inventoryStatus: null, skuSn: '', batchCode: '', progress: '', ownerId: null, realStoreId: null, actualWarehouse: null, provider: '', externalOrder: '', postingState: '', documentType: '' })
+const defaults = () => ({ pageNum: 1, pageSize: 10, keyword: '', supplierSn: '', companyName: '', state: null, poSn: '', noSn: '', sn: '', storeCode: '', ticketType: null, inventoryStatus: null, skuSn: '', batchCode: '', progress: '', ownerId: null, realStoreId: null, actualWarehouse: null, provider: '', externalOrder: '', postingState: '', documentType: '', warehouseState: '', warehouseResult: '' })
 export default {
-  components: { PurchaseCutoffDialog, WmsInboundPanel, WmsLogs, TicketSummary, ReceiptBatches },
+  components: { ProcurementDetail, WarehouseInteractionCell, ReturnDocumentDetail, PurchaseCutoffDialog, WmsInboundPanel, WmsLogs, TicketSummary, ReceiptBatches },
   name: 'PurchaseWorkspace', props: { kind: { type: String, required: true } },
-  data() { return { query: defaults(), dates: [], more: false, rows: [], total: 0, loading: false, listError: false, sequence: 0, choices: { suppliers: [], warehouses: [] }, optionsError: false, view: 'ticket', editing: false, form: { lines: [] }, saving: false, importing: false, importError: '', drawer: false, document: null, detailKind: '', detailLoading: false, detailError: false, detailSequence: 0, detailTab: 'lines', history: [], acting: false, quantityOpen: false, quantityMode: '', quantityLines: [], receiptForm: { expectedDate: null, remarks: '' }, productsOpen: false, productKeyword: '', productPage: 1, productSize: 10, productTotal: 0, products: [], productsLoading: false, postingStates: { NOT_STARTED: '未入账', PARTIAL: '部分入账', POSTED: '已执行数量已记账', ERROR: '入账异常', NONE: '无需入账' }, entryStates: { 0: '待入账', 1: '处理中', 2: '入账成功', 3: '入账异常' } } },
+  data() { return { warehouseStates:{PENDING:'未下发',SENDING:'等待仓库响应',ACCEPTED:'仓库已受理',FAILED:'下发失败',UNKNOWN:'受理结果待确认',CANCEL_PENDING:'截停待确认',CANCELED:'已截停'}, query: defaults(), dates: [], more: false, rows: [], total: 0, loading: false, listError: false, sequence: 0, choices: { suppliers: [], warehouses: [] }, optionsError: false, view: 'ticket', editing: false, form: { lines: [] }, saving: false, importing: false, importError: '', drawer: false, document: null, detailKind: '', detailLoading: false, detailError: false, detailSequence: 0, detailTab: 'lines', history: [], acting: false, quantityOpen: false, quantityMode: '', quantityLines: [], receiptForm: { expectedDate: null, remarks: '' }, productsOpen: false, productKeyword: '', productPage: 1, productSize: 10, productTotal: 0, products: [], productsLoading: false, postingStates: { NOT_STARTED: '未入账', PARTIAL: '部分入账', POSTED: '已执行数量已记账', ERROR: '入账异常', NONE: '无需入账' }, entryStates: { 0: '待入账', 1: '处理中', 2: '入账成功', 3: '入账异常' } } },
   computed: {
+    isReturnDocument() { return checkPermi(['order:return:query']) && this.detailKind === 'ticket' && ['REFUND_IN','EXCHANGE_IN','AFTERSALE_IN','SALE_RETURN'].includes((this.document||{}).documentType) },
     ownerChoices() { return [...new Map(this.choices.warehouses.filter(w => w.ownerId).map(w => [w.ownerId, { id: w.ownerId, name: w.ownerName }])).values()] },
     realChoices() { return [...new Map(this.choices.warehouses.filter(w => w.realStoreId).map(w => [w.realStoreId, { id: w.realStoreId, name: w.wmsName }])).values()] },
     canWmsLogs() { return checkPermi(['warehouse:wms:log']) },
@@ -230,6 +247,7 @@ export default {
   watch: { '$route.query'() { if (this.$route.path === '/oms-supplychain/' + routes[this.kind]) { this.readRoute(); this.load(); this.routeCreate() } } },
   created() { this.readRoute(); this.refresh().then(this.routeCreate) },
   methods: {
+    async retryProcurement(ticket) { await api.action('ticket',ticket.id,'completeVirtual'); await this.show(this.detailKind,this.document,true); this.load() },
     async openInboundReview() { if (this.detailKind === 'ticket') await this.show('receipt', { id: this.document.receiptId }); this.$refs.cutoff.open(this.detailKind, this.document) },
     cutoffChanged() { this.load(); if (this.drawer && this.document && !this.detailLoading) this.show(this.detailKind, this.document, true) },
     arrivalLogs() { this.drawer = false; this.$router.push({ path: '/oms-supplychain/wmsLogs', query: { numberType: 'ARRIVAL', number: this.document.noSn, allTime: 'true' } }) },
@@ -251,7 +269,7 @@ export default {
     async refresh() { await Promise.all([this.load(), this.loadOptions()]) }, async loadOptions() { try { this.choices = (await api.options()).data; this.optionsError = false } catch (_) { this.optionsError = true } },
     search() { this.query.pageNum = 1; this.load() }, reset() { this.query = defaults(); this.dates = []; if (Object.keys(this.$route.query).length) this.$router.replace({ path: this.$route.path, query: {} }); else this.load() }, changeView(view) { this.view = view; this.search() },
     go(kind, query = {}) { this.drawer = false; this.$router.push({ path: '/oms-supplychain/' + routes[kind], query }).catch(() => this.load()) },
-    newForSupplier(row) { this.go('purchase', { supplierSn: row.supplierSn, create: '1' }) }, routeCreate() { if (this.kind === 'ticket' && /^[1-9][0-9]*$/.test(this.$route.query.documentId || '') && this.can('ticket', 'query')) this.show('ticket', { id: Number(this.$route.query.documentId) }); if (this.kind === 'purchase' && /^[1-9][0-9]*$/.test(this.$route.query.receiptId || '') && this.can('purchase', 'query')) this.show('receipt', { id: Number(this.$route.query.receiptId) }); if (this.kind === 'purchase' && this.$route.query.create === '1' && this.can('purchase', 'add')) this.edit() },
+    newForSupplier(row) { this.go('purchase', { supplierSn: row.supplierSn, create: '1' }) }, routeCreate() { if (this.kind === 'purchase' && /^[1-9][0-9]*$/.test(this.$route.query.purchaseId||'') && this.can('purchase','query')) this.show('purchase',{id:Number(this.$route.query.purchaseId)}); if (this.kind === 'receipt' && /^[1-9][0-9]*$/.test(this.$route.query.receiptId||'') && this.can('receipt','query')) this.show('receipt',{id:Number(this.$route.query.receiptId)}); if (this.kind === 'ticket' && /^[1-9][0-9]*$/.test(this.$route.query.documentId || '') && this.can('ticket', 'query')) this.show('ticket', { id: Number(this.$route.query.documentId) }); if (this.kind === 'purchase' && /^[1-9][0-9]*$/.test(this.$route.query.receiptId || '') && this.can('purchase', 'query')) this.show('receipt', { id: Number(this.$route.query.receiptId) }); if (this.kind === 'purchase' && this.$route.query.create === '1' && this.can('purchase', 'add')) this.edit() },
     async edit(row) { const fresh = row ? (await api.detail(this.kind, row.id)).data : null; if (this.kind === 'purchase' && fresh && fresh.editable !== true) { this.$modal.msgWarning(fresh.editBlockReason || '当前采购计划不可编辑'); if (this.can('purchase', 'query')) await this.showReceipts(fresh); this.load(); return } await this.loadOptions(); if (this.optionsError) return; this.importError = ''; this.form = fresh ? { ...fresh } : { status: 2, supplierSn: this.query.supplierSn || '', poName: '', wmsSimulationCode: '', expectedDate: null, remarks: '', lines: [] }; if (!this.form.lines) this.form.lines = []; this.form.expectedDate = this.form.expectedDate ? this.date(this.form.expectedDate) : null; this.editing = true; this.$nextTick(() => this.$refs.form.clearValidate()) },
     closeEdit(done) { if (!this.saving && !this.importing) done() }, closeQuantity(done) { if (!this.acting) done() },
     saveForm() { if (this.saving) return; this.$refs.form.validate(async valid => { if (!valid) return; if (this.kind === 'purchase' && !this.form.lines.length) return this.$modal.msgError('请先添加采购商品'); this.saving = true; try { await api.save(this.kind, this.form); this.editing = false; this.$modal.msgSuccess('保存成功'); await this.refresh() } catch (_) { /* Preserve the complete form for correction. */ } finally { this.saving = false } }) },

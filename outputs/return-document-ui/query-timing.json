@@ -1,0 +1,26 @@
+{
+  "list": {
+    "samples_ms": [
+      63.3,
+      20.3,
+      39.5
+    ],
+    "median_ms": 39.5
+  },
+  "detail": {
+    "samples_ms": [
+      31.7,
+      40.5,
+      30.8
+    ],
+    "median_ms": 31.7
+  },
+  "stock": {
+    "samples_ms": [
+      24.4,
+      20.6,
+      39.3
+    ],
+    "median_ms": 24.4
+  }
+}

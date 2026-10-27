@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Refund search shows one complete mixed package with two B units",
+    "Detail retains both owners and highlights the searched refund",
+    "Actual common warehouse command is a single row",
+    "Refund task shows actual replacement SKU B",
+    "Multiline number paste finds two tasks without duplicate scope",
+    "Mixed package filter retains full source quantity",
+    "Export preserves current filters and complete package amounts",
+    "Unreceived remainder remains visible as partial receipt"
+  ],
+  "javascript_errors": [],
+  "export_rows": 1
+}

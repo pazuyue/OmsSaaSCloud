@@ -1,0 +1,45 @@
+{
+  "timings": [
+    {
+      "api": "标准资料分页",
+      "samples_ms": [
+        9.1,
+        7.2,
+        6.7
+      ],
+      "mean_ms": 7.7,
+      "max_ms": 9.1
+    },
+    {
+      "api": "WMS对照分页",
+      "samples_ms": [
+        28.8,
+        7.0,
+        8.2
+      ],
+      "mean_ms": 14.7,
+      "max_ms": 28.8
+    },
+    {
+      "api": "业务快递选项",
+      "samples_ms": [
+        21.4,
+        38.9,
+        19.4
+      ],
+      "mean_ms": 26.6,
+      "max_ms": 38.9
+    }
+  ],
+  "scope": "本地单用户3次抽样，包含网关与认证；不作为压测结论",
+  "bounded": {
+    "page": 100,
+    "selector": 30,
+    "import_rows": 500,
+    "batch_mappings": 100,
+    "auto_candidates": 50,
+    "background_companies_per_tick": 2,
+    "background_facts_per_company": 3,
+    "background_syncs_per_company": 2
+  }
+}

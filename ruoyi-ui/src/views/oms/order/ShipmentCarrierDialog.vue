@@ -7,7 +7,7 @@
       </el-table>
       <el-form v-if="mode === 'MANUAL'" label-width="110px" class="summary" :disabled="saving || !!results.length">
         <el-form-item label="收货省份">{{ province || '省份缺失，请核对来源订单地址' }}</el-form-item>
-        <el-form-item label="选择快递"><el-select v-model="carrier" filterable placeholder="选择该店铺、仓库及区域可用的快递"><el-option v-for="c in options" :key="c.carrier_code" :value="c.carrier_code" :label="`${c.carrier_name}（${c.carrier_code}）${c.available ? '' : ' · ' + c.reason}`" :disabled="!c.available" /></el-select><p v-if="!loading && !options.some(c => c.available)" class="hint">暂无可用快递，请核对店铺允许快递及仓库配送范围。</p></el-form-item>
+        <el-form-item label="选择快递"><carrier-select v-model="carrier" :context="{shipment_id:items[0]&&items[0].id}" :load-options="searchCarriers" /><p v-if="!loading && !options.some(c => c.available)" class="hint">暂无可用快递，请核对店铺允许快递及仓库配送范围。</p></el-form-item>
         <el-form-item label="调整原因"><el-input v-model.trim="reason" type="textarea" :rows="2" maxlength="200" show-word-limit placeholder="说明选择或更换该快递的原因" /></el-form-item>
       </el-form>
       <p v-else class="hint">按店铺启用的快递规则重新尝试；已经确认快递的单据保留现有选择。</p>
@@ -20,16 +20,19 @@
 </template>
 <script>
 import { shipmentCarrierOptions, matchShipmentCarriers } from '@/api/order'
+import CarrierSelect from '@/components/CarrierSelect'
 export default {
+  components: { CarrierSelect },
   data() { return { visible: false, loading: false, saving: false, items: [], mode: 'AUTO', options: [], carrier: '', reason: '', province: '', results: [], requestId: 0 } },
   methods: {
-    async open(rows, mode = 'AUTO') { if (this.saving || !rows.length) return; const id = ++this.requestId; this.visible = true; this.items = rows.map(r => ({ ...r })); this.mode = mode; this.options = []; this.carrier = ''; this.reason = ''; this.province = ''; this.results = []; this.loading = mode === 'MANUAL'; if (mode === 'MANUAL') { try { const r = await shipmentCarrierOptions(rows[0].id); if (id !== this.requestId) return; this.options = r.data.carriers; this.province = r.data.receiver_province; if (this.options.some(c => c.carrier_code === rows[0].carrier_code && c.available)) this.carrier = rows[0].carrier_code } finally { if (id === this.requestId) this.loading = false } } },
+    searchCarriers(keyword) { return shipmentCarrierOptions(this.items[0].id, keyword) },
+    async open(rows, mode = 'AUTO') { if (this.saving || !rows.length) return; const id = ++this.requestId; this.visible = true; this.items = rows.map(r => ({ ...r })); this.mode = mode; this.options = []; this.carrier = ''; this.reason = ''; this.province = ''; this.results = []; this.loading = mode === 'MANUAL'; if (mode === 'MANUAL') { try { const r = await shipmentCarrierOptions(rows[0].id); if (id !== this.requestId) return; this.options = r.data.carriers; this.province = r.data.receiver_province; if (this.options.some(c => c.carrier_code === rows[0].carrier_code && c.available)) this.carrier = (this.options.find(c => c.carrier_code === rows[0].carrier_code) || {}).standard_id } finally { if (id === this.requestId) this.loading = false } } },
     async submit() {
       if (this.saving) return; this.saving = true;
       try {
         for (let offset = 0; offset < this.items.length; offset += 20) {
           const chunk = this.items.slice(offset, offset + 20)
-          try { const r = await matchShipmentCarriers({ mode: this.mode, items: chunk.map(s => ({ id: s.id, control_version: s.control_version })), carrier_code: this.carrier, reason: this.reason }); this.results.push(...r.data) }
+          try { const r = await matchShipmentCarriers({ mode: this.mode, items: chunk.map(s => ({ id: s.id, control_version: s.control_version })), standard_id: this.carrier, reason: this.reason }); this.results.push(...r.data) }
           catch (_) {
             this.results.push(...chunk.map(s => ({ id: s.id, shipment_sn: s.shipment_sn, success: false, unconfirmed: true, message: '本次请求结果未确认，请刷新后核对再重试' })))
             this.results.push(...this.items.slice(offset + 20).map(s => ({ id: s.id, shipment_sn: s.shipment_sn, success: false, not_submitted: true, message: '尚未提交，请刷新后重新匹配' })))

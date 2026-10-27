@@ -412,3 +412,31 @@ Quartz `orderPullTask.scanAll()` 调用受内部鉴权保护的扫描入口。�
 
 回归包含 `ExchangeFlowAutomationTest`、`SharedReturnParcelsTest`、`SharedReturnDispatchTest` 及原退款、订单、仓库、队列测试。保留验收驱动为 `docker/local/verify_exchange_automation.py`，数据与库存快照输出到 `outputs/exchange-automation`。驱动提供新测试店铺、买家事件、签名TEST仓库回传及明确的商家业务请求；禁止调用目标单据人工审核、平台同意、验收、分仓、下发、推进或流程重试接口。模拟平台和TEST仓库验证不代表真实平台付款或真实承运商服务已经验收。
 
+旧代通知在平台限流前即结束，库存、退回与仓库等待不占用平台额度；已完整预占不重复登记库存需求，已完成入账不重复调用入账服务。共同单查询按来源类型批量读取授权与实际进度，展示计数持久化，避免每个成员逐行远程查询。同子单退款仍有货物阻塞时，自动换出有界等待原退款核对完成，超时转人工，不绕过退款防发货校验。
+
+换货补拉请求先以无覆盖更新取得店铺排他锁，再登记幂等任务；避免并发 `INSERT IGNORE` 后升级共享锁造成死锁。`ExchangeSyncTest` 覆盖已有店铺并发不同请求与首次并发相同请求。WSL运行 `python3 docker/local/test_exchange_automation.py` 可验证订单、退款、共同退回及消息队列的隔离测试库；该脚本不会修改业务库或业务队列策略。保留验收完成后运行 `python docker/local/report_exchange_automation.py`，核对库存、审核人、来源、轮次、原队列和全局调度，并输出 `/acceptance/exchange-automation/验收报告.html`。
+
+部分退回及连续换货补充验收使用 `docker/local/verify_exchange_partial_continuous.py`，独立保留16—23资料于 `outputs/exchange-partial-continuous`。覆盖部分数量A→B→C、非最终分批退回、未收齐禁止续发、部分实际换出后终止并续发、多轮累计实发、当前退款阻断、来源不唯一转人工。20—22为商家明确授权的售后协商单；16—19、23为平台换货申请。只输入签名TEST回传，目标单不调用人工回执补拉、审核、验收、推进或重试接口；原销售发货为独立前置。19保留现场未收齐等待，超时分支在隔离测试库验证，不修改业务等待时间。22通过正常退款同步和原订单JDP指定单号补拉输入冲突事实，未直接更新退款阻断字段。WSL回归命令增加 `--partial-continuous` 后单独保存结果；`report_exchange_partial_continuous.py` 只读核对当前库存、原成本、实际来源、轮次及旧验收基线，输出 `/acceptance/exchange-partial-continuous/验收报告.html`。
+
+换货成功后退货退款的资金仍归原支付子单，实物按原销售或已完成换货的实际发货明细选择。普通商品自动选源最多读取200条候选，退款计划、尚未生成退回单的货物任务、组合占用及换货占用通过一次批量汇总读取；来源不唯一或容量不足转人工。审核时仍在原订单、实际商品行和来源额度锁下重新校验，不以查询快照替代并发防超退。换货可与当前已审核且全部为明确来源退回任务的退款分别占用剩余额度；未审核、版本过期、含取消等动作的退款仍阻断，自动审核提交时在原订单锁内再次检查。出库继续等待退款货物阻塞清除，不跳过防发货校验。
+
+第24条保留验收驱动 `docker/local/verify_exchange_return_split.py`：A3全换B3完成后，先申请B1退货退款100，再申请另B1换C1；两件B同运单合包，最终A10/B9/C9。独立证据保存在 `outputs/exchange-return-split`，修复前失败尝试归档在其 `attempts` 目录，不人工补审或重试原失败目标。WSL隔离回归使用 `python3 docker/local/test_exchange_automation.py --return-split`；详情报告离线渲染会在第24条通过且完成来源、成本与库存审计后，将真实结果合并至原16—23报告，不修改原批次验收清单。
+
+统一查询入口为“订单 → 退货管理”（`/oms-order/returns`），分为退货任务、退回包裹、退货入库单三个视图。任务包含未建仓单的退回意图、购买商品及赠品；换货后退回沿实际发货SKU展示。包裹按已经确认的关联关系聚合，同运单不推断合包；入库单只显示实际仓库命令，公共单的私有RSL仅在来源追溯中展示。单号、店铺、商品、赠品等条件先定位完整包裹/仓单，再汇总全部成员，避免搜索一张退款后整包数量变成该退款数量。件和套分别计算，未明确数量显示待确认；实收待归属不计入已确认实收或库存。
+
+退货查询使用 `oms_return_query_row`、`oms_return_query_number` 和公司内版本化待更新标记，均只作为查询投影。来源变更通过同事务轻量标记捕获，读取时按20个业务来源短批更新；仓库变化以100项版本化批次读取和确认，旧确认不清除新变化。仓库快照按来源批量读取，不逐行远程调用。查询异常保留最近投影并明确提示，初始同步中会自动刷新，不把未同步完整的合包标记为完成。列表默认近30天，明确单号可跨时间查询，日期范围最多93天，每页最多50条，导出最多2000条。
+
+查询API为 `GET /returns`、`GET /returns/detail`、`GET /returns/catalog` 和 `GET /returns/export`，独立权限为 `order:return:list/query/export`。仓库只读批量接口放在已有可信公司路由 `/afterSaleReturns/internal/query`，仍检查内部身份、公司归属与批量上限，不执行核对回执、下发、分配或入库动作。实际处理继续从原退款、换货及共同包裹详情执行，权限和乐观锁沿用原流程。
+
+结构安装由 `docker/local/configure_return_management.py --local` 完成，仅增加带中文备注的查询结构和来源变化标记；菜单使用 `20261025_return_management_menu.sql`。首次登记近90天的原记录供查询，不改写原业务状态或库存，也不启用原业务队列和全局调度。隔离完整回归使用 `test_exchange_automation.py --return-management`，相关复测使用 `test_return_management_affected.py`；`verify_return_management.py --capture` 留存基线，正式只读验收核对完整合包、来源高亮、部分实收和查询前后库存/原单/队列配置不变，证据保存在 `outputs/return-management`。
+
+退货入库单使用专用 `ReturnDocumentDetail`，退货管理及原出入库单入口共用。默认按实际SKU、库存单位汇总，展开保留购买/赠品、套装/福袋组成及各退款/换货归属；从原售后进入时通过 `sourceNumber` 高亮来源。仓库受理、已确认实收、实际库存入账分别展示。列表 `warehouse` 支持当前受理/截停状态、最近交互失败、待分配实收、最终收货差异筛选；相同实际SKU仅汇总展示一次，完整来源不因筛选减少。
+
+`GET /returns/document?sn=实际仓单号&section=SUMMARY|RECEIPTS|LINES|REVIEWS&pageNum=1&pageSize=20` 按需读取实收质量、原始回传、各来源原成本及入账流水关联号，每页最多50条。公司内实际DOCUMENT投影存在才允许读取，私有RSL不可作为实际仓单请求。仓库端严格只读，先用单号索引定位任务，再批量查询；公共回传按原消息展示一次，分配关系及私有库存行分别追溯。报文沿用仓库日志和独立 `warehouse:wms:payload` 权限，点击后才读取脱敏内容。原出入库权限未新增退货查询权限时保留原有页面，不扩大授权。
+
+`configure_return_document_detail.py --local` 可单独安装新增查询摘要字段和按实际仓单通知来源的日志变化标记，完整安装脚本也会调用它。只捕获退回交互，不扫描其他业务日志；查询失败保留受理事实，摘要不携带请求/响应报文。`20261025_return_document_detail.sql` 为增量DDL，新增字段和索引均有明确用途。最终短收/待归属不静默改小计划数量，截停数量展示当前未收部分，原历史截停快照仍可追溯。
+
+`verify_return_document_detail.py`、`verify_return_document_detail_ui.py` 只读核对保留的独立、合包、赠品、部分实收单据及库存基线；`report_return_document_detail.py` 生成 `/acceptance/return-document-ui/验收记录.html`，证据在 `outputs/return-document-ui`。这组UI验收不调用自动推进、人工审核、仓库查询或实收入账命令。
+
+直接打开DOCUMENT详情也会进行有上限的查询投影更新，不依赖先访问退货列表。仓单尚未投影且公司内还有同步待办时返回明确的同步中结果，页面自动刷新；来源未同步完整不判定为完成。仓库不可用时保留最近查询结果并提示。`verify_return_document_direct_entry.py` 仅重建指定共同仓单的查询缓存，验证首次直接打开可自动补齐全部来源，同时核对业务、库存、队列及调度不变。
+

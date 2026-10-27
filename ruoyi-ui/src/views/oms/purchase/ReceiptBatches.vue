@@ -10,6 +10,8 @@
       <el-table-column :label="outbound ? '出库请求' : '收货消息'" prop="messageId" min-width="150" show-overflow-tooltip />
       <el-table-column v-if="!outbound && !processing" label="最终确认" width="90"><template slot-scope="s">{{ s.row.finalReceipt ? '是' : '否' }}</template></el-table-column>
 <el-table-column v-if="outbound" label="执行方式 / 操作人" min-width="160"><template slot-scope="s">{{ s.row.sourceMode === 'PROCESS' ? '仓内加工' : s.row.sourceMode === 'WMS' ? 'WMS 出库' : '虚拟出库' }}<div class="muted">{{ s.row.operatorName }}</div></template></el-table-column>
+      <el-table-column v-if="!outbound" label="成本 / 入账关联号" min-width="210"><template slot-scope="s"><div v-if="s.row.purchasePrice!=null">原采购单价 ¥{{ s.row.purchasePrice }}</div><div class="muted">{{ s.row.inventoryRelation || '查看原执行单' }}</div></template></el-table-column>
+      <el-table-column v-if="!outbound" label="原回传" width="100"><template slot-scope="s"><el-button v-if="s.row.sourceLogId" type="text" @click="$emit('interaction',s.row.sourceLogId)">查看回传</el-button></template></el-table-column>
       <el-table-column :label="outbound ? '出库时间' : '接收时间'" min-width="160"><template slot-scope="s">{{ parseTime(s.row.createTime) }}</template></el-table-column>
     </el-table>
     <pagination v-show="total > 0" :total="total" :page.sync="page" :limit.sync="size" @pagination="load" />

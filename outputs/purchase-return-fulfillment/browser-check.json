@@ -1,0 +1,68 @@
+{
+  "result": "PASS",
+  "checked_at": "2026-10-26T15:50:07.006811",
+  "checks": [
+    "最终短出清楚展示原计划5、实出2、已扣2、未出3和占用3，详情固定为五个业务页签",
+    "同单继续表单展示原来源、余量及持续保留占用，保存使用幂等键与当前版本；验收保存已拦截",
+    "继续与停止是独立明确操作，停止表单说明先确认原执行结束再释放未出占用",
+    "同一CGT内展示两次独立仓库执行、原执行停止结果、新执行沿用占用及每次计划实出扣账",
+    "连续恢复后库存展示原计划5、累计占用10、出库5、累计释放5及当前占用0，历史释放未被覆盖",
+    "三个独立包裹共用同一运单仍分别显示商品、批次、质量、数量和供应商确认进度",
+    "既有包裹只补物流时保留原商品事实，提交明确执行ID、包裹版本和独立操作身份；验收请求已拦截",
+    "拒收收回表单按具体拒收事实选择，已安排2/拒收3的原来源只剩1件可选，并要求供应商退回运单",
+    "同一原行两条拒收来源在CGH分行展示，能反查P2/P3包裹、执行与收货凭证，并独立展示实际次品质检入账",
+    "退款3与抵扣2分别保留，净退仓货值5与已登记5清楚对应，处理记录使用中文动作",
+    "已有验收补关联明确选择包裹和原事实，数量受两边余量限制，不再提交接受或拒收结果；保存请求已拦截",
+    "供应商按包裹或先按执行商品登记都受同一已扣账未确认额度限制，已实出2件尚未确认时两个入口上限均为2",
+    "分片未齐的停止待处理单保留消息号、应有行数、已收分片和阻止释放原因",
+    "恢复审核先展示需恢复3、可恢复1、缺口2和具体占用单据，额度不足禁用审核，提供新标签页处理入口，关闭不改变单据",
+    "业务退仓列表批量显示执行次数、包裹数、待核对数量与独立供应商款项进度",
+    "供应链待办按包裹、恢复审核和供应商商品验收分别归集，可按原CGT定位并直接打开处理详情",
+    "全部浏览器检查未修改验收业务单、库存或自动策略，页面无JavaScript异常"
+  ],
+  "javascript_errors": [],
+  "intercepted_requests": [
+    {
+      "path": "/prod-api/supplychain/purchaseReturns/39/continue",
+      "body": {
+        "request_key": "PRE1793000988812dtmzewkel5j",
+        "control_version": 2,
+        "evidence": "页面验收，确认同一CGT沿用原3件占用继续，保存请求拦截",
+        "reason": "页面验收，确认同一CGT沿用原3件占用继续，保存请求拦截"
+      }
+    },
+    {
+      "path": "/prod-api/supplychain/purchaseReturns/28/parcels/supplement",
+      "body": {
+        "request_key": "PRE1793000993476m32juwpjhg",
+        "control_version": 7,
+        "evidence": "页面验收包裹物流补录，保存已拦截",
+        "reason": "页面验收包裹物流补录，保存已拦截",
+        "execution_id": 1,
+        "package_code": "P3",
+        "carrier_code": "SF",
+        "waybill": "UI-ONLY-NO-MUTATION",
+        "parcel_version": 1,
+        "items": []
+      }
+    },
+    {
+      "path": "/prod-api/supplychain/purchaseReturns/33/supplier-bind",
+      "body": {
+        "request_key": "PRE1793000997693c711o0ly7jj",
+        "control_version": 4,
+        "evidence": "页面验收已有收货补关联，不重复增加验收数量，保存已拦截",
+        "reason": "页面验收已有收货补关联，不重复增加验收数量，保存已拦截",
+        "lines": [
+          {
+            "supplier_line_id": 7,
+            "allocation_id": 10,
+            "quantity": 1
+          }
+        ]
+      }
+    }
+  ],
+  "unexpected_mutations": [],
+  "business_data_unchanged": true
+}

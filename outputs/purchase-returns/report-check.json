@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "http_status": 200,
+  "scenario_sections": 21,
+  "images": 11,
+  "javascript_errors": [],
+  "new_columns_have_comments": true
+}

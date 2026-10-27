@@ -14,7 +14,7 @@ class OrderShipmentDispatchServiceTest {
     @BeforeAll static void setup(){OrderShipmentServiceTest.setup();}
     Map<String,Object> row(Object...pairs){return fixture.row(pairs);}
     @BeforeEach void seed(){
-        fixture=new OrderShipmentServiceTest();fixture.seed();wms=mock(OrderShipmentWmsClient.class);inventory=mock(OrderWarehouseClient.class);dispatch=new OrderShipmentDispatchService();ReflectionTestUtils.setField(dispatch,"repository",fixture.repository);ReflectionTestUtils.setField(dispatch,"wms",wms);ReflectionTestUtils.setField(dispatch,"inventory",inventory);
+        fixture=new OrderShipmentServiceTest();fixture.seed();long carrier=CarrierTestFixtures.standard(fixture.repository,"SF",0,1);CarrierTestFixtures.outbound(fixture.repository,carrier,"R1",7,"SF",Collections.emptyList());wms=mock(OrderShipmentWmsClient.class);inventory=mock(OrderWarehouseClient.class);dispatch=new OrderShipmentDispatchService();ReflectionTestUtils.setField(dispatch,"repository",fixture.repository);ReflectionTestUtils.setField(dispatch,"wms",wms);ReflectionTestUtils.setField(dispatch,"inventory",inventory);
         fixture.db.update("UPDATE oms_platform_order SET platform_created='2026-10-10 10:00:00',processing_payload=?",encode(row("trade_fullinfo_get_response",row("trade",row("receiver_state","北京市","receiver_city","北京市","receiver_district","海淀区","receiver_address","测试地址")))));fixture.db.update("UPDATE oms_order SET review_at=NOW()");
         when(wms.resolve(anyString(),anyMap(),anyString())).thenReturn(R.ok(route()));when(wms.submit(anyString(),anyMap(),anyString())).thenAnswer(i->R.ok(reply("ACCEPTED")));when(wms.query(anyString(),anyMap(),anyString())).thenAnswer(i->R.ok(reply("ACCEPTED")));
     }

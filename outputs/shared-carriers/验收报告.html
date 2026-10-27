@@ -1,0 +1,637 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>公共快递配置验收报告</title><style>body{margin:0;background:#f3f6fa;color:#27374d;font:15px/1.8 system-ui,Arial}main{max-width:1240px;margin:auto;padding:36px}h1{margin:0}h2{margin-top:32px}a{color:#006bd6}article,.summary{background:white;padding:22px;border:1px solid #dce4ee;border-radius:10px;margin:15px 0}span{color:#168052;font-size:14px}.notice{padding:16px;background:#fff4df;border-left:4px solid #c68a1c}.muted{color:#6c7e94}table{width:100%;border-collapse:collapse;background:white;margin:18px 0}th,td{padding:12px;text-align:left;border:1px solid #dce4ee;overflow-wrap:anywhere}th{background:#eaf1fa}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:14px;font-size:12px;max-height:580px;overflow:auto}summary{cursor:pointer;color:#006bd6}img{width:100%;height:auto;border:1px solid #ddd;margin:12px 0}details{margin:12px 0}</style><main><h1>公共快递配置验收报告</h1><p class="muted">2026-10-27 13:57:01 · 本地 TEST 环境 · 测试数据保留</p><div class="summary"><strong>验收通过：</strong>491 条后端回归 / 27 个测试套件，25 个相关 Vue 组件校验，11 项浏览器检查，2 类真实权限账号检查。实物验收为本地真实库存账 + 奇门模拟仓回传。</div><div class="notice">当前渠道范围为天猫。京东、抖音保留模型和页面扩展入口，尚未接入。现有销售发货通知网关仍为 SIMULATION；本报告不代表真实天猫通知、电子面单或仓库账号权限已联调通过。奇门目录查询已实现适配，本地模拟仓不支持目录方法，失败状态和配置保留行为已验证。</div><h2>保留的验收单据</h2><p>原采购：POe0fe157097c5406f99a565586cb7c606<br>退仓单：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=41">CGTe0539389615b4eb0959e46ca6875f6c3</a><br>测试 SKU：SCARRIER_20261026210253<br>未知寄回物流草稿：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=10">CGH7c16d5f8b0574e358e78dda47ed332e6</a>（预期保持待核实草稿，不自动下发、不增加库存）。</p><h2>库存核实</h2><p>采购实收10件；申请退仓5件，审核预占5件；仓库以同一运单回传两个包裹，分别2件、3件。第一次回传的未知快递不阻断数量校验通过的实出扣账。重复回传、补齐映射、重新校验及物流身份修复均没有再次扣库。</p><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th></tr></thead><tbody><tr><td>采购实收入账后</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>审核退仓预占5件后</td><td>10</td><td>5</td><td>5</td><td>0</td></tr><tr><td>两包裹实出及重复回传后</td><td>5</td><td>5</td><td>0</td><td>0</td></tr><tr><td>修复对照及登记拒收收回草稿后</td><td>5</td><td>5</td><td>0</td><td>0</td></tr></tbody></table><h2>原始物流与标准身份</h2><p>计划使用承运商A；实际包裹P2为承运商B，单独保存实际身份。P1原始编码首次未知，补齐原连接下的对照后识别为A。两个包裹保留同一运单，各自保留商品归属。</p><table><thead><tr><th>包裹</th><th>实出件数</th><th>WMS原始编码</th><th>标准快递</th><th>运单</th><th>识别状态</th></tr></thead><tbody><tr><td>TEST-P1</td><td>2</td><td>TEST-SC-UNKNOWN-001</td><td>[公共快递验收] 承运商A 20261026210253</td><td>TEST-SC-WAYBILL-20261026210253</td><td>RESOLVED</td></tr><tr><td>TEST-P2</td><td>3</td><td>TEST-SC-B-001</td><td>[公共快递验收] 承运商B 20261026210253</td><td>TEST-SC-WAYBILL-20261026210253</td><td>RESOLVED</td></tr></tbody></table><h2>业务与配置场景</h2><article><h3>A01 <span>通过</span></h3><p>标准快递无需仓库能力即可独立启用，别名可搜索；重复编码被拒绝</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;standard_a&quot;: 1,
+  &quot;standard_b&quot;: 2,
+  &quot;duplicate&quot;: &quot;(&#x27;/order/sharedCarriers/standard/save&#x27;, &#x27;同公司已存在该编码或能力配置，请刷新核对&#x27;)&quot;
+}</pre></details></article><article><h3>A04-A07 <span>通过</span></h3><p>接口用途、编码大小写与前导零分别识别，未做名称或数值猜测</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;exact&quot;: {
+    &quot;source&quot;: {
+      &quot;state&quot;: &quot;RESOLVED&quot;,
+      &quot;message&quot;: &quot;标准快递关联通过&quot;,
+      &quot;available&quot;: true,
+      &quot;mapping_id&quot;: 14,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;001/sF.a&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] 001/sF.a&quot;,
+      &quot;directory_id&quot;: 17,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;,
+      &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+      &quot;system_type&quot;: &quot;CHANNEL&quot;,
+      &quot;provider&quot;: &quot;TMALL&quot;,
+      &quot;scope_level&quot;: 1,
+      &quot;configuration_revision&quot;: 38,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;CHANNEL&quot;,
+        &quot;provider&quot;: &quot;TMALL&quot;,
+        &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+        &quot;connection_id&quot;: &quot;&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;&quot;,
+        &quot;real_store_code&quot;: &quot;&quot;,
+        &quot;external_code&quot;: &quot;001/sF.a&quot;,
+        &quot;direction&quot;: &quot;IN&quot;
+      }
+    },
+    &quot;target&quot;: {
+      &quot;state&quot;: &quot;RESOLVED&quot;,
+      &quot;message&quot;: &quot;仓库服务能力检查通过&quot;,
+      &quot;available&quot;: true,
+      &quot;mapping_id&quot;: 1,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-SC-PLAN-20261026210253&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] TEST-SC-PLAN-20261026210253&quot;,
+      &quot;directory_id&quot;: 1,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;33&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+      &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+      &quot;purpose&quot;: &quot;WMS_OUTBOUND_CREATE&quot;,
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;scope_level&quot;: 3,
+      &quot;capability_id&quot;: 1,
+      &quot;capability_revision&quot;: 1,
+      &quot;capability_evidence&quot;: &quot;TEST 仓库收发能力确认&quot;,
+      &quot;configuration_revision&quot;: 38,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;WMS&quot;,
+        &quot;provider&quot;: &quot;QIMEN&quot;,
+        &quot;purpose&quot;: &quot;WMS_OUTBOUND_CREATE&quot;,
+        &quot;connection_id&quot;: &quot;33&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+        &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+        &quot;province&quot;: &quot;浙江&quot;,
+        &quot;standard_id&quot;: 1,
+        &quot;direction&quot;: &quot;OUT&quot;,
+        &quot;flow&quot;: &quot;OUTBOUND&quot;
+      }
+    }
+  },
+  &quot;missing&quot;: {
+    &quot;source&quot;: {
+      &quot;state&quot;: &quot;MISSING&quot;,
+      &quot;message&quot;: &quot;当前用途及作用域缺少快递关联；TMALL；外部编码〔1/sF.a〕&quot;,
+      &quot;available&quot;: false,
+      &quot;configuration_revision&quot;: 38,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;CHANNEL&quot;,
+        &quot;provider&quot;: &quot;TMALL&quot;,
+        &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+        &quot;connection_id&quot;: &quot;&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;&quot;,
+        &quot;real_store_code&quot;: &quot;&quot;,
+        &quot;external_code&quot;: &quot;1/sF.a&quot;,
+        &quot;direction&quot;: &quot;IN&quot;
+      }
+    }
+  }
+}</pre></details></article><article><h3>A05 <span>通过</span></h3><p>同一原始编码可在不同WMS连接映射为不同标准；第二连接独立识别为B</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;source&quot;: {
+    &quot;state&quot;: &quot;RESOLVED&quot;,
+    &quot;message&quot;: &quot;标准快递关联通过&quot;,
+    &quot;available&quot;: true,
+    &quot;mapping_id&quot;: 4,
+    &quot;revision&quot;: 1,
+    &quot;standard_id&quot;: 2,
+    &quot;standard_code&quot;: &quot;TEST_SC_B_20261026210253&quot;,
+    &quot;standard_name&quot;: &quot;[公共快递验收] 承运商B 20261026210253&quot;,
+    &quot;external_code&quot;: &quot;TEST-SC-UNKNOWN-001&quot;,
+    &quot;external_name&quot;: &quot;[公共快递TEST] TEST-SC-UNKNOWN-001&quot;,
+    &quot;directory_id&quot;: 4,
+    &quot;product_code&quot;: &quot;&quot;,
+    &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+    &quot;connection_id&quot;: &quot;34&quot;,
+    &quot;shop_id&quot;: &quot;&quot;,
+    &quot;owner_code&quot;: &quot;&quot;,
+    &quot;real_store_code&quot;: &quot;&quot;,
+    &quot;purpose&quot;: &quot;WMS_OUTBOUND_ACTUAL&quot;,
+    &quot;system_type&quot;: &quot;WMS&quot;,
+    &quot;provider&quot;: &quot;QIMEN&quot;,
+    &quot;scope_level&quot;: 1,
+    &quot;configuration_revision&quot;: 38,
+    &quot;context&quot;: {
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;purpose&quot;: &quot;WMS_OUTBOUND_ACTUAL&quot;,
+      &quot;connection_id&quot;: &quot;34&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;,
+      &quot;external_code&quot;: &quot;TEST-SC-UNKNOWN-001&quot;,
+      &quot;direction&quot;: &quot;IN&quot;
+    }
+  },
+  &quot;target&quot;: {
+    &quot;state&quot;: &quot;MISSING&quot;,
+    &quot;message&quot;: &quot;当前用途及作用域缺少快递关联；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；标准身份 2&quot;,
+    &quot;available&quot;: false,
+    &quot;configuration_revision&quot;: 38,
+    &quot;context&quot;: {
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;purpose&quot;: &quot;WMS_OUTBOUND_CREATE&quot;,
+      &quot;connection_id&quot;: &quot;33&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+      &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+      &quot;province&quot;: &quot;浙江&quot;,
+      &quot;standard_id&quot;: 2,
+      &quot;direction&quot;: &quot;OUT&quot;
+    }
+  }
+}</pre></details></article><article><h3>A08-A09 <span>通过</span></h3><p>同仓发货只配送浙江，海南发货不可用；海南寄回按收货能力通过</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;inbound&quot;: {
+    &quot;source&quot;: {
+      &quot;state&quot;: &quot;RESOLVED&quot;,
+      &quot;message&quot;: &quot;标准快递关联通过&quot;,
+      &quot;available&quot;: true,
+      &quot;mapping_id&quot;: 15,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-TM-RETURN-001&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] TEST-TM-RETURN-001&quot;,
+      &quot;directory_id&quot;: 18,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;,
+      &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+      &quot;system_type&quot;: &quot;CHANNEL&quot;,
+      &quot;provider&quot;: &quot;TMALL&quot;,
+      &quot;scope_level&quot;: 1,
+      &quot;configuration_revision&quot;: 40,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;CHANNEL&quot;,
+        &quot;provider&quot;: &quot;TMALL&quot;,
+        &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+        &quot;connection_id&quot;: &quot;&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;&quot;,
+        &quot;real_store_code&quot;: &quot;&quot;,
+        &quot;external_code&quot;: &quot;TEST-TM-RETURN-001&quot;,
+        &quot;direction&quot;: &quot;IN&quot;
+      }
+    },
+    &quot;target&quot;: {
+      &quot;state&quot;: &quot;RESOLVED&quot;,
+      &quot;message&quot;: &quot;仓库服务能力检查通过&quot;,
+      &quot;available&quot;: true,
+      &quot;mapping_id&quot;: 5,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-SC-IN-001&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] TEST-SC-IN-001&quot;,
+      &quot;directory_id&quot;: 5,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;33&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+      &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+      &quot;purpose&quot;: &quot;WMS_RETURN_CREATE&quot;,
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;scope_level&quot;: 3,
+      &quot;capability_id&quot;: 2,
+      &quot;capability_revision&quot;: 1,
+      &quot;capability_evidence&quot;: &quot;TEST 仓库收发能力确认&quot;,
+      &quot;configuration_revision&quot;: 40,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;WMS&quot;,
+        &quot;provider&quot;: &quot;QIMEN&quot;,
+        &quot;purpose&quot;: &quot;WMS_RETURN_CREATE&quot;,
+        &quot;connection_id&quot;: &quot;33&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+        &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+        &quot;province&quot;: &quot;海南&quot;,
+        &quot;standard_id&quot;: 1,
+        &quot;direction&quot;: &quot;OUT&quot;,
+        &quot;flow&quot;: &quot;INBOUND&quot;
+      }
+    }
+  },
+  &quot;outbound&quot;: {
+    &quot;source&quot;: {
+      &quot;state&quot;: &quot;RESOLVED&quot;,
+      &quot;message&quot;: &quot;标准快递关联通过&quot;,
+      &quot;available&quot;: true,
+      &quot;mapping_id&quot;: 15,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-TM-RETURN-001&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] TEST-TM-RETURN-001&quot;,
+      &quot;directory_id&quot;: 18,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;,
+      &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+      &quot;system_type&quot;: &quot;CHANNEL&quot;,
+      &quot;provider&quot;: &quot;TMALL&quot;,
+      &quot;scope_level&quot;: 1,
+      &quot;configuration_revision&quot;: 40,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;CHANNEL&quot;,
+        &quot;provider&quot;: &quot;TMALL&quot;,
+        &quot;purpose&quot;: &quot;CHANNEL_RETURN_IDENTIFY&quot;,
+        &quot;connection_id&quot;: &quot;&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;&quot;,
+        &quot;real_store_code&quot;: &quot;&quot;,
+        &quot;external_code&quot;: &quot;TEST-TM-RETURN-001&quot;,
+        &quot;direction&quot;: &quot;IN&quot;
+      }
+    },
+    &quot;target&quot;: {
+      &quot;state&quot;: &quot;CAPABILITY_UNSUPPORTED&quot;,
+      &quot;message&quot;: &quot;该仓快递不支持当前收货省份；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；标准身份 1&quot;,
+      &quot;available&quot;: false,
+      &quot;mapping_id&quot;: 1,
+      &quot;revision&quot;: 1,
+      &quot;standard_id&quot;: 1,
+      &quot;standard_code&quot;: &quot;TEST_SC_A_20261026210253&quot;,
+      &quot;standard_name&quot;: &quot;[公共快递验收] 承运商A 20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-SC-PLAN-20261026210253&quot;,
+      &quot;external_name&quot;: &quot;[公共快递TEST] TEST-SC-PLAN-20261026210253&quot;,
+      &quot;directory_id&quot;: 1,
+      &quot;product_code&quot;: &quot;&quot;,
+      &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+      &quot;connection_id&quot;: &quot;33&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+      &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+      &quot;purpose&quot;: &quot;WMS_OUTBOUND_CREATE&quot;,
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;scope_level&quot;: 3,
+      &quot;configuration_revision&quot;: 40,
+      &quot;context&quot;: {
+        &quot;system_type&quot;: &quot;WMS&quot;,
+        &quot;provider&quot;: &quot;QIMEN&quot;,
+        &quot;purpose&quot;: &quot;WMS_OUTBOUND_CREATE&quot;,
+        &quot;connection_id&quot;: &quot;33&quot;,
+        &quot;shop_id&quot;: &quot;&quot;,
+        &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+        &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+        &quot;province&quot;: &quot;海南&quot;,
+        &quot;standard_id&quot;: 1,
+        &quot;direction&quot;: &quot;OUT&quot;,
+        &quot;flow&quot;: &quot;OUTBOUND&quot;
+      }
+    }
+  }
+}</pre></details></article><article><h3>A10-A11-A14-A15 <span>通过</span></h3><p>真实本地采购10件、退仓5件；两个包裹共用一个运单，未知原始快递不阻断实出；重复回传未重复扣库存</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;return_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3&quot;,
+  &quot;purchase&quot;: &quot;POe0fe157097c5406f99a565586cb7c606&quot;,
+  &quot;sku&quot;: &quot;SCARRIER_20261026210253&quot;,
+  &quot;stock_received&quot;: {
+    &quot;skuSn&quot;: &quot;SCARRIER_20261026210253&quot;,
+    &quot;totalStock&quot;: 10,
+    &quot;availableStock&quot;: 10,
+    &quot;allocatedStock&quot;: 0,
+    &quot;reservedStock&quot;: 0,
+    &quot;frozenStock&quot;: 0
+  },
+  &quot;stock_held&quot;: {
+    &quot;skuSn&quot;: &quot;SCARRIER_20261026210253&quot;,
+    &quot;totalStock&quot;: 10,
+    &quot;availableStock&quot;: 5,
+    &quot;allocatedStock&quot;: 5,
+    &quot;reservedStock&quot;: 0,
+    &quot;frozenStock&quot;: 0
+  },
+  &quot;stock_posted&quot;: {
+    &quot;skuSn&quot;: &quot;SCARRIER_20261026210253&quot;,
+    &quot;totalStock&quot;: 5,
+    &quot;availableStock&quot;: 5,
+    &quot;allocatedStock&quot;: 0,
+    &quot;reservedStock&quot;: 0,
+    &quot;frozenStock&quot;: 0
+  },
+  &quot;parcels&quot;: [
+    {
+      &quot;id&quot;: 13,
+      &quot;package_code&quot;: &quot;TEST-P2&quot;,
+      &quot;carrier_code&quot;: &quot;TEST-SC-B-001&quot;,
+      &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;
+    },
+    {
+      &quot;id&quot;: 12,
+      &quot;package_code&quot;: &quot;TEST-P1&quot;,
+      &quot;carrier_code&quot;: &quot;TEST-SC-UNKNOWN-001&quot;,
+      &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;
+    }
+  ]
+}</pre></details></article><article><h3>A12-A16 <span>通过</span></h3><p>补齐原连接快递映射后重新校验，仅修复两个包裹的独立标准身份；原始编码不可覆盖，实际出库事件、仓库执行和库存均未重放</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;todo&quot;: {
+    &quot;id&quot;: 1,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;fact_hash&quot;: &quot;7ac303ad03b9d29b5bdb9b7c92d5158c534c16799d7afb6a316cc95b2786a19c&quot;,
+    &quot;business_type&quot;: &quot;PURCHASE_RETURN&quot;,
+    &quot;business_id&quot;: 41,
+    &quot;business_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3&quot;,
+    &quot;fact_id&quot;: &quot;PARCEL_12&quot;,
+    &quot;blocked_action&quot;: &quot;RESOLVE_ACTUAL&quot;,
+    &quot;reason_code&quot;: &quot;RESOLVED&quot;,
+    &quot;reason&quot;: &quot;编码对照通过&quot;,
+    &quot;context_json&quot;: &quot;{\&quot;system_type\&quot;:\&quot;WMS\&quot;,\&quot;provider\&quot;:\&quot;QIMEN\&quot;,\&quot;purpose\&quot;:\&quot;WMS_OUTBOUND_ACTUAL\&quot;,\&quot;connection_id\&quot;:\&quot;33\&quot;,\&quot;owner_code\&quot;:\&quot;SCO_20261026210253\&quot;,\&quot;real_store_code\&quot;:\&quot;SCW_20261026210253\&quot;,\&quot;direction\&quot;:\&quot;IN\&quot;,\&quot;external_code\&quot;:\&quot;TEST-SC-UNKNOWN-001\&quot;,\&quot;raw_name\&quot;:\&quot;[TEST] 原始承运商 TEST-SC-UNKNOWN-001\&quot;,\&quot;source_execution_id\&quot;:17,\&quot;source_package_code\&quot;:\&quot;TEST-P1\&quot;}&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;occurrences&quot;: 1,
+    &quot;revision&quot;: 4,
+    &quot;updated_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-27 09:56:22&quot;,
+    &quot;update_time&quot;: &quot;2026-10-27 09:57:46&quot;
+  },
+  &quot;stock&quot;: {
+    &quot;skuSn&quot;: &quot;SCARRIER_20261026210253&quot;,
+    &quot;totalStock&quot;: 5,
+    &quot;availableStock&quot;: 5,
+    &quot;allocatedStock&quot;: 0,
+    &quot;reservedStock&quot;: 0,
+    &quot;frozenStock&quot;: 0
+  },
+  &quot;parcels&quot;: [
+    {
+      &quot;id&quot;: 13,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 41,
+      &quot;execution_id&quot;: 17,
+      &quot;package_code&quot;: &quot;TEST-P2&quot;,
+      &quot;carrier_code&quot;: &quot;TEST-SC-B-001&quot;,
+      &quot;carrier_name&quot;: &quot;[TEST] 原始承运商 TEST-SC-B-001&quot;,
+      &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;,
+      &quot;content_hash&quot;: &quot;335a6827b5654af704688525f1fcea051832948b9782741aca2b4947647d4670&quot;,
+      &quot;content_state&quot;: &quot;MAPPED&quot;,
+      &quot;evidence&quot;: &quot;&quot;,
+      &quot;control_version&quot;: 1,
+      &quot;create_time&quot;: &quot;2026-10-27 09:48:51&quot;,
+      &quot;standard_id&quot;: 2,
+      &quot;carrier_resolution_state&quot;: &quot;RESOLVED&quot;,
+      &quot;carrier_resolution_json&quot;: &quot;{\&quot;state\&quot;:\&quot;RESOLVED\&quot;,\&quot;message\&quot;:\&quot;编码对照通过\&quot;,\&quot;available\&quot;:true,\&quot;mapping_id\&quot;:2,\&quot;revision\&quot;:1,\&quot;standard_id\&quot;:2,\&quot;standard_code\&quot;:\&quot;TEST_SC_B_20261026210253\&quot;,\&quot;standard_name\&quot;:\&quot;[公共快递验收] 承运商B 20261026210253\&quot;,\&quot;external_code\&quot;:\&quot;TEST-SC-B-001\&quot;,\&quot;external_name\&quot;:\&quot;[公共快递TEST] TEST-SC-B-001\&quot;,\&quot;directory_id\&quot;:2,\&quot;product_code\&quot;:\&quot;\&quot;,\&quot;evidence\&quot;:\&quot;TEST 人工确认目录与标准身份\&quot;,\&quot;connection_id\&quot;:\&quot;33\&quot;,\&quot;shop_id\&quot;:\&quot;\&quot;,\&quot;owner_code\&quot;:\&quot;SCO_20261026210253\&quot;,\&quot;real_store_code\&quot;:\&quot;SCW_20261026210253\&quot;,\&quot;purpose\&quot;:\&quot;WMS_OUTBOUND_ACTUAL\&quot;,\&quot;system_type\&quot;:\&quot;WMS\&quot;,\&quot;provider\&quot;:\&quot;QIMEN\&quot;,\&quot;scope_level\&quot;:3,\&quot;configuration_revision\&quot;:16,\&quot;context\&quot;:{\&quot;system_type\&quot;:\&quot;WMS\&quot;,\&quot;provider\&quot;:\&quot;QIMEN\&quot;,\&quot;purpose\&quot;:\&quot;WMS_OUTBOUND_ACTUAL\&quot;,\&quot;connection_id\&quot;:\&quot;33\&quot;,\&quot;owner_code\&quot;:\&quot;SCO_20261026210253\&quot;,\&quot;real_store_code\&quot;:\&quot;SCW_20261026210253\&quot;,\&quot;direction\&quot;:\&quot;IN\&quot;,\&quot;external_code\&quot;:\&quot;TEST-SC-B-001\&quot;,\&quot;raw_name\&quot;:\&quot;[TEST] 原始承运商 TEST-SC-B-001\&quot;,\&quot;source_execution_id\&quot;:17,\&quot;source_package_code\&quot;:\&quot;TEST-P2\&quot;,\&quot;shop_id\&quot;:\&quot;\&quot;}}&quot;,
+      &quot;execution_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3-01&quot;,
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: 13,
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;return_id&quot;: 41,
+          &quot;parcel_id&quot;: 13,
+          &quot;item_no&quot;: 1,
+          &quot;sku_sn&quot;: &quot;SCARRIER_20261026210253&quot;,
+          &quot;quantity&quot;: 3,
+          &quot;hint_line_id&quot;: 19,
+          &quot;hint_batch&quot;: &quot;SC_BATCH_20261026210253&quot;,
+          &quot;hint_grade&quot;: &quot;ZP&quot;,
+          &quot;allocations&quot;: [
+            {
+              &quot;id&quot;: 13,
+              &quot;company_code&quot;: &quot;QM&quot;,
+              &quot;return_id&quot;: 41,
+              &quot;parcel_item_id&quot;: 13,
+              &quot;execution_line_id&quot;: 19,
+              &quot;return_line_id&quot;: 45,
+              &quot;quantity&quot;: 3,
+              &quot;actor&quot;: &quot;WMS&quot;,
+              &quot;evidence&quot;: &quot;仓库提供的来源唯一且未超实际出库&quot;,
+              &quot;create_time&quot;: &quot;2026-10-27T09:48:51&quot;,
+              &quot;parcel_id&quot;: 13,
+              &quot;package_code&quot;: &quot;TEST-P2&quot;,
+              &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;,
+              &quot;carrier_name&quot;: &quot;[TEST] 原始承运商 TEST-SC-B-001&quot;,
+              &quot;parcel_state&quot;: &quot;MAPPED&quot;,
+              &quot;execution_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3-01&quot;,
+              &quot;sku_sn&quot;: &quot;SCARRIER_20261026210253&quot;,
+              &quot;goods_name&quot;: &quot;[公共快递TEST] 原始物流与库存独立验收&quot;,
+              &quot;stock_unit&quot;: &quot;件&quot;,
+              &quot;batch_code&quot;: &quot;SC_BATCH_20261026210253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;,
+              &quot;purchase_price&quot;: 2.5,
+              &quot;supplier_confirmed&quot;: 0
+            }
+          ],
+          &quot;unassigned_quantity&quot;: 0
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 12,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 41,
+      &quot;execution_id&quot;: 17,
+      &quot;package_code&quot;: &quot;TEST-P1&quot;,
+      &quot;carrier_code&quot;: &quot;TEST-SC-UNKNOWN-001&quot;,
+      &quot;carrier_name&quot;: &quot;[TEST] 原始承运商 TEST-SC-UNKNOWN-001&quot;,
+      &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;,
+      &quot;content_hash&quot;: &quot;8f12832dfd3f66db8066307aaa37c21ee9e151255e97429a28015370a2c52e93&quot;,
+      &quot;content_state&quot;: &quot;MAPPED&quot;,
+      &quot;evidence&quot;: &quot;&quot;,
+      &quot;control_version&quot;: 1,
+      &quot;create_time&quot;: &quot;2026-10-27 09:48:51&quot;,
+      &quot;standard_id&quot;: 1,
+      &quot;carrier_resolution_state&quot;: &quot;RESOLVED&quot;,
+      &quot;carrier_resolution_json&quot;: &quot;{\&quot;state\&quot;:\&quot;RESOLVED\&quot;,\&quot;message\&quot;:\&quot;编码对照通过\&quot;,\&quot;available\&quot;:true,\&quot;mapping_id\&quot;:7,\&quot;revision\&quot;:1,\&quot;standard_id\&quot;:1,\&quot;standard_code\&quot;:\&quot;TEST_SC_A_20261026210253\&quot;,\&quot;standard_name\&quot;:\&quot;[公共快递验收] 承运商A 20261026210253\&quot;,\&quot;external_code\&quot;:\&quot;TEST-SC-UNKNOWN-001\&quot;,\&quot;external_name\&quot;:\&quot;[公共快递TEST] TEST-SC-UNKNOWN-001\&quot;,\&quot;directory_id\&quot;:7,\&quot;product_code\&quot;:\&quot;\&quot;,\&quot;evidence\&quot;:\&quot;TEST 人工确认目录与标准身份\&quot;,\&quot;connection_id\&quot;:\&quot;33\&quot;,\&quot;shop_id\&quot;:\&quot;\&quot;,\&quot;owner_code\&quot;:\&quot;SCO_20261026210253\&quot;,\&quot;real_store_code\&quot;:\&quot;SCW_20261026210253\&quot;,\&quot;purpose\&quot;:\&quot;WMS_OUTBOUND_ACTUAL\&quot;,\&quot;system_type\&quot;:\&quot;WMS\&quot;,\&quot;provider\&quot;:\&quot;QIMEN\&quot;,\&quot;scope_level\&quot;:3,\&quot;configuration_revision\&quot;:18,\&quot;context\&quot;:{\&quot;system_type\&quot;:\&quot;WMS\&quot;,\&quot;provider\&quot;:\&quot;QIMEN\&quot;,\&quot;purpose\&quot;:\&quot;WMS_OUTBOUND_ACTUAL\&quot;,\&quot;connection_id\&quot;:\&quot;33\&quot;,\&quot;owner_code\&quot;:\&quot;SCO_20261026210253\&quot;,\&quot;real_store_code\&quot;:\&quot;SCW_20261026210253\&quot;,\&quot;direction\&quot;:\&quot;IN\&quot;,\&quot;external_code\&quot;:\&quot;TEST-SC-UNKNOWN-001\&quot;,\&quot;raw_name\&quot;:\&quot;[TEST] 原始承运商 TEST-SC-UNKNOWN-001\&quot;,\&quot;source_execution_id\&quot;:17,\&quot;source_package_code\&quot;:\&quot;TEST-P1\&quot;,\&quot;shop_id\&quot;:\&quot;\&quot;}}&quot;,
+      &quot;execution_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3-01&quot;,
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: 12,
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;return_id&quot;: 41,
+          &quot;parcel_id&quot;: 12,
+          &quot;item_no&quot;: 1,
+          &quot;sku_sn&quot;: &quot;SCARRIER_20261026210253&quot;,
+          &quot;quantity&quot;: 2,
+          &quot;hint_line_id&quot;: 19,
+          &quot;hint_batch&quot;: &quot;SC_BATCH_20261026210253&quot;,
+          &quot;hint_grade&quot;: &quot;ZP&quot;,
+          &quot;allocations&quot;: [
+            {
+              &quot;id&quot;: 12,
+              &quot;company_code&quot;: &quot;QM&quot;,
+              &quot;return_id&quot;: 41,
+              &quot;parcel_item_id&quot;: 12,
+              &quot;execution_line_id&quot;: 19,
+              &quot;return_line_id&quot;: 45,
+              &quot;quantity&quot;: 2,
+              &quot;actor&quot;: &quot;WMS&quot;,
+              &quot;evidence&quot;: &quot;仓库提供的来源唯一且未超实际出库&quot;,
+              &quot;create_time&quot;: &quot;2026-10-27T09:48:51&quot;,
+              &quot;parcel_id&quot;: 12,
+              &quot;package_code&quot;: &quot;TEST-P1&quot;,
+              &quot;waybill&quot;: &quot;TEST-SC-WAYBILL-20261026210253&quot;,
+              &quot;carrier_name&quot;: &quot;[TEST] 原始承运商 TEST-SC-UNKNOWN-001&quot;,
+              &quot;parcel_state&quot;: &quot;MAPPED&quot;,
+              &quot;execution_sn&quot;: &quot;CGTe0539389615b4eb0959e46ca6875f6c3-01&quot;,
+              &quot;sku_sn&quot;: &quot;SCARRIER_20261026210253&quot;,
+              &quot;goods_name&quot;: &quot;[公共快递TEST] 原始物流与库存独立验收&quot;,
+              &quot;stock_unit&quot;: &quot;件&quot;,
+              &quot;batch_code&quot;: &quot;SC_BATCH_20261026210253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;,
+              &quot;purchase_price&quot;: 2.5,
+              &quot;supplier_confirmed&quot;: 0
+            }
+          ],
+          &quot;unassigned_quantity&quot;: 0
+        }
+      ]
+    }
+  ],
+  &quot;overwrite_rejected&quot;: &quot;(&#x27;/supplychain/purchaseReturns/41/parcels/supplement&#x27;, &#x27;已有原始物流事实不能覆盖；补录只可完善缺失信息，请核对仓库原始凭证&#x27;)&quot;
+}</pre></details></article><article><h3>A02-A03-A06 <span>通过</span></h3><p>货主精确对照停用时明确阻断；不能回落到连接通用对照</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;source&quot;: {
+    &quot;state&quot;: &quot;DISABLED&quot;,
+    &quot;message&quot;: &quot;命中的快递关联已停用：TEST 精确范围停用，禁止回退宽范围；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；外部编码〔TEST-SC-SHADOW-001〕&quot;,
+    &quot;available&quot;: false,
+    &quot;mapping_id&quot;: 9,
+    &quot;revision&quot;: 2,
+    &quot;standard_id&quot;: 2,
+    &quot;standard_code&quot;: &quot;TEST_SC_B_20261026210253&quot;,
+    &quot;standard_name&quot;: &quot;[公共快递验收] 承运商B 20261026210253&quot;,
+    &quot;external_code&quot;: &quot;TEST-SC-SHADOW-001&quot;,
+    &quot;external_name&quot;: &quot;[公共快递TEST] TEST-SC-SHADOW-001&quot;,
+    &quot;directory_id&quot;: 9,
+    &quot;product_code&quot;: &quot;&quot;,
+    &quot;evidence&quot;: &quot;TEST 人工确认目录与标准身份&quot;,
+    &quot;connection_id&quot;: &quot;33&quot;,
+    &quot;shop_id&quot;: &quot;&quot;,
+    &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+    &quot;real_store_code&quot;: &quot;&quot;,
+    &quot;purpose&quot;: &quot;WMS_OUTBOUND_ACTUAL&quot;,
+    &quot;system_type&quot;: &quot;WMS&quot;,
+    &quot;provider&quot;: &quot;QIMEN&quot;,
+    &quot;scope_level&quot;: 2,
+    &quot;configuration_revision&quot;: 40,
+    &quot;context&quot;: {
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;purpose&quot;: &quot;WMS_OUTBOUND_ACTUAL&quot;,
+      &quot;connection_id&quot;: &quot;33&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+      &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+      &quot;external_code&quot;: &quot;TEST-SC-SHADOW-001&quot;,
+      &quot;direction&quot;: &quot;IN&quot;
+    }
+  }
+}</pre></details></article><article><h3>A19-A20 <span>通过</span></h3><p>目录先预览再确认；数字编码行被拒绝，文本编码保留前导零、大小写及标点；操作留痕</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;error_preview&quot;: {
+    &quot;rows&quot;: [
+      {
+        &quot;line&quot;: 1,
+        &quot;status&quot;: &quot;ERROR&quot;,
+        &quot;message&quot;: &quot;外部编码须为文本，不能把编码按数值转换&quot;
+      }
+    ],
+    &quot;scope&quot;: {
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;purpose&quot;: &quot;WMS_RETURN_ACTUAL&quot;,
+      &quot;connection_id&quot;: &quot;34&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;
+    },
+    &quot;errors&quot;: 1,
+    &quot;base_revision&quot;: 40,
+    &quot;request_key&quot;: &quot;30ad490efd494a75b6167d06b1a72cb8&quot;
+  },
+  &quot;rejected&quot;: &quot;(&#x27;/order/sharedCarriers/directory/import-confirm&#x27;, &#x27;文件存在错误，修正后重新预览&#x27;)&quot;,
+  &quot;confirmed&quot;: {
+    &quot;rows&quot;: [
+      {
+        &quot;line&quot;: 1,
+        &quot;status&quot;: &quot;NEW&quot;,
+        &quot;id&quot;: 0,
+        &quot;revision&quot;: 0,
+        &quot;data&quot;: {
+          &quot;enabled&quot;: 1,
+          &quot;disabled_reason&quot;: &quot;&quot;,
+          &quot;system_type&quot;: &quot;WMS&quot;,
+          &quot;provider&quot;: &quot;QIMEN&quot;,
+          &quot;purpose&quot;: &quot;WMS_RETURN_ACTUAL&quot;,
+          &quot;connection_id&quot;: &quot;34&quot;,
+          &quot;shop_id&quot;: &quot;&quot;,
+          &quot;owner_code&quot;: &quot;&quot;,
+          &quot;real_store_code&quot;: &quot;&quot;,
+          &quot;evidence&quot;: &quot;TEST 正式目录导入验收&quot;,
+          &quot;external_code&quot;: &quot;001/sF.a&quot;,
+          &quot;external_name&quot;: &quot;[TEST] 原值目录&quot;,
+          &quot;source&quot;: &quot;IMPORT&quot;,
+          &quot;scope_hash&quot;: &quot;aca41e8922fe26344148de2c874c88a2da1445ad6205f753d9f56d836ff99b58&quot;
+        }
+      }
+    ],
+    &quot;scope&quot;: {
+      &quot;system_type&quot;: &quot;WMS&quot;,
+      &quot;provider&quot;: &quot;QIMEN&quot;,
+      &quot;purpose&quot;: &quot;WMS_RETURN_ACTUAL&quot;,
+      &quot;connection_id&quot;: &quot;34&quot;,
+      &quot;shop_id&quot;: &quot;&quot;,
+      &quot;owner_code&quot;: &quot;&quot;,
+      &quot;real_store_code&quot;: &quot;&quot;
+    },
+    &quot;errors&quot;: 0,
+    &quot;base_revision&quot;: 23,
+    &quot;request_key&quot;: &quot;13138f056916485781cb01c832931b1f&quot;
+  }
+}</pre></details></article><article><h3>A13 <span>通过</span></h3><p>未接通目录适配器明确提示不支持；奇门TEST目录查询失败正常落为失败任务，均保留已确认目录及对照</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;channel&quot;: {
+    &quot;message&quot;: &quot;该连接尚无已接通且获授权的目录查询适配器，请导入正式目录&quot;,
+    &quot;state&quot;: &quot;UNSUPPORTED&quot;,
+    &quot;id&quot;: 1
+  },
+  &quot;wms&quot;: {
+    &quot;id&quot;: 2,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;system_type&quot;: &quot;WMS&quot;,
+    &quot;provider&quot;: &quot;QIMEN&quot;,
+    &quot;purpose&quot;: &quot;WMS_OUTBOUND_ACTUAL&quot;,
+    &quot;connection_id&quot;: &quot;33&quot;,
+    &quot;shop_id&quot;: &quot;&quot;,
+    &quot;owner_code&quot;: &quot;SCO_20261026210253&quot;,
+    &quot;real_store_code&quot;: &quot;SCW_20261026210253&quot;,
+    &quot;state&quot;: &quot;FAILED&quot;,
+    &quot;source_url&quot;: &quot;https://developer.alibaba.com/docs/api.htm?apiId=27530&quot;,
+    &quot;result_json&quot;: &quot;{\&quot;message\&quot;:\&quot;目录查询未成功，请核对连接权限和接口支持；已有目录及对照保持原状\&quot;}&quot;,
+    &quot;actor&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-27 10:07:59&quot;,
+    &quot;finish_time&quot;: &quot;2026-10-27 10:08:17&quot;
+  }
+}</pre></details></article><article><h3>A17 <span>通过</span></h3><p>供应商未知寄回快递可保存原始编码、名称和运单为待核实草稿；未核实无法审核下发，登记拒收及物流均不增加库存</p><details><summary>查看实际结果与证据</summary><pre>{
+  &quot;reclaim_sn&quot;: &quot;CGH7c16d5f8b0574e358e78dda47ed332e6&quot;,
+  &quot;raw_carrier_code&quot;: &quot;001/Unknown.a&quot;,
+  &quot;raw_carrier_name&quot;: &quot;[TEST] 供应商凭证未知承运商&quot;,
+  &quot;state&quot;: &quot;DRAFT&quot;,
+  &quot;blocked&quot;: &quot;(&#x27;/supplychain/purchaseReturns/reclaims/10/approve&#x27;, &#x27;原始退回物流已保存，审核前请凭证确认标准快递&#x27;)&quot;,
+  &quot;stock&quot;: {
+    &quot;skuSn&quot;: &quot;SCARRIER_20261026210253&quot;,
+    &quot;totalStock&quot;: 5,
+    &quot;availableStock&quot;: 5,
+    &quot;allocatedStock&quot;: 0,
+    &quot;reservedStock&quot;: 0,
+    &quot;frozenStock&quot;: 0
+  }
+}</pre></details></article><h2>权限与隔离</h2><table><thead><tr><th>场景</th><th>维护配置</th><th>重试待办</th></tr></thead><tbody><tr><td>无公共配置权限的业务人员可查询快递选项</td><td>拒绝（符合预期）</td><td>拒绝（符合预期）</td></tr><tr><td>公共只读人员可查询配置</td><td>拒绝（符合预期）</td><td>拒绝（符合预期）</td></tr></tbody></table><p>无公共配置权限的业务查询账号也实际调用采购退仓快递选项接口并得到选项。公司身份隔离、受信内部调用、并发编辑、冻结快照、实际出入库幂等在后端测试中覆盖。</p><h2>性能与保留数据检查</h2><table><thead><tr><th>接口</th><th>3次耗时/ms</th><th>平均/ms</th><th>最大/ms</th></tr></thead><tbody><tr><td>标准资料分页</td><td>[9.1, 7.2, 6.7]</td><td>7.7</td><td>9.1</td></tr><tr><td>WMS对照分页</td><td>[28.8, 7.0, 8.2]</td><td>14.7</td><td>28.8</td></tr><tr><td>业务快递选项</td><td>[21.4, 38.9, 19.4]</td><td>26.6</td><td>38.9</td></tr></tbody></table><p>上述为本地单用户抽样，并非生产容量结论。列表与搜索有上限；自动选快递批量查询对照和能力；目录、物流识别使用有界线程池与按公司索引；外部调用不占用实际库存记账事务。</p><table><thead><tr><th>原有验收资产</th><th>结果</th></tr></thead><tbody><tr><td>manifests</td><td>保持不变</td></tr><tr><td>stock</td><td>保持不变</td></tr><tr><td>warehouse</td><td>保持不变</td></tr><tr><td>refunds</td><td>保持不变</td></tr><tr><td>queues</td><td>保持不变</td></tr><tr><td>job</td><td>保持不变</td></tr><tr><td>purchase_returns</td><td>保持不变</td></tr><tr><td>purchase_executions</td><td>保持不变</td></tr><tr><td>procurement_stock</td><td>保持不变</td></tr></tbody></table><h2>页面验收</h2><ul><li>标准快递资料列表正常加载</li><li>渠道快递配置列表正常加载</li><li>WMS 快递配置列表正常加载</li><li>仓库服务能力列表正常加载</li><li>快递关联待办列表正常加载</li><li>当前仅天猫可配置；京东、抖音入口保留并禁用</li><li>渠道页面统一使用平台快递清单、补录平台快递及导入清单名称</li><li>WMS 连接、货主与实仓可逐级选择，表单使用独立标准身份</li><li>WMS页面统一使用仓库快递清单、补录仓库快递及导入清单名称</li><li>待办可直达原退仓详情；包裹分别展示原始编码、标准身份和识别状态</li><li>未知供应商退回物流原值保留；审核区域提供标准快递及核对凭证，收货选项可正常查询</li></ul><details><summary>ui-standards.png</summary><a href="ui-standards.png" target="_blank"><img src="ui-standards.png" loading="lazy"></a></details><details><summary>ui-channels.png</summary><a href="ui-channels.png" target="_blank"><img src="ui-channels.png" loading="lazy"></a></details><details><summary>ui-wms.png</summary><a href="ui-wms.png" target="_blank"><img src="ui-wms.png" loading="lazy"></a></details><details><summary>ui-capabilities.png</summary><a href="ui-capabilities.png" target="_blank"><img src="ui-capabilities.png" loading="lazy"></a></details><details><summary>ui-todos.png</summary><a href="ui-todos.png" target="_blank"><img src="ui-todos.png" loading="lazy"></a></details><details><summary>ui-channel-scope.png</summary><a href="ui-channel-scope.png" target="_blank"><img src="ui-channel-scope.png" loading="lazy"></a></details><details><summary>ui-wms-scope.png</summary><a href="ui-wms-scope.png" target="_blank"><img src="ui-wms-scope.png" loading="lazy"></a></details><details><summary>ui-return-parcels.png</summary><a href="ui-return-parcels.png" target="_blank"><img src="ui-return-parcels.png" loading="lazy"></a></details><details><summary>ui-raw-return.png</summary><a href="ui-raw-return.png" target="_blank"><img src="ui-raw-return.png" loading="lazy"></a></details><details><summary>direction-outbound-create.png</summary><a href="direction-outbound-create.png" target="_blank"><img src="direction-outbound-create.png" loading="lazy"></a></details><details><summary>direction-outbound-actual.png</summary><a href="direction-outbound-actual.png" target="_blank"><img src="direction-outbound-actual.png" loading="lazy"></a></details><details><summary>direction-return-create.png</summary><a href="direction-return-create.png" target="_blank"><img src="direction-return-create.png" loading="lazy"></a></details><details><summary>direction-return-actual.png</summary><a href="direction-return-actual.png" target="_blank"><img src="direction-return-actual.png" loading="lazy"></a></details><details><summary>direction-batch-out.png</summary><a href="direction-batch-out.png" target="_blank"><img src="direction-batch-out.png" loading="lazy"></a></details><details><summary>direction-batch-in.png</summary><a href="direction-batch-in.png" target="_blank"><img src="direction-batch-in.png" loading="lazy"></a></details><details><summary>channel-action-channel_shipping.png</summary><a href="channel-action-channel_shipping.png" target="_blank"><img src="channel-action-channel_shipping.png" loading="lazy"></a></details><details><summary>channel-action-channel_exchange_logistics.png</summary><a href="channel-action-channel_exchange_logistics.png" target="_blank"><img src="channel-action-channel_exchange_logistics.png" loading="lazy"></a></details><details><summary>channel-action-channel_return_identify.png</summary><a href="channel-action-channel_return_identify.png" target="_blank"><img src="channel-action-channel_return_identify.png" loading="lazy"></a></details><details><summary>channel-action-channel_return_backfill.png</summary><a href="channel-action-channel_return_backfill.png" target="_blank"><img src="channel-action-channel_return_backfill.png" loading="lazy"></a></details><details><summary>channel-action-multiple.png</summary><a href="channel-action-multiple.png" target="_blank"><img src="channel-action-multiple.png" loading="lazy"></a></details><details><summary>channel-action-batch.png</summary><a href="channel-action-batch.png" target="_blank"><img src="channel-action-batch.png" loading="lazy"></a></details><details><summary>configuration-channel.png</summary><a href="configuration-channel.png" target="_blank"><img src="configuration-channel.png" loading="lazy"></a></details><details><summary>configuration-channel-batch.png</summary><a href="configuration-channel-batch.png" target="_blank"><img src="configuration-channel-batch.png" loading="lazy"></a></details><details><summary>configuration-import.png</summary><a href="configuration-import.png" target="_blank"><img src="configuration-import.png" loading="lazy"></a></details><details><summary>configuration-wms.png</summary><a href="configuration-wms.png" target="_blank"><img src="configuration-wms.png" loading="lazy"></a></details><details><summary>configuration-wms-batch.png</summary><a href="configuration-wms-batch.png" target="_blank"><img src="configuration-wms-batch.png" loading="lazy"></a></details><details><summary>configuration-conversion.png</summary><a href="configuration-conversion.png" target="_blank"><img src="configuration-conversion.png" loading="lazy"></a></details><details><summary>management-standards.png</summary><a href="management-standards.png" target="_blank"><img src="management-standards.png" loading="lazy"></a></details><details><summary>management-channels.png</summary><a href="management-channels.png" target="_blank"><img src="management-channels.png" loading="lazy"></a></details><details><summary>management-wms.png</summary><a href="management-wms.png" target="_blank"><img src="management-wms.png" loading="lazy"></a></details><details><summary>management-capabilities.png</summary><a href="management-capabilities.png" target="_blank"><img src="management-capabilities.png" loading="lazy"></a></details><details><summary>management-todos.png</summary><a href="management-todos.png" target="_blank"><img src="management-todos.png" loading="lazy"></a></details><details><summary>management-channel-columns.png</summary><a href="management-channel-columns.png" target="_blank"><img src="management-channel-columns.png" loading="lazy"></a></details><details><summary>management-directory-associate.png</summary><a href="management-directory-associate.png" target="_blank"><img src="management-directory-associate.png" loading="lazy"></a></details><details><summary>management-wms-filters.png</summary><a href="management-wms-filters.png" target="_blank"><img src="management-wms-filters.png" loading="lazy"></a></details><details><summary>management-batch.png</summary><a href="management-batch.png" target="_blank"><img src="management-batch.png" loading="lazy"></a></details><details><summary>management-scenario-failure.png</summary><a href="management-scenario-failure.png" target="_blank"><img src="management-scenario-failure.png" loading="lazy"></a></details><details><summary>management-scenario-success.png</summary><a href="management-scenario-success.png" target="_blank"><img src="management-scenario-success.png" loading="lazy"></a></details><details><summary>management-inbound-capability.png</summary><a href="management-inbound-capability.png" target="_blank"><img src="management-inbound-capability.png" loading="lazy"></a></details><details><summary>management-audit.png</summary><a href="management-audit.png" target="_blank"><img src="management-audit.png" loading="lazy"></a></details><details><summary>management-completed-todo.png</summary><a href="management-completed-todo.png" target="_blank"><img src="management-completed-todo.png" loading="lazy"></a></details><details><summary>management-todo-repair-context.png</summary><a href="management-todo-repair-context.png" target="_blank"><img src="management-todo-repair-context.png" loading="lazy"></a></details><details><summary>management-ready-todo.png</summary><a href="management-ready-todo.png" target="_blank"><img src="management-ready-todo.png" loading="lazy"></a></details><details><summary>management-return-scenario.png</summary><a href="management-return-scenario.png" target="_blank"><img src="management-return-scenario.png" loading="lazy"></a></details><h2>WMS 处理用途自动确定</h2><p>下发类按 OMS → WMS 转换编码；回传类按 WMS → OMS 识别标准身份。单条编辑、批量建立和服务端保存均按接口用途确定方向，回传类不配置默认输出。</p><ul><li>WMS 出库下发自动确定处理用途及默认输出可见性</li><li>WMS 实际出库回传自动确定处理用途及默认输出可见性</li><li>WMS 退回入库下发自动确定处理用途及默认输出可见性</li><li>WMS 实际入库回传自动确定处理用途及默认输出可见性</li><li>编辑已有对照也使用固定处理用途</li><li>下发目录批量关联标准快递无需选择方向</li><li>回传目录批量关联标准快递无需选择方向</li><li>渠道关联也按业务用途确定方向，无需手选</li></ul><p><a href="direction-browser.json">本次页面检查明细（未写入配置）</a></p><h2>渠道关联按业务用途自动确定方向</h2><p>销售发货回传、换货发出物流回传、买家寄回物流识别、平台寄回物流回填使用独立用途。普通表单及批量关联无需选择 IN、OUT 或双向。平台提交首选项仅在多个候选时显示。</p><ul><li>销售发货回传无需选择方向；未选候选时不显示首选项</li><li>换货发出物流回传无需选择方向；未选候选时不显示首选项</li><li>识别买家寄回物流无需选择方向；未选候选时不显示首选项</li><li>向平台回填寄回物流无需选择方向；未选候选时不显示首选项</li><li>多个提交候选才显示平台提交首选项，并显示已配置的首选标识</li><li>单一提交候选自动处理并隐藏首选项</li><li>批量关联按业务用途固定方向；多个同承运商候选明确首选后预览通过</li><li>场景核验按所选业务自动确定来源和目标用途</li></ul><table><thead><tr><th>配置场景</th><th>实际结果</th></tr></thead><tbody><tr><td>识别买家寄回物流和平台回填使用独立关联；识别配置不能替代回填配置</td><td>PASS</td></tr><tr><td>四种渠道用途均由服务端确定方向；提交双向不会产生双向关联，运行时错误方向被拒绝</td><td>PASS</td></tr><tr><td>一次查询同时检查编辑当前项、新增同承运商项与单一候选；排除当前关联并返回其他首选标识</td><td>PASS</td></tr></tbody></table><p>候选检查最多100项，以单次公司内有界查询处理；请求防抖并丢弃旧上下文响应。该查询只用于配置，不加入订单或库存记账事务。<a href="channel-actions.json">查看渠道用途与页面验收证据</a></p><h2>运输产品与配置来源说明</h2><p>渠道关联及渠道转换核验隐藏运输产品条件；WMS 保留运输产品编码，并说明专用匹配和通用匹配规则。单条、批量和导入统一使用“配置来源与确认说明”，提供填写示例并在提交前提示必填。</p><ul><li>渠道列表和单条关联隐藏运输产品；配置说明提供平台填写示例，空值保存时直接提示必填</li><li>补录平台快递使用统一的配置来源与确认说明</li><li>渠道批量关联隐藏产品列；整批配置说明提供示例，空值检查不会发送请求</li><li>清单导入统一配置说明并提供文件、版本提示；空值预览在页面拦截</li><li>WMS 单条关联保留运输产品编码和匹配说明，列表空值显示通用匹配</li><li>WMS 批量关联保留运输产品编码，提供通用匹配提示和本批配置说明</li><li>仓库服务能力使用针对货主、实仓及收发用途的确认说明示例</li><li>转换核验随来源和目标切换，仅 WMS 展示运输产品输入，渠道隐藏</li></ul><p><a href="configuration-help-browser.json">本次页面检查明细</a>；未提交配置变更、外部业务接口或库存操作。</p><h2>快递管理页面迭代验收</h2><p>单一标题、完整导航名称、独立查询与操作区；关联拆列、清单关联状态、范围筛选、直接关联、WMS候选首选、场景分步核验及可读操作记录均已验收。</p><ul><li>五个页面仅保留一处标题，列表正常加载，配置入口与查询区域分开</li><li>关联列表拆分标准快递、外部快递、用途、范围、配置状态和指定场景检查，编码可复制</li><li>配置状态筛选由服务端分页处理，刷新后保留筛选和当前页</li><li>清单按三种关联状态查询；从未关联条目直接建关联，自动带入编码、用途和范围</li><li>已关联清单一键查看对应关联，支持取消单条清单筛选</li><li>WMS 列表按连接、货主、实仓及用途筛选，完整范围显示名称</li><li>WMS 多候选显示仓库下发首选项，单候选自动处理并隐藏开关</li><li>WMS 批量候选按组互斥选择首选，检查结果显示在对应行，预览不写关联</li><li>仓库发货场景区分编码关联和配送能力；上海能力失败、浙江通过，修改条件清空旧结果</li><li>仓库服务区分发货能力和收货能力，收货不显示发货配送限制</li><li>操作记录支持当前配置过滤、可读对象名称、字段修改前后值与来源说明，原始JSON折叠</li><li>已完成待办不再提供修复或重试动作，原始物流和业务单据仍可追溯</li><li>UI专用待办可直接修复，带齐原编码、业务用途、连接、货主与实仓，返回后保留原单筛选；未校验或重试业务</li><li>配置检查通过的UI专用待办展示继续未完成步骤；仅检查按钮，未执行重试</li><li>售后退回入库场景从买家原始快递识别到标准快递，再转换仓库入库编码并验证收货能力，三步通过且无需发货省份；只读核验</li></ul><p>测试保留专用快递配置。待办按钮和跳转使用标记为TEST的UI专用任务，不对应真实业务，未执行业务校验或重试。场景核验为只读配置检查，未调用真实平台发货或库存操作。<a href="management-ui.json">查看本轮UI验收证据</a> · <a href="management-performance.json">清单关联索引与分页耗时抽样</a></p><h2>复核文件</h2><p><a href="regression.json">后端回归明细</a> · <a href="manifest.json">场景与业务证据</a> · <a href="permissions.json">权限验收</a> · <a href="performance.json">耗时抽样及边界</a> · <a href="browser.json">浏览器检查</a></p></main></html>

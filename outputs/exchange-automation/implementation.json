@@ -15,11 +15,12 @@
   ],
   "status": {
     "research": "complete",
-    "schema": "implemented_test_schema_only",
-    "automation": "implemented_regression_in_progress",
-    "shared_parcels": "implemented_regression_in_progress",
-    "ui": "implemented_build_passed",
-    "regression": "focused_129_passed_before_latest_read_model_changes",
-    "retained_acceptance": "pending"
-  }
+    "schema": "installed_new_tables_only_in_local_environment",
+    "automation": "complete_locally_deployed",
+    "shared_parcels": "complete_mixed_parcel_stock_verified",
+    "ui": "build_browser_and_report_verified",
+    "regression": "735_passed_zero_failures_errors_skips",
+    "retained_acceptance": "12_of_12_expected_results; 10_automatic_or_stop; 2_expected_manual_protections"
+  },
+  "report_url": "http://127.0.0.1:8088/acceptance/exchange-automation/验收报告.html"
 }

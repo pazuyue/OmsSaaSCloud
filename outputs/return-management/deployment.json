@@ -1,0 +1,68 @@
+[
+  {
+    "module": "oms-order",
+    "previous_sha256": "69751b8f8dae4df60a300e34eecb972486442dd08f6750d8ce88c63cf803a438",
+    "new_sha256": "c97ef9ba3acfa071bed46faf9d2488132c68ce134d527457600d48e6716095e9",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "420a1ab77266ac75a51c44344d44c714d23b5fd7f79561efc98c2f6e00aea0be",
+    "new_sha256": "e3584b410977c28b87569978dbddd545716150460f95e51f76d682c370f1f0c6",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "c97ef9ba3acfa071bed46faf9d2488132c68ce134d527457600d48e6716095e9",
+    "new_sha256": "fb821b1e1b9ec782032c28783ffbdd350ab5506d1ed0a1547f87706b881057a9",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "e3584b410977c28b87569978dbddd545716150460f95e51f76d682c370f1f0c6",
+    "new_sha256": "aa938dcdab8bed6dbad8eaa60e80e9d8f6405b3733663479f4184c637404acb9",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "fb821b1e1b9ec782032c28783ffbdd350ab5506d1ed0a1547f87706b881057a9",
+    "new_sha256": "5c90783789d3b86425a1117c95463be52de5732adf45c55dcc71753dc483c028",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "5c90783789d3b86425a1117c95463be52de5732adf45c55dcc71753dc483c028",
+    "new_sha256": "51f91cf4a5a51f60e9eb0906795e0e35eec909bd5d4e93ebd7d6434ce79ed187",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "51f91cf4a5a51f60e9eb0906795e0e35eec909bd5d4e93ebd7d6434ce79ed187",
+    "new_sha256": "837810e18b1349d62c3c7abcaf1c4141980e2e8be533be6d9d96d1ed90b8601f",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "aa938dcdab8bed6dbad8eaa60e80e9d8f6405b3733663479f4184c637404acb9",
+    "new_sha256": "5ccaf7949ac672c341152c133fb8e225fa25b0efa5b14391b98cca4c551b009f",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "837810e18b1349d62c3c7abcaf1c4141980e2e8be533be6d9d96d1ed90b8601f",
+    "new_sha256": "ba1db0c44bdb194dbc6b76bfe5e3d0439748fb2a4503503b6705bb257806bee3",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "5ccaf7949ac672c341152c133fb8e225fa25b0efa5b14391b98cca4c551b009f",
+    "new_sha256": "54745c678b6b6510eb908f4f1c76d54d1d943894ff2b8698fc9dc3497d374edd",
+    "sources_match_cache": true
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "ba1db0c44bdb194dbc6b76bfe5e3d0439748fb2a4503503b6705bb257806bee3",
+    "new_sha256": "18d646e4d6eb398c4bc070987863525261030c9bd7a85a29bdc247d6709aa099",
+    "sources_match_cache": true
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "渠道列表和单条关联隐藏运输产品；配置说明提供平台填写示例，空值保存时直接提示必填",
+    "补录平台快递使用统一的配置来源与确认说明",
+    "渠道批量关联隐藏产品列；整批配置说明提供示例，空值检查不会发送请求",
+    "清单导入统一配置说明并提供文件、版本提示；空值预览在页面拦截",
+    "WMS 单条关联保留运输产品编码和匹配说明，列表空值显示通用匹配",
+    "WMS 批量关联保留运输产品编码，提供通用匹配提示和本批配置说明",
+    "仓库服务能力使用针对货主、实仓及收发用途的确认说明示例",
+    "转换核验随来源和目标切换，仅 WMS 展示运输产品输入，渠道隐藏"
+  ],
+  "page_errors": [],
+  "configuration_writes": [],
+  "screenshots": [
+    "configuration-channel.png",
+    "configuration-channel-batch.png",
+    "configuration-import.png",
+    "configuration-wms.png",
+    "configuration-wms-batch.png",
+    "configuration-conversion.png"
+  ]
+}

@@ -9,9 +9,71 @@
 	<a href="https://gitee.com/y_project/RuoYi-Cloud/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
 </p>
 
+## 采购退仓两批迭代（2026-10-25）
+
+采购退仓新增分区表单、批次可退数量说明、清晰的部分完成状态、剩余结束/继续流程、关联后续草稿、多笔款项与冲销、供应商收货凭证及拒收后的独立收回入库。
+收回入库使用奇门QTRK，按实际质量和实收数量恢复库存，形成可再次退仓的新来源；采购详情分别核对原入账、退仓出库、拒收收回及净入库。
+
+详细行为、安装、权限和验收命令见[供应链模块说明](oms-modules/oms-supplychain/README.md)。
+完整验收报告：`http://127.0.0.1:8088/acceptance/purchase-return-iteration/验收报告.html`。
+
+## 采购退仓与质量库存（2026-10-25）
+
+已提供采购退仓、冻结、按原来源解冻和凭仓库质检依据转正。
+采购退仓使用奇门 `stockout.create/query/confirm`，类型 `CGTH`；取消使用 `order.cancel`。
+审核后自动锁定原批次并执行下发，按实际出库扣账；仓库结果不明时保留原占用。
+原采购详情可分别查询累计实收、已退仓和净入库，供应商退款/抵扣另行登记凭证。
+正常等待回传的单据不反复执行，失败任务按下次补偿时间退避；列表、来源库存及交互元数据批量查询。
+
+入口：供应链 → 采购退仓；库存 → 质量库存。安装、权限、协议范围和验收脚本见
+[供应链模块说明](oms-modules/oms-supplychain/README.md)。
+本地详细报告：`http://127.0.0.1:8088/acceptance/purchase-returns/验收报告.html`。
+测试使用本地TEST奇门模拟器，保留原验收订单和库存，新建退仓与质量处理单据均保留。
+
+## 供应链待办、采购与到货详情（2026-10-25）
+
+本轮在采购、到货和入库执行链路增加独立展示与收货差异处理：
+
+- `/oms-supplychain/operations`：当前未解决待办；默认近90天，完整单号可跨日期定位，显式日期最多93天、每页最多50条。
+- `/oms-supplychain/arrivals`：独立到货列表；采购详情与到货详情分别展示计划、有效安排、可安排、确认实收、库存入账、次品、最终短收，商品按采购时单位快照汇总。
+- 采购、到货、出入库及SKU明细列表增加仓库当前状态和最近交互结果；支持组合筛选和导出。最后一次查询失败不会覆盖原“仓库已受理”状态。
+- 详情按需加载收货批次、差异、仓库交互及脱敏原报文；收货明细提供原采购成本、原回传日志及真实入账关联号。
+
+差异表 `purchase_receipt_difference` 保留经过身份校验的原回传及数量快照，覆盖最终短收、次品、超收、错货和迟到额度冲突。
+超收/错货先保留异常事实，不直接确认为实收或库存；后续有效更正会关联原差异。
+短收补建要求原批次最终确认且实收全部入账，以采购剩余额度创建新的待审核到货单；并发处理校验原差异版本。
+次品留库只保存处理结论，要求对应次品已经入账，不把次品改为正品或重复增加库存。
+截单后迟到仍使用原截单待核对能力，在统一待办中查询。
+
+新增权限 `warehouse:operations:list`、`warehouse:poInfo:differenceQuery`、`warehouse:poInfo:differenceReview`；
+补建到货另需原 `warehouse:poInfo:receive` 权限。默认仅授予管理员，普通角色按职责配置。
+新增表、字段和索引有中文备注；脚本不修改原业务状态、库存、队列策略或自动任务。
+
+性能处理：采购最多200个SKU一次批量远程校验；执行单、商品、已入账数量和最近日志按当前页批量读取，
+仓库原报文点击后加载。补建保持采购→到货→执行单的锁顺序，库存沿用原实收明细幂等关联号。
+
+```bash
+# 在已有本地项目的 WSL 环境安装增量表、字段、索引与菜单：
+python3 docker/local/configure_supplychain_iteration.py --local
+# 隔离测试数据库回归并构建；不与其他Maven任务并行：
+python3 docker/local/test_supplychain_iteration.py
+python3 docker/local/publish_supplychain_iteration.py
+bash docker/local/build-frontend.sh
+# Windows Python + Playwright Chromium；创建并保留独立TEST资料：
+python docker/local/verify_supplychain_iteration.py
+python docker/local/verify_supplychain_iteration_ui.py
+python docker/local/verify_supplychain_iteration_queries.py
+python docker/local/report_supplychain_iteration.py
+```
+
+报告：`http://127.0.0.1:8088/acceptance/supplychain-iteration/验收报告.html`。
+`outputs/supplychain-iteration` 保存18个场景的原单、回传、差异、公司/仓库/批次库存及真实入库流水证据。
+采购与到货审核、截单申请和差异处理为显式操作；后续下发、回传解析与库存入账验证自动执行。
+测试仓库交互来自本地TEST模拟器，未调用外部生产仓库。原保留单据与自动策略基线验收前后保持一致。
+
 ## 采购、供应商与出入库工作台
 
-供应链三个页面使用 `purchaseWorkspace` 接口：供应商启停与引用保护、采购独立商品计划、
+供应商、采购、到货与出入库页面使用 `purchaseWorkspace` 接口：供应商启停与引用保护、采购独立商品计划、
 分批到货、显式审核、收货数量确认、库存入账和失败重试，以及单据/商品明细两种查询视图。
 采购审核后锁定商品、单价、供应商及仓库；到货继承采购仓库，实仓和货主从固定虚仓关联取得。
 统一采购状态：`1 草稿 / 2 待收货 / 3 收货中 / 4 已完成 / 5 已关闭 / -1 已作废`。
@@ -28,7 +90,7 @@
 库存失败保留审核结果和失败明细，重试只处理尚未成功的明细；真实仓仍等待 WMS 回传。
 审核提交后若执行中断，可使用“完成虚拟入库”重试，沿用同一入库单号保证幂等。
 已收货或已入账单据不能直接作废。
-真实 WMS 通知接口原为占位实现，本工作台显示等待 WMS 回传，禁止用人工模拟冒充实仓回传。
+真实 WMS 按已配置连接下发并校验签名回传，按实际增量确认实收和自动入账；页面禁止人工模拟真实仓库收货。
 供应商省市区使用固定版本 `@vant/area-data@2.0.0` 的全国地区目录（34 个省级地区）联动，
 不依赖已有供应商地址生成选项。切换上级会清空下级；已有地址原样回显，并允许录入目录外的新地址。
 地区数据来源及维护方式见 [Vant Area Data](https://github.com/youzan/vant/tree/main/packages/vant-area-data)。
@@ -54,7 +116,7 @@ python docker/local/verify_purchase_workspace_ui.py
 
 ## 货主与仓库关联
 
-供应链三个页面共用仓库工作区。货主与实体仓库通过 `owner_warehouse` 支持多对多关联，
+供应链页面共用仓库工作区。货主与实体仓库通过 `owner_warehouse` 支持多对多关联，
 虚仓通过 `owner_warehouse_id` 固定指向一个货主和实体仓库组合。
 编码、关联两端及虚仓归属创建后不可直接修改；已有虚仓的实体仓库出入库模式与关联 WMS 货主编码也受保护。
 库存继续使用原虚仓编码，不重建库存、批次或历史单据。多仓聚合库存池未在本次引入。

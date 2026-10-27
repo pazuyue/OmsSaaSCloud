@@ -1,5 +1,5 @@
 <template>
-  <aside class="workspace-sidebar" aria-label="模块功能菜单">
+  <aside class="workspace-sidebar" :class="{'carrier-navigation': $route.path.startsWith('/common-config/carriers/')}" aria-label="模块功能菜单">
     <div class="sidebar-heading">
       <span v-if="!isCollapse">{{ moduleTitle }}<small>功能导航</small></span><i v-else class="el-icon-menu" />
     </div>
@@ -54,3 +54,7 @@ export default {
   }
 }
 </script>
+<style>
+#app .carrier-navigation .el-menu-item>span{width:auto!important;max-width:none!important;white-space:nowrap}
+#app .carrier-navigation .el-menu-item{padding-right:8px!important}
+</style>

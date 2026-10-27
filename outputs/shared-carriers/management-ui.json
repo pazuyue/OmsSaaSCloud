@@ -1,0 +1,875 @@
+{
+  "stamp": "20261027132902",
+  "commands": {
+    "STD_A": {
+      "id": 16,
+      "company_code": "QM",
+      "standard_code": "UI_CARRIER_20261027132902_A",
+      "standard_name": "[快递UI验收] 承运商A 20261027132902",
+      "category": "EXPRESS",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:03",
+      "aliases": []
+    },
+    "STD_B": {
+      "id": 17,
+      "company_code": "QM",
+      "standard_code": "UI_CARRIER_20261027132902_B",
+      "standard_name": "[快递UI验收] 承运商B 20261027132902",
+      "category": "EXPRESS",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:03",
+      "aliases": []
+    },
+    "CH_FREE": {
+      "id": 19,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_SHIPPING",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_FREE",
+      "external_name": "[快递UI验收] CH_FREE",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:29:03",
+      "scope_hash": "c76694e1c1d7b33e9f1091d92f6013c2c6401e28983834468ac215beb299f83a",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:03"
+    },
+    "CH_LINKED": {
+      "id": 20,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_SHIPPING",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_LINKED",
+      "external_name": "[快递UI验收] CH_LINKED",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:29:03",
+      "scope_hash": "c76694e1c1d7b33e9f1091d92f6013c2c6401e28983834468ac215beb299f83a",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:03"
+    },
+    "CH_DISABLED": {
+      "id": 21,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_SHIPPING",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_DISABLED",
+      "external_name": "[快递UI验收] CH_DISABLED",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:29:04",
+      "scope_hash": "c76694e1c1d7b33e9f1091d92f6013c2c6401e28983834468ac215beb299f83a",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:04"
+    },
+    "CH_MAP": {
+      "id": 16,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_SHIPPING",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "directory_id": 20,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:04"
+    },
+    "CH_MAP_DISABLED": {
+      "id": 17,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_SHIPPING",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "directory_id": 21,
+      "standard_id": 17,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 0,
+      "disabled_reason": "TEST 仓库确认暂停",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:29:04"
+    },
+    "WMS_PLAN": {
+      "id": 22,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "external_code": "UI_CARRIER_20261027132902_WMS_PLAN",
+      "external_name": "[快递UI验收] WMS_PLAN",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "2504ac7e567d0d960076a83efab6760c4f08224eef7245225adc4beb97bdc3cd",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_ALT": {
+      "id": 23,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "external_code": "UI_CARRIER_20261027132902_WMS_ALT",
+      "external_name": "[快递UI验收] WMS_ALT",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "2504ac7e567d0d960076a83efab6760c4f08224eef7245225adc4beb97bdc3cd",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_MAP": {
+      "id": 18,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "directory_id": 22,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_ALT_MAP": {
+      "id": 19,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "directory_id": 23,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 0,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_ACTUAL": {
+      "id": 24,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_ACTUAL",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "external_code": "UI_CARRIER_20261027132902_WMS_ACTUAL",
+      "external_name": "[快递UI验收] WMS_ACTUAL",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "abb110275169da3a5feaacaf78a434f4e9f80d9f03f10836692a1b6fecc5a1e3",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_ACTUAL_MAP": {
+      "id": 20,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_OUTBOUND_ACTUAL",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "directory_id": 24,
+      "standard_id": 16,
+      "direction": "IN",
+      "product_code": "",
+      "is_default": 0,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_RETURN": {
+      "id": 25,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_RETURN_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "external_code": "UI_CARRIER_20261027132902_WMS_RETURN",
+      "external_name": "[快递UI验收] WMS_RETURN",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "bde608caccff2ffcfbf6176f5192bdd87e8ecf38a1ae5c2c1297581119fb63fd",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_RETURN_MAP": {
+      "id": 21,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_RETURN_CREATE",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "directory_id": 25,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_RETURN_ACTUAL": {
+      "id": 26,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_RETURN_ACTUAL",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "external_code": "UI_CARRIER_20261027132902_WMS_RETURN_ACTUAL",
+      "external_name": "[快递UI验收] WMS_RETURN_ACTUAL",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "092343ae406bd20868a7f2a313253aa57f4bd2165c93d7b65bbb25ea4faa4815",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "WMS_RETURN_ACTUAL_MAP": {
+      "id": 22,
+      "company_code": "QM",
+      "system_type": "WMS",
+      "provider": "QIMEN",
+      "purpose": "WMS_RETURN_ACTUAL",
+      "connection_id": "33",
+      "shop_id": "",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "directory_id": 26,
+      "standard_id": 16,
+      "direction": "IN",
+      "product_code": "",
+      "is_default": 0,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "CH_BUYER": {
+      "id": 27,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_RETURN_IDENTIFY",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_BUYER",
+      "external_name": "[快递UI验收] CH_BUYER",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:04",
+      "scope_hash": "e43d27251476f54ac3d4cb92e0246ae3b802e4985f93cf235a1f817540ce7eff",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:04"
+    },
+    "CH_BUYER_MAP": {
+      "id": 23,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_RETURN_IDENTIFY",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "directory_id": 27,
+      "standard_id": 16,
+      "direction": "IN",
+      "product_code": "",
+      "is_default": 0,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05"
+    },
+    "CH_EXCHANGE": {
+      "id": 28,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_EXCHANGE_LOGISTICS",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_EXCHANGE",
+      "external_name": "[快递UI验收] CH_EXCHANGE",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:05",
+      "scope_hash": "a80e719799d2454c40898651c515019ecd0aedb2c8fe91a95edf644760e41df2",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05"
+    },
+    "CH_EXCHANGE_MAP": {
+      "id": 24,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_EXCHANGE_LOGISTICS",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "directory_id": 28,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05"
+    },
+    "CH_BACKFILL": {
+      "id": 29,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_RETURN_BACKFILL",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "external_code": "UI_CARRIER_20261027132902_CH_BACKFILL",
+      "external_name": "[快递UI验收] CH_BACKFILL",
+      "source": "MANUAL",
+      "evidence": "TEST 本地UI验收清单，保留测试配置",
+      "verified_at": "2026-10-27 13:30:05",
+      "scope_hash": "65d3ea48e959565821f54e6bc2cc9cab01241d6047049505b3bad192a9c64772",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05"
+    },
+    "CH_BACKFILL_MAP": {
+      "id": 25,
+      "company_code": "QM",
+      "system_type": "CHANNEL",
+      "provider": "TMALL",
+      "purpose": "CHANNEL_RETURN_BACKFILL",
+      "connection_id": "",
+      "shop_id": "",
+      "owner_code": "",
+      "real_store_code": "",
+      "directory_id": 29,
+      "standard_id": 16,
+      "direction": "OUT",
+      "product_code": "",
+      "is_default": 1,
+      "evidence": "TEST 已核对专用UI验收清单",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05"
+    },
+    "CAP_OUTBOUND": {
+      "id": 3,
+      "company_code": "QM",
+      "connection_id": "33",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "standard_id": 16,
+      "flow": "OUTBOUND",
+      "product_code": "",
+      "evidence": "TEST UI验收能力：发货不支持上海，收货不限省份",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05",
+      "provinces": [],
+      "excluded_provinces": [
+        "上海"
+      ]
+    },
+    "CAP_INBOUND": {
+      "id": 4,
+      "company_code": "QM",
+      "connection_id": "33",
+      "owner_code": "SCO_20261026210253",
+      "real_store_code": "SCW_20261026210253",
+      "standard_id": 16,
+      "flow": "INBOUND",
+      "product_code": "",
+      "evidence": "TEST UI验收能力：发货不支持上海，收货不限省份",
+      "enabled": 1,
+      "disabled_reason": "",
+      "revision": 1,
+      "updated_by": "admin",
+      "update_time": "2026-10-27 13:30:05",
+      "provinces": [],
+      "excluded_provinces": []
+    }
+  },
+  "api_checks": {
+    "association_totals": {
+      "UNLINKED": 1,
+      "LINKED": 1,
+      "DISABLED": 1
+    }
+  },
+  "stage": "VERIFIED",
+  "checks": [
+    "五个页面仅保留一处标题，列表正常加载，配置入口与查询区域分开",
+    "关联列表拆分标准快递、外部快递、用途、范围、配置状态和指定场景检查，编码可复制",
+    "配置状态筛选由服务端分页处理，刷新后保留筛选和当前页",
+    "清单按三种关联状态查询；从未关联条目直接建关联，自动带入编码、用途和范围",
+    "已关联清单一键查看对应关联，支持取消单条清单筛选",
+    "WMS 列表按连接、货主、实仓及用途筛选，完整范围显示名称",
+    "WMS 多候选显示仓库下发首选项，单候选自动处理并隐藏开关",
+    "WMS 批量候选按组互斥选择首选，检查结果显示在对应行，预览不写关联",
+    "仓库发货场景区分编码关联和配送能力；上海能力失败、浙江通过，修改条件清空旧结果",
+    "仓库服务区分发货能力和收货能力，收货不显示发货配送限制",
+    "操作记录支持当前配置过滤、可读对象名称、字段修改前后值与来源说明，原始JSON折叠",
+    "已完成待办不再提供修复或重试动作，原始物流和业务单据仍可追溯",
+    "UI专用待办可直接修复，带齐原编码、业务用途、连接、货主与实仓，返回后保留原单筛选；未校验或重试业务",
+    "配置检查通过的UI专用待办展示继续未完成步骤；仅检查按钮，未执行重试",
+    "售后退回入库场景从买家原始快递识别到标准快递，再转换仓库入库编码并验证收货能力，三步通过且无需发货省份；只读核验"
+  ],
+  "page_errors": [],
+  "configuration_writes": [],
+  "screenshots": [
+    "management-standards.png",
+    "management-channels.png",
+    "management-wms.png",
+    "management-capabilities.png",
+    "management-todos.png",
+    "management-channel-columns.png",
+    "management-directory-associate.png",
+    "management-wms-filters.png",
+    "management-batch.png",
+    "management-scenario-failure.png",
+    "management-scenario-success.png",
+    "management-inbound-capability.png",
+    "management-audit.png",
+    "management-completed-todo.png",
+    "management-todo-repair-context.png",
+    "management-ready-todo.png",
+    "management-return-scenario.png"
+  ],
+  "requests": [
+    {
+      "url": "standard/list?pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?pageNum=1&pageSize=20&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?pageNum=1&pageSize=20&system_type=WMS",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "capability/list?pageNum=1&pageSize=20&flow=OUTBOUND",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "todo/list?pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&enabled=0&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&enabled=0&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&association_state=UNLINKED&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&association_state=LINKED&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&association_state=DISABLED&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&association_state=UNLINKED&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&directory_id=19&association_state=UNLINKED&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?system_type=CHANNEL&provider=TMALL&purpose=CHANNEL_SHIPPING&pageSize=100&for_mapping=1",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902_CH_LINKED&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902_CH_LINKED&pageNum=1&pageSize=20&purpose=CHANNEL_SHIPPING&directory_id=20&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=WMS_OUTBOUND_CREATE&connection_id=33&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&system_type=WMS",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?system_type=WMS&provider=QIMEN&purpose=WMS_OUTBOUND_CREATE&pageSize=100&for_mapping=1&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&connection_id=33",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/output-options",
+      "method": "POST"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?system_type=WMS&provider=QIMEN&purpose=WMS_OUTBOUND_CREATE&pageSize=100&for_mapping=1&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&connection_id=33",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search?keyword=UI_CARRIER_20261027132902_B",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/output-options",
+      "method": "POST"
+    },
+    {
+      "url": "directory/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&purpose=WMS_OUTBOUND_CREATE&connection_id=33&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&system_type=WMS",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/suggestions",
+      "method": "POST"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search?keyword=UI_CARRIER_20261027132902_B",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/output-options",
+      "method": "POST"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search?keyword=UI_CARRIER_20261027132902_B",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/output-options",
+      "method": "POST"
+    },
+    {
+      "url": "mapping/batch-preview",
+      "method": "POST"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902_WMS_PLAN&pageNum=1&pageSize=20&purpose=WMS_OUTBOUND_CREATE&system_type=WMS",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "preview",
+      "method": "POST"
+    },
+    {
+      "url": "preview",
+      "method": "POST"
+    },
+    {
+      "url": "capability/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&flow=OUTBOUND",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "capability/list?keyword=UI_CARRIER_20261027132902&pageNum=1&pageSize=20&flow=INBOUND",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?keyword=UI_CARRIER_20261027132902_CH_LINKED&pageNum=1&pageSize=20&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "audit/list?pageNum=1&pageSize=20&object_type=MAPPING&object_id=16",
+      "method": "GET"
+    },
+    {
+      "url": "todo/list?keyword=CGTe0539389615b4eb0959e46ca6875f6c3&pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "todo/list?keyword=UI_CARRIER_20261027132902_OPEN&pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?pageNum=1&pageSize=20&purpose=WMS_OUTBOUND_ACTUAL&connection_id=33&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&external_code=UI_CARRIER_20261027132902_MISSING&system_type=WMS",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "directory/list?system_type=WMS&provider=QIMEN&purpose=WMS_OUTBOUND_ACTUAL&pageSize=100&for_mapping=1&owner_code=SCO_20261026210253&real_store_code=SCW_20261026210253&connection_id=33",
+      "method": "GET"
+    },
+    {
+      "url": "standards/search",
+      "method": "GET"
+    },
+    {
+      "url": "todo/list?keyword=UI_CARRIER_20261027132902_OPEN&pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "todo/list?keyword=UI_CARRIER_20261027132902_READY&pageNum=1&pageSize=20",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "mapping/list?pageNum=1&pageSize=20&system_type=CHANNEL",
+      "method": "GET"
+    },
+    {
+      "url": "metadata",
+      "method": "GET"
+    },
+    {
+      "url": "preview",
+      "method": "POST"
+    }
+  ],
+  "todo_ids": {
+    "OPEN": 2,
+    "READY": 3
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "suites": [
+    {
+      "name": "com.oms.order.service.ReturnManagementQueryTest",
+      "tests": "17",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.order.service.TenantRoutingTest",
+      "tests": "30",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "total_tests": 47
+}

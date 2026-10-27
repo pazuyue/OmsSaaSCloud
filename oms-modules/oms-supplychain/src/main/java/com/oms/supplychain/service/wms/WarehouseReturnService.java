@@ -23,6 +23,7 @@ public abstract class WarehouseReturnService {
     private final Kind kind;
     protected WarehouseReturnService(Kind kind){this.kind=kind;}
     @Resource protected WmsStore db;
+    @Resource private WmsCarrierBridge carrierBridge;
     @Resource private WmsConnections connections;
     @Resource private WmsTenantRoutes routes;
     @Resource private WmsInteractionLog logs;
@@ -96,6 +97,7 @@ public abstract class WarehouseReturnService {
             if("CANCEL".equals(action))require("PENDING".equals(t.get("cancel_state")),"没有待发送的截单意图");
             Map<String,Object> c="CREATE".equals(action)?connections.usable(company,id(t.get("connection_id"))):connections.get(company,id(t.get("connection_id")));
             if(kind==Kind.REFUND){List<Map<String,Object>> parcels=db.jdbc.queryForList("SELECT p.*,m.append_required,m.late_append FROM wms_refund_parcel_member m JOIN wms_refund_parcel p ON p.company_code=m.company_code AND p.id=m.parcel_id WHERE m.company_code=? AND m.task_id=?",company,document);if(!parcels.isEmpty()){Map<String,Object> p=parcels.get(0);require(id(p.get("connection_id"))==id(t.get("connection_id"))&&text(p.get("store_code")).equals(text(t.get("store_code"))),"退回包裹与仓库单据映射不一致");if("CREATE".equals(action)&&db.jdbc.queryForObject("SELECT COUNT(*) FROM wms_refund_parcel_member WHERE company_code=? AND parcel_id=?",Long.class,company,p.get("id"))>1)require(id(c.get("shared_return_waybill"))==1,"仓库未启用同运单多退回单能力，不能下发合包安排");if("CREATE".equals(action)&&id(p.get("append_required"))==1)require(id(c.get("shared_return_append"))==1,"仓库已关闭追加THK能力，不能下发新增安排");if("CREATE".equals(action)&&id(p.get("late_append"))==1)require(id(c.get("shared_return_late_append"))==1,"仓库未确认收货后补单能力，请先核对");t.put("parcel_sn",p.get("parcel_sn"));t.put("return_waybill",p.get("waybill"));t.put("return_carrier",p.get("carrier_code"));}}
+            if("CREATE".equals(action)){Map<String,Object> carrier=carrierBridge.inbound(company,t,c);t.put("return_carrier",carrier.get("external_code"));}
             secret=connections.secret(c);WmsProtocol.Wire wire=protocol.request(c,secret,action,t);log=logs.start(company,id(c.get("id")),document,text(t.get("return_sn")),"OUT",""+kind.logPrefix+""+action,wire.body);
             require(db.jdbc.queryForObject("SELECT COUNT(*) FROM "+kind.table+" WHERE company_code=? AND id=? AND lease_token=? AND lease_until>DATE_ADD(NOW(),INTERVAL 30 SECOND)",Long.class,company,document,lease)==1,"仓库交互租约已失效");
             contacted=true;response=WmsHttp.post(wire);WmsProtocol.Reply r=protocol.reply(action,response);

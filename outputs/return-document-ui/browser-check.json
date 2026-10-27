@@ -1,0 +1,286 @@
+{
+  "checks": [
+    "列表显示独立仓库状态和最近交互结果，一张共同仓单只显示一行",
+    "专用详情有四个页签，默认按实际B商品汇总整单2件并分开展示三段进度",
+    "初次查看商品不预加载日志或原始报文",
+    "展开实际商品可核对退款和换货各1件及原实际发货和成本",
+    "来源页保留整单归属并高亮从当前退款进入的来源",
+    "实收页仅一条原回传，库存页显示两条来源入账和各自流水关联号",
+    "从库存明细定位原仓库交互，报文仍按需加载",
+    "交互详情可查看已脱敏请求响应，并区分当次结果和当前仓单状态",
+    "仓库交互页在原详情内展示下发回传时间动作结果及请求编号",
+    "导出同步包含中文仓库受理及最近交互结果",
+    "列表仓库交互筛选有效，已受理共同单不误归为下发失败",
+    "原出入库单入口也使用同一专用退货详情，保留退款来源高亮",
+    "部分实收单保留计划2件实收1件入账1件和待收1件",
+    "验收页面无JavaScript错误且未调用任何业务变更接口"
+  ],
+  "javascript_errors": [],
+  "business_mutations": [],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-order/returns?view=DOCUMENT&number=TKfd02e8264796492dac3486f63bffcf07"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.62a8e42a.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-1c989af5.af3c9932.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-3c9bf98b.1b345521.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-3c9bf98b.339a2920.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns?view=DOCUMENT&numberType=ANY&number=TKfd02e8264796492dac3486f63bffcf07&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/detail?view=DOCUMENT&key=THKXf884d10c4ff340b69848e4e2c3a174fc&number=TKfd02e8264796492dac3486f63bffcf07&numberType=ANY"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THKXf884d10c4ff340b69848e4e2c3a174fc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THKXf884d10c4ff340b69848e4e2c3a174fc&section=RECEIPTS&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THKXf884d10c4ff340b69848e4e2c3a174fc&section=LINES&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THKXf884d10c4ff340b69848e4e2c3a174fc&section=REVIEWS&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/log-center?numberType=DOCUMENT&number=THKXf884d10c4ff340b69848e4e2c3a174fc&allTime=true"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/log-center/996"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/logs/996"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/export?view=DOCUMENT&numberType=ANY&number=TKfd02e8264796492dac3486f63bffcf07&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns?view=DOCUMENT&numberType=ANY&number=TKfd02e8264796492dac3486f63bffcf07&warehouse=FAILED&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/wmsTickets?sn=THKXf884d10c4ff340b69848e4e2c3a174fc&documentId=302&sourceNumber=TKfd02e8264796492dac3486f63bffcf07"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.62a8e42a.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-b79ff584.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-b79ff584.b5a4674a.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-23f6c860.b1f5e027.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-23f6c860.c0533f86.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-2d21eef7.9bf34d4d.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/ticket/list?pageNum=1&pageSize=10&sn=THKXf884d10c4ff340b69848e4e2c3a174fc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/ticket/302"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/detail?view=DOCUMENT&key=THKXf884d10c4ff340b69848e4e2c3a174fc&number=TKfd02e8264796492dac3486f63bffcf07&numberType=ANY"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THKXf884d10c4ff340b69848e4e2c3a174fc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-order/returns?view=DOCUMENT&number=HH7bb89798bea0472fa5287f7093a21d75"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.62a8e42a.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-1c989af5.af3c9932.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-3c9bf98b.1b345521.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-3c9bf98b.339a2920.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns?view=DOCUMENT&numberType=ANY&number=HH7bb89798bea0472fa5287f7093a21d75&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/detail?view=DOCUMENT&key=THX365AA4AE88619ED58794082FC841B0&number=HH7bb89798bea0472fa5287f7093a21d75&numberType=ANY"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/order/returns/document?sn=THX365AA4AE88619ED58794082FC841B0"
+    }
+  ]
+}

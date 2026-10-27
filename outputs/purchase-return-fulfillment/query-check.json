@@ -1,0 +1,113 @@
+{
+  "result": "PASS",
+  "checks": [
+    "列表、详情、原来源和待办连续读取不触发仓库调用；列表按当前页批量汇总执行及包裹",
+    "11个保留SKU的公司、仓库、批次账一致；负向待处理场景的有效占用保持",
+    "连续恢复后原计划及来源额度仍按5件计算，累计占用10和释放5没有放大可退额度，也没有生成子CGT",
+    "包裹、供应商事实、收回和款项独立核对：出库5、收回3、净货值5元，原出库和拒收来源保留",
+    "当前页执行次数、已识别包裹与待核对数同详情一致，完整CGT单号精确查询返回原业务单",
+    "包裹未补齐、供应商商品未确认、已释放余量恢复待审核都有独立快捷查询",
+    "供应链待办分别定位退仓包裹待核对、恢复待审核与供应商商品待验收，入口直接指向原CGT",
+    "普通列表默认近90天，每页最多100条，日期跨度最多93天，阻止无界普通查询",
+    "公开API拒绝company_code参数切换公司，所有原执行、包裹及拒收来源查询均限定登录公司",
+    "真实库存流水核实：初次占用5、两轮恢复5、实际出库-5、两轮释放5；重复请求未重复扣账或重置历史",
+    "分片完整后只有一次库存事件；累计快照仅产生2和3两个增量，迟到旧版本没有库存事件",
+    "13张新增表和全部新增字段均有中文备注，数量模式、分片、来源、幂等和库存历史口径清晰",
+    "原执行、消息幂等、包裹和拒收来源均有公司与原单索引；异步执行沿用有界工作池和持久租约",
+    "只读检查未增加这些单据的仓库调用；原业务、旧库存、自动任务与队列配置基线未改变"
+  ],
+  "timings": [
+    {
+      "endpoint": "普通分页列表",
+      "samples_ms": [
+        1100.7,
+        44.7,
+        32.6,
+        20.6,
+        43.7
+      ],
+      "median_ms": 43.7
+    },
+    {
+      "endpoint": "同单连续恢复详情",
+      "samples_ms": [
+        709.3,
+        41.3,
+        35.3,
+        45.4,
+        51.1
+      ],
+      "median_ms": 45.4
+    },
+    {
+      "endpoint": "多包裹收回详情",
+      "samples_ms": [
+        51.3,
+        35.0,
+        47.2,
+        50.2,
+        49.1
+      ],
+      "median_ms": 49.1
+    },
+    {
+      "endpoint": "分片待处理详情",
+      "samples_ms": [
+        50.3,
+        48.5,
+        44.4,
+        49.3,
+        49.5
+      ],
+      "median_ms": 49.3
+    },
+    {
+      "endpoint": "原采购来源",
+      "samples_ms": [
+        68.9,
+        18.9,
+        37.2,
+        31.5,
+        36.2
+      ],
+      "median_ms": 36.2
+    },
+    {
+      "endpoint": "指定单号待办",
+      "samples_ms": [
+        104.2,
+        17.5,
+        17.9,
+        17.7,
+        41.8
+      ],
+      "median_ms": 17.9
+    }
+  ],
+  "explain": {
+    "execution_by_original": "1\tSIMPLE\tpurchase_return_execution\tNULL\tref\tcompany_sn,execution_sequence,original_execution,connection_used\toriginal_execution\t364\tconst,const,const\t1\t100.00\tUsing where; Using index",
+    "message_idempotence": "1\tSIMPLE\tpurchase_return_message\tNULL\tconst\toriginal_message,pending_message\toriginal_message\t780\tconst,const,const\t1\t100.00\tUsing index",
+    "parcel_list": "1\tSIMPLE\tpurchase_return_parcel\tNULL\tref\toriginal_package,parent_parcel\tparent_parcel\t364\tconst,const,const\t1\t100.00\tUsing where; Using index",
+    "supplier_source": "1\tSIMPLE\tpurchase_return_supplier_line\tNULL\tref\tparent_source,execution_receipt\tparent_source\t300\tconst,const,const\t2\t100.00\tUsing where; Using index"
+  },
+  "ledger": {
+    "PRF_20261026133606_01": "RECEIVE\tWMS_RECEIPT_76\t\t10\tPRF_BATCH_parcels_0\tWMS_RECEIPT_76\nRETURN_HOLD\tCGTc091762de47c417db0841e6ed7fb81f2\tZP\t5\tPRF_BATCH_parcels_0\t3e56c54b038e801f67df350f5724f7b55064867941ac99a40e7b1771cae32a66\nRETURN_OUT\tCGTc091762de47c417db0841e6ed7fb81f2\tZP\t-2\tPRF_BATCH_parcels_0\ta170ac64efd49698fab7f4bfda089e9cf19624c8768b5f15f922379db32b45a6\nRETURN_OUT\tCGTc091762de47c417db0841e6ed7fb81f2\tZP\t-3\tPRF_BATCH_parcels_0\t82f83d9732ffef04f456ad3dfb14e2c4f427429cb586a8c78caef127a9b7590e\nRECEIVE\tPURCHASE_RECLAIM_5\tZP\t1\tPRF_BATCH_parcels_0\tbc15f063bc104ae21429049fe15ca14393d88b2725209f3d15f95a94dfcd51a8\nRECEIVE\tPURCHASE_RECLAIM_6\tZP\t1\tPRF_BATCH_parcels_0\t554b26b1520ccecb1b3c08e745b4132fe13a25f41b3114feb99784239da5ca17\nRECEIVE\tPURCHASE_RECLAIM_7\tCP\t1\tPRF_BATCH_parcels_0\td848e1a8a3dec9601d92f56cadc68c546fef930f306fcb4236b439078625f9cd",
+    "PRF_20261026133606_02": "RECEIVE\tWMS_RECEIPT_77\t\t10\tPRF_BATCH_active_continue_0\tWMS_RECEIPT_77\nRETURN_HOLD\tCGTb4946ccd56f94933a40efee112e6647e\tZP\t5\tPRF_BATCH_active_continue_0\t84f1506359c837bb19e7e8abbb4e946ad644f07174618b50150fa7e0d2359e4d\nRETURN_OUT\tCGTb4946ccd56f94933a40efee112e6647e\tZP\t-2\tPRF_BATCH_active_continue_0\tdf4c1eb5127e3db8a9c1479fa88ec01c0eb8e14994e6af42e328b9efbdde30f1\nRETURN_OUT\tCGTb4946ccd56f94933a40efee112e6647e\tZP\t-3\tPRF_BATCH_active_continue_0\t8892d6537e30b59656015a70283ec5cacca5cc3f43c044dc6c4efd002e810746",
+    "PRF_20261026133606_03": "RECEIVE\tWMS_RECEIPT_78\t\t10\tPRF_BATCH_concurrent_continue_0\tWMS_RECEIPT_78\nRETURN_HOLD\tCGTde4d9a301410484781b8616bf322b47d\tZP\t5\tPRF_BATCH_concurrent_continue_0\ta4ae2161372b9ef42b958847fcebdc3da74c94874e2472fa7caee1ac36bc0a33\nRETURN_OUT\tCGTde4d9a301410484781b8616bf322b47d\tZP\t-2\tPRF_BATCH_concurrent_continue_0\t0537533a7f4bfdb8d2a556c3a307abf84bb9a865c665231bd87b3e9f1a7e0dbf\nRETURN_OUT\tCGTde4d9a301410484781b8616bf322b47d\tZP\t-3\tPRF_BATCH_concurrent_continue_0\t736b4ae481b088aa0663cc034940d455cd4b7519f891091bbc2fae739554ebc5",
+    "PRF_20261026133606_04": "RECEIVE\tWMS_RECEIPT_79\t\t10\tPRF_BATCH_restore_0\tWMS_RECEIPT_79\nRETURN_HOLD\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t5\tPRF_BATCH_restore_0\t2cde6d8feab3255e2ce667ec77bb865acbe6a406782c67c0cf74c0cf52ab2e00\nRETURN_OUT\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t-2\tPRF_BATCH_restore_0\t6f5f32461f1f8138572456863da499fd5fc93720e4ae71488f776b5c8359d98a\nRETURN_RELEASE\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t3\tPRF_BATCH_restore_0\t5caa45607eda75514a0daec797d1f0d7f5d056aa5dd62c65a8ba8b230b1f15a3\nRETURN_REHOLD\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t3\tPRF_BATCH_restore_0\t91442d57fbdd74d94f5d9b7261de4c79db1b218f0e89db4e2bd0bde96bb89652\nRETURN_OUT\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t-1\tPRF_BATCH_restore_0\t565a9cc0dedc9436c287727f617b77e887e08cffb72e5626e7a13514f66fdaae\nRETURN_RELEASE\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t2\tPRF_BATCH_restore_0\tbf4881c19e30ae0b7ceeda894684b2fb13b7670502cb4e17be715b944e163b18\nRETURN_REHOLD\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t2\tPRF_BATCH_restore_0\t94a93ab3d453da330e57ba9c7331fbfe42aec139887649677288c398a8d24e74\nRETURN_OUT\tCGT8be1af5e9fb04ba9a885ddce47a35f4e\tZP\t-2\tPRF_BATCH_restore_0\t2cfb77c9f2890e32f106218ac18513814e03f99c5609c62c61dcfde8fadd954b",
+    "PRF_20261026133606_05": "RECEIVE\tWMS_RECEIPT_80\t\t5\tPRF_BATCH_fragment_0\tWMS_RECEIPT_80\nRECEIVE\tWMS_RECEIPT_81\t\t5\tPRF_BATCH_fragment_1\tWMS_RECEIPT_81\nRETURN_HOLD\tCGT341d798ccd154304bc8ef3f3bc5750bb\tZP\t2\tPRF_BATCH_fragment_0\t251701cce9394f39c2a1288a01411c31306135c125ac1db4fea448fe5dc5b09b\nRETURN_HOLD\tCGT341d798ccd154304bc8ef3f3bc5750bb\tZP\t2\tPRF_BATCH_fragment_1\t4973c5ffb79f3d6d30707fd57e74b342a451488531e9599459ac912a2fa93320\nRETURN_OUT\tCGT341d798ccd154304bc8ef3f3bc5750bb\tZP\t-2\tPRF_BATCH_fragment_0\tb7906bb313207e4ff5c03ebd2ef4c252533e2b450333fc9f8ba7bc69a88ccbb4\nRETURN_OUT\tCGT341d798ccd154304bc8ef3f3bc5750bb\tZP\t-2\tPRF_BATCH_fragment_1\td750947b92fdc94704c097592c7925f118c6e47eb392a07a41e9316f99c37cc3",
+    "PRF_20261026133606_06": "RECEIVE\tWMS_RECEIPT_82\t\t10\tPRF_BATCH_cumulative_0\tWMS_RECEIPT_82\nRETURN_HOLD\tCGT2bed98ff91af48bc85a021cc5d7c8be9\tZP\t5\tPRF_BATCH_cumulative_0\t0407d6dd828459730afff5b7dbacd12eb5f324f1bb17068714a2dbe89b982703\nRETURN_OUT\tCGT2bed98ff91af48bc85a021cc5d7c8be9\tZP\t-2\tPRF_BATCH_cumulative_0\t9ce1532c9209bbaf21e24660c578fcda5fe78ed46d113cdfd5480a66440221cc\nRETURN_OUT\tCGT2bed98ff91af48bc85a021cc5d7c8be9\tZP\t-3\tPRF_BATCH_cumulative_0\t241bc972d108dd01d4db40bc49b9779627569e28801c273e1a14ee36009f4b09",
+    "PRF_20261026133606_07": "RECEIVE\tWMS_RECEIPT_83\t\t5\tPRF_BATCH_incomplete_0\tWMS_RECEIPT_83\nRECEIVE\tWMS_RECEIPT_84\t\t5\tPRF_BATCH_incomplete_1\tWMS_RECEIPT_84\nRETURN_HOLD\tCGTaf0ebbe134e94c609a7741fcad3eeebb\tZP\t2\tPRF_BATCH_incomplete_0\t08316a157b37183e76264f0c9876c8fac4ac931070e0347160c86d9b00e13723\nRETURN_HOLD\tCGTaf0ebbe134e94c609a7741fcad3eeebb\tZP\t2\tPRF_BATCH_incomplete_1\t29da94132e9e3afc11d9d7c237d18ee56e45a3746d7eed356ba66f7b06f8d830",
+    "PRF_20261026133606_08": "RECEIVE\tWMS_RECEIPT_85\t\t7\tPRF_BATCH_bad_0\tWMS_RECEIPT_85\nRECEIVE\tWMS_RECEIPT_86\t\t3\tPRF_BATCH_bad_0\tWMS_RECEIPT_86\nRETURN_HOLD\tCGT660daa54c1894ec28b28cc6c74138d6a\tCP\t3\tPRF_BATCH_bad_0\t3a2dfb07602cc17405966993936403a37f5c9a3d1933bc0b721a1b9ff23a1e91\nRETURN_OUT\tCGT660daa54c1894ec28b28cc6c74138d6a\tCP\t-3\tPRF_BATCH_bad_0\tc20f7e0a5e0222e6f145f78de980837c19c1f1d6cedccd7e5a25ccf174a65f94\nRECEIVE\tPURCHASE_RECLAIM_8\tZP\t1\tPRF_BATCH_bad_0\t22ee1bf0490042eba18eb9a10ee1f66faa7d599b4c390c80d9fb92e5a5572ecb",
+    "PRF_20261026133606_09": "RECEIVE\tWMS_RECEIPT_87\t\t10\tPRF_BATCH_restore_conflict_0\tWMS_RECEIPT_87\nRETURN_HOLD\tCGTa03ce6afb2ca42ed92aed4916ebd9633\tZP\t5\tPRF_BATCH_restore_conflict_0\tb9d6d63967fb41d2cbeea354d54cb4c166f571c2627fc9c8a326b0d626ac9f9b\nRETURN_OUT\tCGTa03ce6afb2ca42ed92aed4916ebd9633\tZP\t-2\tPRF_BATCH_restore_conflict_0\t07ef5e35818a09a0564f20d2feda446c673dd24b8f31db46e27469b22bcf9f3c\nRETURN_RELEASE\tCGTa03ce6afb2ca42ed92aed4916ebd9633\tZP\t3\tPRF_BATCH_restore_conflict_0\tbf44660cc235b5406be249c1ff14f058b2393da99b7f99586d144eb70a9985aa\nRETURN_HOLD\tCGT2474b31b62254db3b8ae1cd2c22bfafd\tZP\t7\tPRF_BATCH_restore_conflict_0\tc28b6f71f5459627839f1b88d9217dbb638d6c28ff4cb0f3e00cb5ded2d96b1d",
+    "PRF_20261026133606_10": "RECEIVE\tWMS_RECEIPT_88\t\t10\tPRF_BATCH_supplier_0\tWMS_RECEIPT_88\nRETURN_HOLD\tCGT67c9f4569ab84e3392cb573dee12f199\tZP\t3\tPRF_BATCH_supplier_0\tda1cd9e577d5db75f3525b285b4af40e2021e27bb50e579e823c7a1a6f8f3adc\nRETURN_OUT\tCGT67c9f4569ab84e3392cb573dee12f199\tZP\t-3\tPRF_BATCH_supplier_0\t97f6ee23a723b88f8de2195f1daf6a17a96399920c1031c155737faa3bb9e9f5",
+    "PRF_20261026133606_11": "RECEIVE\tWMS_RECEIPT_89\t\t10\tPRF_BATCH_ready_0\tWMS_RECEIPT_89\nRETURN_HOLD\tCGT79fef94a49a143d290d4a8ba70dfad0b\tZP\t5\tPRF_BATCH_ready_0\t255de9b87d29e057064a614fea9b1a347f682141427f635a84dece513061020f\nRETURN_OUT\tCGT79fef94a49a143d290d4a8ba70dfad0b\tZP\t-2\tPRF_BATCH_ready_0\te560176d028d34bf0dd7524559a0921a571f4ac59e3a7615f6a159981d494c52"
+  },
+  "restore_ledger_sums": {
+    "RETURN_HOLD": 5,
+    "RETURN_REHOLD": 5,
+    "RETURN_OUT": -5,
+    "RETURN_RELEASE": 5
+  },
+  "note": "本地每入口5次读取，只用于发现查询退化，不代表生产容量；WMS仅使用本地TEST模拟器"
+}

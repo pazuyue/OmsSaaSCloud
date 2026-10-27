@@ -20,6 +20,7 @@ const moduleOrder = [
   '/oms-inventory',
   '/oms-channel',
   '/oms-order',
+  '/common-config',
   '/system',
   '/monitor',
   '/tool'
@@ -29,7 +30,8 @@ const moduleNames = {
   '/oms-supplychain': '供应链',
   '/oms-inventory': '库存',
   '/oms-channel': '渠道',
-  '/oms-order': '订单'
+  '/oms-order': '订单',
+  '/common-config': '公共配置'
 }
 export function workspaceModules(routes) {
   return [{ path: '/index', meta: { title: '工作台', icon: 'dashboard' }, children: [] }].concat(

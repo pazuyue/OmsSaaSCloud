@@ -1,0 +1,88 @@
+{
+  "key": "24",
+  "title": "A三件换B后，一件退货退款、一件换C",
+  "case_id": "2026102512481724",
+  "created": "2026-10-25 12:48:20",
+  "sku": "EXAUTO_PC_2026102512481724A",
+  "target_sku": "EXAUTO_PC_2026102512481724B",
+  "third_sku": "EXAUTO_PC_2026102512481724C",
+  "channel_name": "[部分连续换货24] A三件换B后，一件退货退款、一件换C 20261025124817",
+  "seller": "EXAUTO_PC_2026102512481724",
+  "platform_tid": "862026102512481724",
+  "platform_oid": "86202610251248172401",
+  "warehouses": [
+    {
+      "code": "EXAUTO_PC_2026102512481724V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 162
+    }
+  ],
+  "quantity": 3,
+  "claims": [],
+  "refunds": {},
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 13,
+  "channel_id": 135,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXAUTO_PC_2026102512481724A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXAUTO_PC_2026102512481724A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXAUTO_PC_2026102512481724V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 384,
+        "store": "EXAUTO_PC_2026102512481724V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 274,
+  "order_id": 190,
+  "order_sn": "SOdaaeed60d41a4f079d7bd1df60a08051",
+  "prepared": true,
+  "products_ready": [
+    "B",
+    "C"
+  ],
+  "original_shipment_id": 165,
+  "original_shipment_sn": "XS0732bd4d337f471bb14540fb00e765d5",
+  "original_shipment_line_id": 224,
+  "original_shipped": true,
+  "authorized": true
+}

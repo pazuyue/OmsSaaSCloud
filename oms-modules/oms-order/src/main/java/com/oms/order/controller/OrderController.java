@@ -41,10 +41,10 @@ public class OrderController {
     @RequiresPermissions("order:shipment:dispatch") @PostMapping("/shipments/{id}/continue-dispatch") public AjaxResult continueDispatch(@PathVariable long id,@RequestBody Map<String,Object> body){String c=company();Map<String,Object> s=shipments.detail(c,id);require(body.containsKey("control_version")&&number(s,"control_version")==number(body,"control_version"),"发货单已变化，请刷新核对");require("PENDING".equals(text(s,"wms_dispatch_state")),"仅可执行原待下发任务；结果不明请核对仓库");shipmentDispatch.process(c,id);return AjaxResult.success(shipments.detail(c,id));}
     @Resource private OrderCarrierService carriers;
     @RequiresPermissions("order:pull:config") @GetMapping("/carrier-catalog") public AjaxResult carrierCatalog(){return AjaxResult.success(carriers.catalog(company()));}
-    @RequiresPermissions("order:pull:config") @PostMapping("/carriers") public AjaxResult saveCarrier(@RequestBody Map<String,Object> body){carriers.saveCarrier(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
+
     @RequiresPermissions("order:pull:config") @GetMapping("/carrier-configs") public AjaxResult carrierConfigs(){return AjaxResult.success(carriers.configurations(company()));}
     @RequiresPermissions("order:pull:config") @PostMapping("/carrier-configs") public AjaxResult saveCarrierConfig(@RequestBody Map<String,Object> body){carriers.saveConfiguration(company(),body,SecurityUtils.getUsername());return AjaxResult.success();}
-    @RequiresPermissions("order:order:query") @GetMapping("/shipments/{id}/carrier-options") public AjaxResult carrierOptions(@PathVariable long id){return AjaxResult.success(carriers.options(company(),id));}
+    @RequiresPermissions("order:order:query") @GetMapping("/shipments/{id}/carrier-options") public AjaxResult carrierOptions(@PathVariable long id,@RequestParam(defaultValue="") String keyword){return AjaxResult.success(carriers.options(company(),id,keyword));}
     @RequiresPermissions("order:shipment:carrier") @PostMapping("/shipments/match-carrier") public AjaxResult matchCarriers(@RequestBody Map<String,Object> body){return AjaxResult.success(carriers.match(company(),body,SecurityUtils.getUsername()));}
     @Resource private OrderAutoAllocationService automaticAllocation;
     @Resource private OrderAutoAllocationWorker automaticWorker;

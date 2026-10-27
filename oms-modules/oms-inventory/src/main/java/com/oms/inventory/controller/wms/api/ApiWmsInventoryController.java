@@ -19,6 +19,7 @@ public class ApiWmsInventoryController extends BaseController {
 
     @Resource
     private WmsInventoryBatchServiceImpl wmsInventoryBatchService;
+    @Resource private com.oms.inventory.service.impl.InventoryMutationService mutations;
     /**
      * 入库 - 库存增加
      *
@@ -36,7 +37,7 @@ public class ApiWmsInventoryController extends BaseController {
             BeanUtil.copyProperties(dto.getWmsInventoryBatch(), wmsInventoryBatch);
             wmsInventoryBatch.setCompanyCode(company_code);
             String relationSn = dto.getRelationSn();
-            return success(wmsInventoryBatchService.addInventory(wmsInventoryBatch,relationSn));
+            return success(dto.isPurchaseQuality()?mutations.receivePurchase(wmsInventoryBatch,relationSn):wmsInventoryBatchService.addInventory(wmsInventoryBatch,relationSn));
         } catch (Throwable e) {
             return error(e.getMessage());
         }

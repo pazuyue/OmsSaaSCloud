@@ -240,6 +240,16 @@ public class InventoryMutationService {
 
     @Transactional(rollbackFor=Exception.class, timeout=15)
     public boolean receive(WmsInventoryBatch input,String relation) {
+        return receiveInternal(input,relation,false);
+    }
+
+    /** Explicit purchase-only entry; other receipt callers keep their existing quality contract. */
+    @Transactional(rollbackFor=Exception.class, timeout=15)
+    public boolean receivePurchase(WmsInventoryBatch input,String relation) {
+        require(relation!=null&&(relation.matches("WMS_RECEIPT_[0-9]+")||relation.matches("CG[a-f0-9]{32}")),"采购质量入库必须绑定原采购实收明细或CG执行单");
+        return receiveInternal(input,relation,true);
+    }
+    private boolean receiveInternal(WmsInventoryBatch input,String relation,boolean purchaseQuality) {
         String company=canonical(input.getCompanyCode()),sku=input.getSkuSn(),store=input.getStoreCode();
         require(sku!=null && store!=null && input.getBatchCode()!=null && !input.getBatchCode().trim().isEmpty(),"入库必须包含仓库、SKU 和批次");
         require(relation!=null && !relation.isEmpty() && relation.length()<=64,"入库必须关联来源单据");
@@ -258,7 +268,7 @@ public class InventoryMutationService {
         jdbc.update("UPDATE wms_inventory_batch SET zp_actual_number=zp_actual_number+?,zp_available_number=zp_available_number+?,cp_actual_number=cp_actual_number+?,cp_available_number=cp_available_number+?,version=version+1 WHERE id=?",zp,zp,cp,cp,batch.get("id"));
         jdbc.update("UPDATE wms_inventory SET zp_actual_number=zp_actual_number+?,zp_available_number=zp_available_number+?,cp_actual_number=cp_actual_number+?,cp_available_number=cp_available_number+?,version=version+1 WHERE id=?",zp,zp,cp,cp,inventory.get("id"));
         // Exchange returns may contain damaged goods. Keep those out of sellable logical stock.
-        boolean exchangeReturn=relation.startsWith("EXCHANGE_RETURN_");
+        boolean exchangeReturn=purchaseQuality||relation.startsWith("EXCHANGE_RETURN_");
         jdbc.update("UPDATE oms_inventory SET total_stock=total_stock+?,available_stock=available_stock+?,frozen_stock=frozen_stock+?,version=version+1 WHERE id=?",Math.addExact(zp,cp),exchangeReturn?zp:Math.addExact(zp,cp),exchangeReturn?cp:0,oms.get("id"));
         journal(company,batch,"RECEIVE",relation,relation,"",Math.addExact(zp,cp),"入库回传");
         OrderStockService.replanPending(jdbc,company,sku);

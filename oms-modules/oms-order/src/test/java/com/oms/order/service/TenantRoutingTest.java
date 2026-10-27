@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TenantRoutingTest {
+    @Test void purchaseBatchLookupUsesTrustedCompanyAndRejectsPublicOverride() throws Exception {String path="/api/goods/purchaseLookupBatch";MockHttpServletRequest request=new MockHttpServletRequest("POST",path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");filter().doFilter(request,new MockHttpServletResponse(),(r,s)->assertEquals("second",DynamicDataSourceContextHolder.peek()));assertNull(DynamicDataSourceContextHolder.peek());MockHttpServletRequest publicRequest=new MockHttpServletRequest("POST",path);publicRequest.addParameter("company_code","BETA");MockHttpServletResponse response=new MockHttpServletResponse();filter().doFilter(publicRequest,response,(r,s)->fail("public company override"));assertEquals(400,response.getStatus());}
     DynamicRoutingDataSource routing;DataSource first,second;TenantRouting tenants;
     @BeforeEach void setup(){
         TenantRouting.clearContext();routing=mock(DynamicRoutingDataSource.class);first=mock(DataSource.class);second=mock(DataSource.class);
@@ -59,6 +60,12 @@ class TenantRoutingTest {
             filter().doFilter(request,new MockHttpServletResponse(),(req,res)->{called.set(true);assertEquals("second",DynamicDataSourceContextHolder.peek());assertEquals("BETA",req.getParameter("company_code"));});assertTrue(called.get());assertNull(DynamicDataSourceContextHolder.peek());
             request.removeHeader(SecurityConstants.FROM_SOURCE);MockHttpServletResponse denied=new MockHttpServletResponse();filter().doFilter(request,denied,(req,res)->fail("public request cannot override its login company"));assertEquals(400,denied.getStatus());
         }
+    }
+    @Test void publicCarrierInternalCallsUseExplicitTenantAndPublicEndpointsCannotOverrideLoginCompany() throws Exception {
+        for(String path:Arrays.asList("/sharedCarriers/internal/options","/sharedCarriers/internal/convert","/sharedCarriers/internal/facts","/sharedCarriers/internal/freeze/TEST1","/sharedCarriers/internal/standard/1","/sharedCarriers/internal/standards")){
+            MockHttpServletRequest req=new MockHttpServletRequest(path.contains("/standard")?"GET":"POST",path);req.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);req.addParameter("company_code","BETA");java.util.concurrent.atomic.AtomicBoolean reached=new java.util.concurrent.atomic.AtomicBoolean();filter().doFilter(req,new MockHttpServletResponse(),(request,response)->{reached.set(true);assertEquals("BETA",request.getParameter("company_code"));assertEquals("second",DynamicDataSourceContextHolder.peek());});assertTrue(reached.get());assertNull(DynamicDataSourceContextHolder.peek());req.removeHeader(SecurityConstants.FROM_SOURCE);MockHttpServletResponse denied=new MockHttpServletResponse();filter().doFilter(req,denied,(request,response)->fail("untrusted company override"));assertEquals(400,denied.getStatus());
+        }
+        MockHttpServletRequest publicRequest=new MockHttpServletRequest("POST","/sharedCarriers/options");publicRequest.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);publicRequest.addParameter("company_code","BETA");MockHttpServletResponse denied=new MockHttpServletResponse();filter().doFilter(publicRequest,denied,(request,response)->fail("public override"));assertEquals(400,denied.getStatus());
     }
     @Test void giftCatalogInternalCallsUseTrustedCompanyAndPublicCannotOverride() throws Exception {
         for(String path:Arrays.asList("/giftCatalog/internal/references","/orderCatalog/internal/gift-protection","/orderCatalog/internal/gift-protection/refresh")){
@@ -109,6 +116,17 @@ class TenantRoutingTest {
     }
     @Test void refundReturnInternalCallsUseTheExplicitCompanyRoute() throws Exception {for(String path:Arrays.asList("/refundReturns/internal/12","/refundReturns/internal/pending","/refundReturns/internal/12/acknowledge")){MockHttpServletRequest request=new MockHttpServletRequest("POST",path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");MockHttpServletResponse response=new MockHttpServletResponse();java.util.concurrent.atomic.AtomicBoolean called=new java.util.concurrent.atomic.AtomicBoolean();filter().doFilter(request,response,(req,res)->{called.set(true);assertEquals("second",DynamicDataSourceContextHolder.peek());});assertTrue(called.get());assertNull(DynamicDataSourceContextHolder.peek());}}
     @Test void refundReturnCompanyCannotBeSpoofedByPublicRequests() throws Exception {MockHttpServletRequest request=new MockHttpServletRequest("POST","/refundReturns/internal/12");request.addParameter("company_code","BETA");MockHttpServletResponse response=new MockHttpServletResponse();filter().doFilter(request,response,(req,res)->fail("must reject override"));assertEquals(400,response.getStatus());}
+    @Test void actualReturnQueryClientRoutesUseTrustedCompanyAndRejectPublicOverride() throws Exception {
+        String changes=ReturnQueryClient.class.getMethod("changes",String.class,String.class).getAnnotation(org.springframework.web.bind.annotation.GetMapping.class).value()[0];
+        String snapshots=ReturnQueryClient.class.getMethod("snapshots",String.class,List.class,String.class).getAnnotation(org.springframework.web.bind.annotation.PostMapping.class).value()[0];
+        String acknowledge=ReturnQueryClient.class.getMethod("acknowledge",String.class,List.class,String.class).getAnnotation(org.springframework.web.bind.annotation.PostMapping.class).value()[0];
+        String document=ReturnQueryClient.class.getMethod("document",String.class,String.class,String.class,int.class,int.class,String.class).getAnnotation(org.springframework.web.bind.annotation.GetMapping.class).value()[0];
+        for(String path:Arrays.asList(changes,snapshots,acknowledge,document)){
+            String method=path.equals(changes)||path.equals(document)?"GET":"POST";MockHttpServletRequest request=new MockHttpServletRequest(method,path);request.addHeader(SecurityConstants.FROM_SOURCE,SecurityConstants.INNER);request.addParameter("company_code","BETA");MockHttpServletResponse response=new MockHttpServletResponse();java.util.concurrent.atomic.AtomicBoolean called=new java.util.concurrent.atomic.AtomicBoolean();
+            filter().doFilter(request,response,(req,res)->{called.set(true);assertEquals("second",DynamicDataSourceContextHolder.peek());});assertTrue(called.get(),path);assertNull(DynamicDataSourceContextHolder.peek());
+            request=new MockHttpServletRequest(method,path);request.addParameter("company_code","BETA");MockHttpServletResponse rejected=new MockHttpServletResponse();filter().doFilter(request,rejected,(req,res)->fail("public query cannot choose another company"));assertEquals(400,rejected.getStatus());
+        }
+    }
     @Test void allocationContextControllerUsesTrustedCompanyAndPublicCannotOverride() throws Exception {
         Class<?> controller=com.oms.order.controller.RefundAllocationController.class;
         String path=controller.getAnnotation(org.springframework.web.bind.annotation.RequestMapping.class).value()[0]+controller.getMethod("context",String.class,long.class,List.class).getAnnotation(org.springframework.web.bind.annotation.PostMapping.class).value()[0];

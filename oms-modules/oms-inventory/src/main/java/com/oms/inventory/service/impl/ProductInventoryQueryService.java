@@ -48,6 +48,7 @@ public class ProductInventoryQueryService {
         Map<String,Object> lucky=jdbc.queryForObject("SELECT COALESCE(SUM(quantity-consumed_quantity-released_quantity),0) tracked,COALESCE(SUM(occupied_quantity),0) occupied FROM oms_lucky_source WHERE company_code=? AND sku_sn=?",ROW,company,row.get("skuSn"));source.put("trackedLocked",number(source,"trackedLocked")+number(lucky,"tracked"));source.put("occupiedQuantity",number(source,"occupiedQuantity")+number(lucky,"occupied"));
         row.put("luckySources",jdbc.query("SELECT s.pool_id,p.bag_sku,p.channel_id,p.store_code,p.revision,s.batch_id,s.quantity,s.occupied_quantity,s.consumed_quantity,s.released_quantity FROM oms_lucky_source s JOIN oms_lucky_pool p ON p.company_code=s.company_code AND p.id=s.pool_id WHERE s.company_code=? AND s.sku_sn=? ORDER BY s.id DESC LIMIT 100",ROW,company,row.get("skuSn")));
         source.put("otherLocked",Math.max(0,number((Map<String,Object>)row.get("warehouseTotals"),"zpLockNumber")-number(source,"trackedLocked")));
+        row.put("transferSources",jdbc.query("SELECT document_sn,source_store,target_store,batch_code,inventory_type,unit_cost,stock_unit,quantity,out_quantity,in_quantity,recovered_quantity,released_quantity,quantity-out_quantity-released_quantity remaining_hold,out_quantity-in_quantity-recovered_quantity transit_quantity FROM oms_stock_transfer_line WHERE company_code=? AND sku_sn=? ORDER BY document_sn DESC,line_key LIMIT 100",ROW,company,row.get("skuSn")));
         row.put("reservationSummary",source);return row;
     }
 
@@ -64,7 +65,10 @@ public class ProductInventoryQueryService {
         for(Map<String,Object> w:jdbc.query("SELECT w.sku_sn,COUNT(*) AS warehouse_count,"+sums("w")+",SUM(b.batch_count IS NULL AND ("+nonzero+")) AS missing_batches,SUM("+invalid("w")+" OR "+unequal+" OR COALESCE(b.invalid_batches,0)>0) AS abnormal_warehouses FROM wms_inventory w LEFT JOIN ("+perStore+") b ON b.company_code=w.company_code AND b.sku_sn=w.sku_sn AND b.store_code=w.store_code WHERE "+filter.replace("company_code","w.company_code").replace("sku_sn","w.sku_sn")+" GROUP BY w.sku_sn",ROW,combined.toArray()))bySku.put((String)w.get("skuSn"),w);
         Map<String,Map<String,Object>> batchBySku=new HashMap<>();
         for(Map<String,Object> b:jdbc.query("SELECT b.sku_sn,COUNT(*) AS batch_count,"+sums("b")+",SUM(w.id IS NULL) AS orphan_batches FROM wms_inventory_batch b LEFT JOIN wms_inventory w ON w.company_code=b.company_code AND w.sku_sn=b.sku_sn AND w.store_code=b.store_code WHERE "+filter.replace("company_code","b.company_code").replace("sku_sn","b.sku_sn")+" GROUP BY b.sku_sn",ROW,args.toArray()))batchBySku.put((String)b.get("skuSn"),b);
-        Map<String,Long> publicBySku=new HashMap<>(),lockedBySku=new HashMap<>();
+        Map<String,Long> publicBySku=new HashMap<>(),lockedBySku=new HashMap<>(),qualityBySku=new HashMap<>();
+        Map<String,Long> transitBySku=new HashMap<>();
+        for(Map<String,Object> t:jdbc.query("SELECT sku_sn,SUM(out_quantity-in_quantity-recovered_quantity) quantity FROM oms_stock_transfer_line WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))transitBySku.put((String)t.get("skuSn"),number(t,"quantity"));
+        for(Map<String,Object> h:jdbc.query("SELECT l.sku_sn,SUM(l.quantity-l.consumed_quantity-l.released_quantity) quantity FROM oms_stock_care_line l JOIN oms_stock_care d ON d.company_code=l.company_code AND d.document_sn=l.document_sn WHERE "+filter.replace("company_code","l.company_code").replace("sku_sn","l.sku_sn")+" AND d.purpose='QUALITY' GROUP BY l.sku_sn",ROW,args.toArray()))qualityBySku.put((String)h.get("skuSn"),number(h,"quantity"));
         for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(reserved_quantity) AS quantity FROM oms_order_stock_demand WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))publicBySku.put((String)claim.get("skuSn"),number(claim,"quantity"));
         for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(quantity) AS quantity FROM oms_order_stock_source WHERE "+filter+" AND source_type IN ('LOCK','LUCKY') AND reserved=1 GROUP BY sku_sn",ROW,args.toArray()))publicBySku.computeIfPresent((String)claim.get("skuSn"),(key,value)->value-number(claim,"quantity"));
         for(Map<String,Object> claim:jdbc.query("SELECT sku_sn,SUM(occupied_quantity) AS quantity FROM rule_stock_reservation WHERE "+filter+" GROUP BY sku_sn",ROW,args.toArray()))lockedBySku.put((String)claim.get("skuSn"),number(claim,"quantity"));
@@ -75,12 +79,16 @@ public class ProductInventoryQueryService {
             long total=number(w,"zpActualNumber")+number(w,"cpActualNumber"),available=number(w,"zpAvailableNumber")+number(w,"cpAvailableNumber"),locked=number(w,"zpLockNumber")+number(w,"cpLockNumber");
             long publicReserved=publicBySku.getOrDefault(row.get("skuSn"),0L),lockReserved=lockedBySku.getOrDefault(row.get("skuSn"),0L);
             // Compare equivalent OMS buckets while preserving physical zp/cp quantities separately.
+            long qualityHeld=qualityBySku.getOrDefault(row.get("skuSn"),0L),frozen=number(row,"frozenStock");
             available-=publicReserved;locked-=lockReserved;
-            w.put("totalStock",total);w.put("availableStock",available);w.put("allocatedStock",locked);w.put("reservedStock",publicReserved+lockReserved);
-            b.put("totalStock",number(b,"zpActualNumber")+number(b,"cpActualNumber"));b.put("availableStock",number(b,"zpAvailableNumber")+number(b,"cpAvailableNumber")-publicReserved);b.put("allocatedStock",number(b,"zpLockNumber")+number(b,"cpLockNumber")-lockReserved);b.put("reservedStock",publicReserved+lockReserved);
+            // Frozen stock includes free bad stock and source-attributed quality locks.
+            available-=Math.max(0,frozen-qualityHeld);locked-=qualityHeld;
+            w.put("frozenStock",frozen);w.put("totalStock",total);w.put("availableStock",available);w.put("allocatedStock",locked);w.put("reservedStock",publicReserved+lockReserved);
+            b.put("totalStock",number(b,"zpActualNumber")+number(b,"cpActualNumber"));b.put("availableStock",number(b,"zpAvailableNumber")+number(b,"cpAvailableNumber")-publicReserved-Math.max(0,frozen-qualityHeld));b.put("allocatedStock",number(b,"zpLockNumber")+number(b,"cpLockNumber")-lockReserved-qualityHeld);b.put("reservedStock",publicReserved+lockReserved);
             boolean missing=number(w,"missingBatches")>0 || number(b,"orphanBatches")>0 || (number(w,"warehouseCount")==0 && (number(row,"totalStock")!=0 || number(row,"availableStock")!=0 || number(row,"allocatedStock")!=0));
-            boolean balanced=number(row,"totalStock")==total && number(row,"availableStock")==available && number(row,"allocatedStock")==locked && number(row,"reservedStock")==publicReserved+lockReserved && number(row,"totalStock")==number(row,"availableStock")+number(row,"allocatedStock")+number(row,"reservedStock") && number(row,"totalStock")>=0 && number(row,"availableStock")>=0 && number(row,"allocatedStock")>=0 && number(row,"reservedStock")>=0 && number(w,"abnormalWarehouses")==0;
+            boolean balanced=number(row,"totalStock")==total && number(row,"availableStock")==available && number(row,"allocatedStock")==locked && number(row,"reservedStock")==publicReserved+lockReserved && number(row,"totalStock")==number(row,"availableStock")+number(row,"allocatedStock")+number(row,"reservedStock")+frozen && number(row,"totalStock")>=0 && number(row,"availableStock")>=0 && number(row,"allocatedStock")>=0 && number(row,"reservedStock")>=0 && number(w,"abnormalWarehouses")==0;
             for(String field:QUANTITIES)balanced &= number(w,camel(field))==number(b,camel(field));
+            long transit=transitBySku.getOrDefault(row.get("skuSn"),0L);row.put("transitStock",transit);row.put("ownedStock",number(row,"totalStock")+transit);
             row.put("warehouseTotals",w);row.put("batchTotals",b);row.put("checkStatus",missing?"INCOMPLETE":balanced?"CONSISTENT":"DIFFERENT");
             row.put("checkMessage",missing?"存在非零仓库库存缺少批次、批次缺少仓库或商品缺少仓库明细，请按来源核对":balanced?"商品、仓库与批次数量一致":"商品汇总、仓库或批次余额存在差异，请查看明细");
         }
@@ -112,7 +120,7 @@ public class ProductInventoryQueryService {
 
     public TableDataInfo history(String company,long id,String operation,int page,int pageSize) {
         String sku=(String)head(company,id).get("skuSn");List<Object> args=new ArrayList<>(Arrays.asList(company,sku));String where=" WHERE company_code=? AND sku_sn=?";
-        if(operation!=null && !operation.isEmpty()) {if(!Arrays.asList("RECEIVE","ADJUST","LOCK","UNLOCK","CONSUME").contains(operation))throw new IllegalArgumentException("库存流水类型无效");where+=" AND operation_type=?";args.add(operation);}
+        if(operation!=null && !operation.isEmpty()) {if(!Arrays.asList("RECEIVE","ADJUST","LOCK","UNLOCK","CONSUME","TRANSFER_HOLD","TRANSFER_OUT","TRANSFER_IN","TRANSFER_RECOVER","TRANSFER_RELEASE","COUNT_GAIN","COUNT_LOSS").contains(operation))throw new IllegalArgumentException("库存流水类型无效");where+=" AND operation_type=?";args.add(operation);}
         long total=jdbc.queryForObject("SELECT COUNT(*) FROM wms_inventory_change_history"+where,Long.class,args.toArray());int count=size(pageSize);args.add(count);args.add(offset(page,count));
         List<Map<String,Object>> rows=jdbc.query("SELECT * FROM wms_inventory_change_history"+where+" ORDER BY log_id DESC LIMIT ? OFFSET ?",ROW,args.toArray());
         List<Object> requests=rows.stream().map(r->r.get("requestId")).filter(Objects::nonNull).distinct().collect(Collectors.toList());

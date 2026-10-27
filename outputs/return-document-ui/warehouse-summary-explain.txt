@@ -1,0 +1,3 @@
+1	PRIMARY	<derived2>	NULL	system	NULL	NULL	NULL	NULL	1	100.00	NULL
+1	PRIMARY	l	NULL	const	PRIMARY,idx_log_ticket,idx_log_time,log_task,log_connection_time,log_request	PRIMARY	8	const	1	100.00	NULL
+2	DERIVED	wms_interaction_log	NULL	ref	idx_log_ticket,idx_log_time,log_task,log_connection_time,log_request	idx_log_ticket	660	const,const	2	100.00	Using index

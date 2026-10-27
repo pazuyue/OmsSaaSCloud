@@ -1,0 +1,674 @@
+{
+  "checks": [
+    "采购详情区分计划100、有效安排60、未安排40；默认不加载日志或原报文",
+    "采购可进入独立到货详情，待审核批次保留60件待收，尚未下发仓库",
+    "独立到货入口显示本批安排5、仓库实收5、库存入账5",
+    "实收页展示实际SKU、原采购成本、批次、入账结果及库存流水关联号",
+    "入账记录可定位原回传，原始请求响应仍按需加载",
+    "仓库交互详情可加载脱敏原报文并保留当次动作与结果",
+    "部分实收4件保留6件待收，不提前判定最终短收",
+    "最终短收显示2件，可核对本批原计划、原消息、原SKU及可选处理方式",
+    "统一待办查询能定位超收差异，影响数量及原因可见",
+    "待办直达对应到货差异，不把仓库超收回传展示为已入库",
+    "到货列表显示真实下发失败和最近失败原因，不冒充仓库已受理",
+    "到货导出保留正确到货字段、仓库状态和最近交互结果",
+    "出入库商品视图的仓库交互定位原CG执行单，不把商品行ID当成仓单ID",
+    "浏览器验收未更改单据或库存，页面无JavaScript异常"
+  ],
+  "javascript_errors": [],
+  "business_mutations": [],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?purchaseId=30&poSn=PO573489d017ea415fb1516f2b59edef46"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4fe4b208.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4fe4b208.fd40bd70.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/list?pageNum=1&pageSize=10&poSn=PO573489d017ea415fb1516f2b59edef46"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/30"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/46"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/arrivals?receiptId=48&noSn=NO549a784fbe53455ea8edf31c385c4912"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-09d59ede.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-09d59ede.7cdbfb0e.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/list?pageNum=1&pageSize=10&noSn=NO549a784fbe53455ea8edf31c385c4912"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/48"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/tickets/305"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/ticket/305/batches?pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/log-center?numberType=DOCUMENT&number=CGd346e61ee2cf4a25ae35045ca695931f&allTime=true"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/log-center/1000"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/logs/1000"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?purchaseId=33&poSn=PO7c44f1ddaa2f4c84b395a23b9729327d"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4fe4b208.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4fe4b208.fd40bd70.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/list?pageNum=1&pageSize=10&poSn=PO7c44f1ddaa2f4c84b395a23b9729327d"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/33"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/poInfo?purchaseId=35&poSn=PO656741aa758a4f2783268e5b3feae733"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4fe4b208.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4fe4b208.fd40bd70.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/list?pageNum=1&pageSize=10&poSn=PO656741aa758a4f2783268e5b3feae733"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/purchase/35"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/differences?kind=purchase&id=35"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/differences/1"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/operations?number=PO64d414aa4a714c4fb47e20d4096d1ffc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-6c25a222.9eb4d1f0.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-6c25a222.5bc8d649.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/operations?pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/operations?number=PO64d414aa4a714c4fb47e20d4096d1ffc&pageNum=1&pageSize=20"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-09d59ede.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-09d59ede.7cdbfb0e.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/list?pageNum=1&pageSize=10"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/56"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/differences?kind=receipt&id=56"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/differences/5"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/arrivals?noSn=NO28bfa566a3a8435d963164d72d4f942b"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-09d59ede.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-09d59ede.7cdbfb0e.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/list?pageNum=1&pageSize=10&noSn=NO28bfa566a3a8435d963164d72d4f942b"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/receipt/export"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/oms-supplychain/wmsTickets?sn=CGd346e61ee2cf4a25ae35045ca695931f"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-libs.ea078ece.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/app.0cd1e209.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-elementUI.ef7743f1.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-libs.0680a188.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/app.859f1963.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/fonts/element-icons.535877f5.woff"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/user/getInfo"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/system/menu/getRouters"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-5e6cf093.6b70d75b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-0fbda44b.499e0204.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-0fbda44b.eee31004.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4953be56.6de361cf.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4953be56.4d0b2b6f.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-46c17fd6.321ad58d.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-46c17fd6.bfed157b.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/css/chunk-4c51ab70.866dfe3c.css"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/static/js/chunk-4c51ab70.bf48d5b0.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/ticket/list?pageNum=1&pageSize=10&sn=CGd346e61ee2cf4a25ae35045ca695931f"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/options"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/line/list?pageNum=1&pageSize=10&sn=CGd346e61ee2cf4a25ae35045ca695931f"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/purchaseWorkspace/ticket/305"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8088/prod-api/supplychain/wmsIntegration/tickets/305"
+    }
+  ]
+}

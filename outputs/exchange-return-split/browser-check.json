@@ -1,0 +1,13 @@
+{
+  "report": {
+    "status": 200,
+    "scenarios": "9/9",
+    "regression_tests": 745,
+    "case24_filter": true,
+    "evidence_toggles": true,
+    "mobile_no_page_overflow": true
+  },
+  "exchange_shared_ui": true,
+  "refund_ui": true,
+  "javascript_errors": []
+}

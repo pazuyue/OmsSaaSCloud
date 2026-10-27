@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "name": "直接打开尚未建立查询缓存的共同仓单可自动补齐全部来源",
+  "document": "THKXf884d10c4ff340b69848e4e2c3a174fc",
+  "sources_after_rebuild": 2,
+  "posted_quantity": 2,
+  "only_query_cache_rebuilt": true,
+  "business_and_inventory_unchanged": true
+}

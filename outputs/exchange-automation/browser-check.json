@@ -4,6 +4,10 @@
     "settings scope",
     "settings returns",
     "shared parcel",
-    "bad return"
-  ]
+    "bad return",
+    "mixed refund+exchange shared parcel",
+    "continuation round 2",
+    "acceptance report"
+  ],
+  "final_errors": []
 }

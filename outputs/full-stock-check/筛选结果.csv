@@ -1,0 +1,2 @@
+﻿SKU,批次,质量,OMS实物,WMS实物,实物差额,OMS业务占用,WMS冻结,结论,失败说明
+"'WC_FULL_ONLY_20261027154514","'FULL_BATCH","ZP","0","7","7","0","3","PHYSICAL_DIFFERENCE","'未知"

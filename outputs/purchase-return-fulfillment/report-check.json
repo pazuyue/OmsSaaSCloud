@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "backend_tests": 377,
+  "scenarios": 18,
+  "browser_checks": 17,
+  "query_checks": 14,
+  "images": 14,
+  "served_content_matches": true,
+  "document_links_verified": true,
+  "javascript_errors": [],
+  "checked_at": "2026-10-26T14:49:18.178142"
+}

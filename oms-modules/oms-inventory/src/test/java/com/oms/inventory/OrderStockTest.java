@@ -74,6 +74,10 @@ public class OrderStockTest {
         @Bean com.oms.inventory.service.impl.OrderStockDiagnosticsService diagnostics(){return new com.oms.inventory.service.impl.OrderStockDiagnosticsService();}
         @Bean com.oms.inventory.service.impl.OrderFulfillmentAdjustmentService adjustments(){return new com.oms.inventory.service.impl.OrderFulfillmentAdjustmentService();}
         @Bean com.oms.inventory.service.impl.StockProcessService processes(){return new com.oms.inventory.service.impl.StockProcessService();}
+        @Bean com.oms.inventory.service.impl.StockMovementService movements(){return new com.oms.inventory.service.impl.StockMovementService();}
+        @Bean com.oms.inventory.service.impl.StockCareService care(){return new com.oms.inventory.service.impl.StockCareService();}
+        @Bean com.oms.inventory.service.impl.QualityInventoryService quality(){return new com.oms.inventory.service.impl.QualityInventoryService();}
+        @Bean com.oms.inventory.service.impl.PlatformStockSnapshot snapshots(){return new com.oms.inventory.service.impl.PlatformStockSnapshot();}
         @Bean OrderStockService stock(){return new OrderStockService();}
         @Bean com.oms.inventory.service.impl.OrderWarehouseAllocationService warehouses(){return new com.oms.inventory.service.impl.OrderWarehouseAllocationService();}
         @Bean InventoryMutationService inventory(){return new InventoryMutationService();}

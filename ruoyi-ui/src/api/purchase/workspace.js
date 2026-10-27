@@ -15,3 +15,7 @@ export const retryCutoff = (kind, id, data) => request({ url: `${root}/${kind}/$
 export const confirmCutoff = (id, data) => request({ url: `${root}/cutoff/items/${id}/confirm`, method: 'post', data })
 export const inboundReview = id => request({ url: `${root}/inbound-reviews/${id}` })
 export const decideInboundReview = (id, data) => request({ url: `${root}/inbound-reviews/${id}`, method: 'post', data })
+export const operations = params => request({ url: root + '/operations', params })
+export const differences = params => request({ url: root + '/differences', params })
+export const differenceDetail = id => request({ url: `${root}/differences/${id}` })
+export const decideDifference = (id, data) => request({ url: `${root}/differences/${id}`, method: 'post', data })

@@ -1,0 +1,54 @@
+{
+  "unchanged": {
+    "manifests": true,
+    "stock": true,
+    "warehouse": true,
+    "refunds": true,
+    "queues": true,
+    "job": true,
+    "physical": true,
+    "batches": true,
+    "journals": true,
+    "returns": true
+  },
+  "operations_only_parent_tasks": true,
+  "actual_tasks": [
+    [
+      "OMS清单全仓检查",
+      "DZ8363c9444cbd49db97e128b7ff8c327b",
+      10,
+      "COMPLETED",
+      17,
+      3,
+      14
+    ],
+    [
+      "导入仓库完整清单并重试失败",
+      "DZb3e88a1dc57248cd81ccbbb96a66f7de",
+      34,
+      "COMPLETED",
+      19,
+      4,
+      15
+    ],
+    [
+      "页面提交、停止后继续",
+      "DZ0ea613e5d7aa404dac1590087bacae25",
+      196,
+      "COMPLETED",
+      19,
+      4,
+      15
+    ],
+    [
+      "选中商品最新复查",
+      "DZ4f4a6bcb166e408da43004cc267f3844",
+      66,
+      "COMPLETED",
+      1,
+      0,
+      0
+    ]
+  ],
+  "verified_at": "2026-10-27T16:53:50.827300"
+}

@@ -33,7 +33,7 @@ export default {
   methods: {
     quantityText, dispatchText, receiveText, postingText, remaining,
     copied() { this.$message.success('单号已复制') },
-    ticketLink(doc) { return { path: '/oms-supplychain/wmsTickets', query: { sn: doc.return_sn, documentId: doc.ticket_id }} },
+    ticketLink(doc) { return { path: '/oms-supplychain/wmsTickets', query: { sn: doc.return_sn, documentId: doc.ticket_id, sourceNumber: this.refund.refund_sn }} },
     totals(doc) { return { ...doc, quantity: doc.rows.reduce((n, r) => n + Number(r.quantity || 0), 0), accepted_quantity: doc.rows.reduce((n, r) => n + Number(r.accepted_quantity || 0), 0), posted_quantity: doc.rows.reduce((n, r) => n + Number(r.posted_quantity || 0), 0) } },
     refundCount(doc) { return new Set(doc.rows.map(row => String(row.refund_id))).size },
     permissions(doc) { return doc.plan.gift_plan_id ? ['order:gift:execute', 'order:refund:goods'] : ['order:refund:goods'] },

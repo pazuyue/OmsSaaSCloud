@@ -1,0 +1,2365 @@
+{
+  "key": "22",
+  "title": "部分实发后退款冲突阻止续发",
+  "case_id": "2026102511235322",
+  "created": "2026-10-25 11:25:17",
+  "sku": "EXAUTO_PC_2026102511235322A",
+  "target_sku": "EXAUTO_PC_2026102511235322B",
+  "third_sku": "EXAUTO_PC_2026102511235322C",
+  "channel_name": "[部分连续换货22] 部分实发后退款冲突阻止续发 20261025112353",
+  "seller": "EXAUTO_PC_2026102511235322",
+  "platform_tid": "862026102511235322",
+  "platform_oid": "86202610251123532201",
+  "warehouses": [
+    {
+      "code": "EXAUTO_PC_2026102511235322V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 159
+    }
+  ],
+  "quantity": 3,
+  "claims": [
+    {
+      "index": 1,
+      "quantity": 3,
+      "target_sku": "EXAUTO_PC_2026102511235322B",
+      "internal": true,
+      "id": 76,
+      "logistics_recorded": true,
+      "return_parts": 1,
+      "return_final_sent": true
+    }
+  ],
+  "refunds": {
+    "conflict": {
+      "refund_id": "8820261025112353221",
+      "amount": "100.00",
+      "source_sequence": 1,
+      "id": 131
+    }
+  },
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 132,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXAUTO_PC_2026102511235322A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXAUTO_PC_2026102511235322A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXAUTO_PC_2026102511235322V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 362,
+        "store": "EXAUTO_PC_2026102511235322V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 271,
+  "order_id": 187,
+  "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+  "prepared": true,
+  "products_ready": [
+    "B",
+    "C"
+  ],
+  "original_shipment_id": 148,
+  "original_shipment_sn": "XS5df85535c952471e8834472ee450d184",
+  "original_shipment_line_id": 207,
+  "original_shipped": true,
+  "authorized": true,
+  "before_target": {
+    "at": "2026-10-25T11:25:30.230611",
+    "company": [
+      [
+        "EXAUTO_PC_2026102511235322A",
+        "7",
+        "7",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322B",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322A",
+        "7",
+        "7",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322B",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "EXAUTO_PC_2026102511235322A",
+        "7",
+        "0",
+        "7",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322B",
+        "10",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "flow_configured": true,
+  "last_progress": {
+    "at": "2026-10-25T11:31:44.140762",
+    "id": 76,
+    "state": "PROCESSING",
+    "round": 1,
+    "node": "CONTROL",
+    "code": "HELD",
+    "message": "换货已挂起或存在截单、继续换出审核；请在处理原因对应入口核对"
+  },
+  "stock_phases": {
+    "RETURN_76_1_BEFORE": {
+      "at": "2026-10-25T11:26:44.151740",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "7",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "7",
+          "3",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "7",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "3",
+          "7",
+          "3",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "RETURN_76_1_AFTER_CALLBACK": {
+      "at": "2026-10-25T11:26:45.718923",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "7",
+          "3",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "3",
+          "7",
+          "3",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "OUT_150_1_BEFORE": {
+      "at": "2026-10-25T11:27:00.939209",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "7",
+          "3",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "7",
+          "3",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "10",
+          "3",
+          "7",
+          "3",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "OUT_150_1_AFTER_CALLBACK": {
+      "at": "2026-10-25T11:27:02.400917",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "7",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "7",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "2",
+          "7",
+          "2",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "ROUND_1_PARTIAL_POSTED": {
+      "at": "2026-10-25T11:27:19.817336",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "7",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "7",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "2",
+          "7",
+          "2",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    }
+  },
+  "sent_events": [
+    "RETURN_76_1",
+    "OUT_150_1"
+  ],
+  "cutoffs": {
+    "1": {
+      "shipment_id": 150,
+      "posted": 1,
+      "at": "2026-10-25T11:27:21.140492"
+    }
+  },
+  "conflict_refund_source": true,
+  "conflict_order_source": {
+    "task_ids": [
+      294
+    ],
+    "mode": "TID",
+    "start_time": "2026-10-25 11:31:39",
+    "end_time": "2026-10-25 11:31:39",
+    "range_clamped": false,
+    "tid_count": 1
+  },
+  "refund_conflict_input": true,
+  "refund_conflict_observed": {
+    "denial": "('/order/exchanges/76/continuation-preview', '原订单有退款变更待处理')",
+    "exchange": {
+      "id": 76,
+      "company_code": "QM",
+      "channel_id": 132,
+      "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+      "source_kind": "INTERNAL",
+      "dispute_id": null,
+      "source_phase": "AFTER_SALE",
+      "platform_status": "",
+      "goods_status": "",
+      "speed_exchange": null,
+      "platform_tid": "862026102511235322",
+      "platform_oid": "86202610251123532201",
+      "source_modified": "2026-10-25 11:26:24",
+      "payload_hash": "377be3f65806a6a05ae443a696e4ff053a09a32e01355ce5fdf88e56ecf061e0",
+      "payload": {
+        "reason": "[商家业务输入] 明确售后换货及免补差授权",
+        "order_id": 187,
+        "quantity": 3,
+        "target_sku": "EXAUTO_PC_2026102511235322B",
+        "request_key": "PC_INTERNAL_2026102511235322",
+        "platform_oid": "86202610251123532201",
+        "return_store": "EXAUTO_PC_2026102511235322V",
+        "source_phase": "AFTER_SALE",
+        "order_line_id": 287,
+        "return_address": "本地TEST退回地址",
+        "return_contact": "TEST-PC",
+        "fulfillment_mode": "RETURN",
+        "automation_authorized": true,
+        "replacement_recipient": {
+          "area": "验收测试区",
+          "city": "北京市",
+          "name": "部分连续换货验收",
+          "mobile": "TEST-MASKED",
+          "province": "北京市",
+          "detailAddress": "本地TEST地址，无实际配送"
+        },
+        "authorization_reference": "TEST-PC-MERCHANT-2026102511235322",
+        "source_shipment_line_id": 207
+      },
+      "requested_quantity": 3,
+      "original_sku": "EXAUTO_PC_2026102511235322A",
+      "target_sku": "EXAUTO_PC_2026102511235322B",
+      "target_description": "EXAUTO_PC_2026102511235322B",
+      "order_id": 187,
+      "order_line_id": 287,
+      "fulfillment_order_id": 187,
+      "original_platform_order_id": 271,
+      "state": "PROCESSING",
+      "stage": "RETURN_QC",
+      "problem_codes": "",
+      "problem_message": "",
+      "control_version": 8,
+      "approved_version": 2,
+      "approved_snapshot": {
+        "reason": "命中商家自动换货规则版本 1；免补差依据：TEST-PC-2026102511235322 商家明确同价免补差授权",
+        "quantity": 3,
+        "target_sku": "EXAUTO_PC_2026102511235322B",
+        "source_hash": "377be3f65806a6a05ae443a696e4ff053a09a32e01355ce5fdf88e56ecf061e0",
+        "original_sku": "EXAUTO_PC_2026102511235322A",
+        "platform_oid": "86202610251123532201",
+        "return_basis": {
+          "quantity": 3,
+          "unit_cost": 0,
+          "owner_code": "SAASQM01",
+          "cost_policy": "ORIGINAL_SHIPMENT_WEIGHTED",
+          "original_sku": "EXAUTO_PC_2026102511235322A",
+          "source_line_id": 287,
+          "original_shipment_id": 148,
+          "original_shipment_sn": "XS5df85535c952471e8834472ee450d184",
+          "source_shipment_line_id": 207
+        },
+        "return_store": "EXAUTO_PC_2026102511235322V",
+        "return_address": "本地TEST退回地址",
+        "return_contact": "TEST-PC",
+        "source_modified": "2026-10-25 11:26:24",
+        "eligible_quantity": 3,
+        "target_description": "EXAUTO_PC_2026102511235322B",
+        "platform_address_id": "991",
+        "original_source_hash": "6ac176b76c0aae1075b9f9c9c8809c5972952864b93ddd01fb21b3ed736730fe",
+        "replacement_recipient": {
+          "area": "验收测试区",
+          "city": "北京市",
+          "name": "部分连续换货验收",
+          "mobile": "TEST-MASKED",
+          "province": "北京市",
+          "detailAddress": "本地TEST地址，无实际配送"
+        },
+        "automatic_authorization": {
+          "source_sku": "EXAUTO_PC_2026102511235322A",
+          "target_sku": "EXAUTO_PC_2026102511235322B",
+          "platform_target": "EXAUTO_PC_2026102511235322B",
+          "no_surcharge_basis": "TEST-PC-2026102511235322 商家明确同价免补差授权"
+        },
+        "automatic_policy_revision": 1
+      },
+      "review_by": "自动换货规则",
+      "review_reason": "命中商家自动换货规则版本 1；免补差依据：TEST-PC-2026102511235322 商家明确同价免补差授权",
+      "reviewed_at": "2026-10-25 11:26:27",
+      "platform_operation": "NONE",
+      "platform_request": null,
+      "platform_operation_version": null,
+      "platform_error": "",
+      "cutoff_id": null,
+      "return_sn": "THX1DA0F027B9D68E35B8FBA6D07BE627",
+      "return_store": "EXAUTO_PC_2026102511235322V",
+      "platform_address_id": "991",
+      "platform_deadline": null,
+      "stock_request": "{\"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"quantity\": 3, \"reference\": \"EXCHANGE:76\", \"platform_oid\": \"86202610251123532201\", \"allow_public_stock\": 1}",
+      "stock_receipt": "{\"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"platform_oid\": \"86202610251123532201\", \"outbound_quantity\": 1, \"reserved_quantity\": 1, \"cancelled_quantity\": 2, \"locked_reserved_quantity\": 0, \"public_reserved_quantity\": 1}",
+      "last_error": "",
+      "next_attempt": null,
+      "lease_until": null,
+      "actor": "admin",
+      "create_time": "2026-10-25 11:26:24",
+      "update_time": "2026-10-25 11:27:21",
+      "return_result": {
+        "id": 31,
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "attempts": 1,
+        "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+        "quantity": 3,
+        "return_sn": "THX1DA0F027B9D68E35B8FBA6D07BE627",
+        "ticket_id": 278,
+        "unit_cost": 0,
+        "generation": 1,
+        "last_error": "",
+        "owner_code": "SAASQM01",
+        "store_code": "EXAUTO_PC_2026102511235322V",
+        "cancel_mode": "",
+        "create_time": "2026-10-25T11:26:30",
+        "exchange_id": 76,
+        "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+        "lease_until": null,
+        "cancel_actor": "",
+        "cancel_state": "NONE",
+        "cancelled_at": null,
+        "company_code": "QM",
+        "payload_hash": "4274C7D49B2C1DADDC517F7E5AEFB67FB7D16FB4941E7D3CF31E4B06B3FCB8E8",
+        "platform_tid": "862026102511235322",
+        "cancel_reason": "",
+        "connection_id": 10,
+        "receipt_state": "COMPLETED",
+        "dispatch_state": "ACCEPTED",
+        "document_count": 1,
+        "external_order": "SIMIN_4edd2491b1704190b260",
+        "external_owner": "VC00001",
+        "control_version": 2,
+        "posted_quantity": 3,
+        "real_store_code": "TW201",
+        "request_quantity": 3,
+        "shared_member_id": null,
+        "warehouse_status": "FULFILLED",
+        "accepted_quantity": 3,
+        "cancelled_quantity": 0,
+        "external_warehouse": "VC00001",
+        "original_shipment_sn": "XS5df85535c952471e8834472ee450d184",
+        "pending_review_count": 0
+      },
+      "return_qc": "PASSED",
+      "return_qc_reason": "店铺规则授权：可信仓库良品完整入账且无待核对回传，自动确认验收",
+      "fulfillment_line_id": 289,
+      "source_shipment_line_id": 207,
+      "allocation_status": "PART",
+      "allocation_quantity": 1,
+      "allocation_receipts": "[{\"id\": 209, \"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"status\": \"OCCUPIED\", \"batch_id\": 363, \"quantity\": 1, \"demand_id\": 317, \"batch_code\": \"PC_2026102511235322_INITIAL-B\", \"channel_id\": 132, \"owner_code\": \"SAASQM01\", \"store_code\": \"EXAUTO_PC_2026102511235322V\", \"create_time\": \"2026-10-25T11:26:48\", \"source_type\": \"PUBLIC_EXTRA\", \"update_time\": \"2026-10-25T11:27:21\", \"company_code\": \"QM\", \"platform_oid\": \"86202610251123532201\", \"platform_tid\": \"EXCHANGE:76\", \"outbound_method\": \"WMS\", \"real_store_code\": \"TW201\", \"real_store_name\": \"青木WMS001\", \"stock_source_id\": 240, \"original_quantity\": 3, \"outbound_quantity\": 1, \"released_quantity\": 2, \"outbound_shipment_sn\": \"XS181b3a1b49764dd58c376c655c5c79a9\"}]",
+      "allocation_policy": "{\"enabled\": 1, \"strategy\": \"FEWEST_SHIPMENTS\", \"owner_code\": \"SAASQM01\", \"allow_multi\": 1, \"allow_partial\": 1, \"max_shipments\": 0, \"rule_revision\": 1, \"auto_replenish\": 0, \"execution_mode\": \"MANUAL\", \"resolved_order\": [\"EXAUTO_PC_2026102511235322V\"], \"allow_split_sku\": 1, \"warehouse_order\": [\"EXAUTO_PC_2026102511235322V\"], \"receiver_province\": \"北京市\", \"allow_bundle_split\": 0, \"province_priorities\": {\"北京\": [\"EXAUTO_PC_2026102511235322V\"]}, \"max_virtual_warehouses\": 0, \"min_first_allocation_percent\": 0, \"allow_bundle_partial_components\": 0}",
+      "flow_version": 1,
+      "fulfillment_mode": "RETURN",
+      "return_logistics": "[{\"note\": \"\", \"actor\": \"admin\", \"source\": \"MANUAL\", \"carrier\": \"SF\", \"shipped_at\": \"\", \"tracking_no\": \"EXAUTORET_2026102511235322\"}]",
+      "return_review": "{\"at\": \"2026-10-25 11:26:46\", \"actor\": \"自动换货流程\", \"reason\": \"店铺规则授权：可信仓库良品完整入账且无待核对回传，自动确认验收\", \"decision\": \"PASSED\", \"evidence\": \"自动规则版本 1；良品数量 3\", \"issue_type\": \"\"}",
+      "linked_exchange_id": null,
+      "fulfillment_hold": 1,
+      "control_state": "HOLD",
+      "fulfillment_round": 1,
+      "round_quantity": null,
+      "round_recipient": null,
+      "platform_exchange_id": null,
+      "replacement_recipient": {
+        "name": "部分连续换货验收",
+        "mobile": "TEST-MASKED",
+        "province": "北京市",
+        "city": "北京市",
+        "area": "验收测试区",
+        "town": "",
+        "detailAddress": "本地TEST地址，无实际配送",
+        "oaid": ""
+      },
+      "events": [
+        {
+          "id": 462,
+          "action": "CUTOFF_RESULT",
+          "state": "PROCESSING",
+          "version": 8,
+          "message": "换出截单核对完成；已执行事实保留",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:27:21"
+        },
+        {
+          "id": 461,
+          "action": "CUTOFF_REQUEST",
+          "state": "PROCESSING",
+          "version": 7,
+          "message": "已暂停新增履约并登记换出截单：[商家业务输入] 终止本轮未发部分，确认后另行授权继续换出",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:27:20"
+        },
+        {
+          "id": 440,
+          "action": "REPLACEMENT_CREATE",
+          "state": "PROCESSING",
+          "version": 5,
+          "message": "换出方案生效，请在换货单分仓，出入库单据归本次换货单",
+          "actor": "自动换货规则",
+          "create_time": "2026-10-25 11:26:48"
+        },
+        {
+          "id": 438,
+          "action": "RETURN_QC",
+          "state": "PROCESSING",
+          "version": 4,
+          "message": "退回验收已确认；不重复增加库存",
+          "actor": "自动换货流程",
+          "create_time": "2026-10-25 11:26:46"
+        },
+        {
+          "id": 436,
+          "action": "RETURN_LOGISTICS",
+          "state": "PROCESSING",
+          "version": 3,
+          "message": "客服登记寄回物流；不代表仓库收货，不改变库存",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:26:44"
+        },
+        {
+          "id": 428,
+          "action": "REVIEW",
+          "state": "APPROVED",
+          "version": 2,
+          "message": "自动规则确认方案已保存；平台同意与实际库存分别处理",
+          "actor": "自动换货规则",
+          "create_time": "2026-10-25 11:26:27"
+        },
+        {
+          "id": 423,
+          "action": "CREATE",
+          "state": "NEEDS_REVIEW",
+          "version": 1,
+          "message": "协商换货已创建，待审核退回与换出方案；未调整原销售履约或库存",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:26:24"
+        }
+      ],
+      "update_links": [],
+      "order_update": {
+        "id": 271,
+        "platform_tid": "862026102511235322",
+        "business_order_id": 187,
+        "update_version": 3,
+        "update_state": "WAITING",
+        "update_categories": "REFUND",
+        "update_summary": "售后影响履约；整单暂停新增履约",
+        "change_pending": 1,
+        "source_modified": "2026-10-25 11:31:39",
+        "differences": [
+          {
+            "category": "STATUS",
+            "platform_oid": "",
+            "field": "status",
+            "before": "WAIT_SELLER_SEND_GOODS",
+            "after": "WAIT_BUYER_CONFIRM_GOODS",
+            "difference_hash": "ed147a92412d036d6067db6e2401f8806fee09452d455b7b476a998075b1b7f1"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "",
+            "field": "refund_status",
+            "before": "",
+            "after": "WAIT_SELLER_AGREE",
+            "difference_hash": "f786647587fc36e40a15a02499754e17590945be99f1d26e005d4ddf635088b9"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "",
+            "field": "refund_id",
+            "before": "",
+            "after": "8820261025112353221",
+            "difference_hash": "f4f338c0d830bdfd8da06e2dcf53ac798ddb5dc3b01b68338d59190ab78782bb"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "86202610251123532201",
+            "field": "refund_status",
+            "before": "",
+            "after": "WAIT_SELLER_AGREE",
+            "difference_hash": "707a3376e89e7e5c0fa9f97a6c33b756ce888a149b953be2757893aeb225e8d8"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "86202610251123532201",
+            "field": "refund_id",
+            "before": "",
+            "after": "8820261025112353221",
+            "difference_hash": "38ef8167274db05c2439650170d5f46bf12c031f18ee684db93502b5600148df"
+          },
+          {
+            "category": "STATUS",
+            "platform_oid": "86202610251123532201",
+            "field": "status",
+            "before": "",
+            "after": "WAIT_BUYER_CONFIRM_GOODS",
+            "difference_hash": "c362b202de098eecf1992a8c6531b000944965d924ddae135a04309f5e3c56d7"
+          }
+        ],
+        "exchanges": [
+          {
+            "id": 76,
+            "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+            "source_kind": "INTERNAL",
+            "dispute_id": null,
+            "state": "PROCESSING",
+            "stage": "RETURN_QC",
+            "requested_quantity": 3,
+            "platform_oid": "86202610251123532201"
+          }
+        ],
+        "history": [
+          {
+            "id": 4,
+            "version": 2,
+            "source_modified": "2026-10-25 11:31:39",
+            "categories": "REFUND",
+            "state": "WAITING",
+            "blocking": 1,
+            "reason": "售后影响履约；整单暂停新增履约",
+            "cutoff_id": null,
+            "operator_name": "拉单任务",
+            "create_time": "2026-10-25 11:31:41",
+            "handled_at": null
+          }
+        ],
+        "can_apply_recipient": false,
+        "order": {
+          "id": 187,
+          "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+          "status": "WAIT_ALLOCATION",
+          "cutoff_id": null,
+          "cutoff_state": "",
+          "allocation_status": "FULL",
+          "allocation_quantity": 3,
+          "manual_hold": 0,
+          "review_status": "APPROVED"
+        },
+        "active_shipments": 0,
+        "cutoff_operations": [],
+        "shipments": [
+          {
+            "id": 148,
+            "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+            "status": "SHIPPED",
+            "quantity": 3,
+            "cancelled_quantity": 0,
+            "shipped_quantity": 3
+          },
+          {
+            "id": 150,
+            "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+            "status": "PART_SHIPPED",
+            "quantity": 3,
+            "cancelled_quantity": 2,
+            "shipped_quantity": 1
+          }
+        ]
+      },
+      "original_shipments": [
+        {
+          "id": 148,
+          "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+          "stock_reference": "",
+          "business_type": "SALE",
+          "exchange_id": null,
+          "owner_code": "SAASQM01",
+          "source_shipment_line_id": 207,
+          "order_line_id": 287,
+          "allocation_id": 207,
+          "platform_oid": "86202610251123532201",
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "goods_name": "[部分连续换货验收] 原购A",
+          "shipped_quantity": 3,
+          "batch_id": 362,
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "create_time": "2026-10-25 11:25:28",
+          "exchange_sn": null,
+          "claimable_quantity": 3
+        },
+        {
+          "id": 150,
+          "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+          "stock_reference": "EXCHANGE:76",
+          "business_type": "EXCHANGE",
+          "exchange_id": 76,
+          "owner_code": "SAASQM01",
+          "source_shipment_line_id": 209,
+          "order_line_id": 289,
+          "allocation_id": 209,
+          "platform_oid": "86202610251123532201",
+          "sku_sn": "EXAUTO_PC_2026102511235322B",
+          "goods_name": "[部分连续换货22] B",
+          "shipped_quantity": 1,
+          "batch_id": 363,
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "create_time": "2026-10-25 11:26:48",
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "claimable_quantity": 1
+        }
+      ],
+      "shipments": [
+        {
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "packaged_quantity": 1,
+          "package_count": 1,
+          "outbound_unconfirmed_count": 0,
+          "gift_block_reason": "",
+          "refund_block_reason": "平台退款 8820261025112353221 的本子单商品待审核或货物处理",
+          "business_type": "EXCHANGE",
+          "exchange_id": 76,
+          "fulfillment_round": 1,
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "business_owner_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "id": 150,
+          "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+          "order_id": 187,
+          "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+          "channel_id": 132,
+          "platform_tid": "862026102511235322",
+          "stock_reference": "EXCHANGE:76",
+          "generation_no": 2,
+          "owner_code": "SAASQM01",
+          "real_store_code": "TW201",
+          "real_store_name": "青木WMS001",
+          "quantity": 3,
+          "cancelled_quantity": 2,
+          "status": "PART_SHIPPED",
+          "create_time": "2026-10-25 11:26:48",
+          "created_by": "自动换货流程",
+          "cancelled_at": "2026-10-25 11:27:21",
+          "receiver_province": "北京",
+          "carrier_code": "SF",
+          "carrier_name": "顺丰快递",
+          "warehouse_carrier_code": "sf",
+          "carrier_match_status": "MATCHED",
+          "carrier_match_mode": "AUTO",
+          "carrier_match_reason": "按仓库、省份优先及默认顺序匹配",
+          "carrier_attempt_at": "2026-10-25 11:26:48",
+          "carrier_matched_at": "2026-10-25 11:26:48",
+          "carrier_matched_by": "自动换货流程",
+          "control_version": 5,
+          "virtual_outbound_state": "NONE",
+          "virtual_outbound_error": null,
+          "virtual_outbound_quantity": null,
+          "virtual_outbound_request_id": null,
+          "virtual_outbound_completed_at": null,
+          "wms_dispatch_state": "CANCELED",
+          "wms_external_order": "SIMOUT_414a1496c4d042fea4ec",
+          "wms_error": "",
+          "wms_query_message": "",
+          "wms_query_at": null,
+          "wms_attempts": 1,
+          "wms_submitted_at": "2026-10-25 11:26:48",
+          "wms_updated_at": "2026-10-25 11:27:21",
+          "wms_warehouse_status": "PARTDELIVERED",
+          "channel_name": "[部分连续换货22] 部分实发后退款冲突阻止续发 20261025112353",
+          "order_status": "WAIT_ALLOCATION",
+          "manual_hold": 0,
+          "review_status": "APPROVED",
+          "change_pending": 0,
+          "platform_status": "WAIT_SELLER_SEND_GOODS",
+          "fulfillment_block_reason": "换货申请待核对",
+          "shipped_quantity": 1,
+          "wms_fulfillment_state": "PART_SHIPPED",
+          "wms_progress_message": "仓库状态：PARTDELIVERED；部分出库，实际出库 1 / 3 件，剩余 2 件；已记录 1 个包裹，包裹覆盖 1 件；库存扣账完成",
+          "fulfillment_block": "平台退款 8820261025112353221 的本子单商品待审核或货物处理",
+          "can_match_carrier": false,
+          "can_dispatch": false,
+          "can_query_warehouse": false,
+          "unpacked_quantity": 0,
+          "can_register_package": false,
+          "can_reconcile_receipts": false,
+          "can_virtual_outbound": false,
+          "can_retry_virtual_outbound": false,
+          "can_query_virtual_outbound": false,
+          "outbound_mode": 1,
+          "platform_shipping_reportable_quantity": 1,
+          "platform_shipping_mode": "OFF",
+          "platform_shipping_state": "NONE",
+          "platform_shipping_success_quantity": 0,
+          "platform_shipping_failed_packages": 0,
+          "platform_shipping_unknown_packages": 0
+        }
+      ],
+      "capability": {
+        "simulation": false,
+        "can_query": false,
+        "can_write": false
+      },
+      "original_goods": {
+        "id": 369,
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "goods_sn": "EXAUTO_PC_2026102511235322A",
+        "barcode_sn": null,
+        "goods_name": "[验收测试] 分仓策略、上限与预览",
+        "is_fd": 0,
+        "is_package": 0,
+        "is_gift": 0,
+        "color_name": "红色",
+        "size_name": "大码"
+      },
+      "target_goods": {
+        "id": 370,
+        "sku_sn": "EXAUTO_PC_2026102511235322B",
+        "goods_sn": "EXAUTO_PC_2026102511235322B",
+        "barcode_sn": null,
+        "goods_name": "[部分连续换货22] B",
+        "is_fd": 0,
+        "is_package": 0,
+        "is_gift": 0,
+        "color_name": "红色",
+        "size_name": "大码"
+      },
+      "platform_shipped_quantity": 1,
+      "platform_packaged_quantity": 1,
+      "platform_tracking_count": 1,
+      "platform_action": null,
+      "platform_write_enabled": 1,
+      "fulfillment_rounds": [],
+      "lineage": [
+        {
+          "line_id": 287,
+          "source_line_id": null,
+          "source_shipment_line_id": null,
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "goods_name": "[部分连续换货验收] 原购A",
+          "quantity": 3,
+          "cancelled_quantity": 0,
+          "fulfillment_round": 1,
+          "exchange_id": null,
+          "exchange_sn": null,
+          "state": null,
+          "source_kind": null
+        },
+        {
+          "line_id": 289,
+          "source_line_id": 287,
+          "source_shipment_line_id": 207,
+          "sku_sn": "EXAUTO_PC_2026102511235322B",
+          "goods_name": "[部分连续换货22] B",
+          "quantity": 3,
+          "cancelled_quantity": 2,
+          "fulfillment_round": 1,
+          "exchange_id": 76,
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "state": "PROCESSING",
+          "source_kind": "INTERNAL"
+        }
+      ]
+    },
+    "stock": {
+      "at": "2026-10-25T11:31:44.727706",
+      "company": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "9",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "warehouse": [
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322A",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "9",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322V",
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "10",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "channel": [
+        [
+          "EXAUTO_PC_2026102511235322A",
+          "7",
+          "0",
+          "7",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322B",
+          "9",
+          "0",
+          "9",
+          "0",
+          "0"
+        ],
+        [
+          "EXAUTO_PC_2026102511235322C",
+          "10",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ]
+    }
+  },
+  "result": "PASS_EXPECTED_BLOCK",
+  "final_stock": {
+    "at": "2026-10-25T11:35:17.831601",
+    "company": [
+      [
+        "EXAUTO_PC_2026102511235322A",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322B",
+        "9",
+        "9",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    "warehouse": [
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322A",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322B",
+        "9",
+        "9",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322V",
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "10",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    "channel": [
+      [
+        "EXAUTO_PC_2026102511235322A",
+        "7",
+        "0",
+        "7",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322B",
+        "9",
+        "0",
+        "9",
+        "0",
+        "0"
+      ],
+      [
+        "EXAUTO_PC_2026102511235322C",
+        "10",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "final_exchanges": [
+    {
+      "id": 76,
+      "company_code": "QM",
+      "channel_id": 132,
+      "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+      "source_kind": "INTERNAL",
+      "dispute_id": null,
+      "source_phase": "AFTER_SALE",
+      "platform_status": "",
+      "goods_status": "",
+      "speed_exchange": null,
+      "platform_tid": "862026102511235322",
+      "platform_oid": "86202610251123532201",
+      "source_modified": "2026-10-25 11:26:24",
+      "payload_hash": "377be3f65806a6a05ae443a696e4ff053a09a32e01355ce5fdf88e56ecf061e0",
+      "payload": {
+        "reason": "[商家业务输入] 明确售后换货及免补差授权",
+        "order_id": 187,
+        "quantity": 3,
+        "target_sku": "EXAUTO_PC_2026102511235322B",
+        "request_key": "PC_INTERNAL_2026102511235322",
+        "platform_oid": "86202610251123532201",
+        "return_store": "EXAUTO_PC_2026102511235322V",
+        "source_phase": "AFTER_SALE",
+        "order_line_id": 287,
+        "return_address": "本地TEST退回地址",
+        "return_contact": "TEST-PC",
+        "fulfillment_mode": "RETURN",
+        "automation_authorized": true,
+        "replacement_recipient": {
+          "area": "验收测试区",
+          "city": "北京市",
+          "name": "部分连续换货验收",
+          "mobile": "TEST-MASKED",
+          "province": "北京市",
+          "detailAddress": "本地TEST地址，无实际配送"
+        },
+        "authorization_reference": "TEST-PC-MERCHANT-2026102511235322",
+        "source_shipment_line_id": 207
+      },
+      "requested_quantity": 3,
+      "original_sku": "EXAUTO_PC_2026102511235322A",
+      "target_sku": "EXAUTO_PC_2026102511235322B",
+      "target_description": "EXAUTO_PC_2026102511235322B",
+      "order_id": 187,
+      "order_line_id": 287,
+      "fulfillment_order_id": 187,
+      "original_platform_order_id": 271,
+      "state": "PROCESSING",
+      "stage": "RETURN_QC",
+      "problem_codes": "",
+      "problem_message": "",
+      "control_version": 8,
+      "approved_version": 2,
+      "approved_snapshot": {
+        "reason": "命中商家自动换货规则版本 1；免补差依据：TEST-PC-2026102511235322 商家明确同价免补差授权",
+        "quantity": 3,
+        "target_sku": "EXAUTO_PC_2026102511235322B",
+        "source_hash": "377be3f65806a6a05ae443a696e4ff053a09a32e01355ce5fdf88e56ecf061e0",
+        "original_sku": "EXAUTO_PC_2026102511235322A",
+        "platform_oid": "86202610251123532201",
+        "return_basis": {
+          "quantity": 3,
+          "unit_cost": 0,
+          "owner_code": "SAASQM01",
+          "cost_policy": "ORIGINAL_SHIPMENT_WEIGHTED",
+          "original_sku": "EXAUTO_PC_2026102511235322A",
+          "source_line_id": 287,
+          "original_shipment_id": 148,
+          "original_shipment_sn": "XS5df85535c952471e8834472ee450d184",
+          "source_shipment_line_id": 207
+        },
+        "return_store": "EXAUTO_PC_2026102511235322V",
+        "return_address": "本地TEST退回地址",
+        "return_contact": "TEST-PC",
+        "source_modified": "2026-10-25 11:26:24",
+        "eligible_quantity": 3,
+        "target_description": "EXAUTO_PC_2026102511235322B",
+        "platform_address_id": "991",
+        "original_source_hash": "6ac176b76c0aae1075b9f9c9c8809c5972952864b93ddd01fb21b3ed736730fe",
+        "replacement_recipient": {
+          "area": "验收测试区",
+          "city": "北京市",
+          "name": "部分连续换货验收",
+          "mobile": "TEST-MASKED",
+          "province": "北京市",
+          "detailAddress": "本地TEST地址，无实际配送"
+        },
+        "automatic_authorization": {
+          "source_sku": "EXAUTO_PC_2026102511235322A",
+          "target_sku": "EXAUTO_PC_2026102511235322B",
+          "platform_target": "EXAUTO_PC_2026102511235322B",
+          "no_surcharge_basis": "TEST-PC-2026102511235322 商家明确同价免补差授权"
+        },
+        "automatic_policy_revision": 1
+      },
+      "review_by": "自动换货规则",
+      "review_reason": "命中商家自动换货规则版本 1；免补差依据：TEST-PC-2026102511235322 商家明确同价免补差授权",
+      "reviewed_at": "2026-10-25 11:26:27",
+      "platform_operation": "NONE",
+      "platform_request": null,
+      "platform_operation_version": null,
+      "platform_error": "",
+      "cutoff_id": null,
+      "return_sn": "THX1DA0F027B9D68E35B8FBA6D07BE627",
+      "return_store": "EXAUTO_PC_2026102511235322V",
+      "platform_address_id": "991",
+      "platform_deadline": null,
+      "stock_request": "{\"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"quantity\": 3, \"reference\": \"EXCHANGE:76\", \"platform_oid\": \"86202610251123532201\", \"allow_public_stock\": 1}",
+      "stock_receipt": "{\"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"platform_oid\": \"86202610251123532201\", \"outbound_quantity\": 1, \"reserved_quantity\": 1, \"cancelled_quantity\": 2, \"locked_reserved_quantity\": 0, \"public_reserved_quantity\": 1}",
+      "last_error": "",
+      "next_attempt": null,
+      "lease_until": null,
+      "actor": "admin",
+      "create_time": "2026-10-25 11:26:24",
+      "update_time": "2026-10-25 11:27:21",
+      "return_result": {
+        "id": 31,
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "attempts": 1,
+        "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+        "quantity": 3,
+        "return_sn": "THX1DA0F027B9D68E35B8FBA6D07BE627",
+        "ticket_id": 278,
+        "unit_cost": 0,
+        "generation": 1,
+        "last_error": "",
+        "owner_code": "SAASQM01",
+        "store_code": "EXAUTO_PC_2026102511235322V",
+        "cancel_mode": "",
+        "create_time": "2026-10-25T11:26:30",
+        "exchange_id": 76,
+        "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+        "lease_until": null,
+        "cancel_actor": "",
+        "cancel_state": "NONE",
+        "cancelled_at": null,
+        "company_code": "QM",
+        "payload_hash": "4274C7D49B2C1DADDC517F7E5AEFB67FB7D16FB4941E7D3CF31E4B06B3FCB8E8",
+        "platform_tid": "862026102511235322",
+        "cancel_reason": "",
+        "connection_id": 10,
+        "receipt_state": "COMPLETED",
+        "dispatch_state": "ACCEPTED",
+        "document_count": 1,
+        "external_order": "SIMIN_4edd2491b1704190b260",
+        "external_owner": "VC00001",
+        "control_version": 2,
+        "posted_quantity": 3,
+        "real_store_code": "TW201",
+        "request_quantity": 3,
+        "shared_member_id": null,
+        "warehouse_status": "FULFILLED",
+        "accepted_quantity": 3,
+        "cancelled_quantity": 0,
+        "external_warehouse": "VC00001",
+        "original_shipment_sn": "XS5df85535c952471e8834472ee450d184",
+        "pending_review_count": 0
+      },
+      "return_qc": "PASSED",
+      "return_qc_reason": "店铺规则授权：可信仓库良品完整入账且无待核对回传，自动确认验收",
+      "fulfillment_line_id": 289,
+      "source_shipment_line_id": 207,
+      "allocation_status": "PART",
+      "allocation_quantity": 1,
+      "allocation_receipts": "[{\"id\": 209, \"sku_sn\": \"EXAUTO_PC_2026102511235322B\", \"status\": \"OCCUPIED\", \"batch_id\": 363, \"quantity\": 1, \"demand_id\": 317, \"batch_code\": \"PC_2026102511235322_INITIAL-B\", \"channel_id\": 132, \"owner_code\": \"SAASQM01\", \"store_code\": \"EXAUTO_PC_2026102511235322V\", \"create_time\": \"2026-10-25T11:26:48\", \"source_type\": \"PUBLIC_EXTRA\", \"update_time\": \"2026-10-25T11:27:21\", \"company_code\": \"QM\", \"platform_oid\": \"86202610251123532201\", \"platform_tid\": \"EXCHANGE:76\", \"outbound_method\": \"WMS\", \"real_store_code\": \"TW201\", \"real_store_name\": \"青木WMS001\", \"stock_source_id\": 240, \"original_quantity\": 3, \"outbound_quantity\": 1, \"released_quantity\": 2, \"outbound_shipment_sn\": \"XS181b3a1b49764dd58c376c655c5c79a9\"}]",
+      "allocation_policy": "{\"enabled\": 1, \"strategy\": \"FEWEST_SHIPMENTS\", \"owner_code\": \"SAASQM01\", \"allow_multi\": 1, \"allow_partial\": 1, \"max_shipments\": 0, \"rule_revision\": 1, \"auto_replenish\": 0, \"execution_mode\": \"MANUAL\", \"resolved_order\": [\"EXAUTO_PC_2026102511235322V\"], \"allow_split_sku\": 1, \"warehouse_order\": [\"EXAUTO_PC_2026102511235322V\"], \"receiver_province\": \"北京市\", \"allow_bundle_split\": 0, \"province_priorities\": {\"北京\": [\"EXAUTO_PC_2026102511235322V\"]}, \"max_virtual_warehouses\": 0, \"min_first_allocation_percent\": 0, \"allow_bundle_partial_components\": 0}",
+      "flow_version": 1,
+      "fulfillment_mode": "RETURN",
+      "return_logistics": "[{\"note\": \"\", \"actor\": \"admin\", \"source\": \"MANUAL\", \"carrier\": \"SF\", \"shipped_at\": \"\", \"tracking_no\": \"EXAUTORET_2026102511235322\"}]",
+      "return_review": "{\"at\": \"2026-10-25 11:26:46\", \"actor\": \"自动换货流程\", \"reason\": \"店铺规则授权：可信仓库良品完整入账且无待核对回传，自动确认验收\", \"decision\": \"PASSED\", \"evidence\": \"自动规则版本 1；良品数量 3\", \"issue_type\": \"\"}",
+      "linked_exchange_id": null,
+      "fulfillment_hold": 1,
+      "control_state": "HOLD",
+      "fulfillment_round": 1,
+      "round_quantity": null,
+      "round_recipient": null,
+      "platform_exchange_id": null,
+      "replacement_recipient": {
+        "name": "部分连续换货验收",
+        "mobile": "TEST-MASKED",
+        "province": "北京市",
+        "city": "北京市",
+        "area": "验收测试区",
+        "town": "",
+        "detailAddress": "本地TEST地址，无实际配送",
+        "oaid": ""
+      },
+      "events": [
+        {
+          "id": 462,
+          "action": "CUTOFF_RESULT",
+          "state": "PROCESSING",
+          "version": 8,
+          "message": "换出截单核对完成；已执行事实保留",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:27:21"
+        },
+        {
+          "id": 461,
+          "action": "CUTOFF_REQUEST",
+          "state": "PROCESSING",
+          "version": 7,
+          "message": "已暂停新增履约并登记换出截单：[商家业务输入] 终止本轮未发部分，确认后另行授权继续换出",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:27:20"
+        },
+        {
+          "id": 440,
+          "action": "REPLACEMENT_CREATE",
+          "state": "PROCESSING",
+          "version": 5,
+          "message": "换出方案生效，请在换货单分仓，出入库单据归本次换货单",
+          "actor": "自动换货规则",
+          "create_time": "2026-10-25 11:26:48"
+        },
+        {
+          "id": 438,
+          "action": "RETURN_QC",
+          "state": "PROCESSING",
+          "version": 4,
+          "message": "退回验收已确认；不重复增加库存",
+          "actor": "自动换货流程",
+          "create_time": "2026-10-25 11:26:46"
+        },
+        {
+          "id": 436,
+          "action": "RETURN_LOGISTICS",
+          "state": "PROCESSING",
+          "version": 3,
+          "message": "客服登记寄回物流；不代表仓库收货，不改变库存",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:26:44"
+        },
+        {
+          "id": 428,
+          "action": "REVIEW",
+          "state": "APPROVED",
+          "version": 2,
+          "message": "自动规则确认方案已保存；平台同意与实际库存分别处理",
+          "actor": "自动换货规则",
+          "create_time": "2026-10-25 11:26:27"
+        },
+        {
+          "id": 423,
+          "action": "CREATE",
+          "state": "NEEDS_REVIEW",
+          "version": 1,
+          "message": "协商换货已创建，待审核退回与换出方案；未调整原销售履约或库存",
+          "actor": "admin",
+          "create_time": "2026-10-25 11:26:24"
+        }
+      ],
+      "update_links": [],
+      "order_update": {
+        "id": 271,
+        "platform_tid": "862026102511235322",
+        "business_order_id": 187,
+        "update_version": 3,
+        "update_state": "WAITING",
+        "update_categories": "REFUND",
+        "update_summary": "售后影响履约；整单暂停新增履约",
+        "change_pending": 1,
+        "source_modified": "2026-10-25 11:31:39",
+        "differences": [
+          {
+            "category": "STATUS",
+            "platform_oid": "",
+            "field": "status",
+            "before": "WAIT_SELLER_SEND_GOODS",
+            "after": "WAIT_BUYER_CONFIRM_GOODS",
+            "difference_hash": "ed147a92412d036d6067db6e2401f8806fee09452d455b7b476a998075b1b7f1"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "",
+            "field": "refund_status",
+            "before": "",
+            "after": "WAIT_SELLER_AGREE",
+            "difference_hash": "f786647587fc36e40a15a02499754e17590945be99f1d26e005d4ddf635088b9"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "",
+            "field": "refund_id",
+            "before": "",
+            "after": "8820261025112353221",
+            "difference_hash": "f4f338c0d830bdfd8da06e2dcf53ac798ddb5dc3b01b68338d59190ab78782bb"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "86202610251123532201",
+            "field": "refund_status",
+            "before": "",
+            "after": "WAIT_SELLER_AGREE",
+            "difference_hash": "707a3376e89e7e5c0fa9f97a6c33b756ce888a149b953be2757893aeb225e8d8"
+          },
+          {
+            "category": "REFUND",
+            "platform_oid": "86202610251123532201",
+            "field": "refund_id",
+            "before": "",
+            "after": "8820261025112353221",
+            "difference_hash": "38ef8167274db05c2439650170d5f46bf12c031f18ee684db93502b5600148df"
+          },
+          {
+            "category": "STATUS",
+            "platform_oid": "86202610251123532201",
+            "field": "status",
+            "before": "",
+            "after": "WAIT_BUYER_CONFIRM_GOODS",
+            "difference_hash": "c362b202de098eecf1992a8c6531b000944965d924ddae135a04309f5e3c56d7"
+          }
+        ],
+        "exchanges": [
+          {
+            "id": 76,
+            "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+            "source_kind": "INTERNAL",
+            "dispute_id": null,
+            "state": "PROCESSING",
+            "stage": "RETURN_QC",
+            "requested_quantity": 3,
+            "platform_oid": "86202610251123532201"
+          }
+        ],
+        "history": [
+          {
+            "id": 4,
+            "version": 2,
+            "source_modified": "2026-10-25 11:31:39",
+            "categories": "REFUND",
+            "state": "WAITING",
+            "blocking": 1,
+            "reason": "售后影响履约；整单暂停新增履约",
+            "cutoff_id": null,
+            "operator_name": "拉单任务",
+            "create_time": "2026-10-25 11:31:41",
+            "handled_at": null
+          }
+        ],
+        "can_apply_recipient": false,
+        "order": {
+          "id": 187,
+          "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+          "status": "WAIT_ALLOCATION",
+          "cutoff_id": null,
+          "cutoff_state": "",
+          "allocation_status": "FULL",
+          "allocation_quantity": 3,
+          "manual_hold": 0,
+          "review_status": "APPROVED"
+        },
+        "active_shipments": 0,
+        "cutoff_operations": [],
+        "shipments": [
+          {
+            "id": 148,
+            "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+            "status": "SHIPPED",
+            "quantity": 3,
+            "cancelled_quantity": 0,
+            "shipped_quantity": 3
+          },
+          {
+            "id": 150,
+            "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+            "status": "PART_SHIPPED",
+            "quantity": 3,
+            "cancelled_quantity": 2,
+            "shipped_quantity": 1
+          }
+        ]
+      },
+      "original_shipments": [
+        {
+          "id": 148,
+          "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+          "stock_reference": "",
+          "business_type": "SALE",
+          "exchange_id": null,
+          "owner_code": "SAASQM01",
+          "source_shipment_line_id": 207,
+          "order_line_id": 287,
+          "allocation_id": 207,
+          "platform_oid": "86202610251123532201",
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "goods_name": "[部分连续换货验收] 原购A",
+          "shipped_quantity": 3,
+          "batch_id": 362,
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "create_time": "2026-10-25 11:25:28",
+          "exchange_sn": null,
+          "claimable_quantity": 3
+        },
+        {
+          "id": 150,
+          "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+          "stock_reference": "EXCHANGE:76",
+          "business_type": "EXCHANGE",
+          "exchange_id": 76,
+          "owner_code": "SAASQM01",
+          "source_shipment_line_id": 209,
+          "order_line_id": 289,
+          "allocation_id": 209,
+          "platform_oid": "86202610251123532201",
+          "sku_sn": "EXAUTO_PC_2026102511235322B",
+          "goods_name": "[部分连续换货22] B",
+          "shipped_quantity": 1,
+          "batch_id": 363,
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "create_time": "2026-10-25 11:26:48",
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "claimable_quantity": 1
+        }
+      ],
+      "shipments": [
+        {
+          "store_code": "EXAUTO_PC_2026102511235322V",
+          "packaged_quantity": 1,
+          "package_count": 1,
+          "outbound_unconfirmed_count": 0,
+          "gift_block_reason": "",
+          "refund_block_reason": "平台退款 8820261025112353221 的本子单商品待审核或货物处理",
+          "business_type": "EXCHANGE",
+          "exchange_id": 76,
+          "fulfillment_round": 1,
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "business_owner_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "id": 150,
+          "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+          "order_id": 187,
+          "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+          "channel_id": 132,
+          "platform_tid": "862026102511235322",
+          "stock_reference": "EXCHANGE:76",
+          "generation_no": 2,
+          "owner_code": "SAASQM01",
+          "real_store_code": "TW201",
+          "real_store_name": "青木WMS001",
+          "quantity": 3,
+          "cancelled_quantity": 2,
+          "status": "PART_SHIPPED",
+          "create_time": "2026-10-25 11:26:48",
+          "created_by": "自动换货流程",
+          "cancelled_at": "2026-10-25 11:27:21",
+          "receiver_province": "北京",
+          "carrier_code": "SF",
+          "carrier_name": "顺丰快递",
+          "warehouse_carrier_code": "sf",
+          "carrier_match_status": "MATCHED",
+          "carrier_match_mode": "AUTO",
+          "carrier_match_reason": "按仓库、省份优先及默认顺序匹配",
+          "carrier_attempt_at": "2026-10-25 11:26:48",
+          "carrier_matched_at": "2026-10-25 11:26:48",
+          "carrier_matched_by": "自动换货流程",
+          "control_version": 5,
+          "virtual_outbound_state": "NONE",
+          "virtual_outbound_error": null,
+          "virtual_outbound_quantity": null,
+          "virtual_outbound_request_id": null,
+          "virtual_outbound_completed_at": null,
+          "wms_dispatch_state": "CANCELED",
+          "wms_external_order": "SIMOUT_414a1496c4d042fea4ec",
+          "wms_error": "",
+          "wms_query_message": "",
+          "wms_query_at": null,
+          "wms_attempts": 1,
+          "wms_submitted_at": "2026-10-25 11:26:48",
+          "wms_updated_at": "2026-10-25 11:27:21",
+          "wms_warehouse_status": "PARTDELIVERED",
+          "channel_name": "[部分连续换货22] 部分实发后退款冲突阻止续发 20261025112353",
+          "order_status": "WAIT_ALLOCATION",
+          "manual_hold": 0,
+          "review_status": "APPROVED",
+          "change_pending": 0,
+          "platform_status": "WAIT_SELLER_SEND_GOODS",
+          "fulfillment_block_reason": "换货申请待核对",
+          "shipped_quantity": 1,
+          "wms_fulfillment_state": "PART_SHIPPED",
+          "wms_progress_message": "仓库状态：PARTDELIVERED；部分出库，实际出库 1 / 3 件，剩余 2 件；已记录 1 个包裹，包裹覆盖 1 件；库存扣账完成",
+          "fulfillment_block": "平台退款 8820261025112353221 的本子单商品待审核或货物处理",
+          "can_match_carrier": false,
+          "can_dispatch": false,
+          "can_query_warehouse": false,
+          "unpacked_quantity": 0,
+          "can_register_package": false,
+          "can_reconcile_receipts": false,
+          "can_virtual_outbound": false,
+          "can_retry_virtual_outbound": false,
+          "can_query_virtual_outbound": false,
+          "outbound_mode": 1,
+          "platform_shipping_reportable_quantity": 1,
+          "platform_shipping_mode": "OFF",
+          "platform_shipping_state": "NONE",
+          "platform_shipping_success_quantity": 0,
+          "platform_shipping_failed_packages": 0,
+          "platform_shipping_unknown_packages": 0
+        }
+      ],
+      "capability": {
+        "simulation": false,
+        "can_query": false,
+        "can_write": false
+      },
+      "original_goods": {
+        "id": 369,
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "goods_sn": "EXAUTO_PC_2026102511235322A",
+        "barcode_sn": null,
+        "goods_name": "[验收测试] 分仓策略、上限与预览",
+        "is_fd": 0,
+        "is_package": 0,
+        "is_gift": 0,
+        "color_name": "红色",
+        "size_name": "大码"
+      },
+      "target_goods": {
+        "id": 370,
+        "sku_sn": "EXAUTO_PC_2026102511235322B",
+        "goods_sn": "EXAUTO_PC_2026102511235322B",
+        "barcode_sn": null,
+        "goods_name": "[部分连续换货22] B",
+        "is_fd": 0,
+        "is_package": 0,
+        "is_gift": 0,
+        "color_name": "红色",
+        "size_name": "大码"
+      },
+      "platform_shipped_quantity": 1,
+      "platform_packaged_quantity": 1,
+      "platform_tracking_count": 1,
+      "platform_action": null,
+      "platform_write_enabled": 1,
+      "fulfillment_rounds": [],
+      "lineage": [
+        {
+          "line_id": 287,
+          "source_line_id": null,
+          "source_shipment_line_id": null,
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "goods_name": "[部分连续换货验收] 原购A",
+          "quantity": 3,
+          "cancelled_quantity": 0,
+          "fulfillment_round": 1,
+          "exchange_id": null,
+          "exchange_sn": null,
+          "state": null,
+          "source_kind": null
+        },
+        {
+          "line_id": 289,
+          "source_line_id": 287,
+          "source_shipment_line_id": 207,
+          "sku_sn": "EXAUTO_PC_2026102511235322B",
+          "goods_name": "[部分连续换货22] B",
+          "quantity": 3,
+          "cancelled_quantity": 2,
+          "fulfillment_round": 1,
+          "exchange_id": 76,
+          "exchange_sn": "HHI9f43297f2a22d0d662778e762b176aff",
+          "state": "PROCESSING",
+          "source_kind": "INTERNAL"
+        }
+      ]
+    }
+  ],
+  "automatic_flows": [
+    {
+      "task": {
+        "state": "HELD",
+        "node": "CONTROL",
+        "last_code": "HELD",
+        "last_message": "换货已挂起或存在截单、继续换出审核；请在处理原因对应入口核对",
+        "wait_since": "2026-10-25 11:27:24",
+        "next_attempt": null,
+        "policy_revision": 1,
+        "work_version": 7
+      },
+      "operations": []
+    }
+  ],
+  "stock_verified": true,
+  "completed_at": "2026-10-25T11:35:19.623404",
+  "return_ledger": [
+    [
+      "76",
+      "THX1DA0F027B9D68E35B8FBA6D07BE627",
+      "XS5df85535c952471e8834472ee450d184",
+      "EXAUTO_PC_2026102511235322A",
+      "3",
+      "3",
+      "3",
+      "0.000000"
+    ]
+  ],
+  "return_events": [
+    [
+      "76",
+      "PC_RETURN_76_1",
+      "3",
+      "1",
+      "POSTED"
+    ]
+  ],
+  "round_ledger": [],
+  "demand_ledger": [
+    [
+      "862026102511235322",
+      "86202610251123532201",
+      "EXAUTO_PC_2026102511235322A",
+      "3",
+      "0",
+      "3",
+      "3",
+      "RESERVED"
+    ],
+    [
+      "EXCHANGE:76",
+      "86202610251123532201",
+      "EXAUTO_PC_2026102511235322B",
+      "3",
+      "2",
+      "1",
+      "1",
+      "CANCELLED"
+    ]
+  ],
+  "conflict_refund": {
+    "id": 131,
+    "company_code": "QM",
+    "refund_sn": "TK24bc4ed579c64a65a1e0b7fba51bdc2d",
+    "platform_refund_id": 132,
+    "channel_id": 132,
+    "refund_id": "8820261025112353221",
+    "order_id": 187,
+    "order_sn": "SO101b93895fd341f9a0f11d68bec25fca",
+    "original_platform_order_id": 271,
+    "platform_tid": "862026102511235322",
+    "platform_oid": "86202610251123532201",
+    "state": "NEEDS_REVIEW",
+    "review_state": "PENDING",
+    "purpose": "UNKNOWN",
+    "goods_action": "UNKNOWN",
+    "goods_state": "WAIT_REVIEW",
+    "funds_state": "NONE",
+    "approved_version": null,
+    "approved_hash": null,
+    "approved_snapshot": {},
+    "refund_fee": 100.0,
+    "cancelled_quantity": 0,
+    "cancel_line_id": null,
+    "cancel_quantity": 0,
+    "cancel_command": null,
+    "cutoff_id": null,
+    "review_reason": "",
+    "review_evidence": "",
+    "review_by": "",
+    "reviewed_at": null,
+    "problem_code": "",
+    "problem_message": "",
+    "control_version": 1,
+    "next_attempt": null,
+    "lease_token": null,
+    "lease_until": null,
+    "create_time": "2026-10-25 11:29:08",
+    "update_time": "2026-10-25 11:29:08",
+    "shared_return": 0,
+    "platform_context": {},
+    "platform_checked_at": null,
+    "initial_fulfillment_stage": "SHIPPED",
+    "initial_fulfillment_snapshot": {
+      "lines": [
+        {
+          "stage": "SHIPPED",
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "sources": [
+            {
+              "status": "SHIPPED",
+              "quantity": 3,
+              "store_code": "EXAUTO_PC_2026102511235322V",
+              "shipment_id": 148,
+              "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+              "order_line_id": 287,
+              "dispatch_state": "ACCEPTED",
+              "refund_scope_id": 131,
+              "shared_shipment": false,
+              "result_uncertain": false,
+              "shipment_line_id": 207,
+              "shipped_quantity": 3,
+              "suggested_action": "CHECK_PACKAGE",
+              "cancelled_quantity": 0,
+              "remaining_quantity": 0,
+              "unconfirmed_outbound": 0,
+              "other_unshipped_quantity": 0
+            }
+          ],
+          "quantity": 3,
+          "bundle_id": null,
+          "goods_name": "[部分连续换货验收] 原购A",
+          "stock_unit": "件",
+          "order_line_id": 287,
+          "refund_scope_id": 131,
+          "shipped_quantity": 3,
+          "cancelled_quantity": 0,
+          "unshipped_quantity": 0
+        }
+      ],
+      "stage": "SHIPPED",
+      "truncated": false,
+      "uncertain": false,
+      "quantity_unit": "实际商品单位，套装与福袋按原履约组件分别核对",
+      "shipped_quantity": 3,
+      "required_quantity": 3,
+      "unshipped_quantity": 0,
+      "warehouse_pending_quantity": 0
+    },
+    "platform": {
+      "id": 132,
+      "company_code": "QM",
+      "channel_id": 132,
+      "refund_id": "8820261025112353221",
+      "platform_tid": "862026102511235322",
+      "platform_oid": "86202610251123532201",
+      "seller_nick": "EXAUTO_PC_2026102511235322",
+      "platform_status": "WAIT_SELLER_AGREE",
+      "dispute_type": "REFUND_AND_RETURN",
+      "source_phase": "AFTER_SALE",
+      "special_type": "",
+      "refund_fee": 100.0,
+      "platform_quantity": 1,
+      "reason": "[部分续发验收] 继续换出前新增冲突退货退款，待核对实际货物范围",
+      "source_modified": "2026-10-25 11:28:58",
+      "refund_version": "1",
+      "jdp_modified": "2026-10-25 11:28:58",
+      "source_hash": "f4591b5ffa1c3da8bbb24352994a7f07e571eefc06a9e9bad085afad53ec898c",
+      "source_state": "VALID",
+      "source_error": "",
+      "conversion_state": "SUCCESS",
+      "conversion_error": "",
+      "business_refund_id": 131,
+      "version": 1,
+      "last_sync": "2026-10-25 11:29:06",
+      "create_time": "2026-10-25 11:29:06",
+      "semantic_hash": "03785e3674f082ea86a3f97fabd3c828e19c2fb7b85eac492fa1b005ce64a70c",
+      "intake_version": 2,
+      "conversion_requested": 0,
+      "source_kind": "JDP",
+      "return_logistics": {
+        "carrier_name": "",
+        "waybill": "",
+        "address": "",
+        "source": "PLATFORM"
+      }
+    },
+    "automatic_flow": {},
+    "events": [
+      {
+        "id": 860,
+        "action": "CONVERT",
+        "message": "已从平台退款转单；待审核，不代表同意退款或自动截单",
+        "actor": "队列转单",
+        "create_time": "2026-10-25 11:29:08"
+      }
+    ],
+    "lines": [
+      {
+        "id": 287,
+        "platform_oid": "86202610251123532201",
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "goods_name": "[部分连续换货验收] 原购A",
+        "quantity": 3,
+        "cancelled_quantity": 0,
+        "reserved_quantity": 3,
+        "business_type": "SALE",
+        "exchange_id": null,
+        "stock_reference": "",
+        "bundle_id": null,
+        "component_quantity": 0,
+        "gift_plan_id": null,
+        "stocked_bundle_snapshot": null,
+        "platform_spec": ""
+      },
+      {
+        "id": 289,
+        "platform_oid": "86202610251123532201",
+        "sku_sn": "EXAUTO_PC_2026102511235322B",
+        "goods_name": "[部分连续换货22] B",
+        "quantity": 3,
+        "cancelled_quantity": 2,
+        "reserved_quantity": 1,
+        "business_type": "EXCHANGE",
+        "exchange_id": 76,
+        "stock_reference": "EXCHANGE:76",
+        "bundle_id": null,
+        "component_quantity": 0,
+        "gift_plan_id": null,
+        "stocked_bundle_snapshot": null,
+        "platform_spec": ""
+      }
+    ],
+    "has_purchase_return": 0,
+    "has_gift_return": 0,
+    "purchase_return_pending": 0,
+    "missing_purchase_document": 0,
+    "gift_pending": false,
+    "return_progress": {
+      "return_quantity": 0,
+      "accepted_quantity": 0,
+      "posted_quantity": 0,
+      "waived_quantity": 0,
+      "parcel_issues": 0,
+      "parcel_waiting": 0
+    },
+    "gift_assessment_required": false,
+    "sales_context": {
+      "line": {
+        "quantity": 3,
+        "adjustment": "0.00",
+        "sales_price": "100.00",
+        "platform_oid": "86202610251123532201",
+        "sales_amount": "300.00",
+        "goods_payment": "300.00",
+        "item_discount": "0.00",
+        "discount_total": null,
+        "payment_source": "平台分摊实付（已核对不含运费）",
+        "divided_payment": "300.00",
+        "platform_payable": null,
+        "platform_payment": "300.00",
+        "payment_difference": null,
+        "order_discount_share": null,
+        "calculated_goods_payment": null
+      },
+      "source_modified": "2026-10-25 11:25:17",
+      "buyer_freight": "0.00",
+      "order": {
+        "payment": "300.00",
+        "sales_amount": "300.00",
+        "order_discount": "0.00",
+        "item_discount": "0.00",
+        "discount_total": "0.00",
+        "buyer_freight": "0.00",
+        "check_state": "INCOMPLETE"
+      }
+    },
+    "amount_context": {
+      "scope": "PLATFORM_SUBORDER",
+      "original_goods_payment": 300.0,
+      "payment_source": "平台分摊实付（已核对不含运费）",
+      "authoritative": true,
+      "reliable": true,
+      "original_quantity": 3,
+      "requested_goods_payment": null,
+      "requested_payment_note": "平台未提供本次申请数量对应的商品实付，不按平均单价推算",
+      "current_confirmed": 0.0,
+      "confirmed_total": 0.0,
+      "other_confirmed": 0.0,
+      "other_occupied": 0.0,
+      "current_limit": 300.0,
+      "remaining_unpaid": 300.0,
+      "issue": "",
+      "note": "金额按本平台子订单统计；本次上限扣除其他退款，累计已退包含本单成功金额。实际审核、付款时重新校验。"
+    },
+    "shipments": [
+      {
+        "shipment_id": 148,
+        "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+        "business_type": "SALE",
+        "exchange_id": null,
+        "status": "SHIPPED",
+        "shipment_line_id": 207,
+        "order_line_id": 287,
+        "sku_sn": "EXAUTO_PC_2026102511235322A",
+        "goods_name": "[部分连续换货验收] 原购A",
+        "quantity": 3,
+        "shipped_quantity": 3,
+        "store_code": "EXAUTO_PC_2026102511235322V",
+        "batch_id": 362,
+        "platform_oid": "86202610251123532201"
+      },
+      {
+        "shipment_id": 150,
+        "shipment_sn": "XS181b3a1b49764dd58c376c655c5c79a9",
+        "business_type": "EXCHANGE",
+        "exchange_id": 76,
+        "status": "PART_SHIPPED",
+        "shipment_line_id": 209,
+        "order_line_id": 289,
+        "sku_sn": "EXAUTO_PC_2026102511235322B",
+        "goods_name": "[部分连续换货22] B",
+        "quantity": 3,
+        "shipped_quantity": 1,
+        "store_code": "EXAUTO_PC_2026102511235322V",
+        "batch_id": 363,
+        "platform_oid": "86202610251123532201"
+      }
+    ],
+    "fulfillment": {
+      "stage": "SHIPPED",
+      "required_quantity": 3,
+      "shipped_quantity": 3,
+      "unshipped_quantity": 0,
+      "warehouse_pending_quantity": 0,
+      "uncertain": false,
+      "truncated": false,
+      "quantity_unit": "实际商品单位，套装与福袋按原履约组件分别核对",
+      "lines": [
+        {
+          "refund_scope_id": 131,
+          "order_line_id": 287,
+          "sku_sn": "EXAUTO_PC_2026102511235322A",
+          "goods_name": "[部分连续换货验收] 原购A",
+          "quantity": 3,
+          "cancelled_quantity": 0,
+          "bundle_id": null,
+          "stock_unit": "件",
+          "shipped_quantity": 3,
+          "unshipped_quantity": 0,
+          "sources": [
+            {
+              "refund_scope_id": 131,
+              "order_line_id": 287,
+              "shipment_line_id": 207,
+              "shipment_id": 148,
+              "shipment_sn": "XS5df85535c952471e8834472ee450d184",
+              "status": "SHIPPED",
+              "store_code": "EXAUTO_PC_2026102511235322V",
+              "quantity": 3,
+              "shipped_quantity": 3,
+              "cancelled_quantity": 0,
+              "dispatch_state": "ACCEPTED",
+              "unconfirmed_outbound": 0,
+              "other_unshipped_quantity": 0,
+              "remaining_quantity": 0,
+              "result_uncertain": false,
+              "suggested_action": "CHECK_PACKAGE",
+              "shared_shipment": false
+            }
+          ],
+          "stage": "SHIPPED"
+        }
+      ]
+    },
+    "fulfillment_stage": "SHIPPED",
+    "goods_tasks": [],
+    "bundles": [],
+    "parcel_issues": [],
+    "parcel_followups": [],
+    "progress_context": {
+      "plans": [],
+      "plans_truncated": false
+    },
+    "platform_interaction": {
+      "execution_supported": true,
+      "mode": "PLATFORM_OPERATIONS",
+      "operations": [],
+      "observations": [
+        {
+          "id": 774,
+          "source_modified": "2026-10-25 11:28:58",
+          "jdp_modified": "2026-10-25 11:28:58",
+          "outcome": "NEW",
+          "create_time": "2026-10-25 11:29:06",
+          "platform_status": "WAIT_SELLER_AGREE",
+          "refund_fee": 100.0,
+          "refund_version": "1"
+        }
+      ],
+      "message": "支持提交平台售后操作。请先主动刷新平台权限和可用操作；本地审核、接口返回与最终资金结果分别记录。"
+    },
+    "capability": {
+      "platform_payment": true,
+      "platform_agree": true,
+      "platform_refuse": true,
+      "warehouse_return": true,
+      "message": "本地审核确认业务方案；平台操作另行提交，按店铺授权及当前可用操作校验，实际退款成功以平台结果为准。"
+    }
+  },
+  "driver_attempt_notes": [
+    "('/order/orders/configs', '切换来源或卖家须确认重新拉取起点')"
+  ]
+}

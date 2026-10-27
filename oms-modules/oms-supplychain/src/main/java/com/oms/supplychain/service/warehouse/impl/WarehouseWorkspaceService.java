@@ -192,6 +192,8 @@ public class WarehouseWorkspaceService {
                 if(localRef(company,"wms_tickets","real_store_code",row.get("realStoreCode").toString()))throw bad("实体仓库存在出入库记录（含已完成、已作废），不能删除，请停用");
             }
             if(kind.equals("ownerWarehouse") && number(row.get("virtualCount"),0)>0)throw bad("该关联下存在虚拟仓库，不能删除，可停用关联");
+            if(kind.equals("simulationStore"))for(String field:Arrays.asList("source_store","target_store"))if(localRef(company,"warehouse_transfer",field,row.get("wmsSimulationCode").toString()))throw bad("虚仓存在调拨记录，不能删除，请停用");
+            if(kind.equals("simulationStore") && localRef(company,"warehouse_reconciliation","store_code",row.get("wmsSimulationCode").toString()))throw bad("虚仓存在库存对账证据，不能删除，请停用");
             if(kind.equals("simulationStore"))for(String t:Arrays.asList("po_info","no_tickets","wms_tickets"))if(localRef(company,t,"wms_simulation_code",row.get("wmsSimulationCode").toString()))throw bad("虚仓存在"+(t.equals("po_info")?"采购单":t.equals("no_tickets")?"到货单":"出入库单")+"引用（含草稿、已完成、已作废），不能删除，请停用");
         }
         if(kind.equals("simulationStore")) {

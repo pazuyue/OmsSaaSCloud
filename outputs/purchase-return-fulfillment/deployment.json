@@ -1,0 +1,62 @@
+[
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "d30a8488b6b19ffcb25bb49f324b97256ce4e21e9d12c6b61d9511d92541699c",
+    "new_sha256": "2afa711b3d6cf0732d293466a08e49c3963d377099bd3fa2e90396f16c033fd8"
+  },
+  {
+    "module": "oms-inventory",
+    "previous_sha256": "62bce11b12d4093b0ff6e7bf5ebc138bbeeaba82225b3be37d7bf0e5ed12450e",
+    "new_sha256": "c3be761db4b27ca86c48aeca92f8bae576c26554fa9544a3d64efd4596ea296b"
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "1ae38989bcca98eba8cca5874b3983cdf7492438d69ededfdfa6982866414b2b",
+    "new_sha256": "705f83b382334afc8c35ef8b361b2f12c37ed5d25fa18390897a3e4bb3183052"
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "2afa711b3d6cf0732d293466a08e49c3963d377099bd3fa2e90396f16c033fd8",
+    "new_sha256": "ca01732fbffb47af39c7296fd8a30d7fdd146c834af16079e35c6765324b702b"
+  },
+  {
+    "module": "oms-inventory",
+    "previous_sha256": "c3be761db4b27ca86c48aeca92f8bae576c26554fa9544a3d64efd4596ea296b",
+    "new_sha256": "252c44910ec994e228ea7f1eb155a18a471a697ff82d9d3c5367a8b9c02684cb"
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "705f83b382334afc8c35ef8b361b2f12c37ed5d25fa18390897a3e4bb3183052",
+    "new_sha256": "67354f9b053e04fa7565b9ac03a6dbb1229c7e4531d0c08a7d67bf97f71b35be"
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "ca01732fbffb47af39c7296fd8a30d7fdd146c834af16079e35c6765324b702b",
+    "new_sha256": "9ce393674936b33d771990c15b2adabf3f3b038a81e8687bdf67f1a0eb8d7ab8"
+  },
+  {
+    "module": "oms-inventory",
+    "previous_sha256": "252c44910ec994e228ea7f1eb155a18a471a697ff82d9d3c5367a8b9c02684cb",
+    "new_sha256": "de2ef876e33e6cab741fd4d9f15de4572fd896f41e57f9eabacc6d4c64ce30ea"
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "67354f9b053e04fa7565b9ac03a6dbb1229c7e4531d0c08a7d67bf97f71b35be",
+    "new_sha256": "ac3ff1aad9f61e2acc6cb1097816a6cf1ce00902d2ba971c9afa3b6cff1ceaba"
+  },
+  {
+    "module": "oms-supplychain",
+    "previous_sha256": "9ce393674936b33d771990c15b2adabf3f3b038a81e8687bdf67f1a0eb8d7ab8",
+    "new_sha256": "a4efeeff10ace61ec6e819e6d2db58a87a22645a086c07e7dcfd7f854831eca5"
+  },
+  {
+    "module": "oms-inventory",
+    "previous_sha256": "de2ef876e33e6cab741fd4d9f15de4572fd896f41e57f9eabacc6d4c64ce30ea",
+    "new_sha256": "ffe2439dc86ca08b6b37d3c1c8081d19fcf96e57ba169f3ac8f1d6ac1c24b82d"
+  },
+  {
+    "module": "oms-order",
+    "previous_sha256": "ac3ff1aad9f61e2acc6cb1097816a6cf1ce00902d2ba971c9afa3b6cff1ceaba",
+    "new_sha256": "496ff167b88ec8caf949b99a02941c5f3960913da82a8fd5698570ec9bb03e7c"
+  }
+]

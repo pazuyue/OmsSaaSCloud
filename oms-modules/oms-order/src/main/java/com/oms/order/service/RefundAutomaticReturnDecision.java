@@ -20,7 +20,9 @@ import static com.oms.order.service.RefundValues.*;
         else require(lines.size()==1&&lines.get(0).get("bundle_id")==null&&quantity<=number(lines.get(0),"shipped_quantity"),"平台申请数量超出明确的原购买商品实发范围");
         Map<String,Object> policy=parcels.get(c,number(b,"channel_id"));require(number(policy,"auto_create")==1,"自动审核退货退款须开启自动创建退回安排");
         String store=required(policy,"create_store_code",64),address=required(policy,"create_return_address",500),contact=required(policy,"create_return_contact",200);
-        List<Map<String,Object>> tasks=new ArrayList<>();for(Map<String,Object> line:lines){
+        List<Map<String,Object>> tasks=new ArrayList<>();
+        if(!bundle){List<Map<String,Object>> actual=RefundReturnSources.available(refunds.repository,c,b,quantity);require(actual.size()==1,"实际可退发货来源不唯一或额度不足，请核对原销售及已完成换货的实际商品");Map<String,Object> source=actual.get(0);require(source.get("bundle_id")==null,"原组合商品须按全部原组件核对");tasks.add(m("action","RETURN","order_line_id",source.get("order_line_id"),"shipment_line_id",source.get("id"),"quantity",quantity,"store_code",store,"return_address",address,"return_contact",contact));}
+        else for(Map<String,Object> line:lines){
             List<Map<String,Object>> sources=RefundDispositionService.rows(line.get("sources"));sources.removeIf(s->number(s,"shipped_quantity")==0);require(sources.size()==1,"同一实际商品有多个发货来源，暂停自动选择退回来源");Map<String,Object> source=sources.get(0);
             tasks.add(m("action","RETURN","order_line_id",line.get("order_line_id"),"shipment_line_id",source.get("shipment_line_id"),"quantity",bundle?line.get("shipped_quantity"):quantity,"store_code",store,"return_address",address,"return_contact",contact));
         }

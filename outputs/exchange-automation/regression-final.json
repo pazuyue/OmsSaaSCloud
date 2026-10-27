@@ -211,6 +211,13 @@
       "skipped": "0"
     },
     {
+      "name": "com.oms.order.service.ExchangeSyncTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
       "name": "com.oms.order.service.RefundPushReaderTest",
       "tests": "1",
       "failures": "0",
@@ -365,5 +372,5 @@
       "skipped": "0"
     }
   ],
-  "total_tests": 726
+  "total_tests": 735
 }

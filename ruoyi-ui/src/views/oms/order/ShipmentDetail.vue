@@ -13,8 +13,8 @@
         <shipment-package-cards :detail="detail"><el-button v-if="detail.can_register_package" slot="actions" v-hasPermi="['order:shipment:package']" type="primary" size="small" @click="$refs.packageRegister.open(detail.id)">登记运单</el-button></shipment-package-cards>
         <el-collapse class="detail-information"><el-collapse-item title="订单、仓库与收货信息" name="info">
         <el-descriptions border :column="2" class="summary"><el-descriptions-item label="仓库下发 / 出库任务" :span="2"><shipment-dispatch-status :row="detail" /></el-descriptions-item><template v-if="detail.warehouse_target"><el-descriptions-item label="仓库连接">{{ detail.warehouse_target.connection_name }}</el-descriptions-item><el-descriptions-item label="协议 / 环境">{{ detail.warehouse_target.provider === 'QIMEN' ? '奇门' : '京东虎符' }} · {{ detail.warehouse_target.environment === 'PRODUCTION' ? '正式' : '测试' }}</el-descriptions-item><el-descriptions-item label="外部仓库 / 货主" :span="2">{{ detail.warehouse_target.external_warehouse }} / {{ detail.warehouse_target.external_owner }}</el-descriptions-item></template>
-          <el-descriptions-item label="快递">{{ detail.carrier_name ? detail.carrier_name + '（' + detail.carrier_code + '）' : '尚未匹配' }}</el-descriptions-item>
-          <el-descriptions-item label="仓库快递编码">{{ detail.warehouse_carrier_code || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="计划发货快递">{{ detail.carrier_name ? detail.carrier_name + '（' + detail.carrier_code + '）' : '尚未匹配' }}</el-descriptions-item>
+          <el-descriptions-item label="计划 WMS 编码">{{ detail.warehouse_carrier_code || '—' }}</el-descriptions-item>
           <el-descriptions-item label="匹配方式">{{ detail.carrier_match_mode === 'MANUAL' ? '手工确认' : detail.carrier_match_mode === 'AUTO' ? '自动匹配' : '—' }}</el-descriptions-item>
           <el-descriptions-item label="收货省份">{{ detail.receiver_province || '—' }}</el-descriptions-item>
           <el-descriptions-item label="匹配结果 / 原因" :span="2">{{ detail.carrier_match_status === 'FAILED' ? '失败：' : '' }}{{ detail.carrier_match_reason || '尚未尝试匹配' }}</el-descriptions-item>

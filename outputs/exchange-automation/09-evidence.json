@@ -1194,5 +1194,21 @@
     }
   ],
   "result": "PASS",
-  "completed_at": "2026-10-25T00:36:40.384663"
+  "completed_at": "2026-10-25T00:36:40.384663",
+  "duplicate_source_tasks": [
+    {
+      "id": 4062,
+      "state": "PENDING"
+    },
+    {
+      "id": 4052,
+      "state": "PENDING"
+    },
+    {
+      "id": 4063,
+      "state": "PENDING"
+    }
+  ],
+  "duplicate_source_verified": true,
+  "demand_ledger": "9862026102423590609\t986202610242359060901\tEXAUTO_2026102423590609A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:58\t986202610242359060901\tEXAUTO_2026102423590609B\t2\t0\t2\t2\tRESERVED"
 }

@@ -1,0 +1,3576 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>采购退仓两批迭代验收报告</title><style>body{margin:0;background:#f3f6fb;color:#34445b;font:15px/1.8 'Microsoft YaHei',sans-serif}main{max-width:1420px;margin:28px auto;background:white;padding:32px;border-radius:10px}h1{font-size:27px}h2{font-size:21px;margin-top:30px}h3{font-size:17px}.muted{color:#7a899d;font-size:13px}.metrics{display:flex;gap:12px;flex-wrap:wrap}.metrics article{flex:1;min-width:160px;background:#f0f6fd;border-radius:8px;padding:16px}.metrics span,.metrics b{display:block}.metrics b{font-size:25px;color:#278558}table{border-collapse:collapse;width:100%;font-size:13px;margin:15px 0}th,td{padding:10px;border:1px solid #dfe7f0;text-align:left;overflow-wrap:anywhere}th{background:#f4f7fb}section{margin-top:28px;border-top:2px solid #edf2f8;padding-top:12px}a{color:#0877dc;overflow-wrap:anywhere}.pass{color:#278558;font-weight:600}.notice{padding:16px;background:#fff8e9;border-radius:7px}pre{font-size:12px;background:#f4f7fb;white-space:pre-wrap;overflow-wrap:anywhere;padding:14px}img{display:block;max-width:100%;border:1px solid #dfe7f0;margin-top:12px}figure{margin:26px 0}figcaption{font-weight:600}details{margin:16px 0}summary{cursor:pointer;color:#0877dc}</style><main><h1>采购退仓两批迭代 · 详细验收报告</h1><p class="muted">2026-10-25T23:46:05.141133 · 本地TEST仓库 · 测试资料与单据保留</p><div class="metrics"><article><span>后端相关回归</span><b>310 项通过</b></article><article><span>基础退仓场景</span><b>8 项通过</b></article><article><span>完整业务场景</span><b>19 项通过</b></article><article><span>页面检查</span><b>20 项通过</b></article><article><span>查询与协议检查</span><b>14 项通过</b></article></div><p><a href="/oms-supplychain/purchaseReturns">采购退仓列表</a>　<a href="/oms-supplychain/operations">供应链待办</a></p><h2>本轮范围与执行边界</h2><p>新增退仓按采购来源、退仓商品、供应商交付信息分区；省市区复用原全国目录，快递复用现有货主实仓配置。列表、详情和操作区分最终短出、部分完成、实际扣账、原占用释放。继续退仓在原占用释放后生成唯一关联草稿并独立审核。</p><p>支持多笔退款、抵扣和追加冲销；供应商签收、拒收、短收逐行登记。拒收商品通过独立CGH收回入库单恢复库存，按仓库实际质量生成新入库来源，原退仓出库和采购实收均保留。采购净入库=原采购入账−实际退仓出库＋实际拒收收回。</p><p>采购与收回审核、停止或继续申请、供应商结果及凭证登记是显式业务操作；随后锁定、仓库下发、签名回传解析、库存扣账或恢复由后台执行。没有直接改写目标状态或库存来代替流程。款项功能登记已核对凭证，不执行银行付款。</p><p>仓库采用本地TEST奇门模拟器，协议为stockout CGTH、entryorder QTRK及order.cancel；实际外部仓库仍需联调。接口依据<a href="https://developer.alibaba.com/docs/doc.htm?articleId=118403&amp;docType=1&amp;treeId=285">奇门官方白皮书</a>核对。</p><div class="notice">用户原单 <a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=17">CGT5d411f13bbde41b8a53949a3053caaed</a> 展示“部分出库，剩余待处理”：申请5件、实出2件、未出3件、仍占用3件。页面验收仅打开处理弹窗核对预览，原业务状态及库存保留。</div><h2>业务场景索引</h2><table><thead><tr><th>序号</th><th>详细场景</th><th>保留原退仓单</th><th>结果</th></tr></thead><tbody><tr><td>01</td><td><a href="#case-01">最终短出5件中只出2件，清楚展示剩余3件占用</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></td><td><span class="pass">通过</span></td></tr><tr><td>02</td><td><a href="#case-02">最终短出后结束剩余，仅释放3件且保留已退2件</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></td><td><span class="pass">通过</span></td></tr><tr><td>03</td><td><a href="#case-03">剩余3件生成唯一关联草稿，重放申请不重复建单</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></td><td><span class="pass">通过</span></td></tr><tr><td>04</td><td><a href="#case-04">后续草稿独立审核并自动实出3件，原单2件不重复扣减</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></td><td><span class="pass">通过</span></td></tr><tr><td>05</td><td><a href="#case-05">多笔退款3元加抵扣2.50元，重复凭证不重复计款</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>06</td><td><a href="#case-06">超出剩余货值的款项登记被拒绝，原凭证及库存不变</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>07</td><td><a href="#case-07">未确认供应商拒收时不能直接创建收回入库</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>08</td><td><a href="#case-08">供应商签收1件、拒收1件、短收1件独立登记</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>09</td><td><a href="#case-09">拒收1件生成独立QTRK收回入库，受理阶段不加库存</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>10</td><td><a href="#case-10">计划收回1件却回传2件，保留异常且不增加库存</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>11</td><td><a href="#case-11">正品退仓后实收为次品1件，按质检入账且重复回传不重复增加</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>12</td><td><a href="#case-12">收回后款项超出净货值，冲销原凭证并重新登记</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>13</td><td><a href="#case-13">收回入库形成新的真实来源，可按原成本再次退仓</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></td><td><span class="pass">通过</span></td></tr><tr><td>14</td><td><a href="#case-14">正次品混合收回最终短收，只按实收2件入账</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=22">CGT7ac1e348672846d29a671bff5275f7dd</a></td><td><span class="pass">通过</span></td></tr><tr><td>15</td><td><a href="#case-15">虚拟仓拒收收回审核后自动入账，保持原出库记录</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=18">CGT37aa03c5a696409bb7093f88f27c3fdc</a></td><td><span class="pass">通过</span></td></tr><tr><td>16</td><td><a href="#case-16">仓库最终实收0件正常收尾，不产生库存增量</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=21">CGTd39d8008cf9f4852a56e5745416f1066</a></td><td><span class="pass">通过</span></td></tr><tr><td>17</td><td><a href="#case-17">并发两笔各3元凭证，实际退仓货值5元只允许一笔成功</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=20">CGT2180813128294803bfafea327ba2254b</a></td><td><span class="pass">通过</span></td></tr><tr><td>18</td><td><a href="#case-18">仓库未最终结束时停止剩余，取得原仓取消结果后释放</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=20">CGT2180813128294803bfafea327ba2254b</a></td><td><span class="pass">通过</span></td></tr><tr><td>19</td><td><a href="#case-19">同一拒收余额并发审核两张收回单，仅一张占用计划额度</a></td><td><a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=21">CGTd39d8008cf9f4852a56e5745416f1066</a></td><td><span class="pass">通过</span></td></tr></tbody></table><h2>最终库存核对</h2><p class="muted">以下是全部场景完成后的当前库存；后续每个场景还保留该步骤发生前、发生后的库存，便于逐步核对。商品、仓库和批次数量全部一致。</p><table><thead><tr><th>SKU</th><th>总量</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th><th>仓库正品/次品</th></tr></thead><tbody><tr><td>PRQ_20261025230253_01</td><td>9</td><td>9</td><td>0</td><td>0</td><td>0</td><td>9 / 0</td></tr><tr><td>PRQ_20261025230253_02</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td><td>7 / 0</td></tr><tr><td>PRQ_20261025230253_03</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td><td>8 / 0</td></tr><tr><td>PRQ_20261025230253_04</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td><td>5 / 0</td></tr><tr><td>PRQ_20261025230253_05</td><td>4</td><td>2</td><td>0</td><td>0</td><td>2</td><td>2 / 2</td></tr><tr><td>PRQ_20261025230253_06</td><td>10</td><td>7</td><td>3</td><td>0</td><td>0</td><td>10 / 0</td></tr><tr><td>PRQ_20261025230253_07</td><td>10</td><td>7</td><td>3</td><td>0</td><td>0</td><td>10 / 0</td></tr><tr><td>PRQ_20261025230253_08</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td><td>5 / 0</td></tr></tbody></table><section id="case-01"><h2>01 最终短出5件中只出2件，清楚展示剩余3件占用 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a><br>SKU：PRQ_20261025230253_08</p><ol><li>原采购实收入账10件；申请退仓5件。</li><li>TEST仓库签名最终回传2件，后台自动扣账。</li><li>核对进度、来源占用及快捷筛选。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 25,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_final_short&quot;,
+  &quot;purchase_id&quot;: 75,
+  &quot;po_sn&quot;: &quot;POcb28417876d94d0880da033359ae339d&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;APPROVED&quot;,
+  &quot;quantity&quot;: 5,
+  &quot;accepted_quantity&quot;: 2,
+  &quot;posted_quantity&quot;: 2,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+  &quot;cancel_reason&quot;: &quot;&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+  &quot;funds_amount&quot;: 0.0,
+  &quot;funds_evidence&quot;: &quot;&quot;,
+  &quot;control_version&quot;: 2,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:56&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:56&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 27,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 25,
+      &quot;source_key&quot;: &quot;R55&quot;,
+      &quot;ticket_sn&quot;: &quot;CG89cc9b06571e4e67a62039de386574d2&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 5.0,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 18,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+      &quot;source_log_id&quot;: 1122,
+      &quot;quantity&quot;: 2,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+            &quot;line_key&quot;: &quot;27&quot;,
+            &quot;quantity&quot;: 2,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 27,
+            &quot;quantity&quot;: 2
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253final_short&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 2；原消息 PRQ_OUT_20261025230253_final_short&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:58&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;b9ad3c5b15d7f05bbe00e8c3af87b6c4f5d8bcaffca2b0b23b888d3cbdae50b9&quot;,
+    &quot;state&quot;: &quot;HELD&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+        &quot;line_key&quot;: 27,
+        &quot;batch_id&quot;: 436,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;consumed_quantity&quot;: 2,
+        &quot;released_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 25,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;planned_amount&quot;: 12.5,
+      &quot;posted_amount&quot;: 5.0
+    }
+  ],
+  &quot;planned_amount&quot;: 12.5,
+  &quot;net_posted_amount&quot;: 5.0,
+  &quot;unshipped_quantity&quot;: 3,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 0,
+  &quot;remaining_hold&quot;: 3,
+  &quot;progress_code&quot;: &quot;REMAINING&quot;,
+  &quot;progress_label&quot;: &quot;部分出库，剩余待处理&quot;,
+  &quot;progress_hint&quot;: &quot;仓库已最终确认本次出库，未出库部分仍占用，请选择结束或继续退仓。&quot;,
+  &quot;primary_action&quot;: &quot;remaining&quot;,
+  &quot;funds_remaining&quot;: 5.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [],
+  &quot;supplier_receipts&quot;: [],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-02"><h2>02 最终短出后结束剩余，仅释放3件且保留已退2件 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a><br>SKU：PRQ_20261025230253_08</p><ol><li>明确选择结束剩余并填写依据。</li><li>后台依据原最终回传释放原占用。</li><li>核对部分完成状态及总量8、可用8、占用0。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 25,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_final_short&quot;,
+  &quot;purchase_id&quot;: 75,
+  &quot;po_sn&quot;: &quot;POcb28417876d94d0880da033359ae339d&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;CANCELED&quot;,
+  &quot;quantity&quot;: 5,
+  &quot;accepted_quantity&quot;: 2,
+  &quot;posted_quantity&quot;: 2,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+  &quot;cancel_reason&quot;: &quot;[验收] 仓库最终短出，结束剩余3件&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+  &quot;funds_amount&quot;: 0.0,
+  &quot;funds_evidence&quot;: &quot;&quot;,
+  &quot;control_version&quot;: 4,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:56&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:04:07&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 3,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:56&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 27,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 25,
+      &quot;source_key&quot;: &quot;R55&quot;,
+      &quot;ticket_sn&quot;: &quot;CG89cc9b06571e4e67a62039de386574d2&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 5.0,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 18,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+      &quot;source_log_id&quot;: 1122,
+      &quot;quantity&quot;: 2,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+            &quot;line_key&quot;: &quot;27&quot;,
+            &quot;quantity&quot;: 2,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 27,
+            &quot;quantity&quot;: 2
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253final_short&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;CANCEL_CONFIRMED&quot;,
+      &quot;actor&quot;: &quot;自动流程&quot;,
+      &quot;reason&quot;: &quot;未出库占用已按原来源释放，已出库和扣账保留&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:07&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CANCEL_REQUEST&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[验收] 仓库最终短出，结束剩余3件&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:07&quot;
+    },
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 2；原消息 PRQ_OUT_20261025230253_final_short&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:58&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;b9ad3c5b15d7f05bbe00e8c3af87b6c4f5d8bcaffca2b0b23b888d3cbdae50b9&quot;,
+    &quot;state&quot;: &quot;RELEASED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+        &quot;line_key&quot;: 27,
+        &quot;batch_id&quot;: 436,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;consumed_quantity&quot;: 2,
+        &quot;released_quantity&quot;: 3,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 25,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;planned_amount&quot;: 12.5,
+      &quot;posted_amount&quot;: 5.0
+    }
+  ],
+  &quot;planned_amount&quot;: 12.5,
+  &quot;net_posted_amount&quot;: 5.0,
+  &quot;unshipped_quantity&quot;: 3,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 3,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;PARTIAL_CLOSED&quot;,
+  &quot;progress_label&quot;: &quot;部分完成，剩余已停止&quot;,
+  &quot;progress_hint&quot;: &quot;已退仓部分保留，未出库占用已经按原来源释放。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 5.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [],
+  &quot;supplier_receipts&quot;: [],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-03"><h2>03 剩余3件生成唯一关联草稿，重放申请不重复建单 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a><br>SKU：PRQ_20261025230253_08</p><ol><li>从已结束原单明确申请继续剩余3件。</li><li>按原来源及成本生成后续草稿。</li><li>重复提交同一请求，核对仅一张后续草稿且尚未占用库存。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=26">CGT415118fd3d5f4e9b9d28b91c53ffeedd</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;parent&quot;: {
+    &quot;id&quot;: 25,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+    &quot;request_key&quot;: &quot;PRQ_20261025230253_final_short&quot;,
+    &quot;purchase_id&quot;: 75,
+    &quot;po_sn&quot;: &quot;POcb28417876d94d0880da033359ae339d&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;CANCELED&quot;,
+    &quot;quantity&quot;: 5,
+    &quot;accepted_quantity&quot;: 2,
+    &quot;posted_quantity&quot;: 2,
+    &quot;receipt_final&quot;: 1,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+    &quot;cancel_reason&quot;: &quot;[验收] 继续退原剩余3件&quot;,
+    &quot;stock_reserved&quot;: 1,
+    &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+    &quot;funds_amount&quot;: 0.0,
+    &quot;funds_evidence&quot;: &quot;&quot;,
+    &quot;control_version&quot;: 6,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:03:56&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:04:09&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 4,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:04:09&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;测试区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 27,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 25,
+        &quot;source_key&quot;: &quot;R55&quot;,
+        &quot;ticket_sn&quot;: &quot;CG89cc9b06571e4e67a62039de386574d2&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;source_quantity&quot;: 10,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 2,
+        &quot;posted_quantity&quot;: 2,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;reclaim_claimed_quantity&quot;: 0
+      }
+    ],
+    &quot;posted_amount&quot;: 5.0,
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 18,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+        &quot;source_log_id&quot;: 1122,
+        &quot;quantity&quot;: 2,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+        &quot;receipt&quot;: {
+          &quot;lines&quot;: [
+            {
+              &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+              &quot;line_key&quot;: &quot;27&quot;,
+              &quot;quantity&quot;: 2,
+              &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+              &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;
+            }
+          ],
+          &quot;deltas&quot;: [
+            {
+              &quot;line_key&quot;: 27,
+              &quot;quantity&quot;: 2
+            }
+          ],
+          &quot;status&quot;: &quot;DELIVERED&quot;,
+          &quot;waybill&quot;: &quot;PRQ_WB_20261025230253final_short&quot;,
+          &quot;complete&quot;: true,
+          &quot;packages&quot;: [],
+          &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+          &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_final_short&quot;,
+          &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+          &quot;carrier_code&quot;: &quot;SF&quot;,
+          &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+          &quot;outbound_time&quot;: &quot;2026-10-25 23:03:58&quot;,
+          &quot;external_order&quot;: &quot;SIMOUT_c786ba40278244ddb052&quot;,
+          &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+        }
+      }
+    ],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;CONTINUE_CREATED&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;剩余已释放，已生成待审核后续退仓 CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CONTINUE_REQUEST&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;[验收] 继续退原剩余3件&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CANCEL_CONFIRMED&quot;,
+        &quot;actor&quot;: &quot;自动流程&quot;,
+        &quot;reason&quot;: &quot;未出库占用已按原来源释放，已出库和扣账保留&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:07&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CANCEL_REQUEST&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;[验收] 仓库最终短出，结束剩余3件&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:07&quot;
+      },
+      {
+        &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;确认出库增量 2；原消息 PRQ_OUT_20261025230253_final_short&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:58&quot;
+      },
+      {
+        &quot;action&quot;: &quot;APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;
+      }
+    ],
+    &quot;stock&quot;: {
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+      &quot;purpose&quot;: &quot;RETURN&quot;,
+      &quot;payload_hash&quot;: &quot;b9ad3c5b15d7f05bbe00e8c3af87b6c4f5d8bcaffca2b0b23b888d3cbdae50b9&quot;,
+      &quot;state&quot;: &quot;RELEASED&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:56&quot;,
+      &quot;exists&quot;: true,
+      &quot;lines&quot;: [
+        {
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;document_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;,
+          &quot;line_key&quot;: 27,
+          &quot;batch_id&quot;: 436,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+          &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;quantity&quot;: 5,
+          &quot;consumed_quantity&quot;: 2,
+          &quot;released_quantity&quot;: 3,
+          &quot;recovered_quantity&quot;: 0,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+          &quot;transaction_price&quot;: 2.5
+        }
+      ]
+    },
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 25,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;accepted_quantity&quot;: 2,
+        &quot;posted_quantity&quot;: 2,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;planned_amount&quot;: 12.5,
+        &quot;posted_amount&quot;: 5.0
+      }
+    ],
+    &quot;planned_amount&quot;: 12.5,
+    &quot;continuation_state&quot;: &quot;DRAFT_CREATED&quot;,
+    &quot;net_posted_amount&quot;: 5.0,
+    &quot;unshipped_quantity&quot;: 3,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 3,
+    &quot;remaining_hold&quot;: 0,
+    &quot;progress_code&quot;: &quot;PARTIAL_CLOSED&quot;,
+    &quot;progress_label&quot;: &quot;部分完成，剩余已停止&quot;,
+    &quot;progress_hint&quot;: &quot;已退仓部分保留，未出库占用已经按原来源释放。&quot;,
+    &quot;primary_action&quot;: &quot;&quot;,
+    &quot;funds_remaining&quot;: 5.0,
+    &quot;funds_over_recorded&quot;: false,
+    &quot;funds&quot;: [],
+    &quot;supplier_receipts&quot;: [],
+    &quot;reclaims&quot;: [],
+    &quot;parent_return&quot;: [],
+    &quot;child_returns&quot;: [
+      {
+        &quot;id&quot;: 26,
+        &quot;return_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+        &quot;state&quot;: &quot;DRAFT&quot;
+      }
+    ]
+  },
+  &quot;child&quot;: {
+    &quot;id&quot;: 26,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+    &quot;request_key&quot;: &quot;CONTINUE_1&quot;,
+    &quot;purchase_id&quot;: 75,
+    &quot;po_sn&quot;: &quot;POcb28417876d94d0880da033359ae339d&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;DRAFT&quot;,
+    &quot;quantity&quot;: 3,
+    &quot;accepted_quantity&quot;: 0,
+    &quot;posted_quantity&quot;: 0,
+    &quot;receipt_final&quot;: 0,
+    &quot;dispatch_state&quot;: &quot;UNSENT&quot;,
+    &quot;external_order&quot;: &quot;&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[验收] 继续退原剩余3件&quot;,
+    &quot;cancel_reason&quot;: &quot;&quot;,
+    &quot;stock_reserved&quot;: 0,
+    &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+    &quot;funds_amount&quot;: 0.0,
+    &quot;funds_evidence&quot;: &quot;&quot;,
+    &quot;control_version&quot;: 1,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:04:09&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:04:09&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 0,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:04:09&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;测试区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 28,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 26,
+        &quot;source_key&quot;: &quot;R55&quot;,
+        &quot;ticket_sn&quot;: &quot;CG89cc9b06571e4e67a62039de386574d2&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;source_quantity&quot;: 10,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 0,
+        &quot;posted_quantity&quot;: 0,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;reclaim_claimed_quantity&quot;: 0
+      }
+    ],
+    &quot;posted_amount&quot;: 0.0,
+    &quot;events&quot;: [],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;承接原退仓 CGTdba9cd72eb894e9ea0d44752697a47eb 未出库数量，须独立审核&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;
+      }
+    ],
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 26,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;accepted_quantity&quot;: 0,
+        &quot;posted_quantity&quot;: 0,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;planned_amount&quot;: 7.5,
+        &quot;posted_amount&quot;: 0.0
+      }
+    ],
+    &quot;planned_amount&quot;: 7.5,
+    &quot;net_posted_amount&quot;: 0.0,
+    &quot;unshipped_quantity&quot;: 3,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 0,
+    &quot;remaining_hold&quot;: 0,
+    &quot;progress_code&quot;: &quot;DRAFT&quot;,
+    &quot;progress_label&quot;: &quot;待审核&quot;,
+    &quot;progress_hint&quot;: &quot;审核后按原来源锁定库存，并执行仓库退仓。&quot;,
+    &quot;primary_action&quot;: &quot;approve&quot;,
+    &quot;funds_remaining&quot;: 0.0,
+    &quot;funds_over_recorded&quot;: false,
+    &quot;funds&quot;: [],
+    &quot;supplier_receipts&quot;: [],
+    &quot;reclaims&quot;: [],
+    &quot;parent_return&quot;: [
+      {
+        &quot;id&quot;: 25,
+        &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;
+      }
+    ],
+    &quot;child_returns&quot;: []
+  }
+}</pre></details></section><section id="case-04"><h2>04 后续草稿独立审核并自动实出3件，原单2件不重复扣减 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=25">CGTdba9cd72eb894e9ea0d44752697a47eb</a><br>SKU：PRQ_20261025230253_08</p><ol><li>审核关联后续草稿，自动锁定并下发原仓。</li><li>签名回传3件，自动扣账。</li><li>总库存由8变5；原单已扣2件保持不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=26">CGT415118fd3d5f4e9b9d28b91c53ffeedd</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 26,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+  &quot;request_key&quot;: &quot;CONTINUE_1&quot;,
+  &quot;purchase_id&quot;: 75,
+  &quot;po_sn&quot;: &quot;POcb28417876d94d0880da033359ae339d&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;quantity&quot;: 3,
+  &quot;accepted_quantity&quot;: 3,
+  &quot;posted_quantity&quot;: 3,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_0e01b73514cd447a8cef&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[验收] 继续退原剩余3件&quot;,
+  &quot;cancel_reason&quot;: &quot;&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+  &quot;funds_amount&quot;: 0.0,
+  &quot;funds_evidence&quot;: &quot;&quot;,
+  &quot;control_version&quot;: 2,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:04:09&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:04:10&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:04:09&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 28,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 26,
+      &quot;source_key&quot;: &quot;R55&quot;,
+      &quot;ticket_sn&quot;: &quot;CG89cc9b06571e4e67a62039de386574d2&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 仓库最终实出2件后结束，保留申请5件中的剩余占用&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 7.5,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 19,
+      &quot;message_id&quot;: &quot;PRI_CHILD_OUT&quot;,
+      &quot;source_log_id&quot;: 1124,
+      &quot;quantity&quot;: 3,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:10&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+            &quot;line_key&quot;: &quot;28&quot;,
+            &quot;quantity&quot;: 3,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 28,
+            &quot;quantity&quot;: 3
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRI_WAYBILL_CHILD_OUT&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+        &quot;message_id&quot;: &quot;PRI_CHILD_OUT&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_0e01b73514cd447a8cef&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRI_CHILD_OUT&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:10&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;承接原退仓 CGTdba9cd72eb894e9ea0d44752697a47eb 未出库数量，须独立审核&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;618290aa0273f3c845eb8834ac97d2586b42b8a594d629dea50400db904ed94b&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:04:09&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGT415118fd3d5f4e9b9d28b91c53ffeedd&quot;,
+        &quot;line_key&quot;: 28,
+        &quot;batch_id&quot;: 436,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_08&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;consumed_quantity&quot;: 3,
+        &quot;released_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_final_short&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 26,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;planned_amount&quot;: 7.5,
+      &quot;posted_amount&quot;: 7.5
+    }
+  ],
+  &quot;planned_amount&quot;: 7.5,
+  &quot;net_posted_amount&quot;: 7.5,
+  &quot;unshipped_quantity&quot;: 0,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 0,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+  &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+  &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 7.5,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [],
+  &quot;supplier_receipts&quot;: [],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [
+    {
+      &quot;id&quot;: 25,
+      &quot;return_sn&quot;: &quot;CGTdba9cd72eb894e9ea0d44752697a47eb&quot;
+    }
+  ],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-05"><h2>05 多笔退款3元加抵扣2.50元，重复凭证不重复计款 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>实退3件，原采购货值7.50元。</li><li>登记退款3元并重放；再登记抵扣2.50元。</li><li>累计5.50元，剩余待核对2元，库存不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 19,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_full&quot;,
+  &quot;purchase_id&quot;: 69,
+  &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;quantity&quot;: 3,
+  &quot;accepted_quantity&quot;: 3,
+  &quot;posted_quantity&quot;: 3,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+  &quot;cancel_reason&quot;: &quot;&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;MIXED&quot;,
+  &quot;funds_amount&quot;: 5.5,
+  &quot;funds_evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+  &quot;control_version&quot;: 4,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 20,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 19,
+      &quot;source_key&quot;: &quot;R49&quot;,
+      &quot;ticket_sn&quot;: &quot;CG8c5d045632ac43d688f57e8cf353f498&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 7.5,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 13,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+      &quot;source_log_id&quot;: 1100,
+      &quot;quantity&quot;: 3,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+            &quot;line_key&quot;: &quot;20&quot;,
+            &quot;quantity&quot;: 3,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 20,
+            &quot;quantity&quot;: 3
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253full&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CREDIT 凭证登记 2.5；[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REFUND 凭证登记 3；[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRQ_OUT_20261025230253_full&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;fa7e11b14e27271bb7b2ef3932dd54b172361e9a85e929cbe80a3d448e845492&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;line_key&quot;: 20,
+        &quot;batch_id&quot;: 429,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;consumed_quantity&quot;: 3,
+        &quot;released_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 19,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;planned_amount&quot;: 7.5,
+      &quot;posted_amount&quot;: 7.5
+    }
+  ],
+  &quot;planned_amount&quot;: 7.5,
+  &quot;net_posted_amount&quot;: 7.5,
+  &quot;unshipped_quantity&quot;: 0,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 0,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+  &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+  &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 2.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [
+    {
+      &quot;id&quot;: 2,
+      &quot;kind&quot;: &quot;CREDIT&quot;,
+      &quot;amount&quot;: 2.5,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;reversed_by&quot;: null
+    },
+    {
+      &quot;id&quot;: 1,
+      &quot;kind&quot;: &quot;REFUND&quot;,
+      &quot;amount&quot;: 3.0,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:11&quot;,
+      &quot;reversed_by&quot;: null
+    }
+  ],
+  &quot;supplier_receipts&quot;: [],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-06"><h2>06 超出剩余货值的款项登记被拒绝，原凭证及库存不变 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>在累计已登记5.50元后再尝试登记3元。</li><li>核对金额校验拒绝，原两笔凭证保留。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;rejection&quot;: &quot;(&#x27;/supplychain/purchaseReturns/19/funds&#x27;, &#x27;累计登记金额超过实际退仓净货值，请核对已收回商品或原凭证&#x27;)&quot;,
+  &quot;document&quot;: {
+    &quot;id&quot;: 19,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+    &quot;request_key&quot;: &quot;PRQ_20261025230253_full&quot;,
+    &quot;purchase_id&quot;: 69,
+    &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;quantity&quot;: 3,
+    &quot;accepted_quantity&quot;: 3,
+    &quot;posted_quantity&quot;: 3,
+    &quot;receipt_final&quot;: 1,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+    &quot;cancel_reason&quot;: &quot;&quot;,
+    &quot;stock_reserved&quot;: 1,
+    &quot;funds_state&quot;: &quot;MIXED&quot;,
+    &quot;funds_amount&quot;: 5.5,
+    &quot;funds_evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+    &quot;control_version&quot;: 4,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 2,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:10&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;测试区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 20,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 19,
+        &quot;source_key&quot;: &quot;R49&quot;,
+        &quot;ticket_sn&quot;: &quot;CG8c5d045632ac43d688f57e8cf353f498&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;source_quantity&quot;: 10,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 3,
+        &quot;posted_quantity&quot;: 3,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;reclaim_claimed_quantity&quot;: 0
+      }
+    ],
+    &quot;posted_amount&quot;: 7.5,
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 13,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+        &quot;source_log_id&quot;: 1100,
+        &quot;quantity&quot;: 3,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+        &quot;receipt&quot;: {
+          &quot;lines&quot;: [
+            {
+              &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+              &quot;line_key&quot;: &quot;20&quot;,
+              &quot;quantity&quot;: 3,
+              &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+              &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;
+            }
+          ],
+          &quot;deltas&quot;: [
+            {
+              &quot;line_key&quot;: 20,
+              &quot;quantity&quot;: 3
+            }
+          ],
+          &quot;status&quot;: &quot;DELIVERED&quot;,
+          &quot;waybill&quot;: &quot;PRQ_WB_20261025230253full&quot;,
+          &quot;complete&quot;: true,
+          &quot;packages&quot;: [],
+          &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+          &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+          &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+          &quot;carrier_code&quot;: &quot;SF&quot;,
+          &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+          &quot;outbound_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+          &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+          &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+        }
+      }
+    ],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;CREDIT 凭证登记 2.5；[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+      },
+      {
+        &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;REFUND 凭证登记 3；[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:11&quot;
+      },
+      {
+        &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRQ_OUT_20261025230253_full&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:11&quot;
+      },
+      {
+        &quot;action&quot;: &quot;APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+      }
+    ],
+    &quot;stock&quot;: {
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+      &quot;purpose&quot;: &quot;RETURN&quot;,
+      &quot;payload_hash&quot;: &quot;fa7e11b14e27271bb7b2ef3932dd54b172361e9a85e929cbe80a3d448e845492&quot;,
+      &quot;state&quot;: &quot;COMPLETED&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;,
+      &quot;exists&quot;: true,
+      &quot;lines&quot;: [
+        {
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+          &quot;line_key&quot;: 20,
+          &quot;batch_id&quot;: 429,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+          &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;quantity&quot;: 3,
+          &quot;consumed_quantity&quot;: 3,
+          &quot;released_quantity&quot;: 0,
+          &quot;recovered_quantity&quot;: 0,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+          &quot;transaction_price&quot;: 2.5
+        }
+      ]
+    },
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 19,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;accepted_quantity&quot;: 3,
+        &quot;posted_quantity&quot;: 3,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;planned_amount&quot;: 7.5,
+        &quot;posted_amount&quot;: 7.5
+      }
+    ],
+    &quot;planned_amount&quot;: 7.5,
+    &quot;net_posted_amount&quot;: 7.5,
+    &quot;unshipped_quantity&quot;: 0,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 0,
+    &quot;remaining_hold&quot;: 0,
+    &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+    &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+    &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+    &quot;primary_action&quot;: &quot;&quot;,
+    &quot;funds_remaining&quot;: 2.0,
+    &quot;funds_over_recorded&quot;: false,
+    &quot;funds&quot;: [
+      {
+        &quot;id&quot;: 2,
+        &quot;kind&quot;: &quot;CREDIT&quot;,
+        &quot;amount&quot;: 2.5,
+        &quot;original_id&quot;: null,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+        &quot;reversed_by&quot;: null
+      },
+      {
+        &quot;id&quot;: 1,
+        &quot;kind&quot;: &quot;REFUND&quot;,
+        &quot;amount&quot;: 3.0,
+        &quot;original_id&quot;: null,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:11&quot;,
+        &quot;reversed_by&quot;: null
+      }
+    ],
+    &quot;supplier_receipts&quot;: [],
+    &quot;reclaims&quot;: [],
+    &quot;parent_return&quot;: [],
+    &quot;child_returns&quot;: []
+  }
+}</pre></details></section><section id="case-07"><h2>07 未确认供应商拒收时不能直接创建收回入库 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>已实际退仓3件，但尚未登记供应商拒收。</li><li>尝试收回1件，业务校验拒绝且库存不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;rejection&quot;: &quot;(&#x27;/supplychain/purchaseReturns/19/reclaims&#x27;, &#x27;计划超过供应商已拒收且尚未安排收回的数量&#x27;)&quot;
+}</pre></details></section><section id="case-08"><h2>08 供应商签收1件、拒收1件、短收1件独立登记 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>逐笔登记真实签收、拒收和短收凭证。</li><li>重放拒收登记不重复增加拒收数量。</li><li>短收保留待核对，三类登记均不直接增加库存。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 19,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_full&quot;,
+  &quot;purchase_id&quot;: 69,
+  &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;quantity&quot;: 3,
+  &quot;accepted_quantity&quot;: 3,
+  &quot;posted_quantity&quot;: 3,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+  &quot;cancel_reason&quot;: &quot;&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;MIXED&quot;,
+  &quot;funds_amount&quot;: 5.5,
+  &quot;funds_evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+  &quot;control_version&quot;: 7,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 20,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 19,
+      &quot;source_key&quot;: &quot;R49&quot;,
+      &quot;ticket_sn&quot;: &quot;CG8c5d045632ac43d688f57e8cf353f498&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 1,
+      &quot;supplier_refused_quantity&quot;: 1,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 7.5,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 13,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+      &quot;source_log_id&quot;: 1100,
+      &quot;quantity&quot;: 3,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+            &quot;line_key&quot;: &quot;20&quot;,
+            &quot;quantity&quot;: 3,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 20,
+            &quot;quantity&quot;: 3
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253full&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;SUPPLIER_SHORT&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+    },
+    {
+      &quot;action&quot;: &quot;SUPPLIER_REFUSE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;SUPPLIER_ACCEPT&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CREDIT 凭证登记 2.5；[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REFUND 凭证登记 3；[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRQ_OUT_20261025230253_full&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;fa7e11b14e27271bb7b2ef3932dd54b172361e9a85e929cbe80a3d448e845492&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;line_key&quot;: 20,
+        &quot;batch_id&quot;: 429,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;consumed_quantity&quot;: 3,
+        &quot;released_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 19,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 1,
+      &quot;supplier_refused_quantity&quot;: 1,
+      &quot;planned_amount&quot;: 7.5,
+      &quot;posted_amount&quot;: 7.5
+    }
+  ],
+  &quot;planned_amount&quot;: 7.5,
+  &quot;net_posted_amount&quot;: 7.5,
+  &quot;unshipped_quantity&quot;: 0,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 0,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+  &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+  &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 2.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [
+    {
+      &quot;id&quot;: 2,
+      &quot;kind&quot;: &quot;CREDIT&quot;,
+      &quot;amount&quot;: 2.5,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;reversed_by&quot;: null
+    },
+    {
+      &quot;id&quot;: 1,
+      &quot;kind&quot;: &quot;REFUND&quot;,
+      &quot;amount&quot;: 3.0,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:11&quot;,
+      &quot;reversed_by&quot;: null
+    }
+  ],
+  &quot;supplier_receipts&quot;: [
+    {
+      &quot;id&quot;: 3,
+      &quot;decision&quot;: &quot;SHORT&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;decision&quot;: &quot;REFUSE&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 1,
+      &quot;decision&quot;: &quot;ACCEPT&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    }
+  ],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-09"><h2>09 拒收1件生成独立QTRK收回入库，受理阶段不加库存 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>按已拒收1件创建收回草稿，填写供应商实际退回快递及运单。</li><li>审核后自动调用奇门entryorder.create，类型QTRK。</li><li>仓库受理后等待实收，原出库3件保持。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=1">CGH168fdd33cbac4eb2b0e0f6b5b77b7f40</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 1,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;reclaim_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+  &quot;return_id&quot;: 19,
+  &quot;request_key&quot;: &quot;PRI_20261025230253_RECLAIM_FULL&quot;,
+  &quot;state&quot;: &quot;ACTIVE&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;inbound_mode&quot;: 1,
+  &quot;quantity&quot;: 1,
+  &quot;accepted_quantity&quot;: 0,
+  &quot;posted_quantity&quot;: 0,
+  &quot;receipt_final&quot;: 0,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMIN_ac590ef163974c618fea&quot;,
+  &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_FULL&quot;,
+  &quot;control_version&quot;: 3,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:11:52&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:11:52&quot;,
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 1,
+      &quot;return_line_id&quot;: 20,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    }
+  ],
+  &quot;receipt_lines&quot;: [],
+  &quot;events&quot;: []
+}</pre></details></section><section id="case-10"><h2>10 计划收回1件却回传2件，保留异常且不增加库存 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>仓库签名回传超过原收回计划。</li><li>核对回传待更正、实收0、入账0及原库存不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=1">CGH168fdd33cbac4eb2b0e0f6b5b77b7f40</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 1,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;reclaim_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+  &quot;return_id&quot;: 19,
+  &quot;request_key&quot;: &quot;PRI_20261025230253_RECLAIM_FULL&quot;,
+  &quot;state&quot;: &quot;ACTIVE&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;inbound_mode&quot;: 1,
+  &quot;quantity&quot;: 1,
+  &quot;accepted_quantity&quot;: 0,
+  &quot;posted_quantity&quot;: 0,
+  &quot;receipt_final&quot;: 0,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMIN_ac590ef163974c618fea&quot;,
+  &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_FULL&quot;,
+  &quot;control_version&quot;: 3,
+  &quot;last_error&quot;: &quot;累计收回超过原计划，请仓库更正回传&quot;,
+  &quot;receipt_review_pending&quot;: 1,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:11:52&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:11:53&quot;,
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 1,
+      &quot;return_line_id&quot;: 20,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    }
+  ],
+  &quot;receipt_lines&quot;: [],
+  &quot;events&quot;: []
+}</pre></details></section><section id="case-11"><h2>11 正品退仓后实收为次品1件，按质检入账且重复回传不重复增加 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>仓库更正回传原SKU原批次，实际质量为次品CC。</li><li>自动新增收回入库流水，原出库记录保留。</li><li>核对总库存8、可用7、不可售1；重放原消息结果不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>7</td><td>0</td><td>0</td><td>1</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=1">CGH168fdd33cbac4eb2b0e0f6b5b77b7f40</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;reclaim&quot;: {
+    &quot;id&quot;: 1,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;reclaim_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+    &quot;return_id&quot;: 19,
+    &quot;request_key&quot;: &quot;PRI_20261025230253_RECLAIM_FULL&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;inbound_mode&quot;: 1,
+    &quot;quantity&quot;: 1,
+    &quot;accepted_quantity&quot;: 1,
+    &quot;posted_quantity&quot;: 1,
+    &quot;receipt_final&quot;: 1,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMIN_ac590ef163974c618fea&quot;,
+    &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_FULL&quot;,
+    &quot;control_version&quot;: 3,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;attempts&quot;: 3,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:11:52&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:11:54&quot;,
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 1,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;reclaim_id&quot;: 1,
+        &quot;return_line_id&quot;: 20,
+        &quot;quantity&quot;: 1,
+        &quot;accepted_quantity&quot;: 1,
+        &quot;posted_quantity&quot;: 1,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;stock_unit&quot;: &quot;件&quot;
+      }
+    ],
+    &quot;receipt_lines&quot;: [
+      {
+        &quot;id&quot;: 1,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;reclaim_id&quot;: 1,
+        &quot;event_id&quot;: 1,
+        &quot;reclaim_line_id&quot;: 1,
+        &quot;return_line_id&quot;: 20,
+        &quot;inventory_type&quot;: &quot;CP&quot;,
+        &quot;quantity&quot;: 1,
+        &quot;origin_relation&quot;: &quot;PURCHASE_RECLAIM_1&quot;,
+        &quot;posted&quot;: 1,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;
+      }
+    ],
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 1,
+        &quot;message_id&quot;: &quot;PRI_IN_REAL_RECLAIM&quot;,
+        &quot;source_log_id&quot;: 1127,
+        &quot;quantity&quot;: 1,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:11:53&quot;
+      }
+    ]
+  },
+  &quot;parent&quot;: {
+    &quot;id&quot;: 19,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+    &quot;request_key&quot;: &quot;PRQ_20261025230253_full&quot;,
+    &quot;purchase_id&quot;: 69,
+    &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;quantity&quot;: 3,
+    &quot;accepted_quantity&quot;: 3,
+    &quot;posted_quantity&quot;: 3,
+    &quot;receipt_final&quot;: 1,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+    &quot;cancel_reason&quot;: &quot;&quot;,
+    &quot;stock_reserved&quot;: 1,
+    &quot;funds_state&quot;: &quot;MIXED&quot;,
+    &quot;funds_amount&quot;: 5.5,
+    &quot;funds_evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+    &quot;control_version&quot;: 7,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 2,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:10&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;测试区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 20,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 19,
+        &quot;source_key&quot;: &quot;R49&quot;,
+        &quot;ticket_sn&quot;: &quot;CG8c5d045632ac43d688f57e8cf353f498&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;source_quantity&quot;: 10,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 3,
+        &quot;posted_quantity&quot;: 3,
+        &quot;supplier_received_quantity&quot;: 1,
+        &quot;supplier_refused_quantity&quot;: 1,
+        &quot;recovered_quantity&quot;: 1,
+        &quot;reclaim_claimed_quantity&quot;: 1
+      }
+    ],
+    &quot;posted_amount&quot;: 7.5,
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 13,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+        &quot;source_log_id&quot;: 1100,
+        &quot;quantity&quot;: 3,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+        &quot;receipt&quot;: {
+          &quot;lines&quot;: [
+            {
+              &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+              &quot;line_key&quot;: &quot;20&quot;,
+              &quot;quantity&quot;: 3,
+              &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+              &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;
+            }
+          ],
+          &quot;deltas&quot;: [
+            {
+              &quot;line_key&quot;: 20,
+              &quot;quantity&quot;: 3
+            }
+          ],
+          &quot;status&quot;: &quot;DELIVERED&quot;,
+          &quot;waybill&quot;: &quot;PRQ_WB_20261025230253full&quot;,
+          &quot;complete&quot;: true,
+          &quot;packages&quot;: [],
+          &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+          &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+          &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+          &quot;carrier_code&quot;: &quot;SF&quot;,
+          &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+          &quot;outbound_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+          &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+          &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+        }
+      }
+    ],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;RECLAIM_RECEIPT&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；确认实收增量 1&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:11:53&quot;
+      },
+      {
+        &quot;action&quot;: &quot;RECLAIM_RETRY&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:11:52&quot;
+      },
+      {
+        &quot;action&quot;: &quot;RECLAIM_APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；审核后自动下发，按仓库实收恢复库存&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+      },
+      {
+        &quot;action&quot;: &quot;RECLAIM_CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+      },
+      {
+        &quot;action&quot;: &quot;SUPPLIER_SHORT&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+      },
+      {
+        &quot;action&quot;: &quot;SUPPLIER_REFUSE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+      },
+      {
+        &quot;action&quot;: &quot;SUPPLIER_ACCEPT&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+      },
+      {
+        &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;CREDIT 凭证登记 2.5；[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+      },
+      {
+        &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;REFUND 凭证登记 3；[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:04:11&quot;
+      },
+      {
+        &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRQ_OUT_20261025230253_full&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:11&quot;
+      },
+      {
+        &quot;action&quot;: &quot;APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+      }
+    ],
+    &quot;stock&quot;: {
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+      &quot;purpose&quot;: &quot;RETURN&quot;,
+      &quot;payload_hash&quot;: &quot;fa7e11b14e27271bb7b2ef3932dd54b172361e9a85e929cbe80a3d448e845492&quot;,
+      &quot;state&quot;: &quot;COMPLETED&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;,
+      &quot;exists&quot;: true,
+      &quot;lines&quot;: [
+        {
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+          &quot;line_key&quot;: 20,
+          &quot;batch_id&quot;: 429,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+          &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;quantity&quot;: 3,
+          &quot;consumed_quantity&quot;: 3,
+          &quot;released_quantity&quot;: 0,
+          &quot;recovered_quantity&quot;: 1,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+          &quot;transaction_price&quot;: 2.5
+        }
+      ]
+    },
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 19,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;accepted_quantity&quot;: 3,
+        &quot;posted_quantity&quot;: 3,
+        &quot;supplier_received_quantity&quot;: 1,
+        &quot;supplier_refused_quantity&quot;: 1,
+        &quot;planned_amount&quot;: 7.5,
+        &quot;posted_amount&quot;: 7.5
+      }
+    ],
+    &quot;planned_amount&quot;: 7.5,
+    &quot;recovered_amount&quot;: 2.5,
+    &quot;recovered_quantity&quot;: 1,
+    &quot;net_posted_amount&quot;: 5.0,
+    &quot;unshipped_quantity&quot;: 0,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 0,
+    &quot;remaining_hold&quot;: 0,
+    &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+    &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+    &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+    &quot;primary_action&quot;: &quot;&quot;,
+    &quot;funds_remaining&quot;: 0,
+    &quot;funds_over_recorded&quot;: true,
+    &quot;funds&quot;: [
+      {
+        &quot;id&quot;: 2,
+        &quot;kind&quot;: &quot;CREDIT&quot;,
+        &quot;amount&quot;: 2.5,
+        &quot;original_id&quot;: null,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+        &quot;reversed_by&quot;: null
+      },
+      {
+        &quot;id&quot;: 1,
+        &quot;kind&quot;: &quot;REFUND&quot;,
+        &quot;amount&quot;: 3.0,
+        &quot;original_id&quot;: null,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:11&quot;,
+        &quot;reversed_by&quot;: null
+      }
+    ],
+    &quot;supplier_receipts&quot;: [
+      {
+        &quot;id&quot;: 3,
+        &quot;decision&quot;: &quot;SHORT&quot;,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+        &quot;lines&quot;: [
+          {
+            &quot;line_id&quot;: 20,
+            &quot;quantity&quot;: 1
+          }
+        ]
+      },
+      {
+        &quot;id&quot;: 2,
+        &quot;decision&quot;: &quot;REFUSE&quot;,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+        &quot;lines&quot;: [
+          {
+            &quot;line_id&quot;: 20,
+            &quot;quantity&quot;: 1
+          }
+        ]
+      },
+      {
+        &quot;id&quot;: 1,
+        &quot;decision&quot;: &quot;ACCEPT&quot;,
+        &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+        &quot;lines&quot;: [
+          {
+            &quot;line_id&quot;: 20,
+            &quot;quantity&quot;: 1
+          }
+        ]
+      }
+    ],
+    &quot;reclaims&quot;: [
+      {
+        &quot;id&quot;: 1,
+        &quot;reclaim_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+        &quot;state&quot;: &quot;COMPLETED&quot;,
+        &quot;quantity&quot;: 1,
+        &quot;accepted_quantity&quot;: 1,
+        &quot;posted_quantity&quot;: 1,
+        &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+        &quot;receipt_final&quot;: 1,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_FULL&quot;
+      }
+    ],
+    &quot;parent_return&quot;: [],
+    &quot;child_returns&quot;: []
+  }
+}</pre></details></section><section id="case-12"><h2>12 收回后款项超出净货值，冲销原凭证并重新登记 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>原登记5.50元，收回1件后净退仓货值降为5元，页面提示核对。</li><li>冲销原退款3元，原记录保留；再登记退款2.50元。</li><li>累计有效凭证5元，与净货值一致。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>7</td><td>0</td><td>0</td><td>1</td></tr><tr><td>本步骤后</td><td>8</td><td>7</td><td>0</td><td>0</td><td>1</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 19,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_full&quot;,
+  &quot;purchase_id&quot;: 69,
+  &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;quantity&quot;: 3,
+  &quot;accepted_quantity&quot;: 3,
+  &quot;posted_quantity&quot;: 3,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+  &quot;cancel_reason&quot;: &quot;&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;MIXED&quot;,
+  &quot;funds_amount&quot;: 5.0,
+  &quot;funds_evidence&quot;: &quot;[退仓迭代TEST] NEW_REFUND 已核对凭证，未调用银行&quot;,
+  &quot;control_version&quot;: 9,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:10&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 20,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 19,
+      &quot;source_key&quot;: &quot;R49&quot;,
+      &quot;ticket_sn&quot;: &quot;CG8c5d045632ac43d688f57e8cf353f498&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 1,
+      &quot;supplier_refused_quantity&quot;: 1,
+      &quot;recovered_quantity&quot;: 1,
+      &quot;reclaim_claimed_quantity&quot;: 1
+    }
+  ],
+  &quot;posted_amount&quot;: 7.5,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 13,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+      &quot;source_log_id&quot;: 1100,
+      &quot;quantity&quot;: 3,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+            &quot;line_key&quot;: &quot;20&quot;,
+            &quot;quantity&quot;: 3,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 20,
+            &quot;quantity&quot;: 3
+          }
+        ],
+        &quot;status&quot;: &quot;DELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253full&quot;,
+        &quot;complete&quot;: true,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_full&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:11&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REFUND 凭证登记 2.5；[退仓迭代TEST] NEW_REFUND 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:11:55&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_REVERSAL&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REVERSAL 凭证登记 -3.00；[退仓迭代TEST] REVERSE 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:11:55&quot;
+    },
+    {
+      &quot;action&quot;: &quot;RECLAIM_RECEIPT&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；确认实收增量 1&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:11:53&quot;
+    },
+    {
+      &quot;action&quot;: &quot;RECLAIM_RETRY&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:11:52&quot;
+    },
+    {
+      &quot;action&quot;: &quot;RECLAIM_APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；审核后自动下发，按仓库实收恢复库存&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+    },
+    {
+      &quot;action&quot;: &quot;RECLAIM_CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40；[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+    },
+    {
+      &quot;action&quot;: &quot;SUPPLIER_SHORT&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:13&quot;
+    },
+    {
+      &quot;action&quot;: &quot;SUPPLIER_REFUSE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;SUPPLIER_ACCEPT&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;CREDIT 凭证登记 2.5；[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:12&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REFUND 凭证登记 3；[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:04:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 3；原消息 PRQ_OUT_20261025230253_full&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:11&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;fa7e11b14e27271bb7b2ef3932dd54b172361e9a85e929cbe80a3d448e845492&quot;,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:10&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;line_key&quot;: 20,
+        &quot;batch_id&quot;: 429,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;consumed_quantity&quot;: 3,
+        &quot;released_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 1,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 19,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 3,
+      &quot;accepted_quantity&quot;: 3,
+      &quot;posted_quantity&quot;: 3,
+      &quot;supplier_received_quantity&quot;: 1,
+      &quot;supplier_refused_quantity&quot;: 1,
+      &quot;planned_amount&quot;: 7.5,
+      &quot;posted_amount&quot;: 7.5
+    }
+  ],
+  &quot;planned_amount&quot;: 7.5,
+  &quot;recovered_amount&quot;: 2.5,
+  &quot;recovered_quantity&quot;: 1,
+  &quot;net_posted_amount&quot;: 5.0,
+  &quot;unshipped_quantity&quot;: 0,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 0,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+  &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+  &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 0.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [
+    {
+      &quot;id&quot;: 4,
+      &quot;kind&quot;: &quot;REFUND&quot;,
+      &quot;amount&quot;: 2.5,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] NEW_REFUND 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+      &quot;reversed_by&quot;: null
+    },
+    {
+      &quot;id&quot;: 3,
+      &quot;kind&quot;: &quot;REVERSAL&quot;,
+      &quot;amount&quot;: -3.0,
+      &quot;original_id&quot;: 1,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] REVERSE 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+      &quot;reversed_by&quot;: null
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;kind&quot;: &quot;CREDIT&quot;,
+      &quot;amount&quot;: 2.5,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] CREDIT_25 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;reversed_by&quot;: null
+    },
+    {
+      &quot;id&quot;: 1,
+      &quot;kind&quot;: &quot;REFUND&quot;,
+      &quot;amount&quot;: 3.0,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] REFUND_3 已核对凭证，未调用银行&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:11&quot;,
+      &quot;reversed_by&quot;: 3
+    }
+  ],
+  &quot;supplier_receipts&quot;: [
+    {
+      &quot;id&quot;: 3,
+      &quot;decision&quot;: &quot;SHORT&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_SHORT 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:13&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;decision&quot;: &quot;REFUSE&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_REFUSE 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 1,
+      &quot;decision&quot;: &quot;ACCEPT&quot;,
+      &quot;evidence&quot;: &quot;[退仓迭代TEST] SUP_ACCEPT 供应商实际结果凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:04:12&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;line_id&quot;: 20,
+          &quot;quantity&quot;: 1
+        }
+      ]
+    }
+  ],
+  &quot;reclaims&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;reclaim_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+      &quot;state&quot;: &quot;COMPLETED&quot;,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 1,
+      &quot;posted_quantity&quot;: 1,
+      &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+      &quot;receipt_final&quot;: 1,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;carrier_code&quot;: &quot;SF&quot;,
+      &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_FULL&quot;
+    }
+  ],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-13"><h2>13 收回入库形成新的真实来源，可按原成本再次退仓 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=19">CGT7a262217d64f4ce3bc72ccbae8ed40ac</a><br>SKU：PRQ_20261025230253_02</p><ol><li>从收回实收来源S选择次品1件，原采购成本2.50元。</li><li>新退仓审核后按此新来源占用并实出。</li><li>原采购累计入账10、退仓出库4、拒收收回1，净入库7，与库存一致。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>7</td><td>0</td><td>0</td><td>1</td></tr><tr><td>本步骤后</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=27">CGT531f3f506d014a3da789434e2b4a8f01</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;source&quot;: {
+    &quot;source_key&quot;: &quot;S1&quot;,
+    &quot;ticket_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+    &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+    &quot;stock_unit&quot;: &quot;件&quot;,
+    &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+    &quot;good&quot;: 0,
+    &quot;bad&quot;: 1,
+    &quot;purchase_price&quot;: 2.5,
+    &quot;origin_relation&quot;: &quot;PURCHASE_RECLAIM_1&quot;,
+    &quot;inventory_type&quot;: &quot;CP&quot;,
+    &quot;source_quantity&quot;: 1,
+    &quot;claimed_quantity&quot;: 0,
+    &quot;returned_quantity&quot;: 0,
+    &quot;other_claimed_quantity&quot;: 0,
+    &quot;remaining_quantity&quot;: 1,
+    &quot;batch_free&quot;: 1,
+    &quot;batch_id&quot;: 429,
+    &quot;selectable_quantity&quot;: 1
+  },
+  &quot;second_return&quot;: {
+    &quot;id&quot;: 27,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+    &quot;request_key&quot;: &quot;PRI_20261025230253_SECOND_OUT&quot;,
+    &quot;purchase_id&quot;: 69,
+    &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;COMPLETED&quot;,
+    &quot;quantity&quot;: 1,
+    &quot;accepted_quantity&quot;: 1,
+    &quot;posted_quantity&quot;: 1,
+    &quot;receipt_final&quot;: 1,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMOUT_f66df861ae184dee9e87&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[退仓迭代TEST] 按新收回来源再次退仓&quot;,
+    &quot;cancel_reason&quot;: &quot;&quot;,
+    &quot;stock_reserved&quot;: 1,
+    &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+    &quot;funds_amount&quot;: 0.0,
+    &quot;funds_evidence&quot;: &quot;&quot;,
+    &quot;control_version&quot;: 2,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:11:57&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 2,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:11:55&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;西湖区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;供应商实际收货地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 29,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 27,
+        &quot;source_key&quot;: &quot;S1&quot;,
+        &quot;ticket_sn&quot;: &quot;CGH168fdd33cbac4eb2b0e0f6b5b77b7f40&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 真实仓退供3件并自动扣账&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+        &quot;inventory_type&quot;: &quot;CP&quot;,
+        &quot;quantity&quot;: 1,
+        &quot;source_quantity&quot;: 1,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 1,
+        &quot;posted_quantity&quot;: 1,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;reclaim_claimed_quantity&quot;: 0
+      }
+    ],
+    &quot;posted_amount&quot;: 2.5,
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 20,
+        &quot;message_id&quot;: &quot;PRI_SECOND_OUT&quot;,
+        &quot;source_log_id&quot;: 1130,
+        &quot;quantity&quot;: 1,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:11:56&quot;,
+        &quot;receipt&quot;: {
+          &quot;lines&quot;: [
+            {
+              &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+              &quot;line_key&quot;: &quot;29&quot;,
+              &quot;quantity&quot;: 1,
+              &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+              &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+              &quot;inventory_type&quot;: &quot;CP&quot;
+            }
+          ],
+          &quot;deltas&quot;: [
+            {
+              &quot;line_key&quot;: 29,
+              &quot;quantity&quot;: 1
+            }
+          ],
+          &quot;status&quot;: &quot;DELIVERED&quot;,
+          &quot;waybill&quot;: &quot;PRI_WAYBILL_SECOND_OUT&quot;,
+          &quot;complete&quot;: true,
+          &quot;packages&quot;: [],
+          &quot;return_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+          &quot;message_id&quot;: &quot;PRI_SECOND_OUT&quot;,
+          &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+          &quot;carrier_code&quot;: &quot;SF&quot;,
+          &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+          &quot;outbound_time&quot;: &quot;&quot;,
+          &quot;external_order&quot;: &quot;SIMOUT_f66df861ae184dee9e87&quot;,
+          &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+        }
+      }
+    ],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;确认出库增量 1；原消息 PRI_SECOND_OUT&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:11:56&quot;
+      },
+      {
+        &quot;action&quot;: &quot;APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:11:55&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:11:55&quot;
+      }
+    ],
+    &quot;stock&quot;: {
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;document_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+      &quot;purpose&quot;: &quot;RETURN&quot;,
+      &quot;payload_hash&quot;: &quot;3474cc1a0a4599722032f42d3b0bff02cb0ca48d1eecc3f05875484993a422c7&quot;,
+      &quot;state&quot;: &quot;COMPLETED&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:11:55&quot;,
+      &quot;exists&quot;: true,
+      &quot;lines&quot;: [
+        {
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;document_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+          &quot;line_key&quot;: 29,
+          &quot;batch_id&quot;: 429,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+          &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+          &quot;inventory_type&quot;: &quot;CP&quot;,
+          &quot;quantity&quot;: 1,
+          &quot;consumed_quantity&quot;: 1,
+          &quot;released_quantity&quot;: 0,
+          &quot;recovered_quantity&quot;: 0,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_full&quot;,
+          &quot;transaction_price&quot;: 2.5
+        }
+      ]
+    },
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 27,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 1,
+        &quot;accepted_quantity&quot;: 1,
+        &quot;posted_quantity&quot;: 1,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;planned_amount&quot;: 2.5,
+        &quot;posted_amount&quot;: 2.5
+      }
+    ],
+    &quot;planned_amount&quot;: 2.5,
+    &quot;net_posted_amount&quot;: 2.5,
+    &quot;unshipped_quantity&quot;: 0,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 0,
+    &quot;remaining_hold&quot;: 0,
+    &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+    &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+    &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+    &quot;primary_action&quot;: &quot;&quot;,
+    &quot;funds_remaining&quot;: 2.5,
+    &quot;funds_over_recorded&quot;: false,
+    &quot;funds&quot;: [],
+    &quot;supplier_receipts&quot;: [],
+    &quot;reclaims&quot;: [],
+    &quot;parent_return&quot;: [],
+    &quot;child_returns&quot;: []
+  },
+  &quot;purchase_projection&quot;: {
+    &quot;rows&quot;: [
+      {
+        &quot;id&quot;: 27,
+        &quot;return_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+        &quot;purchase_id&quot;: 69,
+        &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+        &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;outbound_mode&quot;: 1,
+        &quot;state&quot;: &quot;COMPLETED&quot;,
+        &quot;quantity&quot;: 1,
+        &quot;accepted_quantity&quot;: 1,
+        &quot;posted_quantity&quot;: 1,
+        &quot;receipt_final&quot;: 1,
+        &quot;receipt_review_pending&quot;: 0,
+        &quot;stock_reserved&quot;: 1,
+        &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_f66df861ae184dee9e87&quot;,
+        &quot;funds_state&quot;: &quot;UNRECORDED&quot;,
+        &quot;funds_amount&quot;: 0.0,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+        &quot;update_time&quot;: &quot;2026-10-25 23:11:57&quot;,
+        &quot;latestInteraction&quot;: {
+          &quot;id&quot;: 1130,
+          &quot;ticket_sn&quot;: &quot;CGT531f3f506d014a3da789434e2b4a8f01&quot;,
+          &quot;action&quot;: &quot;PURCHASE_RETURN_RECEIPT&quot;,
+          &quot;direction&quot;: &quot;IN&quot;,
+          &quot;result&quot;: &quot;SUCCESS&quot;,
+          &quot;request_id&quot;: &quot;1676e33f-0d2b-4bb0-accb-a9cd11754225&quot;,
+          &quot;error_info&quot;: &quot;&quot;,
+          &quot;result_summary&quot;: &quot;&quot;,
+          &quot;duration_ms&quot;: 50,
+          &quot;create_time&quot;: &quot;2026-10-25 23:11:56&quot;
+        },
+        &quot;warehouseLabel&quot;: &quot;仓库已受理&quot;,
+        &quot;quantity_summary&quot;: [
+          {
+            &quot;return_id&quot;: 27,
+            &quot;stock_unit&quot;: &quot;件&quot;,
+            &quot;quantity&quot;: 1,
+            &quot;accepted_quantity&quot;: 1,
+            &quot;posted_quantity&quot;: 1,
+            &quot;supplier_received_quantity&quot;: 0,
+            &quot;supplier_refused_quantity&quot;: 0,
+            &quot;planned_amount&quot;: 2.5,
+            &quot;posted_amount&quot;: 2.5
+          }
+        ],
+        &quot;posted_amount&quot;: 2.5,
+        &quot;planned_amount&quot;: 2.5,
+        &quot;net_posted_amount&quot;: 2.5,
+        &quot;unshipped_quantity&quot;: 0,
+        &quot;pending_post_quantity&quot;: 0,
+        &quot;released_quantity&quot;: 0,
+        &quot;remaining_hold&quot;: 0,
+        &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+        &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+        &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+        &quot;primary_action&quot;: &quot;&quot;,
+        &quot;funds_remaining&quot;: 2.5,
+        &quot;funds_over_recorded&quot;: false
+      },
+      {
+        &quot;id&quot;: 19,
+        &quot;return_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+        &quot;purchase_id&quot;: 69,
+        &quot;po_sn&quot;: &quot;PO459273f6c938499689d5a62451b74abe&quot;,
+        &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;outbound_mode&quot;: 1,
+        &quot;state&quot;: &quot;COMPLETED&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;accepted_quantity&quot;: 3,
+        &quot;posted_quantity&quot;: 3,
+        &quot;receipt_final&quot;: 1,
+        &quot;receipt_review_pending&quot;: 0,
+        &quot;stock_reserved&quot;: 1,
+        &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_081c291a11df4880b1b4&quot;,
+        &quot;funds_state&quot;: &quot;MIXED&quot;,
+        &quot;funds_amount&quot;: 5.0,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:03:10&quot;,
+        &quot;update_time&quot;: &quot;2026-10-25 23:11:55&quot;,
+        &quot;latestInteraction&quot;: {
+          &quot;id&quot;: 1100,
+          &quot;ticket_sn&quot;: &quot;CGT7a262217d64f4ce3bc72ccbae8ed40ac&quot;,
+          &quot;action&quot;: &quot;PURCHASE_RETURN_RECEIPT&quot;,
+          &quot;direction&quot;: &quot;IN&quot;,
+          &quot;result&quot;: &quot;SUCCESS&quot;,
+          &quot;request_id&quot;: &quot;7bb8fefb-5b06-4274-a5ec-49d8f6b01506&quot;,
+          &quot;error_info&quot;: &quot;&quot;,
+          &quot;result_summary&quot;: &quot;&quot;,
+          &quot;duration_ms&quot;: 23,
+          &quot;create_time&quot;: &quot;2026-10-25 23:03:11&quot;
+        },
+        &quot;warehouseLabel&quot;: &quot;仓库已受理&quot;,
+        &quot;quantity_summary&quot;: [
+          {
+            &quot;return_id&quot;: 19,
+            &quot;stock_unit&quot;: &quot;件&quot;,
+            &quot;quantity&quot;: 3,
+            &quot;accepted_quantity&quot;: 3,
+            &quot;posted_quantity&quot;: 3,
+            &quot;supplier_received_quantity&quot;: 1,
+            &quot;supplier_refused_quantity&quot;: 1,
+            &quot;planned_amount&quot;: 7.5,
+            &quot;posted_amount&quot;: 7.5
+          }
+        ],
+        &quot;posted_amount&quot;: 7.5,
+        &quot;planned_amount&quot;: 7.5,
+        &quot;recovered_amount&quot;: 2.5,
+        &quot;recovered_quantity&quot;: 1,
+        &quot;net_posted_amount&quot;: 5.0,
+        &quot;unshipped_quantity&quot;: 0,
+        &quot;pending_post_quantity&quot;: 0,
+        &quot;released_quantity&quot;: 0,
+        &quot;remaining_hold&quot;: 0,
+        &quot;progress_code&quot;: &quot;COMPLETED&quot;,
+        &quot;progress_label&quot;: &quot;全部退仓完成&quot;,
+        &quot;progress_hint&quot;: &quot;全部申请数量已实际出库并扣账，供应商收货和款项单独跟踪。&quot;,
+        &quot;primary_action&quot;: &quot;&quot;,
+        &quot;funds_remaining&quot;: 0.0,
+        &quot;funds_over_recorded&quot;: false
+      }
+    ],
+    &quot;total&quot;: 2,
+    &quot;returned_by_sku&quot;: [
+      {
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 4
+      }
+    ],
+    &quot;recovered_by_sku&quot;: [
+      {
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_02&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 1
+      }
+    ]
+  }
+}</pre></details></section><section id="case-14"><h2>14 正次品混合收回最终短收，只按实收2件入账 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=22">CGT7ac1e348672846d29a671bff5275f7dd</a><br>SKU：PRQ_20261025230253_05</p><ol><li>原退仓正品2、次品1均已实际出库。</li><li>供应商拒收3件，计划收回3件；仓库最终实收正品1、次品1。</li><li>按各实际质量恢复2件，停止剩余1件计划，不虚增库存。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>2</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>本步骤后</td><td>4</td><td>2</td><td>0</td><td>0</td><td>2</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=2">CGH6215677741374dbd99c82389d8135bfc</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 2,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;reclaim_sn&quot;: &quot;CGH6215677741374dbd99c82389d8135bfc&quot;,
+  &quot;return_id&quot;: 22,
+  &quot;request_key&quot;: &quot;PRI_20261025230253_MIX_RECLAIM&quot;,
+  &quot;state&quot;: &quot;CANCELED&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;inbound_mode&quot;: 1,
+  &quot;quantity&quot;: 3,
+  &quot;accepted_quantity&quot;: 2,
+  &quot;posted_quantity&quot;: 2,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMIN_b32b0fa35f774575bd2c&quot;,
+  &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;waybill&quot;: &quot;PRI_BACK_MIX_RECLAIM&quot;,
+  &quot;control_version&quot;: 3,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;attempts&quot;: 3,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:11:59&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:11:58&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:11:59&quot;,
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 2,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 2,
+      &quot;return_line_id&quot;: 23,
+      &quot;quantity&quot;: 2,
+      &quot;accepted_quantity&quot;: 1,
+      &quot;posted_quantity&quot;: 1,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_05&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 同一退仓单包含正品2件及次品1件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_mixed&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    },
+    {
+      &quot;id&quot;: 3,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 2,
+      &quot;return_line_id&quot;: 24,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 1,
+      &quot;posted_quantity&quot;: 1,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_05&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 同一退仓单包含正品2件及次品1件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_mixed&quot;,
+      &quot;inventory_type&quot;: &quot;CP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    }
+  ],
+  &quot;receipt_lines&quot;: [
+    {
+      &quot;id&quot;: 3,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 2,
+      &quot;event_id&quot;: 2,
+      &quot;reclaim_line_id&quot;: 3,
+      &quot;return_line_id&quot;: 24,
+      &quot;inventory_type&quot;: &quot;CP&quot;,
+      &quot;quantity&quot;: 1,
+      &quot;origin_relation&quot;: &quot;PURCHASE_RECLAIM_3&quot;,
+      &quot;posted&quot;: 1,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_05&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_mixed&quot;
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 2,
+      &quot;event_id&quot;: 2,
+      &quot;reclaim_line_id&quot;: 2,
+      &quot;return_line_id&quot;: 23,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 1,
+      &quot;origin_relation&quot;: &quot;PURCHASE_RECLAIM_2&quot;,
+      &quot;posted&quot;: 1,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_05&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_mixed&quot;
+    }
+  ],
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 2,
+      &quot;message_id&quot;: &quot;PRI_IN_MIX_IN&quot;,
+      &quot;source_log_id&quot;: 1132,
+      &quot;quantity&quot;: 2,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:11:58&quot;
+    }
+  ]
+}</pre></details></section><section id="case-15"><h2>15 虚拟仓拒收收回审核后自动入账，保持原出库记录 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=18">CGT37aa03c5a696409bb7093f88f27c3fdc</a><br>SKU：PRQ_20261025230253_01</p><ol><li>原虚拟退仓3件，登记供应商拒收2件。</li><li>创建并审核独立收回草稿。</li><li>自动虚拟入库2件，总库存由7恢复9，无外部仓库回传要求。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>7</td><td>7</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>9</td><td>9</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=3">CGH9abb287af3364c80ae410f78ca480048</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 3,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;reclaim_sn&quot;: &quot;CGH9abb287af3364c80ae410f78ca480048&quot;,
+  &quot;return_id&quot;: 18,
+  &quot;request_key&quot;: &quot;PRI_20261025230253_VIRTUAL_RECLAIM&quot;,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;store_code&quot;: &quot;PRQ_VIRTUAL_20261025230253&quot;,
+  &quot;inbound_mode&quot;: 2,
+  &quot;quantity&quot;: 2,
+  &quot;accepted_quantity&quot;: 2,
+  &quot;posted_quantity&quot;: 2,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;PENDING&quot;,
+  &quot;external_order&quot;: &quot;&quot;,
+  &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;waybill&quot;: &quot;PRI_BACK_VIRTUAL_RECLAIM&quot;,
+  &quot;control_version&quot;: 2,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;attempts&quot;: 2,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:12:00&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:12:00&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:12:00&quot;,
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 4,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 3,
+      &quot;return_line_id&quot;: 19,
+      &quot;quantity&quot;: 2,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_01&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 虚拟仓退供3件，审核后自动扣账&quot;,
+      &quot;batch_code&quot;: &quot;B8e720a9c4dff4f26a03ffca6bcee8441&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    }
+  ],
+  &quot;receipt_lines&quot;: [
+    {
+      &quot;id&quot;: 4,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 3,
+      &quot;event_id&quot;: 3,
+      &quot;reclaim_line_id&quot;: 4,
+      &quot;return_line_id&quot;: 19,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 2,
+      &quot;origin_relation&quot;: &quot;PURCHASE_RECLAIM_4&quot;,
+      &quot;posted&quot;: 1,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_01&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;B8e720a9c4dff4f26a03ffca6bcee8441&quot;
+    }
+  ],
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 3,
+      &quot;message_id&quot;: &quot;VIRTUAL_FINAL&quot;,
+      &quot;source_log_id&quot;: 0,
+      &quot;quantity&quot;: 2,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:12:00&quot;
+    }
+  ]
+}</pre></details></section><section id="case-16"><h2>16 仓库最终实收0件正常收尾，不产生库存增量 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=21">CGTd39d8008cf9f4852a56e5745416f1066</a><br>SKU：PRQ_20261025230253_04</p><ol><li>供应商拒收1件并安排收回。</li><li>仓库签名最终确认实收0件。</li><li>记录最终事实但不调用空库存入账，停止后释放收回计划额度。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?reclaimId=4">CGH70471936667945a58b166237c7cb1087</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 4,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;reclaim_sn&quot;: &quot;CGH70471936667945a58b166237c7cb1087&quot;,
+  &quot;return_id&quot;: 21,
+  &quot;request_key&quot;: &quot;PRI_20261025230253_ZERO_RECLAIM&quot;,
+  &quot;state&quot;: &quot;CANCELED&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;inbound_mode&quot;: 1,
+  &quot;quantity&quot;: 1,
+  &quot;accepted_quantity&quot;: 0,
+  &quot;posted_quantity&quot;: 0,
+  &quot;receipt_final&quot;: 1,
+  &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+  &quot;external_order&quot;: &quot;SIMIN_69daad1f7c314a5fb116&quot;,
+  &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;waybill&quot;: &quot;PRI_BACK_ZERO_RECLAIM&quot;,
+  &quot;control_version&quot;: 3,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;attempts&quot;: 3,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:12:02&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:12:01&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:12:02&quot;,
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 5,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_id&quot;: 4,
+      &quot;return_line_id&quot;: 22,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_04&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 5件分两次出库2件加3件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_split&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;stock_unit&quot;: &quot;件&quot;
+    }
+  ],
+  &quot;receipt_lines&quot;: [],
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 4,
+      &quot;message_id&quot;: &quot;PRI_IN_ZERO_IN&quot;,
+      &quot;source_log_id&quot;: 1134,
+      &quot;quantity&quot;: 0,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:12:02&quot;
+    }
+  ]
+}</pre></details></section><section id="case-17"><h2>17 并发两笔各3元凭证，实际退仓货值5元只允许一笔成功 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=20">CGT2180813128294803bfafea327ba2254b</a><br>SKU：PRQ_20261025230253_03</p><ol><li>原申请5件，目前分批实出2件，货值5元。</li><li>并发提交两笔各3元凭证。</li><li>版本及金额校验确保只计一笔，库存仍总量8、可用5、占用3。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr></tbody></table><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;results&quot;: [
+    {
+      &quot;ok&quot;: true,
+      &quot;result&quot;: 3.0
+    },
+    {
+      &quot;ok&quot;: false,
+      &quot;reason&quot;: &quot;(&#x27;/supplychain/purchaseReturns/20/funds&#x27;, &#x27;退仓单已变化，请刷新核对后操作&#x27;)&quot;
+    }
+  ],
+  &quot;document&quot;: {
+    &quot;id&quot;: 20,
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;return_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+    &quot;request_key&quot;: &quot;PRQ_20261025230253_partial&quot;,
+    &quot;purchase_id&quot;: 70,
+    &quot;po_sn&quot;: &quot;PO46aa72450faa4218842ebe320213d134&quot;,
+    &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+    &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+    &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+    &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+    &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+    &quot;outbound_mode&quot;: 1,
+    &quot;state&quot;: &quot;APPROVED&quot;,
+    &quot;quantity&quot;: 5,
+    &quot;accepted_quantity&quot;: 2,
+    &quot;posted_quantity&quot;: 2,
+    &quot;receipt_final&quot;: 0,
+    &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+    &quot;external_order&quot;: &quot;SIMOUT_112245be0c6a40589048&quot;,
+    &quot;carrier_code&quot;: &quot;SF&quot;,
+    &quot;reason&quot;: &quot;[退仓质量验收] 申请5件只实出2件，保留剩余3件占用&quot;,
+    &quot;cancel_reason&quot;: &quot;&quot;,
+    &quot;stock_reserved&quot;: 1,
+    &quot;funds_state&quot;: &quot;REFUND&quot;,
+    &quot;funds_amount&quot;: 3.0,
+    &quot;funds_evidence&quot;: &quot;[TEST] 并发退款凭证&quot;,
+    &quot;control_version&quot;: 3,
+    &quot;last_error&quot;: &quot;&quot;,
+    &quot;created_by&quot;: &quot;admin&quot;,
+    &quot;approved_by&quot;: &quot;admin&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25 23:03:17&quot;,
+    &quot;update_time&quot;: &quot;2026-10-25 23:12:02&quot;,
+    &quot;receipt_review_pending&quot;: 0,
+    &quot;attempts&quot;: 2,
+    &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:17&quot;,
+    &quot;receiver&quot;: {
+      &quot;area&quot;: &quot;测试区&quot;,
+      &quot;city&quot;: &quot;杭州市&quot;,
+      &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+      &quot;mobile&quot;: &quot;13000000000&quot;,
+      &quot;province&quot;: &quot;浙江省&quot;,
+      &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+    },
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 21,
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;return_id&quot;: 20,
+        &quot;source_key&quot;: &quot;R50&quot;,
+        &quot;ticket_sn&quot;: &quot;CG0a7a4f6899f247a493f4222dbb093536&quot;,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+        &quot;goods_name&quot;: &quot;[退仓质量验收] 申请5件只实出2件，保留剩余3件占用&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;source_quantity&quot;: 10,
+        &quot;purchase_price&quot;: 2.5,
+        &quot;accepted_quantity&quot;: 2,
+        &quot;posted_quantity&quot;: 2,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;reclaim_claimed_quantity&quot;: 0
+      }
+    ],
+    &quot;posted_amount&quot;: 5.0,
+    &quot;events&quot;: [
+      {
+        &quot;id&quot;: 14,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_partial&quot;,
+        &quot;source_log_id&quot;: 1104,
+        &quot;quantity&quot;: 2,
+        &quot;state&quot;: &quot;POSTED&quot;,
+        &quot;last_error&quot;: &quot;&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:03:19&quot;,
+        &quot;receipt&quot;: {
+          &quot;lines&quot;: [
+            {
+              &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+              &quot;line_key&quot;: &quot;21&quot;,
+              &quot;quantity&quot;: 2,
+              &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+              &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+              &quot;inventory_type&quot;: &quot;ZP&quot;
+            }
+          ],
+          &quot;deltas&quot;: [
+            {
+              &quot;line_key&quot;: 21,
+              &quot;quantity&quot;: 2
+            }
+          ],
+          &quot;status&quot;: &quot;PARTDELIVERED&quot;,
+          &quot;waybill&quot;: &quot;PRQ_WB_20261025230253partial&quot;,
+          &quot;complete&quot;: false,
+          &quot;packages&quot;: [],
+          &quot;return_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+          &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_partial&quot;,
+          &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+          &quot;carrier_code&quot;: &quot;SF&quot;,
+          &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+          &quot;outbound_time&quot;: &quot;2026-10-25 23:03:19&quot;,
+          &quot;external_order&quot;: &quot;SIMOUT_112245be0c6a40589048&quot;,
+          &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+        }
+      }
+    ],
+    &quot;audit&quot;: [
+      {
+        &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;REFUND 凭证登记 3；[TEST] 并发退款凭证&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:12:02&quot;
+      },
+      {
+        &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+        &quot;actor&quot;: &quot;WMS&quot;,
+        &quot;reason&quot;: &quot;确认出库增量 2；原消息 PRQ_OUT_20261025230253_partial&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:19&quot;
+      },
+      {
+        &quot;action&quot;: &quot;APPROVE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;
+      },
+      {
+        &quot;action&quot;: &quot;CREATE&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;
+      }
+    ],
+    &quot;stock&quot;: {
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;document_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+      &quot;purpose&quot;: &quot;RETURN&quot;,
+      &quot;payload_hash&quot;: &quot;2b125273994d676fbbc00032c78b81eba4473a64a61ad3aa767a04940950f879&quot;,
+      &quot;state&quot;: &quot;HELD&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;,
+      &quot;exists&quot;: true,
+      &quot;lines&quot;: [
+        {
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;document_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+          &quot;line_key&quot;: 21,
+          &quot;batch_id&quot;: 430,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+          &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;quantity&quot;: 5,
+          &quot;consumed_quantity&quot;: 2,
+          &quot;released_quantity&quot;: 0,
+          &quot;recovered_quantity&quot;: 0,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+          &quot;transaction_price&quot;: 2.5
+        }
+      ]
+    },
+    &quot;quantity_summary&quot;: [
+      {
+        &quot;return_id&quot;: 20,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;accepted_quantity&quot;: 2,
+        &quot;posted_quantity&quot;: 2,
+        &quot;supplier_received_quantity&quot;: 0,
+        &quot;supplier_refused_quantity&quot;: 0,
+        &quot;planned_amount&quot;: 12.5,
+        &quot;posted_amount&quot;: 5.0
+      }
+    ],
+    &quot;planned_amount&quot;: 12.5,
+    &quot;net_posted_amount&quot;: 5.0,
+    &quot;unshipped_quantity&quot;: 3,
+    &quot;pending_post_quantity&quot;: 0,
+    &quot;released_quantity&quot;: 0,
+    &quot;remaining_hold&quot;: 3,
+    &quot;progress_code&quot;: &quot;PARTIAL&quot;,
+    &quot;progress_label&quot;: &quot;部分出库，等待后续&quot;,
+    &quot;progress_hint&quot;: &quot;仓库尚未最终结束，剩余数量继续占用等待后续出库。&quot;,
+    &quot;primary_action&quot;: &quot;&quot;,
+    &quot;funds_remaining&quot;: 2.0,
+    &quot;funds_over_recorded&quot;: false,
+    &quot;funds&quot;: [
+      {
+        &quot;id&quot;: 5,
+        &quot;kind&quot;: &quot;REFUND&quot;,
+        &quot;amount&quot;: 3.0,
+        &quot;original_id&quot;: null,
+        &quot;evidence&quot;: &quot;[TEST] 并发退款凭证&quot;,
+        &quot;actor&quot;: &quot;admin&quot;,
+        &quot;create_time&quot;: &quot;2026-10-25 23:12:02&quot;,
+        &quot;reversed_by&quot;: null
+      }
+    ],
+    &quot;supplier_receipts&quot;: [],
+    &quot;reclaims&quot;: [],
+    &quot;parent_return&quot;: [],
+    &quot;child_returns&quot;: []
+  }
+}</pre></details></section><section id="case-18"><h2>18 仓库未最终结束时停止剩余，取得原仓取消结果后释放 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=20">CGT2180813128294803bfafea327ba2254b</a><br>SKU：PRQ_20261025230253_03</p><ol><li>原单已分批实出2件，剩余3件占用。</li><li>明确申请停止剩余，自动调用奇门order.cancel。</li><li>仓库明确成功后释放3件，已出库2件和原凭证保留。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>8</td><td>5</td><td>3</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><p>关联单据：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=20">CGT2180813128294803bfafea327ba2254b</a></p><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;id&quot;: 20,
+  &quot;company_code&quot;: &quot;QM&quot;,
+  &quot;return_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+  &quot;request_key&quot;: &quot;PRQ_20261025230253_partial&quot;,
+  &quot;purchase_id&quot;: 70,
+  &quot;po_sn&quot;: &quot;PO46aa72450faa4218842ebe320213d134&quot;,
+  &quot;supplier_sn&quot;: &quot;SUP6907a66e12504c17a3a9c7688a7b03a1&quot;,
+  &quot;supplier_name&quot;: &quot;[退仓质量验收] 20261025230253&quot;,
+  &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+  &quot;owner_code&quot;: &quot;PRQO_20261025230253&quot;,
+  &quot;real_store_code&quot;: &quot;PRQW_20261025230253&quot;,
+  &quot;outbound_mode&quot;: 1,
+  &quot;state&quot;: &quot;CANCELED&quot;,
+  &quot;quantity&quot;: 5,
+  &quot;accepted_quantity&quot;: 2,
+  &quot;posted_quantity&quot;: 2,
+  &quot;receipt_final&quot;: 0,
+  &quot;dispatch_state&quot;: &quot;CANCELED&quot;,
+  &quot;external_order&quot;: &quot;SIMOUT_112245be0c6a40589048&quot;,
+  &quot;carrier_code&quot;: &quot;SF&quot;,
+  &quot;reason&quot;: &quot;[退仓质量验收] 申请5件只实出2件，保留剩余3件占用&quot;,
+  &quot;cancel_reason&quot;: &quot;未最终出库，申请停止剩余3件&quot;,
+  &quot;stock_reserved&quot;: 1,
+  &quot;funds_state&quot;: &quot;REFUND&quot;,
+  &quot;funds_amount&quot;: 3.0,
+  &quot;funds_evidence&quot;: &quot;[TEST] 并发退款凭证&quot;,
+  &quot;control_version&quot;: 5,
+  &quot;last_error&quot;: &quot;&quot;,
+  &quot;created_by&quot;: &quot;admin&quot;,
+  &quot;approved_by&quot;: &quot;admin&quot;,
+  &quot;create_time&quot;: &quot;2026-10-25 23:03:17&quot;,
+  &quot;update_time&quot;: &quot;2026-10-25 23:12:02&quot;,
+  &quot;receipt_review_pending&quot;: 0,
+  &quot;attempts&quot;: 3,
+  &quot;next_attempt_at&quot;: &quot;2026-10-25 23:03:17&quot;,
+  &quot;receiver&quot;: {
+    &quot;area&quot;: &quot;测试区&quot;,
+    &quot;city&quot;: &quot;杭州市&quot;,
+    &quot;name&quot;: &quot;[TEST]供应商收货&quot;,
+    &quot;mobile&quot;: &quot;13000000000&quot;,
+    &quot;province&quot;: &quot;浙江省&quot;,
+    &quot;detailAddress&quot;: &quot;本地验收测试供应商地址&quot;
+  },
+  &quot;lines&quot;: [
+    {
+      &quot;id&quot;: 21,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;return_id&quot;: 20,
+      &quot;source_key&quot;: &quot;R50&quot;,
+      &quot;ticket_sn&quot;: &quot;CG0a7a4f6899f247a493f4222dbb093536&quot;,
+      &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+      &quot;goods_name&quot;: &quot;[退仓质量验收] 申请5件只实出2件，保留剩余3件占用&quot;,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+      &quot;inventory_type&quot;: &quot;ZP&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;source_quantity&quot;: 10,
+      &quot;purchase_price&quot;: 2.5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;recovered_quantity&quot;: 0,
+      &quot;reclaim_claimed_quantity&quot;: 0
+    }
+  ],
+  &quot;posted_amount&quot;: 5.0,
+  &quot;events&quot;: [
+    {
+      &quot;id&quot;: 14,
+      &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_partial&quot;,
+      &quot;source_log_id&quot;: 1104,
+      &quot;quantity&quot;: 2,
+      &quot;state&quot;: &quot;POSTED&quot;,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:03:19&quot;,
+      &quot;receipt&quot;: {
+        &quot;lines&quot;: [
+          {
+            &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+            &quot;line_key&quot;: &quot;21&quot;,
+            &quot;quantity&quot;: 2,
+            &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+            &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;
+          }
+        ],
+        &quot;deltas&quot;: [
+          {
+            &quot;line_key&quot;: 21,
+            &quot;quantity&quot;: 2
+          }
+        ],
+        &quot;status&quot;: &quot;PARTDELIVERED&quot;,
+        &quot;waybill&quot;: &quot;PRQ_WB_20261025230253partial&quot;,
+        &quot;complete&quot;: false,
+        &quot;packages&quot;: [],
+        &quot;return_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+        &quot;message_id&quot;: &quot;PRQ_OUT_20261025230253_partial&quot;,
+        &quot;owner_code&quot;: &quot;PRQ_OWNER_20261025230253&quot;,
+        &quot;carrier_code&quot;: &quot;SF&quot;,
+        &quot;carrier_name&quot;: &quot;[TEST]顺丰&quot;,
+        &quot;outbound_time&quot;: &quot;2026-10-25 23:03:19&quot;,
+        &quot;external_order&quot;: &quot;SIMOUT_112245be0c6a40589048&quot;,
+        &quot;warehouse_code&quot;: &quot;PRQ_EXT_20261025230253&quot;
+      }
+    }
+  ],
+  &quot;audit&quot;: [
+    {
+      &quot;action&quot;: &quot;CANCEL_CONFIRMED&quot;,
+      &quot;actor&quot;: &quot;自动流程&quot;,
+      &quot;reason&quot;: &quot;未出库占用已按原来源释放，已出库和扣账保留&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:12:02&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CANCEL_REQUEST&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;未最终出库，申请停止剩余3件&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:12:02&quot;
+    },
+    {
+      &quot;action&quot;: &quot;FUNDS_RECORD&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;REFUND 凭证登记 3；[TEST] 并发退款凭证&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:12:02&quot;
+    },
+    {
+      &quot;action&quot;: &quot;OUTBOUND_ACCEPTED&quot;,
+      &quot;actor&quot;: &quot;WMS&quot;,
+      &quot;reason&quot;: &quot;确认出库增量 2；原消息 PRQ_OUT_20261025230253_partial&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:19&quot;
+    },
+    {
+      &quot;action&quot;: &quot;APPROVE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;审核通过，后台按原批次锁定库存后自动执行退仓&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;
+    },
+    {
+      &quot;action&quot;: &quot;CREATE&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;reason&quot;: &quot;创建原采购来源退仓草稿&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;
+    }
+  ],
+  &quot;stock&quot;: {
+    &quot;company_code&quot;: &quot;QM&quot;,
+    &quot;document_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+    &quot;purpose&quot;: &quot;RETURN&quot;,
+    &quot;payload_hash&quot;: &quot;2b125273994d676fbbc00032c78b81eba4473a64a61ad3aa767a04940950f879&quot;,
+    &quot;state&quot;: &quot;RELEASED&quot;,
+    &quot;create_time&quot;: &quot;2026-10-25T23:03:17&quot;,
+    &quot;exists&quot;: true,
+    &quot;lines&quot;: [
+      {
+        &quot;company_code&quot;: &quot;QM&quot;,
+        &quot;document_sn&quot;: &quot;CGT2180813128294803bfafea327ba2254b&quot;,
+        &quot;line_key&quot;: 21,
+        &quot;batch_id&quot;: 430,
+        &quot;sku_sn&quot;: &quot;PRQ_20261025230253_03&quot;,
+        &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;consumed_quantity&quot;: 2,
+        &quot;released_quantity&quot;: 3,
+        &quot;recovered_quantity&quot;: 0,
+        &quot;batch_code&quot;: &quot;PRQ_BATCH_partial&quot;,
+        &quot;transaction_price&quot;: 2.5
+      }
+    ]
+  },
+  &quot;quantity_summary&quot;: [
+    {
+      &quot;return_id&quot;: 20,
+      &quot;stock_unit&quot;: &quot;件&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;supplier_received_quantity&quot;: 0,
+      &quot;supplier_refused_quantity&quot;: 0,
+      &quot;planned_amount&quot;: 12.5,
+      &quot;posted_amount&quot;: 5.0
+    }
+  ],
+  &quot;planned_amount&quot;: 12.5,
+  &quot;net_posted_amount&quot;: 5.0,
+  &quot;unshipped_quantity&quot;: 3,
+  &quot;pending_post_quantity&quot;: 0,
+  &quot;released_quantity&quot;: 3,
+  &quot;remaining_hold&quot;: 0,
+  &quot;progress_code&quot;: &quot;PARTIAL_CLOSED&quot;,
+  &quot;progress_label&quot;: &quot;部分完成，剩余已停止&quot;,
+  &quot;progress_hint&quot;: &quot;已退仓部分保留，未出库占用已经按原来源释放。&quot;,
+  &quot;primary_action&quot;: &quot;&quot;,
+  &quot;funds_remaining&quot;: 2.0,
+  &quot;funds_over_recorded&quot;: false,
+  &quot;funds&quot;: [
+    {
+      &quot;id&quot;: 5,
+      &quot;kind&quot;: &quot;REFUND&quot;,
+      &quot;amount&quot;: 3.0,
+      &quot;original_id&quot;: null,
+      &quot;evidence&quot;: &quot;[TEST] 并发退款凭证&quot;,
+      &quot;actor&quot;: &quot;admin&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:12:02&quot;,
+      &quot;reversed_by&quot;: null
+    }
+  ],
+  &quot;supplier_receipts&quot;: [],
+  &quot;reclaims&quot;: [],
+  &quot;parent_return&quot;: [],
+  &quot;child_returns&quot;: []
+}</pre></details></section><section id="case-19"><h2>19 同一拒收余额并发审核两张收回单，仅一张占用计划额度 <span class="pass">通过</span></h2><p>原退仓：<a href="http://127.0.0.1:8088/oms-supplychain/purchaseReturns?id=21">CGTd39d8008cf9f4852a56e5745416f1066</a><br>SKU：PRQ_20261025230253_04</p><ol><li>原拒收1件的上次收回已最终实收0并停止。</li><li>创建两张各1件收回草稿，并发审核。</li><li>原退仓锁和来源额度校验保证仅一张成功下发；另一张保留待审核，库存不变。</li></ol><table><thead><tr><th>阶段</th><th>总库存</th><th>可用</th><th>已分配</th><th>预占</th><th>不可售/冻结</th></tr></thead><tbody><tr><td>本步骤前</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td></tr><tr><td>本步骤后</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td></tr></tbody></table><details><summary>查看该步骤原单据、仓库、供应商及凭证证据</summary><pre>{
+  &quot;results&quot;: [
+    {
+      &quot;id&quot;: 5,
+      &quot;ok&quot;: true
+    },
+    {
+      &quot;id&quot;: 6,
+      &quot;ok&quot;: false,
+      &quot;reason&quot;: &quot;(&#x27;/supplychain/purchaseReturns/reclaims/6/approve&#x27;, &#x27;原拒收额度已被其他收回单占用&#x27;)&quot;
+    }
+  ],
+  &quot;documents&quot;: [
+    {
+      &quot;id&quot;: 5,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_sn&quot;: &quot;CGH157a67ec42d14996a8f01e31ff6fb284&quot;,
+      &quot;return_id&quot;: 21,
+      &quot;request_key&quot;: &quot;PRI_20261025230253_RECLAIM_RACE_A&quot;,
+      &quot;state&quot;: &quot;ACTIVE&quot;,
+      &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+      &quot;inbound_mode&quot;: 1,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;receipt_final&quot;: 0,
+      &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+      &quot;external_order&quot;: &quot;SIMIN_52cff75a80fe454eabcc&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+      &quot;carrier_code&quot;: &quot;SF&quot;,
+      &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_RACE_A&quot;,
+      &quot;control_version&quot;: 2,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;receipt_review_pending&quot;: 0,
+      &quot;created_by&quot;: &quot;admin&quot;,
+      &quot;approved_by&quot;: &quot;admin&quot;,
+      &quot;attempts&quot;: 1,
+      &quot;next_attempt_at&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;update_time&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;id&quot;: 6,
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;reclaim_id&quot;: 5,
+          &quot;return_line_id&quot;: 22,
+          &quot;quantity&quot;: 1,
+          &quot;accepted_quantity&quot;: 0,
+          &quot;posted_quantity&quot;: 0,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_04&quot;,
+          &quot;goods_name&quot;: &quot;[退仓质量验收] 5件分两次出库2件加3件&quot;,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_split&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;purchase_price&quot;: 2.5,
+          &quot;stock_unit&quot;: &quot;件&quot;
+        }
+      ],
+      &quot;receipt_lines&quot;: [],
+      &quot;events&quot;: []
+    },
+    {
+      &quot;id&quot;: 6,
+      &quot;company_code&quot;: &quot;QM&quot;,
+      &quot;reclaim_sn&quot;: &quot;CGH68eab2d5160c47e18dcfb2d3e681c951&quot;,
+      &quot;return_id&quot;: 21,
+      &quot;request_key&quot;: &quot;PRI_20261025230253_RECLAIM_RACE_B&quot;,
+      &quot;state&quot;: &quot;DRAFT&quot;,
+      &quot;store_code&quot;: &quot;PRQ_REAL_20261025230253&quot;,
+      &quot;inbound_mode&quot;: 1,
+      &quot;quantity&quot;: 1,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;receipt_final&quot;: 0,
+      &quot;dispatch_state&quot;: &quot;UNSENT&quot;,
+      &quot;external_order&quot;: &quot;&quot;,
+      &quot;reason&quot;: &quot;[退仓迭代TEST] 供应商拒收，独立收回入库&quot;,
+      &quot;carrier_code&quot;: &quot;SF&quot;,
+      &quot;waybill&quot;: &quot;PRI_BACK_RECLAIM_RACE_B&quot;,
+      &quot;control_version&quot;: 1,
+      &quot;last_error&quot;: &quot;&quot;,
+      &quot;receipt_review_pending&quot;: 0,
+      &quot;created_by&quot;: &quot;admin&quot;,
+      &quot;approved_by&quot;: &quot;&quot;,
+      &quot;attempts&quot;: 0,
+      &quot;next_attempt_at&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;create_time&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;update_time&quot;: &quot;2026-10-25 23:17:45&quot;,
+      &quot;lines&quot;: [
+        {
+          &quot;id&quot;: 7,
+          &quot;company_code&quot;: &quot;QM&quot;,
+          &quot;reclaim_id&quot;: 6,
+          &quot;return_line_id&quot;: 22,
+          &quot;quantity&quot;: 1,
+          &quot;accepted_quantity&quot;: 0,
+          &quot;posted_quantity&quot;: 0,
+          &quot;sku_sn&quot;: &quot;PRQ_20261025230253_04&quot;,
+          &quot;goods_name&quot;: &quot;[退仓质量验收] 5件分两次出库2件加3件&quot;,
+          &quot;batch_code&quot;: &quot;PRQ_BATCH_split&quot;,
+          &quot;inventory_type&quot;: &quot;ZP&quot;,
+          &quot;purchase_price&quot;: 2.5,
+          &quot;stock_unit&quot;: &quot;件&quot;
+        }
+      ],
+      &quot;receipt_lines&quot;: [],
+      &quot;events&quot;: []
+    }
+  ]
+}</pre></details></section><h2>现场发现与修复</h2><div class="notice"><b>连接编号经JSON保存后类型变化，被错误判断为原仓库映射变化；未下发也未增加库存</b><p>按连接编号、货主和仓库的规范化业务值比较；补充真实HTTP下发回归</p></div><div class="notice"><b>释放预览未带出批次可用数量，曾显示NaN。</b><p>补齐库存来源查询的正次品可用字段，增加页面未知值提示及库存服务回归；原单已验证能正确预览释放3件、批次可用5→8。没有改变原单库存。</p></div><h2>页面验收</h2><ol><li>原CGT单据清楚展示最终实出2、未出3、占用3及剩余处理入口</li><li>剩余处理可预览按原批次释放3件及可用5变8，继续申请明确须重新审核</li><li>部分结束保留原实出2件，显示剩余已停止及唯一后续单关联</li><li>后续退仓可反查原单，并独立展示实际出库与完成状态</li><li>款项表单可选择抵扣并提交金额、凭证、幂等键和原版本；验收请求已拦截</li><li>多笔退款抵扣与负数冲销分别保留，展示出库货值、收回货值和净金额</li><li>原有效凭证可打开冲销更正入口，原凭证与关联冲销号可查</li><li>供应商签收、拒收、短收凭证分开显示，登记上限按尚未确认数量限制</li><li>独立收回详情区分原计划质量与实际次品质检，显示运单和新增库存来源</li><li>收回仓库交互使用专属业务与动作名称，能查下发和实收回传</li><li>收回草稿审核入口有明确确认窗口，取消确认不触发业务操作</li><li>原采购展示入账10、退仓出库4、拒收收回1、净入库7，与实际库存一致</li><li>拒收收回表单限定原已拒收且尚未安排的数量，要求独立退回快递和运单</li><li>新增表单按三段组织，真实供应商地址自动带入省市区联动下拉</li><li>复用全国目录，切换省清空市区，切换市清空区县并更新候选</li><li>清空上级禁用下级，直辖市三级选择正常</li><li>快递下拉复用该货主实仓配置，显示快递名称和仓库编码</li><li>底部汇总本次数量及采购货值，表单滚动时保存操作保持在可见范围</li><li>新增保存请求保留原来源、地区名称、物流编码及幂等键；验收请求已拦截</li><li>原用户单据、退仓单总数和全部验收SKU库存未变化，页面无JavaScript异常</li></ol><figure><figcaption>原单最终短出与剩余占用</figcaption><a href="01-original-final-short.png"><img src="01-original-final-short.png" alt="原单最终短出与剩余占用"></a></figure><figure><figcaption>结束或继续剩余及释放预览</figcaption><a href="02-remaining-decision.png"><img src="02-remaining-decision.png" alt="结束或继续剩余及释放预览"></a></figure><figure><figcaption>部分完成与关联后续草稿</figcaption><a href="03-partial-closed-linked-child.png"><img src="03-partial-closed-linked-child.png" alt="部分完成与关联后续草稿"></a></figure><figure><figcaption>多笔款项和追加冲销</figcaption><a href="04-multiple-vouchers-reversal.png"><img src="04-multiple-vouchers-reversal.png" alt="多笔款项和追加冲销"></a></figure><figure><figcaption>供应商签收、拒收、短收及关联收回</figcaption><a href="05-supplier-receipts.png"><img src="05-supplier-receipts.png" alt="供应商签收、拒收、短收及关联收回"></a></figure><figure><figcaption>独立收回计划、实际次品质检及新库存来源</figcaption><a href="06-reclaim-actual-quality.png"><img src="06-reclaim-actual-quality.png" alt="独立收回计划、实际次品质检及新库存来源"></a></figure><figure><figcaption>收回仓库下发和实收交互</figcaption><a href="07-reclaim-warehouse-interactions.png"><img src="07-reclaim-warehouse-interactions.png" alt="收回仓库下发和实收交互"></a></figure><figure><figcaption>原采购入账、退仓、收回和净入库</figcaption><a href="08-procurement-net-receipts.png"><img src="08-procurement-net-receipts.png" alt="原采购入账、退仓、收回和净入库"></a></figure><figure><figcaption>拒收来源与供应商实际退回物流</figcaption><a href="09-reclaim-source-form.png"><img src="09-reclaim-source-form.png" alt="拒收来源与供应商实际退回物流"></a></figure><figure><figcaption>新增分区、省市区、快递及固定操作栏</figcaption><a href="10-create-address-and-footer.png"><img src="10-create-address-and-footer.png" alt="新增分区、省市区、快递及固定操作栏"></a></figure><h2>查询、协议与性能</h2><ol><li>部分完成与唯一后续单关联正确，原占用已释放</li><li>用户原单仍占用3件，释放预览使用真实批次可用5件</li><li>原来源及收回新增来源独立核算，可退额度与实际库存一致</li><li>采购净入库10减4加1等于7，原采购实收保留</li><li>多笔凭证及冲销累计5元，与净退仓货值一致</li><li>独立收回保留次品质检及真实库存入账来源</li><li>仓库交互按独立采购退仓收回业务分类查询</li><li>实际奇门QTRK报文与供应商退回本仓运单字段核对通过</li><li>全部8个验收SKU商品、仓库与批次库存一致</li><li>更正及重复回传仅增加次品1件，收回流水仅1条</li><li>快递目录使用现有货主实仓配置</li><li>公开接口拒绝覆盖登录公司身份</li><li>新增表全部字段有明确备注</li><li>原订单退款库存与任务队列策略基线未改变</li></ol><table><thead><tr><th>读取入口</th><th>样本数</th><th>中位耗时毫秒</th><th>最小/最大毫秒</th></tr></thead><tbody><tr><td>退仓列表</td><td>5</td><td>42.0</td><td>30.5 / 56.6</td></tr><tr><td>完整单号</td><td>5</td><td>20.8</td><td>18.7 / 45.4</td></tr><tr><td>来源批量库存</td><td>5</td><td>39.9</td><td>28.8 / 52.2</td></tr><tr><td>收回详情</td><td>5</td><td>43.8</td><td>20.3 / 71.6</td></tr></tbody></table><p class="muted">这是本地环境连续读取样本，不代表生产容量测试。列表不调用仓库或逐行库存服务；来源库存一次批量RPC，审核来源额度在原单锁下批量汇总；后台有界执行、租约、幂等事件及失败退避。</p><details><summary>查看关键查询执行计划</summary><pre>{
+  &quot;凭证来源&quot;: &quot;1\tSIMPLE\tpurchase_return_fund\tNULL\tindex\trequest_once,reversal_once,parent_funds\tPRIMARY\t8\tNULL\t5\t20.00\tUsing where&quot;,
+  &quot;原拒收额度&quot;: &quot;1\tSIMPLE\tpurchase_return_reclaim_line\tNULL\tref\toriginal_line,parent_lines,source_claim\tsource_claim\t266\tconst,const\t1\t100.00\tNULL&quot;,
+  &quot;实收防重&quot;: &quot;1\tSIMPLE\tpurchase_return_reclaim_event\tNULL\tconst\treceipt_once,pending_post\treceipt_once\t780\tconst,const,const\t1\t100.00\tNULL&quot;
+}</pre></details><h2>库存原始流水</h2><details><summary>PRQ_20261025230253_01</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>CG3408ac9702554ae3acb6c77146ad0a31</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT37aa03c5a696409bb7093f88f27c3fdc</td><td>ZP</td><td>3</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGT37aa03c5a696409bb7093f88f27c3fdc</td><td>ZP</td><td>-3</td><td>10</td><td>7</td><td>0</td><td>0</td></tr><tr><td>RECEIVE</td><td>PURCHASE_RECLAIM_4</td><td>ZP</td><td>2</td><td>7</td><td>9</td><td>0</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_02</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_49</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT7a262217d64f4ce3bc72ccbae8ed40ac</td><td>ZP</td><td>3</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGT7a262217d64f4ce3bc72ccbae8ed40ac</td><td>ZP</td><td>-3</td><td>10</td><td>7</td><td>0</td><td>0</td></tr><tr><td>RECEIVE</td><td>PURCHASE_RECLAIM_1</td><td>CP</td><td>1</td><td>7</td><td>7</td><td>0</td><td>1</td></tr><tr><td>RETURN_HOLD</td><td>CGT531f3f506d014a3da789434e2b4a8f01</td><td>CP</td><td>1</td><td>7</td><td>7</td><td>1</td><td>1</td></tr><tr><td>RETURN_OUT</td><td>CGT531f3f506d014a3da789434e2b4a8f01</td><td>CP</td><td>-1</td><td>7</td><td>7</td><td>1</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_03</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_50</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT2180813128294803bfafea327ba2254b</td><td>ZP</td><td>5</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGT2180813128294803bfafea327ba2254b</td><td>ZP</td><td>-2</td><td>10</td><td>8</td><td>0</td><td>0</td></tr><tr><td>RETURN_RELEASE</td><td>CGT2180813128294803bfafea327ba2254b</td><td>ZP</td><td>3</td><td>8</td><td>8</td><td>0</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_04</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_51</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGTd39d8008cf9f4852a56e5745416f1066</td><td>ZP</td><td>5</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGTd39d8008cf9f4852a56e5745416f1066</td><td>ZP</td><td>-2</td><td>10</td><td>8</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGTd39d8008cf9f4852a56e5745416f1066</td><td>ZP</td><td>-3</td><td>8</td><td>5</td><td>0</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_05</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_52</td><td></td><td>3</td><td>0</td><td>3</td><td>0</td><td>0</td></tr><tr><td>RECEIVE</td><td>WMS_RECEIPT_53</td><td></td><td>2</td><td>3</td><td>3</td><td>0</td><td>2</td></tr><tr><td>RETURN_HOLD</td><td>CGT7ac1e348672846d29a671bff5275f7dd</td><td>ZP</td><td>2</td><td>3</td><td>3</td><td>2</td><td>2</td></tr><tr><td>RETURN_HOLD</td><td>CGT7ac1e348672846d29a671bff5275f7dd</td><td>CP</td><td>1</td><td>3</td><td>3</td><td>2</td><td>2</td></tr><tr><td>RETURN_OUT</td><td>CGT7ac1e348672846d29a671bff5275f7dd</td><td>ZP</td><td>-2</td><td>3</td><td>1</td><td>2</td><td>2</td></tr><tr><td>RETURN_OUT</td><td>CGT7ac1e348672846d29a671bff5275f7dd</td><td>CP</td><td>-1</td><td>1</td><td>1</td><td>2</td><td>1</td></tr><tr><td>RECEIVE</td><td>PURCHASE_RECLAIM_2</td><td>ZP</td><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td></tr><tr><td>RECEIVE</td><td>PURCHASE_RECLAIM_3</td><td>CP</td><td>1</td><td>2</td><td>2</td><td>1</td><td>2</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_06</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_54</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT46a37fb85bf14aec885fcf76cddb47a0</td><td>ZP</td><td>3</td><td>10</td><td>10</td><td>0</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_07</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>CG5fe0c9d6bca04757a715736f896c33c4</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT0529a57e42c34b289dc2f8733d47fef0</td><td>ZP</td><td>3</td><td>10</td><td>10</td><td>0</td><td>0</td></tr></tbody></table></details><details><summary>PRQ_20261025230253_08</summary><table><thead><tr><th>动作</th><th>关联来源</th><th>质量</th><th>变化数量</th><th>旧正品</th><th>新正品</th><th>旧次品</th><th>新次品</th></tr></thead><tbody><tr><td>RECEIVE</td><td>WMS_RECEIPT_55</td><td></td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGTdba9cd72eb894e9ea0d44752697a47eb</td><td>ZP</td><td>5</td><td>10</td><td>10</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGTdba9cd72eb894e9ea0d44752697a47eb</td><td>ZP</td><td>-2</td><td>10</td><td>8</td><td>0</td><td>0</td></tr><tr><td>RETURN_RELEASE</td><td>CGTdba9cd72eb894e9ea0d44752697a47eb</td><td>ZP</td><td>3</td><td>8</td><td>8</td><td>0</td><td>0</td></tr><tr><td>RETURN_HOLD</td><td>CGT415118fd3d5f4e9b9d28b91c53ffeedd</td><td>ZP</td><td>3</td><td>8</td><td>8</td><td>0</td><td>0</td></tr><tr><td>RETURN_OUT</td><td>CGT415118fd3d5f4e9b9d28b91c53ffeedd</td><td>ZP</td><td>-3</td><td>8</td><td>5</td><td>0</td><td>0</td></tr></tbody></table></details><p class="notice">原订单、退款、相关库存、自动任务及队列策略基线核对一致。测试采购、退仓、收回、凭证和仓库交互记录全部保留。</p></main></html>

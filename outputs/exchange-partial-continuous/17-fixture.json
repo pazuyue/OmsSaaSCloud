@@ -1,0 +1,88 @@
+{
+  "key": "17",
+  "title": "收到换出商品后只换其中一件",
+  "case_id": "2026102511235317",
+  "created": "2026-10-25 11:24:09",
+  "sku": "EXAUTO_PC_2026102511235317A",
+  "target_sku": "EXAUTO_PC_2026102511235317B",
+  "third_sku": "EXAUTO_PC_2026102511235317C",
+  "channel_name": "[部分连续换货17] 收到换出商品后只换其中一件 20261025112353",
+  "seller": "EXAUTO_PC_2026102511235317",
+  "platform_tid": "862026102511235317",
+  "platform_oid": "86202610251123531701",
+  "warehouses": [
+    {
+      "code": "EXAUTO_PC_2026102511235317V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 154
+    }
+  ],
+  "quantity": 2,
+  "claims": [],
+  "refunds": {},
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 127,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXAUTO_PC_2026102511235317A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXAUTO_PC_2026102511235317A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXAUTO_PC_2026102511235317V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 347,
+        "store": "EXAUTO_PC_2026102511235317V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 266,
+  "order_id": 182,
+  "order_sn": "SO33ddd005b8424ddd892773a3ed585a53",
+  "prepared": true,
+  "products_ready": [
+    "B",
+    "C"
+  ],
+  "original_shipment_id": 143,
+  "original_shipment_sn": "XSf29c94adcf354b2d9d8a34c4ecfa0549",
+  "original_shipment_line_id": 202,
+  "original_shipped": true,
+  "authorized": true
+}

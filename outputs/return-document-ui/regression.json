@@ -1,0 +1,54 @@
+{
+  "suites": [
+    {
+      "name": "com.oms.order.service.ReturnManagementQueryTest",
+      "tests": "25",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.order.service.TenantRoutingTest",
+      "tests": "30",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.supplychain.service.wms.SharedReturnParcelsTest",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.supplychain.service.wms.ReturnQueryWarehouseTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.supplychain.service.wms.ReturnDocumentReadTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.supplychain.WmsLogQueryTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.oms.supplychain.service.wms.SharedReturnDispatchTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "total_tests": 98
+}

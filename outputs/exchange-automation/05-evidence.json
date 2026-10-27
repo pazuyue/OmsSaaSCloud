@@ -451,6 +451,7 @@
           "stock_reference": "EXCHANGE:56",
           "business_type": "SALE",
           "exchange_id": 56,
+          "owner_code": "SAASQM01",
           "source_shipment_line_id": 186,
           "order_line_id": 265,
           "allocation_id": 186,
@@ -619,12 +620,12 @@
   "automatic_flows": [
     {
       "task": {
-        "state": "PENDING",
-        "node": "DISPATCH",
-        "last_code": "DISPATCH_PENDING",
-        "last_message": "继续核对原仓库请求；不重新创建未知结果的发货单",
-        "wait_since": "2026-10-25 00:09:41",
-        "next_attempt": "2026-10-25 00:10:50",
+        "state": "DONE",
+        "node": "FINISHED",
+        "last_code": "LOCAL_ENDED",
+        "last_message": "本地换货已结束，原库存及收发事实保留",
+        "wait_since": "2026-10-25 00:10:56",
+        "next_attempt": null,
         "policy_revision": 1,
         "work_version": 4
       },
@@ -632,5 +633,7 @@
     }
   ],
   "result": "PASS",
-  "completed_at": "2026-10-25T00:10:56.556052"
+  "completed_at": "2026-10-25T00:10:56.556052",
+  "demand_ledger": "9862026102423590605\t986202610242359060501\tEXAUTO_2026102423590605A\t2\t2\t0\t0\tCANCELLED\nEXCHANGE:56\t986202610242359060501\tEXAUTO_2026102423590605B\t2\t0\t2\t2\tRESERVED",
+  "unshipped_review_evidence": "AUTO_EXCHANGE_APPROVE\tAUTO_APPROVED\t自动换货规则"
 }

@@ -1,0 +1,34 @@
+{
+  "shipment_id": 165,
+  "shipment_sn": "XS0732bd4d337f471bb14540fb00e765d5",
+  "order_id": 190,
+  "external_order": "SIMOUT_c67f6345b1e84e488e1c",
+  "external_owner": "VC00001",
+  "external_warehouse": "VC00001",
+  "quantity": 3,
+  "message_id": "SIM_COMPLETE_XS0732bd4d337f471bb14540fb00e765d5",
+  "package_code": "SIMPKG_XS0732bd4d337f471bb14540fb00e765d5",
+  "express_code": "TEST-SF-XS0732bd4d337f471bb14540fb00e765d5",
+  "outbound_time": "2026-10-25 12:48:35",
+  "plans": [
+    {
+      "id": 224,
+      "sku_sn": "EXAUTO_PC_2026102512481724A",
+      "quantity": 3,
+      "platform_oid": "86202610251248172401",
+      "store_code": "EXAUTO_PC_2026102512481724V",
+      "batch_code": "TEST-MULTI-BATCH-2026102512481724-V1"
+    }
+  ],
+  "callback_body": "<request><deliveryOrder><deliveryOrderCode>XS0732bd4d337f471bb14540fb00e765d5</deliveryOrderCode><deliveryOrderId>SIMOUT_c67f6345b1e84e488e1c</deliveryOrderId><warehouseCode>VC00001</warehouseCode><ownerCode>VC00001</ownerCode><status>DELIVERED</status><confirmType>0</confirmType><outBizCode>SIM_COMPLETE_XS0732bd4d337f471bb14540fb00e765d5</outBizCode><totalOrderLines>1</totalOrderLines><orderConfirmTime>2026-10-25 12:48:35</orderConfirmTime></deliveryOrder><orderLines><orderLine><orderLineNo>224</orderLineNo><itemCode>EXAUTO_PC_2026102512481724A</itemCode><ownerCode>VC00001</ownerCode><batchCode>TEST-MULTI-BATCH-2026102512481724-V1</batchCode><inventoryType>ZP</inventoryType><actualQty>3</actualQty></orderLine></orderLines><packages><package><packageCode>SIMPKG_XS0732bd4d337f471bb14540fb00e765d5</packageCode><expressCode>TEST-SF-XS0732bd4d337f471bb14540fb00e765d5</expressCode><logisticsCode>sf</logisticsCode><logisticsName>顺丰快递</logisticsName><items><item><itemCode>EXAUTO_PC_2026102512481724A</itemCode><quantity>3</quantity></item></items></package></packages></request>",
+  "result": {
+    "shipment_sn": "XS0732bd4d337f471bb14540fb00e765d5",
+    "quantity": 3,
+    "status": "SHIPPED",
+    "shipped_quantity": 3,
+    "package_count": 1,
+    "test_waybill": "TEST-SF-XS0732bd4d337f471bb14540fb00e765d5",
+    "completed_outbound_records": 1,
+    "replay_idempotent": true
+  }
+}

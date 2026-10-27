@@ -1,0 +1,2453 @@
+{
+  "stamp": "20261026210253",
+  "commands": {
+    "STANDARD_A": {
+      "path": "/order/sharedCarriers/standard/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 1,
+          "company_code": "QM",
+          "standard_code": "TEST_SC_A_20261026210253",
+          "standard_name": "[公共快递验收] 承运商A 20261026210253",
+          "category": "EXPRESS",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:54",
+          "aliases": [
+            "测试别名A_20261026210253"
+          ]
+        }
+      }
+    },
+    "STANDARD_B": {
+      "path": "/order/sharedCarriers/standard/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 2,
+          "company_code": "QM",
+          "standard_code": "TEST_SC_B_20261026210253",
+          "standard_name": "[公共快递验收] 承运商B 20261026210253",
+          "category": "EXPRESS",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:54",
+          "aliases": [
+            "测试别名B_20261026210253"
+          ]
+        }
+      }
+    },
+    "STORE": {
+      "path": "/supplychain/simulationStore",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 178
+      }
+    },
+    "PLAN_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 1,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_CREATE",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "external_code": "TEST-SC-PLAN-20261026210253",
+          "external_name": "[公共快递TEST] TEST-SC-PLAN-20261026210253",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:55",
+          "scope_hash": "2504ac7e567d0d960076a83efab6760c4f08224eef7245225adc4beb97bdc3cd",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:55"
+        }
+      }
+    },
+    "PLAN": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 1,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_CREATE",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "directory_id": 1,
+          "standard_id": 1,
+          "direction": "OUT",
+          "product_code": "",
+          "is_default": 1,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:55"
+        }
+      }
+    },
+    "CAP_OUTBOUND": {
+      "path": "/order/sharedCarriers/capability/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 1,
+          "company_code": "QM",
+          "connection_id": "33",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "standard_id": 1,
+          "flow": "OUTBOUND",
+          "product_code": "",
+          "evidence": "TEST 仓库收发能力确认",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:55",
+          "provinces": [
+            "浙江"
+          ],
+          "excluded_provinces": []
+        }
+      }
+    },
+    "CAP_INBOUND": {
+      "path": "/order/sharedCarriers/capability/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 2,
+          "company_code": "QM",
+          "connection_id": "33",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "standard_id": 1,
+          "flow": "INBOUND",
+          "product_code": "",
+          "evidence": "TEST 仓库收发能力确认",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:55",
+          "provinces": [],
+          "excluded_provinces": []
+        }
+      }
+    },
+    "ACTUAL_B_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 2,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "external_code": "TEST-SC-B-001",
+          "external_name": "[公共快递TEST] TEST-SC-B-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:56",
+          "scope_hash": "abb110275169da3a5feaacaf78a434f4e9f80d9f03f10836692a1b6fecc5a1e3",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "ACTUAL_B": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 2,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "directory_id": 2,
+          "standard_id": 2,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "TM_ALIAS_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 3,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_SHIPPING",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "001/sF.a",
+          "external_name": "[公共快递TEST] 001/sF.a",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:56",
+          "scope_hash": "c76694e1c1d7b33e9f1091d92f6013c2c6401e28983834468ac215beb299f83a",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "TM_ALIAS": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 3,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_SHIPPING",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 3,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "SECOND_ACTUAL_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 4,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "34",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "TEST-SC-UNKNOWN-001",
+          "external_name": "[公共快递TEST] TEST-SC-UNKNOWN-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:56",
+          "scope_hash": "87092613cf2adf3d2134255860708b8a626c24115b075b7cfaf4d895b24c778d",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "SECOND_ACTUAL": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 4,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "34",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 4,
+          "standard_id": 2,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "INBOUND_A_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 5,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_RETURN_CREATE",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "external_code": "TEST-SC-IN-001",
+          "external_name": "[公共快递TEST] TEST-SC-IN-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:56",
+          "scope_hash": "bde608caccff2ffcfbf6176f5192bdd87e8ecf38a1ae5c2c1297581119fb63fd",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "INBOUND_A": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 5,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_RETURN_CREATE",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "directory_id": 5,
+          "standard_id": 1,
+          "direction": "OUT",
+          "product_code": "",
+          "is_default": 1,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "TM_RETURN_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 6,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_LOGISTICS",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "TEST-TM-RETURN-001",
+          "external_name": "[公共快递TEST] TEST-TM-RETURN-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-26 21:02:56",
+          "scope_hash": "1b1130a096d2d82d604b5d23c32fd2ff08335e2e31503208cc952017012858bd",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "TM_RETURN": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 6,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_LOGISTICS",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 6,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-26 21:02:56"
+        }
+      }
+    },
+    "PRODUCT": {
+      "path": "/goods/info",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 458
+      }
+    },
+    "PURCHASE": {
+      "path": "/supplychain/purchaseWorkspace/purchase",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 105
+      }
+    },
+    "PO_APPROVE": {
+      "path": "/supplychain/purchaseWorkspace/purchase/105/approve",
+      "response": {
+        "msg": "操作成功",
+        "code": 200
+      }
+    },
+    "RECEIPT": {
+      "path": "/supplychain/purchaseWorkspace/purchase/105/receipt",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 123
+      }
+    },
+    "RECEIPT_APPROVE": {
+      "path": "/supplychain/purchaseWorkspace/receipt/123/approve",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 378
+      }
+    },
+    "INBOUND_CALLBACK": {
+      "message": "回传已接收，入账异步处理"
+    },
+    "RETURN": {
+      "path": "/supplychain/purchaseReturns",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 41
+      }
+    },
+    "RETURN_APPROVE": {
+      "path": "/supplychain/purchaseReturns/41/approve",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 41,
+          "company_code": "QM",
+          "return_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+          "request_key": "SCARRIER_20261026210253",
+          "purchase_id": 105,
+          "po_sn": "POe0fe157097c5406f99a565586cb7c606",
+          "supplier_sn": "SUPbe7b9d04e4ab40368844b13f9d85f662",
+          "supplier_name": "[公共快递TEST] 20261026210253",
+          "store_code": "SCV_20261026210253",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "outbound_mode": 1,
+          "state": "APPROVING",
+          "quantity": 5,
+          "accepted_quantity": 0,
+          "posted_quantity": 0,
+          "receipt_final": 0,
+          "dispatch_state": "PENDING",
+          "external_order": "",
+          "carrier_code": "TEST-SC-PLAN-20261026210253",
+          "reason": "[公共快递TEST] 20261026210253",
+          "cancel_reason": "",
+          "stock_reserved": 0,
+          "funds_state": "UNRECORDED",
+          "funds_amount": 0.0,
+          "funds_evidence": "",
+          "control_version": 2,
+          "last_error": "",
+          "created_by": "admin",
+          "approved_by": "admin",
+          "create_time": "2026-10-27 09:48:28",
+          "update_time": "2026-10-27 09:48:28",
+          "receipt_review_pending": 0,
+          "attempts": 0,
+          "next_attempt_at": "2026-10-27 09:48:28",
+          "fulfillment_model": 2,
+          "stop_key": "",
+          "standard_id": 1,
+          "carrier_snapshot": "{\"state\":\"RESOLVED\",\"message\":\"仓库服务能力检查通过\",\"available\":true,\"mapping_id\":1,\"revision\":1,\"standard_id\":1,\"standard_code\":\"TEST_SC_A_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商A 20261026210253\",\"external_code\":\"TEST-SC-PLAN-20261026210253\",\"external_name\":\"[公共快递TEST] TEST-SC-PLAN-20261026210253\",\"directory_id\":1,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_CREATE\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"capability_id\":1,\"capability_revision\":1,\"capability_evidence\":\"TEST 仓库收发能力确认\",\"configuration_revision\":16,\"context\":{\"virtual\":false,\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_CREATE\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"OUT\",\"standard_id\":1,\"province\":\"浙江\",\"shop_id\":\"\",\"flow\":\"OUTBOUND\"}}",
+          "receiver": {
+            "area": "西湖区",
+            "city": "杭州市",
+            "name": "[TEST]供应商",
+            "mobile": "13000000000",
+            "province": "浙江省",
+            "detailAddress": "本地TEST验收地址"
+          },
+          "lines": [
+            {
+              "id": 45,
+              "company_code": "QM",
+              "return_id": 41,
+              "source_key": "R90",
+              "ticket_sn": "CG729c16d3840f486e97d24cfdda09a843",
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "quantity": 5,
+              "source_quantity": 10,
+              "purchase_price": 2.5,
+              "accepted_quantity": 0,
+              "posted_quantity": 0,
+              "supplier_received_quantity": 0,
+              "supplier_refused_quantity": 0,
+              "recovered_quantity": 0,
+              "reclaim_claimed_quantity": 0
+            }
+          ],
+          "posted_amount": 0.0,
+          "events": [],
+          "audit": [
+            {
+              "action": "APPROVE",
+              "actor": "admin",
+              "reason": "审核通过，后台按原批次锁定库存后自动执行退仓",
+              "create_time": "2026-10-27T09:48:28"
+            },
+            {
+              "action": "EXECUTION_CREATED",
+              "actor": "admin",
+              "reason": "同一退仓追加仓库执行 CGTe0539389615b4eb0959e46ca6875f6c3-01，首次锁定库存",
+              "create_time": "2026-10-27T09:48:28"
+            },
+            {
+              "action": "CREATE",
+              "actor": "admin",
+              "reason": "创建原采购来源退仓草稿",
+              "create_time": "2026-10-27T09:48:28"
+            }
+          ],
+          "quantity_summary": [
+            {
+              "return_id": 41,
+              "stock_unit": "件",
+              "quantity": 5,
+              "accepted_quantity": 0,
+              "posted_quantity": 0,
+              "supplier_received_quantity": 0,
+              "supplier_refused_quantity": 0,
+              "planned_amount": 12.5,
+              "posted_amount": 0.0
+            }
+          ],
+          "planned_amount": 12.5,
+          "net_posted_amount": 0.0,
+          "unshipped_quantity": 5,
+          "pending_post_quantity": 0,
+          "released_quantity": 0,
+          "remaining_hold": 0,
+          "progress_code": "RESERVING",
+          "progress_label": "库存锁定中",
+          "progress_hint": "后台正在校验并锁定原来源库存。",
+          "primary_action": "",
+          "funds_remaining": 0.0,
+          "funds_over_recorded": false,
+          "execution_count": 1,
+          "parcel_count": 0,
+          "parcel_pending": 0,
+          "parcel_unknown_execution_count": 0,
+          "funds": [],
+          "supplier_receipts": [],
+          "reclaims": [],
+          "parent_return": [],
+          "child_returns": [],
+          "executions": [
+            {
+              "id": 17,
+              "sequence_no": 1,
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "state": "ACTIVE",
+              "dispatch_state": "PENDING",
+              "cancel_state": "NONE",
+              "external_order": "",
+              "quantity_mode": "INCREMENTAL",
+              "fragment_mode": "COMPLETE",
+              "hold_action": "INITIAL",
+              "stock_ready": 0,
+              "quantity": 5,
+              "accepted_quantity": 0,
+              "posted_quantity": 0,
+              "receipt_final": 0,
+              "review_pending": 0,
+              "carrier_code": "",
+              "waybill": "",
+              "last_error": "",
+              "create_time": "2026-10-27 09:48:28",
+              "lines": [
+                {
+                  "id": 19,
+                  "company_code": "QM",
+                  "return_id": 41,
+                  "execution_id": 17,
+                  "return_line_id": 45,
+                  "quantity": 5,
+                  "accepted_quantity": 0,
+                  "posted_quantity": 0,
+                  "supplier_accepted": 0,
+                  "supplier_refused": 0,
+                  "sku_sn": "SCARRIER_20261026210253",
+                  "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                  "stock_unit": "件",
+                  "batch_code": "SC_BATCH_20261026210253",
+                  "inventory_type": "ZP",
+                  "purchase_price": 2.5,
+                  "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01"
+                }
+              ]
+            }
+          ],
+          "execution_lines": [
+            {
+              "id": 19,
+              "company_code": "QM",
+              "return_id": 41,
+              "execution_id": 17,
+              "return_line_id": 45,
+              "quantity": 5,
+              "accepted_quantity": 0,
+              "posted_quantity": 0,
+              "supplier_accepted": 0,
+              "supplier_refused": 0,
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "purchase_price": 2.5,
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01"
+            }
+          ],
+          "execution_requests": [],
+          "pending_messages": [],
+          "parcels": [],
+          "parcel_allocations": [],
+          "supplier_sources": []
+        }
+      }
+    },
+    "OUTBOUND_CALLBACK": {
+      "message": "原执行回传已保留；完整出库明细后台入账，包裹独立核对"
+    },
+    "OUTBOUND_CALLBACK_DUPLICATE": {
+      "message": "原执行回传已保留；完整出库明细后台入账，包裹独立核对"
+    },
+    "REPAIR_ACTUAL_A_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 7,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "external_code": "TEST-SC-UNKNOWN-001",
+          "external_name": "[公共快递TEST] TEST-SC-UNKNOWN-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-27 09:57:45",
+          "scope_hash": "abb110275169da3a5feaacaf78a434f4e9f80d9f03f10836692a1b6fecc5a1e3",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:45"
+        }
+      }
+    },
+    "REPAIR_ACTUAL_A": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 7,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "directory_id": 7,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:45"
+        }
+      }
+    },
+    "SHADOW_BROAD_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 8,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "TEST-SC-SHADOW-001",
+          "external_name": "[公共快递TEST] TEST-SC-SHADOW-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-27 09:57:49",
+          "scope_hash": "be8d3ffe0341828132ce5c56e31fe9054c80bfaa1077099c03616b7c1f130197",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:49"
+        }
+      }
+    },
+    "SHADOW_BROAD": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 8,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 8,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:49"
+        }
+      }
+    },
+    "SHADOW_PRECISE_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 9,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "",
+          "external_code": "TEST-SC-SHADOW-001",
+          "external_name": "[公共快递TEST] TEST-SC-SHADOW-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-27 09:57:49",
+          "scope_hash": "ea1a07b98da7ff53f5935bef5723d40e3e561abe0ae79cb166af30f0223a6f1a",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:49"
+        }
+      }
+    },
+    "SHADOW_PRECISE": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 9,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "",
+          "directory_id": 9,
+          "standard_id": 2,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:49"
+        }
+      }
+    },
+    "SHADOW_DISABLE": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 9,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "",
+          "directory_id": 9,
+          "standard_id": 2,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 0,
+          "disabled_reason": "TEST 精确范围停用，禁止回退宽范围",
+          "revision": 2,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 09:57:49"
+        }
+      }
+    },
+    "IMPORT_PREVIEW": {
+      "path": "/order/sharedCarriers/directory/import-preview",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "rows": [
+            {
+              "line": 1,
+              "status": "NEW",
+              "id": 0,
+              "revision": 0,
+              "data": {
+                "enabled": 1,
+                "disabled_reason": "",
+                "system_type": "WMS",
+                "provider": "QIMEN",
+                "purpose": "WMS_RETURN_ACTUAL",
+                "connection_id": "34",
+                "shop_id": "",
+                "owner_code": "",
+                "real_store_code": "",
+                "evidence": "TEST 正式目录导入验收",
+                "external_code": "001/sF.a",
+                "external_name": "[TEST] 原值目录",
+                "source": "IMPORT",
+                "scope_hash": "aca41e8922fe26344148de2c874c88a2da1445ad6205f753d9f56d836ff99b58"
+              }
+            }
+          ],
+          "scope": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_RETURN_ACTUAL",
+            "connection_id": "34",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": ""
+          },
+          "errors": 0,
+          "base_revision": 23,
+          "request_key": "13138f056916485781cb01c832931b1f"
+        }
+      }
+    },
+    "IMPORT_CONFIRM": {
+      "path": "/order/sharedCarriers/directory/import-confirm",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "rows": [
+            {
+              "line": 1,
+              "status": "NEW",
+              "id": 0,
+              "revision": 0,
+              "data": {
+                "enabled": 1,
+                "disabled_reason": "",
+                "system_type": "WMS",
+                "provider": "QIMEN",
+                "purpose": "WMS_RETURN_ACTUAL",
+                "connection_id": "34",
+                "shop_id": "",
+                "owner_code": "",
+                "real_store_code": "",
+                "evidence": "TEST 正式目录导入验收",
+                "external_code": "001/sF.a",
+                "external_name": "[TEST] 原值目录",
+                "source": "IMPORT",
+                "scope_hash": "aca41e8922fe26344148de2c874c88a2da1445ad6205f753d9f56d836ff99b58"
+              }
+            }
+          ],
+          "scope": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_RETURN_ACTUAL",
+            "connection_id": "34",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": ""
+          },
+          "errors": 0,
+          "base_revision": 23,
+          "request_key": "13138f056916485781cb01c832931b1f"
+        }
+      }
+    },
+    "SYNC_UNSUPPORTED": {
+      "path": "/order/sharedCarriers/directory/sync",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "message": "该连接尚无已接通且获授权的目录查询适配器，请导入正式目录",
+          "state": "UNSUPPORTED",
+          "id": 1
+        }
+      }
+    },
+    "SUPPLIER_REFUSAL": {
+      "path": "/supplychain/purchaseReturns/41/supplier-receipt",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 41,
+          "company_code": "QM",
+          "return_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+          "request_key": "SCARRIER_20261026210253",
+          "purchase_id": 105,
+          "po_sn": "POe0fe157097c5406f99a565586cb7c606",
+          "supplier_sn": "SUPbe7b9d04e4ab40368844b13f9d85f662",
+          "supplier_name": "[公共快递TEST] 20261026210253",
+          "store_code": "SCV_20261026210253",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "outbound_mode": 1,
+          "state": "COMPLETED",
+          "quantity": 5,
+          "accepted_quantity": 5,
+          "posted_quantity": 5,
+          "receipt_final": 1,
+          "dispatch_state": "ACCEPTED",
+          "external_order": "SIMOUT_106406a9b51e49948c5b",
+          "carrier_code": "TEST-SC-PLAN-20261026210253",
+          "reason": "[公共快递TEST] 20261026210253",
+          "cancel_reason": "",
+          "stock_reserved": 1,
+          "funds_state": "UNRECORDED",
+          "funds_amount": 0.0,
+          "funds_evidence": "",
+          "control_version": 3,
+          "last_error": "",
+          "created_by": "admin",
+          "approved_by": "admin",
+          "create_time": "2026-10-27 09:48:28",
+          "update_time": "2026-10-27 10:06:07",
+          "receipt_review_pending": 0,
+          "attempts": 2,
+          "next_attempt_at": "2026-10-27 09:48:28",
+          "fulfillment_model": 2,
+          "stop_key": "",
+          "standard_id": 1,
+          "carrier_snapshot": "{\"state\":\"RESOLVED\",\"message\":\"仓库服务能力检查通过\",\"available\":true,\"mapping_id\":1,\"revision\":1,\"standard_id\":1,\"standard_code\":\"TEST_SC_A_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商A 20261026210253\",\"external_code\":\"TEST-SC-PLAN-20261026210253\",\"external_name\":\"[公共快递TEST] TEST-SC-PLAN-20261026210253\",\"directory_id\":1,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_CREATE\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"capability_id\":1,\"capability_revision\":1,\"capability_evidence\":\"TEST 仓库收发能力确认\",\"configuration_revision\":16,\"context\":{\"virtual\":false,\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_CREATE\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"OUT\",\"standard_id\":1,\"province\":\"浙江\",\"shop_id\":\"\",\"flow\":\"OUTBOUND\"}}",
+          "receiver": {
+            "area": "西湖区",
+            "city": "杭州市",
+            "name": "[TEST]供应商",
+            "mobile": "13000000000",
+            "province": "浙江省",
+            "detailAddress": "本地TEST验收地址"
+          },
+          "lines": [
+            {
+              "id": 45,
+              "company_code": "QM",
+              "return_id": 41,
+              "source_key": "R90",
+              "ticket_sn": "CG729c16d3840f486e97d24cfdda09a843",
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "quantity": 5,
+              "source_quantity": 10,
+              "purchase_price": 2.5,
+              "accepted_quantity": 5,
+              "posted_quantity": 5,
+              "supplier_received_quantity": 0,
+              "supplier_refused_quantity": 1,
+              "recovered_quantity": 0,
+              "reclaim_claimed_quantity": 0
+            }
+          ],
+          "posted_amount": 12.5,
+          "events": [
+            {
+              "id": 37,
+              "message_id": "E17/ef563cf69f6aba2e3be2fcbb3ef6e8d09873da1153cc11825e993a44b17cd33c",
+              "source_log_id": 1319,
+              "quantity": 5,
+              "state": "POSTED",
+              "last_error": "",
+              "create_time": "2026-10-27 09:48:51",
+              "receipt": {
+                "lines": [
+                  {
+                    "sku_sn": "SCARRIER_20261026210253",
+                    "line_key": 19,
+                    "quantity": 5,
+                    "batch_code": "SC_BATCH_20261026210253",
+                    "owner_code": "SC_OWNER_20261026210253",
+                    "inventory_type": "ZP"
+                  }
+                ],
+                "status": "DELIVERED",
+                "waybill": "",
+                "complete": true,
+                "packages": [
+                  {
+                    "items": [
+                      {
+                        "sku_sn": "SCARRIER_20261026210253",
+                        "line_key": "19",
+                        "quantity": 2,
+                        "batch_code": "SC_BATCH_20261026210253",
+                        "inventory_type": "ZP"
+                      }
+                    ],
+                    "waybill": "TEST-SC-WAYBILL-20261026210253",
+                    "parse_error": "",
+                    "carrier_code": "TEST-SC-UNKNOWN-001",
+                    "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+                    "package_code": "TEST-P1"
+                  },
+                  {
+                    "items": [
+                      {
+                        "sku_sn": "SCARRIER_20261026210253",
+                        "line_key": "19",
+                        "quantity": 3,
+                        "batch_code": "SC_BATCH_20261026210253",
+                        "inventory_type": "ZP"
+                      }
+                    ],
+                    "waybill": "TEST-SC-WAYBILL-20261026210253",
+                    "parse_error": "",
+                    "carrier_code": "TEST-SC-B-001",
+                    "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+                    "package_code": "TEST-P2"
+                  }
+                ],
+                "return_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+                "message_id": "SC_OUT_20261026210253",
+                "owner_code": "SC_OWNER_20261026210253",
+                "total_lines": 1,
+                "carrier_code": "",
+                "carrier_name": "",
+                "outbound_time": "",
+                "external_order": "SIMOUT_106406a9b51e49948c5b",
+                "warehouse_code": "SC_EXT_20261026210253",
+                "snapshot_version": 0
+              }
+            }
+          ],
+          "audit": [
+            {
+              "action": "SUPPLIER_REFUSE",
+              "actor": "admin",
+              "reason": "[TEST] 供应商实际拒收1件凭证；仅登记事实；按实际商品登记，不以物流签收代替商品验收",
+              "create_time": "2026-10-27T10:06:07"
+            },
+            {
+              "action": "OUTBOUND_ACCEPTED",
+              "actor": "WMS",
+              "reason": "执行 CGTe0539389615b4eb0959e46ca6875f6c3-01；消息 SC_OUT_20261026210253；确认增量 5；本执行最终确认",
+              "create_time": "2026-10-27T09:48:51"
+            },
+            {
+              "action": "APPROVE",
+              "actor": "admin",
+              "reason": "审核通过，后台按原批次锁定库存后自动执行退仓",
+              "create_time": "2026-10-27T09:48:28"
+            },
+            {
+              "action": "EXECUTION_CREATED",
+              "actor": "admin",
+              "reason": "同一退仓追加仓库执行 CGTe0539389615b4eb0959e46ca6875f6c3-01，首次锁定库存",
+              "create_time": "2026-10-27T09:48:28"
+            },
+            {
+              "action": "CREATE",
+              "actor": "admin",
+              "reason": "创建原采购来源退仓草稿",
+              "create_time": "2026-10-27T09:48:28"
+            }
+          ],
+          "stock": {
+            "company_code": "QM",
+            "document_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+            "purpose": "RETURN",
+            "payload_hash": "fc2358f6a178947246869c9f4ff32ba2679028b71cecb571800801dbf7cea310",
+            "state": "COMPLETED",
+            "create_time": "2026-10-27T09:48:28",
+            "exists": true,
+            "lines": [
+              {
+                "company_code": "QM",
+                "document_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+                "line_key": 45,
+                "batch_id": 486,
+                "sku_sn": "SCARRIER_20261026210253",
+                "store_code": "SCV_20261026210253",
+                "inventory_type": "ZP",
+                "quantity": 5,
+                "consumed_quantity": 5,
+                "released_quantity": 0,
+                "recovered_quantity": 0,
+                "planned_quantity": 5,
+                "batch_code": "SC_BATCH_20261026210253",
+                "transaction_price": 2.5,
+                "zp_available_number": 5,
+                "cp_available_number": 0
+              }
+            ]
+          },
+          "quantity_summary": [
+            {
+              "return_id": 41,
+              "stock_unit": "件",
+              "quantity": 5,
+              "accepted_quantity": 5,
+              "posted_quantity": 5,
+              "supplier_received_quantity": 0,
+              "supplier_refused_quantity": 1,
+              "planned_amount": 12.5,
+              "posted_amount": 12.5
+            }
+          ],
+          "planned_amount": 12.5,
+          "net_posted_amount": 12.5,
+          "unshipped_quantity": 0,
+          "pending_post_quantity": 0,
+          "released_quantity": 0,
+          "remaining_hold": 0,
+          "progress_code": "COMPLETED",
+          "progress_label": "原计划出库已扣账",
+          "progress_hint": "原计划已全部出库扣账；供应商商品验收、拒收收回和款项继续分别跟踪。",
+          "primary_action": "",
+          "funds_remaining": 12.5,
+          "funds_over_recorded": false,
+          "execution_count": 1,
+          "parcel_count": 2,
+          "parcel_pending": 0,
+          "parcel_unknown_execution_count": 0,
+          "funds": [],
+          "supplier_receipts": [
+            {
+              "id": 18,
+              "decision": "REFUSE",
+              "evidence": "[TEST] 供应商实际拒收1件凭证；仅登记事实",
+              "actor": "admin",
+              "create_time": "2026-10-27 10:06:07",
+              "lines": [
+                {
+                  "quantity": 1,
+                  "execution_line_id": 19
+                }
+              ]
+            }
+          ],
+          "reclaims": [],
+          "parent_return": [],
+          "child_returns": [],
+          "executions": [
+            {
+              "id": 17,
+              "sequence_no": 1,
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "state": "ENDED",
+              "dispatch_state": "ACCEPTED",
+              "cancel_state": "NONE",
+              "external_order": "SIMOUT_106406a9b51e49948c5b",
+              "quantity_mode": "INCREMENTAL",
+              "fragment_mode": "COMPLETE",
+              "hold_action": "INITIAL",
+              "stock_ready": 1,
+              "quantity": 5,
+              "accepted_quantity": 5,
+              "posted_quantity": 5,
+              "receipt_final": 1,
+              "review_pending": 0,
+              "carrier_code": "",
+              "waybill": "",
+              "last_error": "",
+              "create_time": "2026-10-27 09:48:28",
+              "lines": [
+                {
+                  "id": 19,
+                  "company_code": "QM",
+                  "return_id": 41,
+                  "execution_id": 17,
+                  "return_line_id": 45,
+                  "quantity": 5,
+                  "accepted_quantity": 5,
+                  "posted_quantity": 5,
+                  "supplier_accepted": 0,
+                  "supplier_refused": 1,
+                  "sku_sn": "SCARRIER_20261026210253",
+                  "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                  "stock_unit": "件",
+                  "batch_code": "SC_BATCH_20261026210253",
+                  "inventory_type": "ZP",
+                  "purchase_price": 2.5,
+                  "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01"
+                }
+              ]
+            }
+          ],
+          "execution_lines": [
+            {
+              "id": 19,
+              "company_code": "QM",
+              "return_id": 41,
+              "execution_id": 17,
+              "return_line_id": 45,
+              "quantity": 5,
+              "accepted_quantity": 5,
+              "posted_quantity": 5,
+              "supplier_accepted": 0,
+              "supplier_refused": 1,
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "purchase_price": 2.5,
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01"
+            }
+          ],
+          "execution_requests": [],
+          "pending_messages": [],
+          "parcels": [
+            {
+              "id": 13,
+              "company_code": "QM",
+              "return_id": 41,
+              "execution_id": 17,
+              "package_code": "TEST-P2",
+              "carrier_code": "TEST-SC-B-001",
+              "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+              "waybill": "TEST-SC-WAYBILL-20261026210253",
+              "content_hash": "335a6827b5654af704688525f1fcea051832948b9782741aca2b4947647d4670",
+              "content_state": "MAPPED",
+              "evidence": "",
+              "control_version": 1,
+              "create_time": "2026-10-27 09:48:51",
+              "standard_id": 2,
+              "carrier_resolution_state": "RESOLVED",
+              "carrier_resolution_json": "{\"state\":\"RESOLVED\",\"message\":\"编码对照通过\",\"available\":true,\"mapping_id\":2,\"revision\":1,\"standard_id\":2,\"standard_code\":\"TEST_SC_B_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商B 20261026210253\",\"external_code\":\"TEST-SC-B-001\",\"external_name\":\"[公共快递TEST] TEST-SC-B-001\",\"directory_id\":2,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"configuration_revision\":16,\"context\":{\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"IN\",\"external_code\":\"TEST-SC-B-001\",\"raw_name\":\"[TEST] 原始承运商 TEST-SC-B-001\",\"source_execution_id\":17,\"source_package_code\":\"TEST-P2\",\"shop_id\":\"\"}}",
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "items": [
+                {
+                  "id": 13,
+                  "company_code": "QM",
+                  "return_id": 41,
+                  "parcel_id": 13,
+                  "item_no": 1,
+                  "sku_sn": "SCARRIER_20261026210253",
+                  "quantity": 3,
+                  "hint_line_id": 19,
+                  "hint_batch": "SC_BATCH_20261026210253",
+                  "hint_grade": "ZP",
+                  "allocations": [
+                    {
+                      "id": 13,
+                      "company_code": "QM",
+                      "return_id": 41,
+                      "parcel_item_id": 13,
+                      "execution_line_id": 19,
+                      "return_line_id": 45,
+                      "quantity": 3,
+                      "actor": "WMS",
+                      "evidence": "仓库提供的来源唯一且未超实际出库",
+                      "create_time": "2026-10-27T09:48:51",
+                      "parcel_id": 13,
+                      "package_code": "TEST-P2",
+                      "waybill": "TEST-SC-WAYBILL-20261026210253",
+                      "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+                      "parcel_state": "MAPPED",
+                      "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+                      "sku_sn": "SCARRIER_20261026210253",
+                      "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                      "stock_unit": "件",
+                      "batch_code": "SC_BATCH_20261026210253",
+                      "inventory_type": "ZP",
+                      "purchase_price": 2.5,
+                      "supplier_confirmed": 0
+                    }
+                  ],
+                  "unassigned_quantity": 0
+                }
+              ]
+            },
+            {
+              "id": 12,
+              "company_code": "QM",
+              "return_id": 41,
+              "execution_id": 17,
+              "package_code": "TEST-P1",
+              "carrier_code": "TEST-SC-UNKNOWN-001",
+              "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+              "waybill": "TEST-SC-WAYBILL-20261026210253",
+              "content_hash": "8f12832dfd3f66db8066307aaa37c21ee9e151255e97429a28015370a2c52e93",
+              "content_state": "MAPPED",
+              "evidence": "",
+              "control_version": 1,
+              "create_time": "2026-10-27 09:48:51",
+              "standard_id": 1,
+              "carrier_resolution_state": "RESOLVED",
+              "carrier_resolution_json": "{\"state\":\"RESOLVED\",\"message\":\"编码对照通过\",\"available\":true,\"mapping_id\":7,\"revision\":1,\"standard_id\":1,\"standard_code\":\"TEST_SC_A_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商A 20261026210253\",\"external_code\":\"TEST-SC-UNKNOWN-001\",\"external_name\":\"[公共快递TEST] TEST-SC-UNKNOWN-001\",\"directory_id\":7,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"configuration_revision\":18,\"context\":{\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"IN\",\"external_code\":\"TEST-SC-UNKNOWN-001\",\"raw_name\":\"[TEST] 原始承运商 TEST-SC-UNKNOWN-001\",\"source_execution_id\":17,\"source_package_code\":\"TEST-P1\",\"shop_id\":\"\"}}",
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "items": [
+                {
+                  "id": 12,
+                  "company_code": "QM",
+                  "return_id": 41,
+                  "parcel_id": 12,
+                  "item_no": 1,
+                  "sku_sn": "SCARRIER_20261026210253",
+                  "quantity": 2,
+                  "hint_line_id": 19,
+                  "hint_batch": "SC_BATCH_20261026210253",
+                  "hint_grade": "ZP",
+                  "allocations": [
+                    {
+                      "id": 12,
+                      "company_code": "QM",
+                      "return_id": 41,
+                      "parcel_item_id": 12,
+                      "execution_line_id": 19,
+                      "return_line_id": 45,
+                      "quantity": 2,
+                      "actor": "WMS",
+                      "evidence": "仓库提供的来源唯一且未超实际出库",
+                      "create_time": "2026-10-27T09:48:51",
+                      "parcel_id": 12,
+                      "package_code": "TEST-P1",
+                      "waybill": "TEST-SC-WAYBILL-20261026210253",
+                      "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+                      "parcel_state": "MAPPED",
+                      "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+                      "sku_sn": "SCARRIER_20261026210253",
+                      "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                      "stock_unit": "件",
+                      "batch_code": "SC_BATCH_20261026210253",
+                      "inventory_type": "ZP",
+                      "purchase_price": 2.5,
+                      "supplier_confirmed": 0
+                    }
+                  ],
+                  "unassigned_quantity": 0
+                }
+              ]
+            }
+          ],
+          "parcel_allocations": [
+            {
+              "id": 12,
+              "company_code": "QM",
+              "return_id": 41,
+              "parcel_item_id": 12,
+              "execution_line_id": 19,
+              "return_line_id": 45,
+              "quantity": 2,
+              "actor": "WMS",
+              "evidence": "仓库提供的来源唯一且未超实际出库",
+              "create_time": "2026-10-27T09:48:51",
+              "parcel_id": 12,
+              "package_code": "TEST-P1",
+              "waybill": "TEST-SC-WAYBILL-20261026210253",
+              "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+              "parcel_state": "MAPPED",
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "purchase_price": 2.5,
+              "supplier_confirmed": 0
+            },
+            {
+              "id": 13,
+              "company_code": "QM",
+              "return_id": 41,
+              "parcel_item_id": 13,
+              "execution_line_id": 19,
+              "return_line_id": 45,
+              "quantity": 3,
+              "actor": "WMS",
+              "evidence": "仓库提供的来源唯一且未超实际出库",
+              "create_time": "2026-10-27T09:48:51",
+              "parcel_id": 13,
+              "package_code": "TEST-P2",
+              "waybill": "TEST-SC-WAYBILL-20261026210253",
+              "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+              "parcel_state": "MAPPED",
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "purchase_price": 2.5,
+              "supplier_confirmed": 0
+            }
+          ],
+          "supplier_sources": [
+            {
+              "id": 9,
+              "company_code": "QM",
+              "return_id": 41,
+              "receipt_id": 18,
+              "execution_line_id": 19,
+              "return_line_id": 45,
+              "decision": "REFUSE",
+              "quantity": 1,
+              "create_time": "2026-10-27 10:06:07",
+              "evidence": "[TEST] 供应商实际拒收1件凭证；仅登记事实",
+              "actor": "admin",
+              "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+              "sku_sn": "SCARRIER_20261026210253",
+              "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+              "stock_unit": "件",
+              "batch_code": "SC_BATCH_20261026210253",
+              "inventory_type": "ZP",
+              "purchase_price": 2.5,
+              "bound_quantity": 0,
+              "reclaim_claimed": 0,
+              "parcel_bindings": [],
+              "unbound_quantity": 1,
+              "reclaim_available": 1
+            }
+          ]
+        }
+      }
+    },
+    "RAW_RECLAIM": {
+      "path": "/supplychain/purchaseReturns/41/reclaims",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": 10
+      }
+    },
+    "SYNC_WMS_FAILURE": {
+      "path": "/order/sharedCarriers/directory/sync",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "message": "已排队查询奇门目录，未变更任何对照",
+          "state": "PENDING",
+          "id": 2
+        }
+      }
+    },
+    "TM_ALIAS_IDENTIFY_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 17,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_IDENTIFY",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "001/sF.a",
+          "external_name": "[公共快递TEST] 001/sF.a",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-27 12:30:36",
+          "scope_hash": "e43d27251476f54ac3d4cb92e0246ae3b802e4985f93cf235a1f817540ce7eff",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 12:30:36"
+        }
+      }
+    },
+    "TM_ALIAS_IDENTIFY": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 14,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_IDENTIFY",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 17,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 12:30:36"
+        }
+      }
+    },
+    "TM_RETURN_IDENTIFY_DIRECTORY": {
+      "path": "/order/sharedCarriers/directory/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 18,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_IDENTIFY",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "external_code": "TEST-TM-RETURN-001",
+          "external_name": "[公共快递TEST] TEST-TM-RETURN-001",
+          "source": "MANUAL",
+          "evidence": "TEST 本地目录验收，非官方真实编码",
+          "verified_at": "2026-10-27 12:30:36",
+          "scope_hash": "e43d27251476f54ac3d4cb92e0246ae3b802e4985f93cf235a1f817540ce7eff",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 12:30:36"
+        }
+      }
+    },
+    "TM_RETURN_IDENTIFY": {
+      "path": "/order/sharedCarriers/mapping/save",
+      "response": {
+        "msg": "操作成功",
+        "code": 200,
+        "data": {
+          "id": 15,
+          "company_code": "QM",
+          "system_type": "CHANNEL",
+          "provider": "TMALL",
+          "purpose": "CHANNEL_RETURN_IDENTIFY",
+          "connection_id": "",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "directory_id": 18,
+          "standard_id": 1,
+          "direction": "IN",
+          "product_code": "",
+          "is_default": 0,
+          "evidence": "TEST 人工确认目录与标准身份",
+          "enabled": 1,
+          "disabled_reason": "",
+          "revision": 1,
+          "updated_by": "admin",
+          "update_time": "2026-10-27 12:30:36"
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "key": "A01",
+      "scenario": "标准快递无需仓库能力即可独立启用，别名可搜索；重复编码被拒绝",
+      "result": "PASS",
+      "evidence": {
+        "standard_a": 1,
+        "standard_b": 2,
+        "duplicate": "('/order/sharedCarriers/standard/save', '同公司已存在该编码或能力配置，请刷新核对')"
+      },
+      "time": "2026-10-27T12:30:36.113839"
+    },
+    {
+      "key": "A04-A07",
+      "scenario": "接口用途、编码大小写与前导零分别识别，未做名称或数值猜测",
+      "result": "PASS",
+      "evidence": {
+        "exact": {
+          "source": {
+            "state": "RESOLVED",
+            "message": "标准快递关联通过",
+            "available": true,
+            "mapping_id": 14,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "001/sF.a",
+            "external_name": "[公共快递TEST] 001/sF.a",
+            "directory_id": 17,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": "",
+            "purpose": "CHANNEL_RETURN_IDENTIFY",
+            "system_type": "CHANNEL",
+            "provider": "TMALL",
+            "scope_level": 1,
+            "configuration_revision": 38,
+            "context": {
+              "system_type": "CHANNEL",
+              "provider": "TMALL",
+              "purpose": "CHANNEL_RETURN_IDENTIFY",
+              "connection_id": "",
+              "shop_id": "",
+              "owner_code": "",
+              "real_store_code": "",
+              "external_code": "001/sF.a",
+              "direction": "IN"
+            }
+          },
+          "target": {
+            "state": "RESOLVED",
+            "message": "仓库服务能力检查通过",
+            "available": true,
+            "mapping_id": 1,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "TEST-SC-PLAN-20261026210253",
+            "external_name": "[公共快递TEST] TEST-SC-PLAN-20261026210253",
+            "directory_id": 1,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "33",
+            "shop_id": "",
+            "owner_code": "SCO_20261026210253",
+            "real_store_code": "SCW_20261026210253",
+            "purpose": "WMS_OUTBOUND_CREATE",
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "scope_level": 3,
+            "capability_id": 1,
+            "capability_revision": 1,
+            "capability_evidence": "TEST 仓库收发能力确认",
+            "configuration_revision": 38,
+            "context": {
+              "system_type": "WMS",
+              "provider": "QIMEN",
+              "purpose": "WMS_OUTBOUND_CREATE",
+              "connection_id": "33",
+              "shop_id": "",
+              "owner_code": "SCO_20261026210253",
+              "real_store_code": "SCW_20261026210253",
+              "province": "浙江",
+              "standard_id": 1,
+              "direction": "OUT",
+              "flow": "OUTBOUND"
+            }
+          }
+        },
+        "missing": {
+          "source": {
+            "state": "MISSING",
+            "message": "当前用途及作用域缺少快递关联；TMALL；外部编码〔1/sF.a〕",
+            "available": false,
+            "configuration_revision": 38,
+            "context": {
+              "system_type": "CHANNEL",
+              "provider": "TMALL",
+              "purpose": "CHANNEL_RETURN_IDENTIFY",
+              "connection_id": "",
+              "shop_id": "",
+              "owner_code": "",
+              "real_store_code": "",
+              "external_code": "1/sF.a",
+              "direction": "IN"
+            }
+          }
+        }
+      },
+      "time": "2026-10-27T12:30:36.203948"
+    },
+    {
+      "key": "A05",
+      "scenario": "同一原始编码可在不同WMS连接映射为不同标准；第二连接独立识别为B",
+      "result": "PASS",
+      "evidence": {
+        "source": {
+          "state": "RESOLVED",
+          "message": "标准快递关联通过",
+          "available": true,
+          "mapping_id": 4,
+          "revision": 1,
+          "standard_id": 2,
+          "standard_code": "TEST_SC_B_20261026210253",
+          "standard_name": "[公共快递验收] 承运商B 20261026210253",
+          "external_code": "TEST-SC-UNKNOWN-001",
+          "external_name": "[公共快递TEST] TEST-SC-UNKNOWN-001",
+          "directory_id": 4,
+          "product_code": "",
+          "evidence": "TEST 人工确认目录与标准身份",
+          "connection_id": "34",
+          "shop_id": "",
+          "owner_code": "",
+          "real_store_code": "",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "scope_level": 1,
+          "configuration_revision": 38,
+          "context": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_OUTBOUND_ACTUAL",
+            "connection_id": "34",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": "",
+            "external_code": "TEST-SC-UNKNOWN-001",
+            "direction": "IN"
+          }
+        },
+        "target": {
+          "state": "MISSING",
+          "message": "当前用途及作用域缺少快递关联；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；标准身份 2",
+          "available": false,
+          "configuration_revision": 38,
+          "context": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_OUTBOUND_CREATE",
+            "connection_id": "33",
+            "shop_id": "",
+            "owner_code": "SCO_20261026210253",
+            "real_store_code": "SCW_20261026210253",
+            "province": "浙江",
+            "standard_id": 2,
+            "direction": "OUT"
+          }
+        }
+      },
+      "time": "2026-10-27T12:30:36.217917"
+    },
+    {
+      "key": "A08-A09",
+      "scenario": "同仓发货只配送浙江，海南发货不可用；海南寄回按收货能力通过",
+      "result": "PASS",
+      "evidence": {
+        "inbound": {
+          "source": {
+            "state": "RESOLVED",
+            "message": "标准快递关联通过",
+            "available": true,
+            "mapping_id": 15,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "TEST-TM-RETURN-001",
+            "external_name": "[公共快递TEST] TEST-TM-RETURN-001",
+            "directory_id": 18,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": "",
+            "purpose": "CHANNEL_RETURN_IDENTIFY",
+            "system_type": "CHANNEL",
+            "provider": "TMALL",
+            "scope_level": 1,
+            "configuration_revision": 40,
+            "context": {
+              "system_type": "CHANNEL",
+              "provider": "TMALL",
+              "purpose": "CHANNEL_RETURN_IDENTIFY",
+              "connection_id": "",
+              "shop_id": "",
+              "owner_code": "",
+              "real_store_code": "",
+              "external_code": "TEST-TM-RETURN-001",
+              "direction": "IN"
+            }
+          },
+          "target": {
+            "state": "RESOLVED",
+            "message": "仓库服务能力检查通过",
+            "available": true,
+            "mapping_id": 5,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "TEST-SC-IN-001",
+            "external_name": "[公共快递TEST] TEST-SC-IN-001",
+            "directory_id": 5,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "33",
+            "shop_id": "",
+            "owner_code": "SCO_20261026210253",
+            "real_store_code": "SCW_20261026210253",
+            "purpose": "WMS_RETURN_CREATE",
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "scope_level": 3,
+            "capability_id": 2,
+            "capability_revision": 1,
+            "capability_evidence": "TEST 仓库收发能力确认",
+            "configuration_revision": 40,
+            "context": {
+              "system_type": "WMS",
+              "provider": "QIMEN",
+              "purpose": "WMS_RETURN_CREATE",
+              "connection_id": "33",
+              "shop_id": "",
+              "owner_code": "SCO_20261026210253",
+              "real_store_code": "SCW_20261026210253",
+              "province": "海南",
+              "standard_id": 1,
+              "direction": "OUT",
+              "flow": "INBOUND"
+            }
+          }
+        },
+        "outbound": {
+          "source": {
+            "state": "RESOLVED",
+            "message": "标准快递关联通过",
+            "available": true,
+            "mapping_id": 15,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "TEST-TM-RETURN-001",
+            "external_name": "[公共快递TEST] TEST-TM-RETURN-001",
+            "directory_id": 18,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": "",
+            "purpose": "CHANNEL_RETURN_IDENTIFY",
+            "system_type": "CHANNEL",
+            "provider": "TMALL",
+            "scope_level": 1,
+            "configuration_revision": 40,
+            "context": {
+              "system_type": "CHANNEL",
+              "provider": "TMALL",
+              "purpose": "CHANNEL_RETURN_IDENTIFY",
+              "connection_id": "",
+              "shop_id": "",
+              "owner_code": "",
+              "real_store_code": "",
+              "external_code": "TEST-TM-RETURN-001",
+              "direction": "IN"
+            }
+          },
+          "target": {
+            "state": "CAPABILITY_UNSUPPORTED",
+            "message": "该仓快递不支持当前收货省份；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；标准身份 1",
+            "available": false,
+            "mapping_id": 1,
+            "revision": 1,
+            "standard_id": 1,
+            "standard_code": "TEST_SC_A_20261026210253",
+            "standard_name": "[公共快递验收] 承运商A 20261026210253",
+            "external_code": "TEST-SC-PLAN-20261026210253",
+            "external_name": "[公共快递TEST] TEST-SC-PLAN-20261026210253",
+            "directory_id": 1,
+            "product_code": "",
+            "evidence": "TEST 人工确认目录与标准身份",
+            "connection_id": "33",
+            "shop_id": "",
+            "owner_code": "SCO_20261026210253",
+            "real_store_code": "SCW_20261026210253",
+            "purpose": "WMS_OUTBOUND_CREATE",
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "scope_level": 3,
+            "configuration_revision": 40,
+            "context": {
+              "system_type": "WMS",
+              "provider": "QIMEN",
+              "purpose": "WMS_OUTBOUND_CREATE",
+              "connection_id": "33",
+              "shop_id": "",
+              "owner_code": "SCO_20261026210253",
+              "real_store_code": "SCW_20261026210253",
+              "province": "海南",
+              "standard_id": 1,
+              "direction": "OUT",
+              "flow": "OUTBOUND"
+            }
+          }
+        }
+      },
+      "time": "2026-10-27T12:30:36.344035"
+    },
+    {
+      "key": "A10-A11-A14-A15",
+      "scenario": "真实本地采购10件、退仓5件；两个包裹共用一个运单，未知原始快递不阻断实出；重复回传未重复扣库存",
+      "result": "PASS",
+      "evidence": {
+        "return_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+        "purchase": "POe0fe157097c5406f99a565586cb7c606",
+        "sku": "SCARRIER_20261026210253",
+        "stock_received": {
+          "skuSn": "SCARRIER_20261026210253",
+          "totalStock": 10,
+          "availableStock": 10,
+          "allocatedStock": 0,
+          "reservedStock": 0,
+          "frozenStock": 0
+        },
+        "stock_held": {
+          "skuSn": "SCARRIER_20261026210253",
+          "totalStock": 10,
+          "availableStock": 5,
+          "allocatedStock": 5,
+          "reservedStock": 0,
+          "frozenStock": 0
+        },
+        "stock_posted": {
+          "skuSn": "SCARRIER_20261026210253",
+          "totalStock": 5,
+          "availableStock": 5,
+          "allocatedStock": 0,
+          "reservedStock": 0,
+          "frozenStock": 0
+        },
+        "parcels": [
+          {
+            "id": 13,
+            "package_code": "TEST-P2",
+            "carrier_code": "TEST-SC-B-001",
+            "waybill": "TEST-SC-WAYBILL-20261026210253"
+          },
+          {
+            "id": 12,
+            "package_code": "TEST-P1",
+            "carrier_code": "TEST-SC-UNKNOWN-001",
+            "waybill": "TEST-SC-WAYBILL-20261026210253"
+          }
+        ]
+      },
+      "time": "2026-10-27T12:30:40.403106"
+    },
+    {
+      "key": "A12-A16",
+      "scenario": "补齐原连接快递映射后重新校验，仅修复两个包裹的独立标准身份；原始编码不可覆盖，实际出库事件、仓库执行和库存均未重放",
+      "result": "PASS",
+      "evidence": {
+        "todo": {
+          "id": 1,
+          "company_code": "QM",
+          "fact_hash": "7ac303ad03b9d29b5bdb9b7c92d5158c534c16799d7afb6a316cc95b2786a19c",
+          "business_type": "PURCHASE_RETURN",
+          "business_id": 41,
+          "business_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+          "fact_id": "PARCEL_12",
+          "blocked_action": "RESOLVE_ACTUAL",
+          "reason_code": "RESOLVED",
+          "reason": "编码对照通过",
+          "context_json": "{\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"IN\",\"external_code\":\"TEST-SC-UNKNOWN-001\",\"raw_name\":\"[TEST] 原始承运商 TEST-SC-UNKNOWN-001\",\"source_execution_id\":17,\"source_package_code\":\"TEST-P1\"}",
+          "state": "COMPLETED",
+          "occurrences": 1,
+          "revision": 4,
+          "updated_by": "admin",
+          "create_time": "2026-10-27 09:56:22",
+          "update_time": "2026-10-27 09:57:46"
+        },
+        "stock": {
+          "skuSn": "SCARRIER_20261026210253",
+          "totalStock": 5,
+          "availableStock": 5,
+          "allocatedStock": 0,
+          "reservedStock": 0,
+          "frozenStock": 0
+        },
+        "parcels": [
+          {
+            "id": 13,
+            "company_code": "QM",
+            "return_id": 41,
+            "execution_id": 17,
+            "package_code": "TEST-P2",
+            "carrier_code": "TEST-SC-B-001",
+            "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+            "waybill": "TEST-SC-WAYBILL-20261026210253",
+            "content_hash": "335a6827b5654af704688525f1fcea051832948b9782741aca2b4947647d4670",
+            "content_state": "MAPPED",
+            "evidence": "",
+            "control_version": 1,
+            "create_time": "2026-10-27 09:48:51",
+            "standard_id": 2,
+            "carrier_resolution_state": "RESOLVED",
+            "carrier_resolution_json": "{\"state\":\"RESOLVED\",\"message\":\"编码对照通过\",\"available\":true,\"mapping_id\":2,\"revision\":1,\"standard_id\":2,\"standard_code\":\"TEST_SC_B_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商B 20261026210253\",\"external_code\":\"TEST-SC-B-001\",\"external_name\":\"[公共快递TEST] TEST-SC-B-001\",\"directory_id\":2,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"configuration_revision\":16,\"context\":{\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"IN\",\"external_code\":\"TEST-SC-B-001\",\"raw_name\":\"[TEST] 原始承运商 TEST-SC-B-001\",\"source_execution_id\":17,\"source_package_code\":\"TEST-P2\",\"shop_id\":\"\"}}",
+            "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+            "items": [
+              {
+                "id": 13,
+                "company_code": "QM",
+                "return_id": 41,
+                "parcel_id": 13,
+                "item_no": 1,
+                "sku_sn": "SCARRIER_20261026210253",
+                "quantity": 3,
+                "hint_line_id": 19,
+                "hint_batch": "SC_BATCH_20261026210253",
+                "hint_grade": "ZP",
+                "allocations": [
+                  {
+                    "id": 13,
+                    "company_code": "QM",
+                    "return_id": 41,
+                    "parcel_item_id": 13,
+                    "execution_line_id": 19,
+                    "return_line_id": 45,
+                    "quantity": 3,
+                    "actor": "WMS",
+                    "evidence": "仓库提供的来源唯一且未超实际出库",
+                    "create_time": "2026-10-27T09:48:51",
+                    "parcel_id": 13,
+                    "package_code": "TEST-P2",
+                    "waybill": "TEST-SC-WAYBILL-20261026210253",
+                    "carrier_name": "[TEST] 原始承运商 TEST-SC-B-001",
+                    "parcel_state": "MAPPED",
+                    "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+                    "sku_sn": "SCARRIER_20261026210253",
+                    "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                    "stock_unit": "件",
+                    "batch_code": "SC_BATCH_20261026210253",
+                    "inventory_type": "ZP",
+                    "purchase_price": 2.5,
+                    "supplier_confirmed": 0
+                  }
+                ],
+                "unassigned_quantity": 0
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "company_code": "QM",
+            "return_id": 41,
+            "execution_id": 17,
+            "package_code": "TEST-P1",
+            "carrier_code": "TEST-SC-UNKNOWN-001",
+            "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+            "waybill": "TEST-SC-WAYBILL-20261026210253",
+            "content_hash": "8f12832dfd3f66db8066307aaa37c21ee9e151255e97429a28015370a2c52e93",
+            "content_state": "MAPPED",
+            "evidence": "",
+            "control_version": 1,
+            "create_time": "2026-10-27 09:48:51",
+            "standard_id": 1,
+            "carrier_resolution_state": "RESOLVED",
+            "carrier_resolution_json": "{\"state\":\"RESOLVED\",\"message\":\"编码对照通过\",\"available\":true,\"mapping_id\":7,\"revision\":1,\"standard_id\":1,\"standard_code\":\"TEST_SC_A_20261026210253\",\"standard_name\":\"[公共快递验收] 承运商A 20261026210253\",\"external_code\":\"TEST-SC-UNKNOWN-001\",\"external_name\":\"[公共快递TEST] TEST-SC-UNKNOWN-001\",\"directory_id\":7,\"product_code\":\"\",\"evidence\":\"TEST 人工确认目录与标准身份\",\"connection_id\":\"33\",\"shop_id\":\"\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"scope_level\":3,\"configuration_revision\":18,\"context\":{\"system_type\":\"WMS\",\"provider\":\"QIMEN\",\"purpose\":\"WMS_OUTBOUND_ACTUAL\",\"connection_id\":\"33\",\"owner_code\":\"SCO_20261026210253\",\"real_store_code\":\"SCW_20261026210253\",\"direction\":\"IN\",\"external_code\":\"TEST-SC-UNKNOWN-001\",\"raw_name\":\"[TEST] 原始承运商 TEST-SC-UNKNOWN-001\",\"source_execution_id\":17,\"source_package_code\":\"TEST-P1\",\"shop_id\":\"\"}}",
+            "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+            "items": [
+              {
+                "id": 12,
+                "company_code": "QM",
+                "return_id": 41,
+                "parcel_id": 12,
+                "item_no": 1,
+                "sku_sn": "SCARRIER_20261026210253",
+                "quantity": 2,
+                "hint_line_id": 19,
+                "hint_batch": "SC_BATCH_20261026210253",
+                "hint_grade": "ZP",
+                "allocations": [
+                  {
+                    "id": 12,
+                    "company_code": "QM",
+                    "return_id": 41,
+                    "parcel_item_id": 12,
+                    "execution_line_id": 19,
+                    "return_line_id": 45,
+                    "quantity": 2,
+                    "actor": "WMS",
+                    "evidence": "仓库提供的来源唯一且未超实际出库",
+                    "create_time": "2026-10-27T09:48:51",
+                    "parcel_id": 12,
+                    "package_code": "TEST-P1",
+                    "waybill": "TEST-SC-WAYBILL-20261026210253",
+                    "carrier_name": "[TEST] 原始承运商 TEST-SC-UNKNOWN-001",
+                    "parcel_state": "MAPPED",
+                    "execution_sn": "CGTe0539389615b4eb0959e46ca6875f6c3-01",
+                    "sku_sn": "SCARRIER_20261026210253",
+                    "goods_name": "[公共快递TEST] 原始物流与库存独立验收",
+                    "stock_unit": "件",
+                    "batch_code": "SC_BATCH_20261026210253",
+                    "inventory_type": "ZP",
+                    "purchase_price": 2.5,
+                    "supplier_confirmed": 0
+                  }
+                ],
+                "unassigned_quantity": 0
+              }
+            ]
+          }
+        ],
+        "overwrite_rejected": "('/supplychain/purchaseReturns/41/parcels/supplement', '已有原始物流事实不能覆盖；补录只可完善缺失信息，请核对仓库原始凭证')"
+      },
+      "time": "2026-10-27T12:30:41.628513"
+    },
+    {
+      "key": "A02-A03-A06",
+      "scenario": "货主精确对照停用时明确阻断；不能回落到连接通用对照",
+      "result": "PASS",
+      "evidence": {
+        "source": {
+          "state": "DISABLED",
+          "message": "命中的快递关联已停用：TEST 精确范围停用，禁止回退宽范围；QIMEN / 连接 33 / 货主 SCO_20261026210253 / 实仓 SCW_20261026210253；外部编码〔TEST-SC-SHADOW-001〕",
+          "available": false,
+          "mapping_id": 9,
+          "revision": 2,
+          "standard_id": 2,
+          "standard_code": "TEST_SC_B_20261026210253",
+          "standard_name": "[公共快递验收] 承运商B 20261026210253",
+          "external_code": "TEST-SC-SHADOW-001",
+          "external_name": "[公共快递TEST] TEST-SC-SHADOW-001",
+          "directory_id": 9,
+          "product_code": "",
+          "evidence": "TEST 人工确认目录与标准身份",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "scope_level": 2,
+          "configuration_revision": 40,
+          "context": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_OUTBOUND_ACTUAL",
+            "connection_id": "33",
+            "shop_id": "",
+            "owner_code": "SCO_20261026210253",
+            "real_store_code": "SCW_20261026210253",
+            "external_code": "TEST-SC-SHADOW-001",
+            "direction": "IN"
+          }
+        }
+      },
+      "time": "2026-10-27T12:30:41.642941"
+    },
+    {
+      "key": "A19-A20",
+      "scenario": "目录先预览再确认；数字编码行被拒绝，文本编码保留前导零、大小写及标点；操作留痕",
+      "result": "PASS",
+      "evidence": {
+        "error_preview": {
+          "rows": [
+            {
+              "line": 1,
+              "status": "ERROR",
+              "message": "外部编码须为文本，不能把编码按数值转换"
+            }
+          ],
+          "scope": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_RETURN_ACTUAL",
+            "connection_id": "34",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": ""
+          },
+          "errors": 1,
+          "base_revision": 40,
+          "request_key": "30ad490efd494a75b6167d06b1a72cb8"
+        },
+        "rejected": "('/order/sharedCarriers/directory/import-confirm', '文件存在错误，修正后重新预览')",
+        "confirmed": {
+          "rows": [
+            {
+              "line": 1,
+              "status": "NEW",
+              "id": 0,
+              "revision": 0,
+              "data": {
+                "enabled": 1,
+                "disabled_reason": "",
+                "system_type": "WMS",
+                "provider": "QIMEN",
+                "purpose": "WMS_RETURN_ACTUAL",
+                "connection_id": "34",
+                "shop_id": "",
+                "owner_code": "",
+                "real_store_code": "",
+                "evidence": "TEST 正式目录导入验收",
+                "external_code": "001/sF.a",
+                "external_name": "[TEST] 原值目录",
+                "source": "IMPORT",
+                "scope_hash": "aca41e8922fe26344148de2c874c88a2da1445ad6205f753d9f56d836ff99b58"
+              }
+            }
+          ],
+          "scope": {
+            "system_type": "WMS",
+            "provider": "QIMEN",
+            "purpose": "WMS_RETURN_ACTUAL",
+            "connection_id": "34",
+            "shop_id": "",
+            "owner_code": "",
+            "real_store_code": ""
+          },
+          "errors": 0,
+          "base_revision": 23,
+          "request_key": "13138f056916485781cb01c832931b1f"
+        }
+      },
+      "time": "2026-10-27T12:30:41.702582"
+    },
+    {
+      "key": "A13",
+      "scenario": "未接通目录适配器明确提示不支持；奇门TEST目录查询失败正常落为失败任务，均保留已确认目录及对照",
+      "result": "PASS",
+      "evidence": {
+        "channel": {
+          "message": "该连接尚无已接通且获授权的目录查询适配器，请导入正式目录",
+          "state": "UNSUPPORTED",
+          "id": 1
+        },
+        "wms": {
+          "id": 2,
+          "company_code": "QM",
+          "system_type": "WMS",
+          "provider": "QIMEN",
+          "purpose": "WMS_OUTBOUND_ACTUAL",
+          "connection_id": "33",
+          "shop_id": "",
+          "owner_code": "SCO_20261026210253",
+          "real_store_code": "SCW_20261026210253",
+          "state": "FAILED",
+          "source_url": "https://developer.alibaba.com/docs/api.htm?apiId=27530",
+          "result_json": "{\"message\":\"目录查询未成功，请核对连接权限和接口支持；已有目录及对照保持原状\"}",
+          "actor": "admin",
+          "create_time": "2026-10-27 10:07:59",
+          "finish_time": "2026-10-27 10:08:17"
+        }
+      },
+      "time": "2026-10-27T12:30:41.780805"
+    },
+    {
+      "key": "A17",
+      "scenario": "供应商未知寄回快递可保存原始编码、名称和运单为待核实草稿；未核实无法审核下发，登记拒收及物流均不增加库存",
+      "result": "PASS",
+      "evidence": {
+        "reclaim_sn": "CGH7c16d5f8b0574e358e78dda47ed332e6",
+        "raw_carrier_code": "001/Unknown.a",
+        "raw_carrier_name": "[TEST] 供应商凭证未知承运商",
+        "state": "DRAFT",
+        "blocked": "('/supplychain/purchaseReturns/reclaims/10/approve', '原始退回物流已保存，审核前请凭证确认标准快递')",
+        "stock": {
+          "skuSn": "SCARRIER_20261026210253",
+          "totalStock": 5,
+          "availableStock": 5,
+          "allocatedStock": 0,
+          "reservedStock": 0,
+          "frozenStock": 0
+        }
+      },
+      "time": "2026-10-27T12:30:41.973309"
+    }
+  ],
+  "ids": {
+    "standard_A": 1,
+    "standard_B": 2,
+    "owner": 41,
+    "warehouse": 42,
+    "relation": 52,
+    "connection": 33,
+    "second_connection": 34,
+    "supplier": 29,
+    "purchase": 105,
+    "ticket": 378,
+    "return": 41,
+    "raw_reclaim": 10
+  },
+  "store": "SCV_20261026210253",
+  "sku": "SCARRIER_20261026210253",
+  "po_sn": "POe0fe157097c5406f99a565586cb7c606",
+  "stock_received": {
+    "skuSn": "SCARRIER_20261026210253",
+    "totalStock": 10,
+    "availableStock": 10,
+    "allocatedStock": 0,
+    "reservedStock": 0,
+    "frozenStock": 0
+  },
+  "return_sn": "CGTe0539389615b4eb0959e46ca6875f6c3",
+  "stock_held": {
+    "skuSn": "SCARRIER_20261026210253",
+    "totalStock": 10,
+    "availableStock": 5,
+    "allocatedStock": 5,
+    "reservedStock": 0,
+    "frozenStock": 0
+  },
+  "stock_posted": {
+    "skuSn": "SCARRIER_20261026210253",
+    "totalStock": 5,
+    "availableStock": 5,
+    "allocatedStock": 0,
+    "reservedStock": 0,
+    "frozenStock": 0
+  },
+  "before_repair": {
+    "stock": {
+      "skuSn": "SCARRIER_20261026210253",
+      "totalStock": 5,
+      "availableStock": 5,
+      "allocatedStock": 0,
+      "reservedStock": 0,
+      "frozenStock": 0
+    },
+    "events": "37\tE17/ef563cf69f6aba2e3be2fcbb3ef6e8d09873da1153cc11825e993a44b17cd33c\t5\tPOSTED",
+    "execution": "17\t5\t5\t5\tACCEPTED"
+  },
+  "stage": "CONFIG_AND_PHYSICAL_VERIFIED"
+}

@@ -67,9 +67,9 @@ public class DynamicDatasourceInterceptorFilter extends BaseController implement
             try {
                 String[] supplied=req.getParameterValues("company_code");
                 if(supplied!=null&&supplied.length!=1)throw new IllegalArgumentException("公司参数不能重复");
-                boolean internalPath=path.matches("^/(orders|orderCatalog|giftCatalog|orderStock|stockProcess|platformStock|stockSync|platformProducts|shipmentWms|allocation|exchangePlatform|refundPlatform|exchangeReturns|refundReturns|afterSaleReturns|platformLogBusiness)/internal(/.*)?$")
+                boolean internalPath=path.matches("^/(orders|orderCatalog|sharedCarriers|giftCatalog|orderStock|stockProcess|stockCare|stockMovement|platformStock|stockSync|platformProducts|shipmentWms|allocation|exchangePlatform|refundPlatform|exchangeReturns|refundReturns|afterSaleReturns|platformLogBusiness)/internal(/.*)?$")
                     ||path.matches("^/platform/log-center/internal/(simulation|refund-sync)/(start|finish)$")
-                    ||Arrays.asList("/goodsReferences/internal","/warehouseReferences/internal","/api/goods/purchaseLookup","/api/WmsInventory/addInventory").contains(path);
+                    ||Arrays.asList("/goodsReferences/internal","/warehouseReferences/internal","/api/goods/purchaseLookup","/api/goods/purchaseLookupBatch","/api/WmsInventory/addInventory").contains(path);
                 if(inner&&internalPath)company=com.oms.common.tenant.TenantRouting.company(req.getParameter("company_code"));
                 else {
                     company=com.oms.common.tenant.TenantRouting.company(getCompanyCode());

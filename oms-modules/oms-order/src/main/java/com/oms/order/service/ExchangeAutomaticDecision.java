@@ -20,7 +20,7 @@ import static com.oms.order.service.ExchangeService.*;
         require(e.get("linked_exchange_id")==null,"已关联其他协商处理单，请在关联单核对，不重复换出");
         require(!Arrays.asList("4","5","13","14").contains(text(e,"platform_status")),"平台申请已关闭、转退款或已有换出事实，禁止新建自动方案");
         require(recoverable(e),"换货存在来源或订单冲突："+text(e,"problem_message"));
-        require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_refund WHERE company_code=? AND channel_id=? AND platform_tid=? AND platform_oid=? AND NOT (review_state='APPROVED' AND purpose IN ('DIFFERENCE','COMPENSATION','POSTAGE','PRICE_PROTECTION') AND goods_action='KEEP') AND state NOT IN ('CLOSED','REJECTED')",Long.class,c,e.get("channel_id"),e.get("platform_tid"),e.get("platform_oid"))==0,"原子单存在未核对或涉及货物的退款，需先处理冲突售后");
+        requireNoConflictingRefund(repository,c,e);
         Map<String,Object> payload=object(e.get("payload"));boolean internal="INTERNAL".equals(text(e,"source_kind")),unshipped=ExchangeFulfillment.unshipped(e);
         if(internal){require(ExchangeFlowPolicy.on(p,"auto_internal_review"),"店铺未启用协商换货自动确认方案");require(Boolean.TRUE.equals(payload.get("automation_authorized"))&&!text(payload,"authorization_reference").trim().isEmpty(),"协商换货缺少明确业务授权编号；请补齐授权后重新评估");}
         else require(ExchangeFlowPolicy.on(p,"auto_review"),"店铺未启用平台换货自动确认方案");
@@ -41,6 +41,7 @@ import static com.oms.order.service.ExchangeService.*;
         policies.requireCurrent(c,number(e,"channel_id"),number(p,"revision"),internal?"auto_internal_review":"auto_review");
         return exchanges.review(c,number(e,"id"),input,ExchangeFlowPolicy.REVIEW_ACTOR);
     }
+    static void requireNoConflictingRefund(OrderRepository repository,String c,Map<String,Object> e){require(repository.db().queryForObject("SELECT COUNT(*) FROM oms_refund rb WHERE rb.company_code=? AND rb.channel_id=? AND rb.platform_tid=? AND rb.platform_oid=? AND NOT ((rb.review_state='APPROVED' AND rb.purpose IN ('DIFFERENCE','COMPENSATION','POSTAGE','PRICE_PROTECTION') AND rb.goods_action='KEEP') OR "+RefundReturnSources.reviewedReturnOnly("rb")+") AND rb.state NOT IN ('CLOSED','REJECTED')",Long.class,c,e.get("channel_id"),e.get("platform_tid"),e.get("platform_oid"))==0,"原子单存在未核对或涉及货物的退款，需先处理冲突售后");}
     void continueRound(String c,Map<String,Object> e,Map<String,Object> p){
         require(ExchangeFlowPolicy.on(p,"auto_continue_review"),"继续换出自动审核未启用，请在继续换出申请审核");
         List<Map<String,Object>> pending=repository.db().query("SELECT * FROM oms_exchange_round WHERE company_code=? AND exchange_id=? AND state='REVIEW' ORDER BY round_no LIMIT 2",ROW,c,e.get("id"));require(pending.size()==1,"继续换出待审批次不唯一，请核对原申请");

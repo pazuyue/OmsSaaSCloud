@@ -1,0 +1,180 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>采购退仓恢复额度核对优化验收</title><style>body{margin:0;background:#f2f6fb;color:#34445b;font:15px/1.8 'Microsoft YaHei',sans-serif}main{max-width:1380px;margin:28px auto;background:white;padding:30px;border-radius:10px}h1{font-size:25px}h2{font-size:20px;margin-top:28px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.metrics article{background:#eff5fd;border-radius:8px;padding:20px}.metrics span,.metrics b{display:block}.metrics b{font-size:27px;margin-top:8px}.short{color:#b65c19}.muted{color:#7a899d;font-size:13px}.notice{padding:17px;background:#fff8e8;border-radius:8px}table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}td,th{border:1px solid #dfe7f1;text-align:left;padding:12px}th{background:#f3f7fc}a{color:#0877dc;overflow-wrap:anywhere}img{display:block;max-width:100%;border:1px solid #dfe7f1;margin:15px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6fa;padding:16px;font-size:12px}summary{cursor:pointer;color:#0877dc}</style><main><h1>采购退仓恢复额度：缺口与占用单据核对</h1><p class="muted">2026-10-26T16:11:00.546591 · 使用原保留TEST单据只读验收</p><p><a href="/oms-supplychain/purchaseReturns?id=36">CGTa03ce6afb2ca42ed92aed4916ebd9633</a></p><div class="metrics"><article><span>本次申请恢复</span><b>3 件</b></article><article><span>来源及批次可恢复</span><b>1 件</b></article><article><span>本次缺口</span><b class="short">2 件</b></article></div><h2>实际原因与处理入口</h2><table><tr><th>原来源实收</th><th>本单已退</th><th>其他退仓已用 / 占用</th><th>原来源余额</th><th>原批次可用</th></tr><tr><td>10 件</td><td>2 件</td><td>7 件</td><td>1 件</td><td>1 件</td></tr></table><p>原来源余额：10 − 2 − 7 = 1 件。本次仍按原申请的3件整体核对，当前缺2件。</p><p>占用单据：<a href="/oms-supplychain/purchaseReturns?id=38">CGT2474b31b62254db3b8ae1cd2c22bfafd</a>，仓库已受理，实出已扣0件，未出计划7件。如优先恢复本单，先协调该单的未出计划，等待仓库确认停止与释放后，再返回原单刷新核对并审核。</p><h2>已完成的界面与校验调整</h2><ul><li>点击审核先打开核对窗口，展示原来源、本单已退、其他单已用/计划占用、余额、需恢复和缺口。</li><li>占用单号支持在新标签页查看与处理；返回原窗口可主动刷新额度及库存。</li><li>原来源额度和批次库存分别核查，多个来源共用同一批次时合并库存需求，避免重复计算可用量。</li><li>额度或库存不满足时禁用审核；库存查询未确认时显示待确认，保留刷新入口。</li><li>提交时仍在原采购与业务单锁内再次校验来源，变更时返回最新结构化缺口。</li><li>恢复核对及审核由窗口统一显示错误，修复接口层和页面重复弹出同一错误；其他请求保留默认提示行为。</li></ul><p class="notice">382 项相关后端回归通过，包含5项新增恢复核对及并发变化边界；6个前端模板及恢复窗口/错误提示逻辑检查通过；本次原单页面验收7项通过。没有新增数据库结构，没有停止或释放另一张单据，也没有审核恢复原单。</p><h2>页面验收结果</h2><ol><li>真实API明确原实收10、本单已退2、其他单占7、来源余额1、恢复需3、缺口2、批次可用1及占用单号</li><li>窗口直接展示恢复3、可恢复1、缺口2；不足时审核按钮禁用，不弹出重复错误</li><li>占用单号可在新标签页打开原单详情，关闭后原恢复核对窗口保留</li><li>核对失败仅有一个窗口内错误，审核保持禁用，未把未知余额显示为0</li><li>处理后可主动刷新来源和库存，刷新成功清除上次查询错误，不调用WMS</li><li>模拟打开窗口后额度被占用：提交失败自动刷新最新缺口，保留窗口且只显示一个错误；提交已拦截</li><li>本单与占用单的状态、数量、版本、执行和申请、SKU库存及仓库交互数量全部未变</li></ol><p class="muted">原额度及占用关系来自真实只读API。额度在提交前发生变化的响应通过浏览器拦截模拟，后台锁内重新校验由真实数据库事务回归验证。</p><h2>当前3件申请、1件余额及2件缺口，直接查看占用单据</h2><a href="01-exact-restore-gap.png"><img src="01-exact-restore-gap.png" alt="当前3件申请、1件余额及2件缺口，直接查看占用单据"></a><h2>提交时额度变化：保留最新数量、禁用重复审核，窗口内仅一条错误</h2><a href="02-concurrent-change-single-error.png"><img src="02-concurrent-change-single-error.png" alt="提交时额度变化：保留最新数量、禁用重复审核，窗口内仅一条错误"></a><h2>查询与库存复核</h2><p>14项查询及库存核对通过，按本轮起止快照比较原业务与库存，没有新增仓库调用。</p><p class="muted">较早验收快照中的旧单CGT2180813128294803bfafea327ba2254b在15:13至15:18已有admin登记拒收、创建/撤回收回、继续申请记录，版本从5变化为8。此次保留这些既有变更，以本轮开始时状态作只读前后比较，没有回写旧单或旧快照。</p><h2>数据与仓库调用保持不变</h2><p>本单与占用单的业务状态、计划/实出/扣账数量、版本、执行、恢复申请以及SKU库存均在浏览器验收前后比较一致，仓库交互数量未增加。</p><details><summary>完整额度与验收证据</summary><pre>{
+  &quot;result&quot;: &quot;PASS&quot;,
+  &quot;checked_at&quot;: &quot;2026-10-26T15:46:46.795805&quot;,
+  &quot;checks&quot;: [
+    &quot;真实API明确原实收10、本单已退2、其他单占7、来源余额1、恢复需3、缺口2、批次可用1及占用单号&quot;,
+    &quot;窗口直接展示恢复3、可恢复1、缺口2；不足时审核按钮禁用，不弹出重复错误&quot;,
+    &quot;占用单号可在新标签页打开原单详情，关闭后原恢复核对窗口保留&quot;,
+    &quot;核对失败仅有一个窗口内错误，审核保持禁用，未把未知余额显示为0&quot;,
+    &quot;处理后可主动刷新来源和库存，刷新成功清除上次查询错误，不调用WMS&quot;,
+    &quot;模拟打开窗口后额度被占用：提交失败自动刷新最新缺口，保留窗口且只显示一个错误；提交已拦截&quot;,
+    &quot;本单与占用单的状态、数量、版本、执行和申请、SKU库存及仓库交互数量全部未变&quot;
+  ],
+  &quot;source_check&quot;: {
+    &quot;return_id&quot;: 36,
+    &quot;return_sn&quot;: &quot;CGTa03ce6afb2ca42ed92aed4916ebd9633&quot;,
+    &quot;po_sn&quot;: &quot;POde18bfcd75c3410aa21e060a79ba9f0d&quot;,
+    &quot;control_version&quot;: 5,
+    &quot;source_ok&quot;: false,
+    &quot;inventory_checked&quot;: true,
+    &quot;inventory_ok&quot;: false,
+    &quot;can_approve&quot;: false,
+    &quot;claimants_truncated&quot;: false,
+    &quot;lines&quot;: [
+      {
+        &quot;id&quot;: 40,
+        &quot;source_key&quot;: &quot;R87&quot;,
+        &quot;ticket_sn&quot;: &quot;CG092c34043a334b249c326f40bce8c29a&quot;,
+        &quot;sku_sn&quot;: &quot;PRF_20261026133606_09&quot;,
+        &quot;goods_name&quot;: &quot;[同单分次退仓TEST] 释放后原来源被其他退仓占用，恢复被阻止&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;batch_code&quot;: &quot;PRF_BATCH_restore_conflict_0&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;quantity&quot;: 5,
+        &quot;source_quantity&quot;: 10,
+        &quot;posted_quantity&quot;: 2,
+        &quot;store_code&quot;: &quot;PRFV_complete_20261026133606&quot;,
+        &quot;required_quantity&quot;: 3,
+        &quot;own_posted_quantity&quot;: 2,
+        &quot;other_claimed_quantity&quot;: 7,
+        &quot;other_posted_quantity&quot;: 0,
+        &quot;other_unexecuted_quantity&quot;: 7,
+        &quot;source_available_quantity&quot;: 1,
+        &quot;source_shortage_quantity&quot;: 2,
+        &quot;inventory_known&quot;: true,
+        &quot;claimants&quot;: [
+          {
+            &quot;return_id&quot;: 38,
+            &quot;return_sn&quot;: &quot;CGT2474b31b62254db3b8ae1cd2c22bfafd&quot;,
+            &quot;state&quot;: &quot;APPROVED&quot;,
+            &quot;dispatch_state&quot;: &quot;ACCEPTED&quot;,
+            &quot;source_key&quot;: &quot;R87&quot;,
+            &quot;inventory_type&quot;: &quot;ZP&quot;,
+            &quot;stock_unit&quot;: &quot;件&quot;,
+            &quot;quantity&quot;: 7,
+            &quot;posted_quantity&quot;: 0,
+            &quot;claimed_quantity&quot;: 7,
+            &quot;unexecuted_claim_quantity&quot;: 7
+          }
+        ],
+        &quot;batch_available_quantity&quot;: 1
+      }
+    ],
+    &quot;inventory_groups&quot;: [
+      {
+        &quot;sku_sn&quot;: &quot;PRF_20261026133606_09&quot;,
+        &quot;store_code&quot;: &quot;PRFV_complete_20261026133606&quot;,
+        &quot;batch_code&quot;: &quot;PRF_BATCH_restore_conflict_0&quot;,
+        &quot;inventory_type&quot;: &quot;ZP&quot;,
+        &quot;stock_unit&quot;: &quot;件&quot;,
+        &quot;required_quantity&quot;: 3,
+        &quot;available_quantity&quot;: 1,
+        &quot;inventory_known&quot;: true,
+        &quot;shortage_quantity&quot;: 2
+      }
+    ],
+    &quot;checked_at&quot;: &quot;2026-10-26T15:46:42.653&quot;,
+    &quot;message&quot;: &quot;原入库来源已被其他退仓占用：PRF_20261026133606_09 本次恢复 3件，原来源可恢复 1件，缺口 2件。请核对占用单据。&quot;,
+    &quot;request_id&quot;: 5,
+    &quot;request_state&quot;: &quot;REVIEW&quot;,
+    &quot;actionable&quot;: true
+  },
+  &quot;before&quot;: {
+    &quot;36&quot;: {
+      &quot;state&quot;: &quot;CANCELED&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;control_version&quot;: 5,
+      &quot;execution_requests&quot;: [
+        {
+          &quot;id&quot;: 5,
+          &quot;kind&quot;: &quot;RESTORE&quot;,
+          &quot;state&quot;: &quot;REVIEW&quot;,
+          &quot;from_execution_id&quot;: 9,
+          &quot;execution_id&quot;: null,
+          &quot;reason&quot;: &quot;[TEST]供应商同意原CGT剩余数量继续退仓&quot;,
+          &quot;actor&quot;: &quot;admin&quot;,
+          &quot;reviewed_by&quot;: &quot;&quot;,
+          &quot;create_time&quot;: &quot;2026-10-26T13:37:39&quot;
+        }
+      ],
+      &quot;executions&quot;: [
+        9
+      ]
+    },
+    &quot;38&quot;: {
+      &quot;state&quot;: &quot;APPROVED&quot;,
+      &quot;quantity&quot;: 7,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;control_version&quot;: 2,
+      &quot;execution_requests&quot;: [],
+      &quot;executions&quot;: [
+        15
+      ]
+    },
+    &quot;stock&quot;: {
+      &quot;totalStock&quot;: 8,
+      &quot;availableStock&quot;: 1,
+      &quot;allocatedStock&quot;: 7,
+      &quot;reservedStock&quot;: 0,
+      &quot;frozenStock&quot;: 0
+    },
+    &quot;warehouse_calls&quot;: &quot;4\t1314&quot;
+  },
+  &quot;after&quot;: {
+    &quot;36&quot;: {
+      &quot;state&quot;: &quot;CANCELED&quot;,
+      &quot;quantity&quot;: 5,
+      &quot;accepted_quantity&quot;: 2,
+      &quot;posted_quantity&quot;: 2,
+      &quot;control_version&quot;: 5,
+      &quot;execution_requests&quot;: [
+        {
+          &quot;id&quot;: 5,
+          &quot;kind&quot;: &quot;RESTORE&quot;,
+          &quot;state&quot;: &quot;REVIEW&quot;,
+          &quot;from_execution_id&quot;: 9,
+          &quot;execution_id&quot;: null,
+          &quot;reason&quot;: &quot;[TEST]供应商同意原CGT剩余数量继续退仓&quot;,
+          &quot;actor&quot;: &quot;admin&quot;,
+          &quot;reviewed_by&quot;: &quot;&quot;,
+          &quot;create_time&quot;: &quot;2026-10-26T13:37:39&quot;
+        }
+      ],
+      &quot;executions&quot;: [
+        9
+      ]
+    },
+    &quot;38&quot;: {
+      &quot;state&quot;: &quot;APPROVED&quot;,
+      &quot;quantity&quot;: 7,
+      &quot;accepted_quantity&quot;: 0,
+      &quot;posted_quantity&quot;: 0,
+      &quot;control_version&quot;: 2,
+      &quot;execution_requests&quot;: [],
+      &quot;executions&quot;: [
+        15
+      ]
+    },
+    &quot;stock&quot;: {
+      &quot;totalStock&quot;: 8,
+      &quot;availableStock&quot;: 1,
+      &quot;allocatedStock&quot;: 7,
+      &quot;reservedStock&quot;: 0,
+      &quot;frozenStock&quot;: 0
+    },
+    &quot;warehouse_calls&quot;: &quot;4\t1314&quot;
+  },
+  &quot;javascript_errors&quot;: [],
+  &quot;intercepted_submissions&quot;: [
+    {
+      &quot;path&quot;: &quot;/prod-api/supplychain/purchaseReturns/36/restore/5/approve&quot;,
+      &quot;body&quot;: {
+        &quot;control_version&quot;: 5
+      }
+    }
+  ],
+  &quot;note&quot;: &quot;原单及额度来自真实只读API；额度变化的提交响应在浏览器中模拟，后台锁内拒绝通过真实事务回归验证；未停止、释放或审核原验收单&quot;
+}</pre></details><p><a href="/acceptance/purchase-return-fulfillment/验收报告.html">查看同CGT分次退仓完整验收报告</a></p></main></html>

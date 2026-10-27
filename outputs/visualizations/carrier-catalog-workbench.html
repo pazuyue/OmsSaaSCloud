@@ -1,0 +1,138 @@
+<div id="carrier-catalog-concept" aria-label="WMS 快递目录与关联维护页面方案">
+ <style>
+ #carrier-catalog-concept{--cc-bg:light-dark(#f4f6fa,#151b25);--cc-panel:light-dark(#fff,#1d2633);--cc-text:light-dark(#26364a,#e4eaf3);--cc-muted:light-dark(#66768b,#a5b3c5);--cc-line:light-dark(#e0e6ee,#364254);--cc-blue:light-dark(#0875e8,#75b5ff);--cc-tint:light-dark(#edf5ff,#253b55);--cc-warn:light-dark(#fff5e4,#3c3020);--cc-warn-text:light-dark(#96600b,#f2c579);--cc-good:light-dark(#edf7f1,#213b32);--cc-good-text:light-dark(#26724b,#91d2ad);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;color:var(--cc-text);background:var(--cc-bg)}
+ #carrier-catalog-concept *{box-sizing:border-box}
+ #carrier-catalog-concept button,#carrier-catalog-concept input,#carrier-catalog-concept select,#carrier-catalog-concept textarea{font:inherit;color:inherit}
+ #carrier-catalog-concept button{cursor:pointer}
+ #carrier-catalog-concept button:disabled{cursor:default;opacity:.45}
+ #carrier-catalog-concept .cc-top{display:flex;gap:24px;align-items:center;flex-wrap:wrap;padding:16px 110px 16px 20px;background:var(--cc-panel);border-bottom:1px solid var(--cc-line)}
+ #carrier-catalog-concept .cc-brand{font-size:19px;font-weight:500}
+ #carrier-catalog-concept .cc-topnav{display:flex;gap:20px;flex-wrap:wrap;color:var(--cc-muted)}
+ #carrier-catalog-concept .cc-active{color:var(--cc-blue);font-weight:500}
+ #carrier-catalog-concept .cc-layout{display:grid;grid-template-columns:156px minmax(0,1fr)}
+ #carrier-catalog-concept .cc-side{padding:24px 12px;background:var(--cc-panel);border-right:1px solid var(--cc-line)}
+ #carrier-catalog-concept .cc-side strong{font-weight:500;display:block;padding:0 12px 16px}
+ #carrier-catalog-concept .cc-side span{display:block;padding:11px 12px;margin-bottom:5px}
+ #carrier-catalog-concept .cc-side .cc-active{background:var(--cc-tint);border-radius:6px}
+ #carrier-catalog-concept .cc-main{padding:24px;min-width:0}
+ #carrier-catalog-concept .cc-crumb{color:var(--cc-muted);font-size:12px;margin-bottom:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+ #carrier-catalog-concept .cc-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+ #carrier-catalog-concept h2{font-size:22px;font-weight:500;margin:0 0 8px}
+ #carrier-catalog-concept h3{font-size:15px;font-weight:500;margin:0 0 12px}
+ #carrier-catalog-concept .cc-muted{color:var(--cc-muted)}
+ #carrier-catalog-concept .cc-small{font-size:12px}
+ #carrier-catalog-concept .cc-btn{background:var(--cc-panel);border:1px solid var(--cc-line);border-radius:6px;padding:7px 13px;white-space:normal}
+ #carrier-catalog-concept .cc-primary{background:var(--cc-blue);color:light-dark(#fff,#111e30);border-color:var(--cc-blue)}
+ #carrier-catalog-concept .cc-link{border:0;padding:3px 0;background:transparent;color:var(--cc-blue);text-align:left}
+ #carrier-catalog-concept .cc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ #carrier-catalog-concept .cc-sheet{background:var(--cc-panel);border:1px solid var(--cc-line);border-radius:9px;padding:20px;margin-top:20px;min-width:0}
+ #carrier-catalog-concept .cc-context{display:flex;gap:10px 22px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--cc-line);font-size:12px;color:var(--cc-muted)}
+ #carrier-catalog-concept .cc-summary{margin:18px 0 12px;display:flex;gap:18px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+ #carrier-catalog-concept .cc-filter{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+ #carrier-catalog-concept .cc-filter button[aria-pressed="true"]{background:var(--cc-tint);border-color:var(--cc-blue);color:var(--cc-blue)}
+ #carrier-catalog-concept table{border-collapse:collapse;width:100%;text-align:left}
+ #carrier-catalog-concept th{font-weight:500;background:var(--cc-bg);color:var(--cc-muted)}
+ #carrier-catalog-concept th,#carrier-catalog-concept td{padding:13px 10px;border-bottom:1px solid var(--cc-line);vertical-align:middle;overflow-wrap:anywhere}
+ #carrier-catalog-concept .cc-status{display:inline-block;font-size:12px;border-radius:4px;padding:2px 7px;white-space:normal;background:var(--cc-bg);color:var(--cc-muted)}
+ #carrier-catalog-concept .cc-status.good{background:var(--cc-good);color:var(--cc-good-text)}
+ #carrier-catalog-concept .cc-status.warn{background:var(--cc-warn);color:var(--cc-warn-text)}
+ #carrier-catalog-concept .cc-foot{margin:16px 0 0;font-size:12px;color:var(--cc-muted)}
+ #carrier-catalog-concept .cc-notice{margin:14px 0;padding:10px 14px;background:var(--cc-tint);border-radius:5px}
+ #carrier-catalog-concept .cc-form{margin:18px 0;padding:16px;background:var(--cc-bg);border-radius:6px}
+ #carrier-catalog-concept .cc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:12px 0}
+ #carrier-catalog-concept label{display:block;color:var(--cc-muted);font-size:12px}
+ #carrier-catalog-concept input,#carrier-catalog-concept select,#carrier-catalog-concept textarea{display:block;width:100%;min-width:0;margin-top:5px;padding:8px 10px;border:1px solid var(--cc-line);border-radius:5px;background:var(--cc-panel)}
+ #carrier-catalog-concept .cc-form .cc-actions{margin-top:14px}
+ #carrier-catalog-concept .cc-error{color:var(--cc-warn-text);margin-top:12px}
+ #carrier-catalog-concept .cc-source{margin-top:10px;font-size:12px;color:var(--cc-muted)}
+ #carrier-catalog-concept details{margin-top:14px}
+ #carrier-catalog-concept summary{cursor:pointer;color:var(--cc-blue)}
+ @media(max-width:740px){#carrier-catalog-concept .cc-layout{grid-template-columns:minmax(0,1fr)}#carrier-catalog-concept .cc-side{display:none}#carrier-catalog-concept .cc-main{padding:18px}#carrier-catalog-concept .cc-topnav{gap:12px}#carrier-catalog-concept .cc-sheet{padding:14px}}
+ @media(max-width:540px){#carrier-catalog-concept .cc-topnav{display:none}#carrier-catalog-concept .cc-fields{grid-template-columns:minmax(0,1fr)}#carrier-catalog-concept .cc-data thead{display:none}#carrier-catalog-concept .cc-data,#carrier-catalog-concept .cc-data tbody,#carrier-catalog-concept .cc-data tr,#carrier-catalog-concept .cc-data td{display:block;width:100%}#carrier-catalog-concept .cc-data tr{padding:10px 0;border-bottom:1px solid var(--cc-line)}#carrier-catalog-concept .cc-data td{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;border:0;padding:6px 0}#carrier-catalog-concept .cc-data td::before{content:attr(data-label);color:var(--cc-muted);font-size:12px}#carrier-catalog-concept .cc-data td[colspan]{display:block}#carrier-catalog-concept .cc-data td[colspan]::before{display:none}}
+ @media(pointer:coarse){#carrier-catalog-concept button,#carrier-catalog-concept select,#carrier-catalog-concept input{min-height:44px}#carrier-catalog-concept input,#carrier-catalog-concept select,#carrier-catalog-concept textarea{font-size:16px}}
+ </style>
+ <header class="cc-top"><span class="cc-brand">OMS 工作空间</span><nav class="cc-topnav" aria-label="业务模块"><span>工作台</span><span>商品</span><span>库存</span><span>订单</span><span class="cc-active">公共配置</span></nav></header>
+ <div class="cc-layout">
+  <aside class="cc-side"><strong>快递管理</strong><span>标准快递资料</span><span>渠道快递配置</span><span class="cc-active" aria-current="page">WMS 快递配置</span><span>仓库服务能力</span><span>配置异常</span></aside>
+  <main class="cc-main" data-content></main>
+ </div>
+ <script>
+ (function(){
+  const root=document.getElementById('carrier-catalog-concept'),content=root.querySelector('[data-content]');
+  const catalogs=[
+   {id:'east-out',name:'华东仓 · 出库下发',connection:'华东奇门连接',purpose:'出库下发',scope:'连接通用',flow:'OMS 标准快递 → WMS 出库编码',rows:[{code:'SF01',name:'顺丰速运',standard:'顺丰'},{code:'ZT02',name:'中通快递',standard:''},{code:'YT03',name:'圆通速递',standard:'圆通'},{code:'YZ04',name:'邮政快递包裹',standard:'邮政快递包裹'},{code:'OLD05',name:'旧承运商',standard:'',disabled:true}]},
+   {id:'east-in',name:'华东仓 · 退回入库',connection:'华东奇门连接',purpose:'退回入库下发',scope:'连接通用',flow:'OMS 标准快递 → WMS 入库编码',rows:[{code:'RETURN_SF',name:'顺丰速运',standard:'顺丰'},{code:'RETURN_ZTO',name:'中通快递',standard:'中通'},{code:'RETURN_YTO',name:'圆通速递',standard:''}]},
+   {id:'south-actual',name:'华南仓 · 实际出库回传',connection:'华南 WMS 连接',purpose:'实际出库回传',scope:'货主：华南品牌',flow:'WMS 回传编码 → OMS 标准快递',rows:[{code:'sf_express',name:'顺丰',standard:'顺丰'},{code:'zto_express',name:'中通',standard:''}]}
+  ];
+  let state={view:'detail',catalog:'east-out',filter:'all',assignments:{},added:{}},editor='',panel='',notice='';
+  const appearance={source:false};
+  const standards=['顺丰','中通','圆通','邮政快递包裹','申通'];
+  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function current(){return catalogs.find(c=>c.id===state.catalog)||catalogs[0]}
+  function rows(c){return c.rows.concat(state.added[c.id]||[]).map(r=>Object.assign({},r,{standard:state.assignments[c.id+':'+r.code]!==undefined?state.assignments[c.id+':'+r.code]:r.standard}))}
+  function counts(c){const all=rows(c);return {all:all.length,mapped:all.filter(r=>r.standard&&!r.disabled).length,pending:all.filter(r=>!r.standard&&!r.disabled).length,disabled:all.filter(r=>r.disabled).length}}
+  function restore(saved){const s=saved&&(saved.privateContent||saved);if(!s||typeof s!=='object')return;if(catalogs.some(c=>c.id===s.catalog))state.catalog=s.catalog;if(['list','detail'].includes(s.view))state.view=s.view;if(['all','pending','mapped','disabled'].includes(s.filter))state.filter=s.filter;if(s.assignments&&typeof s.assignments==='object')state.assignments=s.assignments;if(s.added&&typeof s.added==='object')state.added=s.added}
+  function remember(){if(window.openai&&window.openai.setWidgetState)window.openai.setWidgetState({modelContent:{directory:current().name,view:state.view,filter:state.filter,counts:counts(current())},privateContent:state}).catch(function(){})}
+  function button(action,label,extra,primary){return '<button type="button" class="cc-btn'+(primary?' cc-primary':'')+'" data-action="'+action+'" '+(extra||'')+'>'+label+'</button>'}
+  function optionList(selected){return '<option value="">选择 OMS 标准快递</option>'+standards.map(s=>'<option'+(selected===s?' selected':'')+'>'+esc(s)+'</option>').join('')}
+  function form(row){return '<div class="cc-form" aria-label="关联标准快递"><h3>'+esc(row.name)+' / '+esc(row.code)+'</h3><div class="cc-fields"><label>OMS 标准快递<select data-standard>'+optionList(row.standard)+'</select></label><label>核对依据<input data-evidence placeholder="例如：仓库提供的正式快递编码表"></label></div><details><summary>特殊范围与产品条件</summary><div class="cc-fields"><label>关联范围<select><option>继承本目录范围</option><option>指定货主</option><option>指定货主与实仓</option></select></label><label>运输产品<input placeholder="可选，通常留空"></label></div></details><div data-error role="alert" class="cc-error"></div><div class="cc-actions">'+button('save-map','保存关联','data-code="'+esc(row.code)+'"',true)+button('cancel','取消')+'</div></div>'}
+  function panelMarkup(){
+   if(panel==='new')return '<section class="cc-form"><h3>补录仓库快递编码</h3><div class="cc-fields"><label>仓库原始编码<input data-new-code placeholder="保留大小写、前导零"></label><label>仓库原始名称<input data-new-name placeholder="按仓库提供的名称填写"></label><label>同时关联 OMS 标准快递（可选）<select data-new-standard>'+optionList('')+'</select></label><label>资料依据<input data-new-evidence placeholder="仓库正式清单或核对记录"></label></div><div data-error role="alert" class="cc-error"></div><div class="cc-actions">'+button('save-new','保存到当前目录','',true)+button('cancel','取消')+'</div></section>';
+   if(panel==='import')return '<section class="cc-form"><h3>导入清单 · 差异预览</h3><div class="cc-small cc-muted">当前目录：'+esc(current().name)+'</div><table class="cc-data"><thead><tr><th>仓库编码</th><th>仓库名称</th><th>检查结果</th><th>OMS 关联</th></tr></thead><tbody><tr><td data-label="仓库编码">ST06</td><td data-label="仓库名称">申通快递</td><td data-label="检查结果">新增</td><td data-label="OMS 关联">导入后待关联</td></tr></tbody></table><div class="cc-actions">'+button('confirm-import','确认导入 1 条','',true)+button('cancel','取消导入')+'</div></section>';
+   return '';
+  }
+  function render(){
+   const c=current(),n=counts(c);
+   let html='<div class="cc-crumb"><span>公共配置 / 快递管理 / WMS 快递配置</span><span>方案示意 · 示例数据</span></div>';
+   if(state.view==='list'){
+    html+='<div class="cc-heading"><div><h2>WMS 快递目录</h2><div class="cc-muted">按连接、接口用途和适用范围维护整份快递清单</div></div></div><section class="cc-sheet"><table class="cc-data"><thead><tr><th>目录</th><th>适用范围</th><th>编码总数</th><th>待关联</th><th>操作</th></tr></thead><tbody>';
+    html+=catalogs.map(d=>{const x=counts(d);return '<tr><td data-label="目录"><div>'+esc(d.name)+'</div><div class="cc-small cc-muted">'+esc(d.connection)+'</div></td><td data-label="适用范围">'+esc(d.scope)+'</td><td data-label="编码总数">'+x.all+' 个</td><td data-label="待关联"><span class="cc-status '+(x.pending?'warn':'good')+'">'+x.pending+' 个</span></td><td data-label="操作">'+button('open','维护清单','data-catalog="'+d.id+'"')+'</td></tr>'}).join('');
+    html+='</tbody></table></section>';
+   }else{
+    html+='<div class="cc-heading"><div><h2>'+esc(c.name)+'</h2><div class="cc-muted">'+esc(c.flow)+'</div></div>'+button('back','返回目录列表')+'</div>';
+    html+='<section class="cc-sheet"><div class="cc-context"><span>WMS：'+esc(c.connection)+'</span><span>接口用途：'+esc(c.purpose)+'</span><span>适用范围：'+esc(c.scope)+'</span></div><div class="cc-summary" aria-live="polite"><span>共 '+n.all+' 个仓库编码</span><span>已关联 '+n.mapped+'</span><span>待关联 '+n.pending+'</span><span>外部停用 '+n.disabled+'</span></div><div class="cc-heading"><div class="cc-filter">';
+    html+=['all','pending','mapped','disabled'].map((f,i)=>'<button type="button" class="cc-btn" aria-pressed="'+(state.filter===f)+'" data-action="filter" data-filter="'+f+'">'+['全部','待关联','已关联','外部停用'][i]+'</button>').join('');
+    html+='</div><div class="cc-actions">'+button('import','导入仓库清单','',true)+button('sync','同步清单')+button('new','补录编码')+'</div></div>';
+    if(notice)html+='<div class="cc-notice" role="status">'+esc(notice)+'</div>';
+    html+=panelMarkup();
+    html+='<table class="cc-data"><thead><tr><th>仓库快递编码</th><th>仓库快递名称</th><th>OMS 标准快递</th><th>关联状态</th><th>操作</th></tr></thead><tbody>';
+    const filtered=rows(c).filter(r=>state.filter==='all'||state.filter==='disabled'&&r.disabled||state.filter==='pending'&&!r.standard&&!r.disabled||state.filter==='mapped'&&r.standard&&!r.disabled);
+    html+=filtered.map(r=>'<tr><td data-label="仓库编码">'+esc(r.code)+'</td><td data-label="仓库名称">'+esc(r.name)+'</td><td data-label="OMS 标准快递">'+(r.standard?esc(r.standard):'<span class="cc-muted">尚未关联</span>')+'</td><td data-label="关联状态"><span class="cc-status '+(r.disabled?'':r.standard?'good':'warn')+'">'+(r.disabled?'外部已停用':r.standard?'已关联':'待关联')+'</span></td><td data-label="操作"><button type="button" class="cc-link" data-action="'+(r.disabled?'disabled-reason':'edit')+'" data-code="'+esc(r.code)+'">'+(r.disabled?'查看原因':r.standard?'更换关联':'关联标准快递')+'</button></td></tr>'+(editor===r.code?'<tr><td colspan="5">'+form(r)+'</td></tr>':'')).join('');
+    if(!filtered.length)html+='<tr><td colspan="5">当前分类没有需要处理的编码。</td></tr>';
+    html+='</tbody></table><p class="cc-foot">关联完成后，可到“仓库服务能力”设置哪些货主与实仓可以使用该快递。</p><div class="cc-source" '+(appearance.source?'':'hidden')+'>资料来源：仓库正式清单 · 最近核对：今天 09:30 · 核对人：仓储对接员</div></section>';
+   }
+   content.innerHTML=html;
+  }
+  root.addEventListener('click',function(event){
+   const b=event.target.closest('button[data-action]');if(!b||!root.contains(b))return;
+   const a=b.dataset.action,c=current();
+   if(a==='back'){state.view='list';editor='';panel='';notice=''}
+   if(a==='open'){state.catalog=b.dataset.catalog;state.view='detail';state.filter='all';editor='';panel='';notice=''}
+   if(a==='filter'){state.filter=b.dataset.filter;editor='';panel='';notice=''}
+   if(a==='edit'){editor=b.dataset.code;panel='';notice=''}
+   if(a==='cancel'){editor='';panel='';notice=''}
+   if(a==='new'||a==='import'){panel=a;editor='';notice=''}
+   if(a==='sync')notice='此连接尚未接通目录查询，可导入仓库清单。已有关联继续保留。';
+   if(a==='disabled-reason')notice='仓库已停用该外部编码，需仓库核实恢复后才可继续使用。';
+   if(a==='save-map'){
+    const standard=root.querySelector('[data-standard]').value,evidence=root.querySelector('[data-evidence]').value.trim();
+    if(!standard||!evidence){root.querySelector('[data-error]').textContent='请选择标准快递并填写核对依据。';return}
+    state.assignments[c.id+':'+b.dataset.code]=standard;editor='';notice='关联已保存（示例），可继续处理其他待关联编码。';
+   }
+   if(a==='save-new'){
+    const code=root.querySelector('[data-new-code]').value.trim(),name=root.querySelector('[data-new-name]').value.trim(),evidence=root.querySelector('[data-new-evidence]').value.trim(),standard=root.querySelector('[data-new-standard]').value;
+    if(!code||!name||!evidence||rows(c).some(r=>r.code===code)){root.querySelector('[data-error]').textContent='请填写编码、名称和资料依据；同一目录编码不可重复。';return}
+    if(!state.added[c.id])state.added[c.id]=[];state.added[c.id].push({code:code,name:name,standard:standard});panel='';state.filter='all';notice=standard?'编码及其关联已同时保存（示例）。':'编码已加入当前目录，后续可关联标准快递（示例）。';
+   }
+   if(a==='confirm-import'){
+    if(!state.added[c.id])state.added[c.id]=[];if(!rows(c).some(r=>r.code==='ST06'))state.added[c.id].push({code:'ST06',name:'申通快递',standard:''});panel='';state.filter='pending';notice='清单导入完成（示例），新编码等待关联；已有关联保留。';
+   }
+   render();if(['back','open','filter','save-map','save-new','confirm-import'].includes(a))remember();
+  });
+  if(window.openai)restore(window.openai.widgetState);
+  window.addEventListener('openai:set_globals',function(e){const globals=e.detail&&e.detail.globals;if(globals&&globals.widgetState){const before=JSON.stringify(state),location=state.catalog+':'+state.view+':'+state.filter;restore(globals.widgetState);if(JSON.stringify(state)!==before){if(location!==state.catalog+':'+state.view+':'+state.filter){editor='';panel=''}render()}}});
+  render();
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:render});tweak.addToggle(appearance,'source',{label:'显示资料来源与核对时间'})}
+ })();
+ </script>
+</div>

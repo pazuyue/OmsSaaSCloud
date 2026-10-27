@@ -81,6 +81,13 @@ service.interceptors.response.use(res => {
     if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
       return res.data
     }
+    // A local review dialog owns its business error and its structured explanation.
+    if (code !== 200 && code !== 401 && res.config && res.config.silentError) {
+      const failure = new Error(msg)
+      failure.response = res
+      failure.data = res.data.data
+      return Promise.reject(failure)
+    }
     if (code === 401) {
       if (!isRelogin.show) {
         isRelogin.show = true;
@@ -95,8 +102,11 @@ service.interceptors.response.use(res => {
     }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
-      Message({ message: msg, type: 'error' })
-      return Promise.reject(new Error(msg))
+      const failure = new Error(msg)
+      failure.response = res
+      failure.data = res.data.data
+      if (!res.config || !res.config.silentError) Message({ message: msg, type: 'error' })
+      return Promise.reject(failure)
     } else if (code === 601) {
       Message({ message: msg, type: 'warning' })
       return Promise.reject('error')
@@ -117,7 +127,8 @@ service.interceptors.response.use(res => {
     } else if (message.includes("Request failed with status code")) {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
     }
-    Message({ message: message, type: 'error', duration: 5 * 1000 })
+    if (!error.config || !error.config.silentError) Message({ message: message, type: 'error', duration: 5 * 1000 })
+    if (error.config && error.config.silentError) error.message = message
     return Promise.reject(error)
   }
 )

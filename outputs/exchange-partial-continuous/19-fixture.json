@@ -1,0 +1,88 @@
+{
+  "key": "19",
+  "title": "退回未收齐禁止继续换出",
+  "case_id": "2026102511235319",
+  "created": "2026-10-25 11:24:36",
+  "sku": "EXAUTO_PC_2026102511235319A",
+  "target_sku": "EXAUTO_PC_2026102511235319B",
+  "third_sku": "EXAUTO_PC_2026102511235319C",
+  "channel_name": "[部分连续换货19] 退回未收齐禁止继续换出 20261025112353",
+  "seller": "EXAUTO_PC_2026102511235319",
+  "platform_tid": "862026102511235319",
+  "platform_oid": "86202610251123531901",
+  "warehouses": [
+    {
+      "code": "EXAUTO_PC_2026102511235319V",
+      "quantity": 10,
+      "package_count": 1,
+      "id": 156
+    }
+  ],
+  "quantity": 2,
+  "claims": [],
+  "refunds": {},
+  "owner_code": "SAASQM01",
+  "real_store_code": "TW201",
+  "connection_id": 10,
+  "channel_id": 129,
+  "configured": true,
+  "received": true,
+  "initial_stock": {
+    "company": [
+      {
+        "sku": "EXAUTO_PC_2026102511235319A",
+        "total": 10,
+        "available": 10,
+        "allocated": 0,
+        "reserved": 0,
+        "version": 2
+      }
+    ],
+    "channel": [
+      {
+        "sku": "EXAUTO_PC_2026102511235319A",
+        "available": 0,
+        "allocated": 0,
+        "reserved": 0,
+        "quota": 10,
+        "quota_reserved": 0,
+        "version": 1
+      }
+    ],
+    "warehouse": [
+      {
+        "store": "EXAUTO_PC_2026102511235319V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "batch": [
+      {
+        "id": 353,
+        "store": "EXAUTO_PC_2026102511235319V",
+        "actual": 10,
+        "available": 10,
+        "locked": 0,
+        "version": 2
+      }
+    ],
+    "demand": [],
+    "source": [],
+    "allocation": []
+  },
+  "platform_id": 268,
+  "order_id": 184,
+  "order_sn": "SOcb916bafe4234ca1a8f8718cc59701c7",
+  "prepared": true,
+  "products_ready": [
+    "B",
+    "C"
+  ],
+  "original_shipment_id": 145,
+  "original_shipment_sn": "XS085da09fc1ad470dabf9fa9b0611932f",
+  "original_shipment_line_id": 204,
+  "original_shipped": true,
+  "authorized": true
+}

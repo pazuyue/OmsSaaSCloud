@@ -12,6 +12,10 @@ import java.util.*;
 /** Database tasks survive restarts. Conditional claims coordinate multiple service instances. */
 @Component
 public class WmsInboundWorker {
+    @org.springframework.beans.factory.annotation.Autowired(required=false) private PurchaseReturns purchaseReturns;
+    @org.springframework.beans.factory.annotation.Autowired(required=false) private PurchaseReturnReclaims purchaseReclaims;
+    @org.springframework.beans.factory.annotation.Autowired(required=false) private WarehouseTransfers warehouseTransfers;
+    @org.springframework.beans.factory.annotation.Autowired(required=false) private WarehouseReconciliation warehouseReconciliation;
     @Resource private DataSource dataSource;
     @Resource private WmsInboundService inbound;
     @Resource private WmsTenantRoutes tenantRoutes;
@@ -19,7 +23,7 @@ public class WmsInboundWorker {
         ScanReport report=new ScanReport();
         for(Map.Entry<String,String> entry:tenantRoutes.all().entrySet()){
             try{
-                tenantRoutes.run(entry.getKey(),()->report.merge(inbound.pollCompany(entry.getKey(),tenantRoutes.enabled(entry.getKey()))));
+                tenantRoutes.run(entry.getKey(),()->{report.merge(inbound.pollCompany(entry.getKey(),tenantRoutes.enabled(entry.getKey())));if(purchaseReturns!=null)purchaseReturns.scan(entry.getKey());if(purchaseReclaims!=null)purchaseReclaims.scan(entry.getKey());if(warehouseTransfers!=null)warehouseTransfers.scan(entry.getKey());if(warehouseReconciliation!=null)warehouseReconciliation.scan(entry.getKey());});
             }catch(Exception e){report.scopeFailure(entry.getKey());org.slf4j.LoggerFactory.getLogger(getClass()).error("WMS任务数据源异常，route={}",entry.getKey(),e);}
         }
         return report;

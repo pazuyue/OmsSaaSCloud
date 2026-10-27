@@ -1,0 +1,85 @@
+{
+  "checks": [
+    "仓库受理、单据完成和最近交互成功可组合查询，元数据不替代实出",
+    "已受理的完成单不误归为仓库下发失败",
+    "明确拒绝下发保留失败记录和原占用，可通过仓库状态快速查询",
+    "原成功入账10件、已退供占用3件、当前可选7件同时核对",
+    "原采购已退仓投影按实际扣账3件统计，保留原累计实收10件",
+    "统一待办定位 over，保持原退仓单处理入口",
+    "统一待办定位 wrong_batch，保持原退仓单处理入口",
+    "统一待办定位 dispatch_fail，保持原退仓单处理入口",
+    "混合正次品生成两条不同库存幂等流水，共扣3件，无重复扣账",
+    "实际发送报文核对CGTH、次品CC及原单取消字段，未套用销售发货单",
+    "供应商凭证独立登记7.50元，与已出库原采购货值一致",
+    "商品库存对账包含不可售与质量冻结，冻结解冻转正及混合退供均与仓库和批次一致",
+    "公开接口不能通过company_code选择其他公司"
+  ],
+  "timings": [
+    {
+      "name": "退仓列表",
+      "samples_ms": [
+        31.1,
+        30.6,
+        34.4,
+        19.4,
+        17.9
+      ],
+      "median_ms": 30.6,
+      "max_ms": 34.4
+    },
+    {
+      "name": "退仓完整单号",
+      "samples_ms": [
+        33.6,
+        15.4,
+        39.6,
+        38.8,
+        37.9
+      ],
+      "median_ms": 37.9,
+      "max_ms": 39.6
+    },
+    {
+      "name": "原入库可退来源",
+      "samples_ms": [
+        32.7,
+        41.2,
+        22.8,
+        42.7,
+        48.1
+      ],
+      "median_ms": 41.2,
+      "max_ms": 48.1
+    },
+    {
+      "name": "质量库存列表",
+      "samples_ms": [
+        14.3,
+        33.8,
+        18.0,
+        25.0,
+        15.0
+      ],
+      "median_ms": 18.0,
+      "max_ms": 33.8
+    },
+    {
+      "name": "供应链退仓待办",
+      "samples_ms": [
+        35.3,
+        25.9,
+        48.4,
+        51.6,
+        63.7
+      ],
+      "median_ms": 48.4,
+      "max_ms": 63.7
+    }
+  ],
+  "explain": {
+    "return_number": "1\tSIMPLE\tpurchase_return\tNULL\tconst\tcompany_sn,company_request,company_page,purchase_claim,pending_work,due_work\tcompany_sn\t516\tconst,const\t1\t100.00\tUsing index",
+    "quality_sku": "1\tSIMPLE\toms_stock_care_line\tNULL\tref\tPRIMARY,batch_held,sku_hold\tsku_hold\t772\tconst,const\t1\t100.00\tNULL"
+  },
+  "protected_baseline_unchanged": true,
+  "verified_at": "2026-10-25T21:01:10.683949"
+}

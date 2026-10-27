@@ -1,5 +1,5 @@
 <template>
-  <header v-if="$route.path !== '/index' && !['/oms-order/businessSettings','/oms-order/syncTasks'].includes($route.path)" class="page-heading">
+  <header v-if="$route.path !== '/index' && !$route.path.startsWith('/common-config/carriers/') && !['/oms-order/businessSettings','/oms-order/syncTasks'].includes($route.path)" class="page-heading">
     <div>
       <div class="page-eyebrow">{{ section }}</div>
       <h1>{{ $route.meta.title || '工作空间' }}</h1>
@@ -10,6 +10,14 @@
 </template>
 <script>
 const descriptions = {
+  '/oms-supplychain/warehouseTransfers': ['分别跟踪原仓出库、在途、目的仓入库及独立收回，按原批次和成本核对库存。', 'el-icon-truck'],
+  '/oms-supplychain/warehouseReconciliation': ['合并同货主同实仓全部虚仓，核查实物差额、冻结和待入账单据；真实差异独立审核。', 'el-icon-document-checked'],
+  '/oms-supplychain/purchaseReturns': ['按原采购入库来源退供，分别核对仓库出库、库存扣账与供应商退款或抵扣凭证。', 'el-icon-truck'],
+  '/oms-inventory/quality': ['按原批次申请冻结、解冻及次品转正，保留质检依据、审核结果与库存流水。', 'el-icon-document-checked'],
+  '/oms-supplychain/operations': ['按当前未解决问题查询采购、仓库下发、收货差异、库存入账与售后退回待办。', 'el-icon-tickets'],
+  '/oms-supplychain/arrivals': ['按到货批次核对采购安排、仓库确认实收及库存入账，追溯原始仓库交互。', 'el-icon-truck'],
+  '/oms-supplychain/poInfo': ['维护采购计划与单价，分批安排到货，分别跟进实收、短收与库存入账。', 'el-icon-document'],
+  '/oms-order/returns': ['统一查询退货任务、退回包裹与入库单，核对合包归属、仓库实收和库存入账。', 'el-icon-box'],
   '/oms-order/gift-editor/index': ['配置赠送条件、模拟购物清单并关联适用店铺组。', 'el-icon-present'],
   '/oms-order/gifts': ['按店铺组编排赠品策略，查看执行路径并处理赠品售后。', 'el-icon-present'],
   '/oms-order/afterSaleRules/returns': ['独立设置退回安排、仓库下发、合包与实收处理。', 'el-icon-setting'],

@@ -1,0 +1,11 @@
+{
+  "environment": "local warmed query; three observations",
+  "milliseconds": [
+    63.1,
+    40.5,
+    23.1
+  ],
+  "median_ms": 40.5,
+  "number_index": "number_any",
+  "source_index": "group_scope"
+}

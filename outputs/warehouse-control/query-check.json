@@ -1,0 +1,121 @@
+{
+  "result": "PASS",
+  "checks": [
+    "列表、详情、原批次和统一待办只读本地投影或一次库存服务读取，不产生任何WMS请求",
+    "17个SKU的商品、仓库、批次均一致；公司拥有等于实物加在途，在途未并入可用",
+    "公开API拒绝额外company_code参数切换公司，库存继续受登录公司隔离",
+    "调拨和对账每页最多50条，避免无界读取",
+    "普通列表日期跨度限制93天，完整单号保留跨日期定位",
+    "完整调拨单号精确查询仅返回原单",
+    "源仓占用、出库和目的收货均产生库存重算信号；渠道可售的变化由新增真实事务回归验证",
+    "调拨目的及收回批次保留原批次编码和2.50元成本，原出库流水保留",
+    "同批次正次品与重复消息的库存流水身份无冲突、无重复",
+    "全部11张新增表的字段均有中文备注，数量、质量、成本、租约与幂等口径明确",
+    "最新范围快照、到期调拨扫描及按SKU在途汇总具备专用索引，列表不逐行查询WMS"
+  ],
+  "timings": [
+    {
+      "endpoint": "调拨分页",
+      "samples_ms": [
+        15.1,
+        16.5,
+        32.7,
+        9.0,
+        9.1
+      ],
+      "median_ms": 15.1
+    },
+    {
+      "endpoint": "对账分页",
+      "samples_ms": [
+        7.7,
+        23.5,
+        7.3,
+        9.3,
+        32.8
+      ],
+      "median_ms": 9.3
+    },
+    {
+      "endpoint": "完整调拨详情",
+      "samples_ms": [
+        40.7,
+        33.0,
+        34.5,
+        31.5,
+        15.8
+      ],
+      "median_ms": 33.0
+    },
+    {
+      "endpoint": "对账详情",
+      "samples_ms": [
+        9.9,
+        11.8,
+        24.5,
+        32.2,
+        18.9
+      ],
+      "median_ms": 18.9
+    },
+    {
+      "endpoint": "原库存批次批量读取",
+      "samples_ms": [
+        22.2,
+        26.1,
+        26.7,
+        24.8,
+        25.7
+      ],
+      "median_ms": 25.7
+    },
+    {
+      "endpoint": "商品库存（含在途）",
+      "samples_ms": [
+        30.0,
+        32.5,
+        33.4,
+        33.9,
+        29.7
+      ],
+      "median_ms": 32.5
+    },
+    {
+      "endpoint": "指定单号统一待办",
+      "samples_ms": [
+        63.3,
+        25.6,
+        31.8,
+        15.7,
+        17.9
+      ],
+      "median_ms": 25.6
+    }
+  ],
+  "explain": {
+    "reconciliation_latest": "1\tPRIMARY\twarehouse_reconciliation\tNULL\tref\tcompany_sn,company_request,company_connection,company_page,due_work,latest_scope\tlatest_scope\t612\tconst,const,const\t2\t100.00\tUsing where; Using index\n2\tSUBQUERY\twarehouse_reconciliation\tNULL\tconst\tPRIMARY\tPRIMARY\t8\tconst\t1\t100.00\tNULL",
+    "transfer_due": "1\tSIMPLE\twarehouse_transfer\tNULL\trange\tcompany_sn,company_request,company_page,due_work\tdue_work\t361\tNULL\t5\t100.00\tUsing where; Using index",
+    "transit": "1\tSIMPLE\toms_stock_transfer_line\tNULL\tref\tPRIMARY,company_transit,source_hold\tcompany_transit\t772\tconst,const\t1\t100.00\tNULL"
+  },
+  "ledger": {
+    "WC_20261026105220_01": "RECEIVE\tWMS_RECEIPT_56\t\t10\tWCV_source_20261026105220\tWC_BATCH_full\nTRANSFER_HOLD\tDB2e05815aad024b718558b21fae63b1ce\tZP\t10\tWCV_source_20261026105220\tWC_BATCH_full\nTRANSFER_OUT\tDB2e05815aad024b718558b21fae63b1ce\tZP\t-10\tWCV_source_20261026105220\tWC_BATCH_full\nTRANSFER_IN\tDB2e05815aad024b718558b21fae63b1ce\tZP\t10\tWCV_target_20261026105220\tWC_BATCH_full",
+    "WC_20261026105220_02": "RECEIVE\tWMS_RECEIPT_57\t\t10\tWCV_source_20261026105220\tWC_BATCH_split\nTRANSFER_HOLD\tDBee8d18895e0e4691a789a4df2ef4f87a\tZP\t10\tWCV_source_20261026105220\tWC_BATCH_split\nTRANSFER_OUT\tDBee8d18895e0e4691a789a4df2ef4f87a\tZP\t-4\tWCV_source_20261026105220\tWC_BATCH_split\nTRANSFER_OUT\tDBee8d18895e0e4691a789a4df2ef4f87a\tZP\t-6\tWCV_source_20261026105220\tWC_BATCH_split\nTRANSFER_IN\tDBee8d18895e0e4691a789a4df2ef4f87a\tZP\t4\tWCV_target_20261026105220\tWC_BATCH_split\nTRANSFER_IN\tDBee8d18895e0e4691a789a4df2ef4f87a\tZP\t6\tWCV_target_20261026105220\tWC_BATCH_split",
+    "WC_20261026105220_03": "RECEIVE\tWMS_RECEIPT_58\t\t10\tWCV_source_20261026105220\tWC_BATCH_short\nTRANSFER_HOLD\tDBa6b0dcf848884a7eb0b928e3a9924609\tZP\t10\tWCV_source_20261026105220\tWC_BATCH_short\nTRANSFER_OUT\tDBa6b0dcf848884a7eb0b928e3a9924609\tZP\t-10\tWCV_source_20261026105220\tWC_BATCH_short\nTRANSFER_IN\tDBa6b0dcf848884a7eb0b928e3a9924609\tZP\t8\tWCV_target_20261026105220\tWC_BATCH_short\nTRANSFER_RECOVER\tDBa6b0dcf848884a7eb0b928e3a9924609\tZP\t1\tWCV_source_20261026105220\tWC_BATCH_short\nTRANSFER_RECOVER\tDBa6b0dcf848884a7eb0b928e3a9924609\tZP\t1\tWCV_source_20261026105220\tWC_BATCH_short",
+    "WC_20261026105220_04": "RECEIVE\tWMS_RECEIPT_59\t\t10\tWCV_source_20261026105220\tWC_BATCH_cancel\nTRANSFER_HOLD\tDB8568bdece96149ba9fc17300af66e6bd\tZP\t10\tWCV_source_20261026105220\tWC_BATCH_cancel\nTRANSFER_OUT\tDB8568bdece96149ba9fc17300af66e6bd\tZP\t-4\tWCV_source_20261026105220\tWC_BATCH_cancel\nTRANSFER_RELEASE\tDB8568bdece96149ba9fc17300af66e6bd\tZP\t6\tWCV_source_20261026105220\tWC_BATCH_cancel\nTRANSFER_IN\tDB8568bdece96149ba9fc17300af66e6bd\tZP\t4\tWCV_target_20261026105220\tWC_BATCH_cancel",
+    "WC_20261026105220_05": "RECEIVE\tWMS_RECEIPT_60\t\t10\tWCV_source_20261026105220\tWC_BATCH_cancel0\nTRANSFER_HOLD\tDB5fb806b1948d4ffd9c32995745893c27\tZP\t3\tWCV_source_20261026105220\tWC_BATCH_cancel0\nTRANSFER_RELEASE\tDB5fb806b1948d4ffd9c32995745893c27\tZP\t3\tWCV_source_20261026105220\tWC_BATCH_cancel0",
+    "WC_20261026105220_06": "RECEIVE\tWMS_RECEIPT_61\t\t10\tWCV_source_20261026105220\tWC_BATCH_over\nTRANSFER_HOLD\tDB539542205bab4b12b53fa3d50755dcd2\tZP\t3\tWCV_source_20261026105220\tWC_BATCH_over\nTRANSFER_OUT\tDB539542205bab4b12b53fa3d50755dcd2\tZP\t-3\tWCV_source_20261026105220\tWC_BATCH_over\nTRANSFER_IN\tDB539542205bab4b12b53fa3d50755dcd2\tZP\t3\tWCV_target_20261026105220\tWC_BATCH_over",
+    "WC_20261026105220_07": "RECEIVE\tWMS_RECEIPT_62\t\t10\tWCV_source_20261026105220\tWC_BATCH_wrong\nTRANSFER_HOLD\tDB4c67f02d8bf94aa6ac3fa04f56cd6dbc\tZP\t3\tWCV_source_20261026105220\tWC_BATCH_wrong\nTRANSFER_OUT\tDB4c67f02d8bf94aa6ac3fa04f56cd6dbc\tZP\t-3\tWCV_source_20261026105220\tWC_BATCH_wrong\nTRANSFER_IN\tDB4c67f02d8bf94aa6ac3fa04f56cd6dbc\tZP\t3\tWCV_target_20261026105220\tWC_BATCH_wrong",
+    "WC_20261026105220_08": "RECEIVE\tWMS_RECEIPT_63\t\t3\tWCV_source_20261026105220\tWC_BATCH_bad\nRECEIVE\tWMS_RECEIPT_64\t\t2\tWCV_source_20261026105220\tWC_BATCH_bad\nTRANSFER_HOLD\tDB7fe01100cb6d49adb9d4a5a00314eecb\tCP\t2\tWCV_source_20261026105220\tWC_BATCH_bad\nTRANSFER_OUT\tDB7fe01100cb6d49adb9d4a5a00314eecb\tCP\t-2\tWCV_source_20261026105220\tWC_BATCH_bad\nTRANSFER_IN\tDB7fe01100cb6d49adb9d4a5a00314eecb\tCP\t1\tWCV_target_20261026105220\tWC_BATCH_bad\nTRANSFER_RECOVER\tDB7fe01100cb6d49adb9d4a5a00314eecb\tCP\t1\tWCV_source_20261026105220\tWC_BATCH_bad",
+    "WC_20261026105220_09": "RECEIVE\tWMS_RECEIPT_65\t\t3\tWCV_source_20261026105220\tWC_BATCH_mixed\nRECEIVE\tWMS_RECEIPT_66\t\t2\tWCV_source_20261026105220\tWC_BATCH_mixed\nTRANSFER_HOLD\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_mixed\nTRANSFER_HOLD\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tCP\t1\tWCV_source_20261026105220\tWC_BATCH_mixed\nTRANSFER_OUT\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tZP\t-2\tWCV_source_20261026105220\tWC_BATCH_mixed\nTRANSFER_OUT\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tCP\t-1\tWCV_source_20261026105220\tWC_BATCH_mixed\nTRANSFER_IN\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tZP\t2\tWCV_target_20261026105220\tWC_BATCH_mixed\nTRANSFER_IN\tDBd4a30fbc5e3642689c5ed4bd114c21a1\tCP\t1\tWCV_target_20261026105220\tWC_BATCH_mixed",
+    "WC_20261026105220_10": "RECEIVE\tWMS_RECEIPT_67\t\t10\tWCV_source_20261026105220\tWC_BATCH_race\nTRANSFER_HOLD\tDB426f6b399b7b4663b295223373b90fc6\tZP\t7\tWCV_source_20261026105220\tWC_BATCH_race",
+    "WC_20261026105220_11": "RECEIVE\tWMS_RECEIPT_68\t\t6\tWCV_source_20261026105220\tWC_BATCH_reconcile\nRECEIVE\tWMS_RECEIPT_69\t\t4\tWCV_source2_20261026105220\tWC_BATCH_reconcile\nCOUNT_LOSS\tTZ71cb1a8a9b2f4eaa9a8abcdaec93050e\tZP\t-2\tWCV_source_20261026105220\tWC_BATCH_reconcile",
+    "WC_20261026105220_12": "RECEIVE\tWMS_RECEIPT_70\t\t10\tWCV_source_20261026105220\tWC_BATCH_frozen",
+    "WC_20261026105220_13": "RECEIVE\tWMS_RECEIPT_71\t\t10\tWCV_source_20261026105220\tWC_BATCH_missing\nTRANSFER_HOLD\tDBde53c28b8e65408fa60e9b9e31a8d1b3\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_missing\nTRANSFER_RELEASE\tDBde53c28b8e65408fa60e9b9e31a8d1b3\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_missing\nTRANSFER_HOLD\tDB74eb42d8fd714a6caf51d449c654ae2a\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_missing\nTRANSFER_OUT\tDB74eb42d8fd714a6caf51d449c654ae2a\tZP\t-2\tWCV_source_20261026105220\tWC_BATCH_missing",
+    "WC_20261026105220_14": "RECEIVE\tWMS_RECEIPT_72\t\t10\tWCV_source_20261026105220\tWC_BATCH_stale\nTRANSFER_HOLD\tDBe8ebe3a89a3f409ca1b53c2984bcfa12\tZP\t1\tWCV_source_20261026105220\tWC_BATCH_stale",
+    "WC_20261026105220_15": "RECEIVE\tWMS_RECEIPT_73\t\t10\tWCV_source_20261026105220\tWC_BATCH_pending\nTRANSFER_HOLD\tDB4886221bb8c448a19e1f0be60da24da4\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_pending",
+    "WC_20261026105220_16": "RECEIVE\tWMS_RECEIPT_74\t\t10\tWCV_source_20261026105220\tWC_BATCH_gain\nCOUNT_GAIN\tTZ8d75fd1b53304deaa274f5353e3c8823\tZP\t2\tWCV_source_20261026105220\tWC_BATCH_gain",
+    "WC_20261026105220_17": "RECEIVE\tWMS_RECEIPT_75\t\t10\tWCV_source_20261026105220\tWC_BATCH_reject"
+  },
+  "stock_signals": "WCV_source_20261026105220\t3\nWCV_target_20261026105220\t1",
+  "note": "本地每入口5次读取耗时，仅用于发现查询退化，不代表生产容量；真实店铺下发未执行"
+}

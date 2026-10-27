@@ -1,0 +1,75 @@
+{
+  "checks": [
+    "组合筛选 purchase / full / ACCEPTED / SUCCESS = 1",
+    "组合筛选 receipt / dispatch_fail / FAILED / FAILED = 1",
+    "组合筛选 receipt / full / FAILED / SUCCESS = 0",
+    "组合筛选 ticket / full / ACCEPTED / SUCCESS = 1",
+    "当前待办 short / DIFFERENCE = 1",
+    "当前待办 rearrange / DIFFERENCE = 0",
+    "当前待办 bad_keep / DIFFERENCE = 0",
+    "当前待办 corrected / DIFFERENCE = 0",
+    "当前待办 dispatch_fail / DISPATCH = 1",
+    "当前待办 late / REVIEW = 1",
+    "当前待办 overdue / OVERDUE = 1",
+    "完整实际CG单号可直接定位对应到货的差异",
+    "拒绝超量分页、无效待办类型及超过93天的显式日期范围"
+  ],
+  "timings": [
+    {
+      "name": "待办默认近90天",
+      "samples_ms": [
+        44.4,
+        46.3,
+        30.2,
+        20.5,
+        20.9
+      ],
+      "median_ms": 30.2,
+      "max_ms": 46.3
+    },
+    {
+      "name": "待办完整采购单号",
+      "samples_ms": [
+        31.6,
+        20.2,
+        20.0,
+        35.2,
+        31.8
+      ],
+      "median_ms": 31.6,
+      "max_ms": 35.2
+    },
+    {
+      "name": "采购详情",
+      "samples_ms": [
+        20.1,
+        41.2,
+        21.5,
+        22.0,
+        32.7
+      ],
+      "median_ms": 22.0,
+      "max_ms": 41.2
+    },
+    {
+      "name": "采购列表仓库状态筛选",
+      "samples_ms": [
+        40.3,
+        47.7,
+        47.1,
+        27.6,
+        49.8
+      ],
+      "median_ms": 47.1,
+      "max_ms": 49.8
+    }
+  ],
+  "explain": {
+    "采购定位": "1\tSIMPLE\tp\tNULL\tconst\tuk_purchase_code,sc_po_due\tuk_purchase_code\t2045\tconst,const\t1\t100.00\tUsing index",
+    "当前差异索引": "1\tSIMPLE\tpurchase_receipt_difference\tNULL\tref\tdifference_fact,current_issue,ticket_issue,message_issue\tticket_issue\t258\tconst\t7\t14.29\tUsing where; Using index; Using filesort",
+    "实际SKU批量读取": "1\tSIMPLE\twms_tickets_goods\tNULL\trange\tsales_source_line,sc_ticket_goods\tsales_source_line\t1022\tNULL\t2\t50.00\tUsing index condition; Using filesort"
+  },
+  "protected_baseline_unchanged": true,
+  "verified_at": "2026-10-25T18:42:34.219161",
+  "scope": "本机保留数据的暖请求；不是生产容量压测"
+}

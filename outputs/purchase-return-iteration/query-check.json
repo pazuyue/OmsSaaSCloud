@@ -1,0 +1,72 @@
+{
+  "result": "PASS",
+  "checked_at": "2026-10-25T23:39:08.210383",
+  "checks": [
+    "部分完成与唯一后续单关联正确，原占用已释放",
+    "用户原单仍占用3件，释放预览使用真实批次可用5件",
+    "原来源及收回新增来源独立核算，可退额度与实际库存一致",
+    "采购净入库10减4加1等于7，原采购实收保留",
+    "多笔凭证及冲销累计5元，与净退仓货值一致",
+    "独立收回保留次品质检及真实库存入账来源",
+    "仓库交互按独立采购退仓收回业务分类查询",
+    "实际奇门QTRK报文与供应商退回本仓运单字段核对通过",
+    "全部8个验收SKU商品、仓库与批次库存一致",
+    "更正及重复回传仅增加次品1件，收回流水仅1条",
+    "快递目录使用现有货主实仓配置",
+    "公开接口拒绝覆盖登录公司身份",
+    "新增表全部字段有明确备注",
+    "原订单退款库存与任务队列策略基线未改变"
+  ],
+  "timings": [
+    {
+      "endpoint": "退仓列表",
+      "samples_ms": [
+        30.5,
+        52.4,
+        41.1,
+        56.6,
+        42.0
+      ],
+      "median_ms": 42.0
+    },
+    {
+      "endpoint": "完整单号",
+      "samples_ms": [
+        20.8,
+        18.7,
+        20.1,
+        45.4,
+        39.8
+      ],
+      "median_ms": 20.8
+    },
+    {
+      "endpoint": "来源批量库存",
+      "samples_ms": [
+        52.2,
+        39.9,
+        46.0,
+        29.8,
+        28.8
+      ],
+      "median_ms": 39.9
+    },
+    {
+      "endpoint": "收回详情",
+      "samples_ms": [
+        20.3,
+        71.6,
+        43.8,
+        47.6,
+        29.1
+      ],
+      "median_ms": 43.8
+    }
+  ],
+  "explain": {
+    "凭证来源": "1\tSIMPLE\tpurchase_return_fund\tNULL\tindex\trequest_once,reversal_once,parent_funds\tPRIMARY\t8\tNULL\t5\t20.00\tUsing where",
+    "原拒收额度": "1\tSIMPLE\tpurchase_return_reclaim_line\tNULL\tref\toriginal_line,parent_lines,source_claim\tsource_claim\t266\tconst,const\t1\t100.00\tNULL",
+    "实收防重": "1\tSIMPLE\tpurchase_return_reclaim_event\tNULL\tconst\treceipt_once,pending_post\treceipt_once\t780\tconst,const,const\t1\t100.00\tNULL"
+  },
+  "protected_baseline_unchanged": true
+}

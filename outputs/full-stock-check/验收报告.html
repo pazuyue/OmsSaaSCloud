@@ -1,0 +1,109 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>全仓库存检查验收报告</title><style>body{margin:0;background:#f2f5fa;color:#27374e;font:15px/1.8 system-ui,Arial}main{max-width:1240px;margin:auto;padding:32px}h1{margin:0}h2{margin-top:30px}.card,article{background:white;border:1px solid #dce4ef;border-radius:10px;padding:22px;margin:18px 0}.pass{color:#18805a}.notice{background:#fff4df;padding:18px;border-left:4px solid #c38a22}.muted{color:#708197}a{color:#0670d1}table{border-collapse:collapse;width:100%;background:white;font-size:13px}td,th{border:1px solid #dce4ef;padding:10px;text-align:left;overflow-wrap:anywhere}th{background:#eaf1fa}.table-wrap{overflow:auto}pre{background:#f3f6fa;padding:16px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:520px}summary{cursor:pointer;color:#0670d1}details{margin:12px 0}img{width:100%;height:auto;margin:16px 0;border:1px solid #ddd}</style><main><h1>全仓库存检查验收报告</h1><p class="muted">2026-10-27 16:53:50 · 本地 TEST 环境 · 单据、查询交互与测试数据保留</p><div class="card"><b class="pass">功能验收通过</b><p>367 条后端回归、8组接口验收、11组页面验收、只读权限与导出验收均通过；前端两个组件校验脚本及生产构建通过。</p><p>入口：<a href="/oms-supplychain/warehouseReconciliation">供应链 → 库存对账 → 新建库存检查</a>，默认选择全仓检查。<a href="/oms-supplychain/warehouseReconciliation?id=196">打开页面验收任务</a></p></div><p class="notice">“检查完成”指当前清单查询结束。本测试仓仍有实物差异、缺失返回或待核查事项；本报告不宣称全仓库存一致。检查与重试没有修改OMS库存，也没有创建实物调整入账。</p><h2>已交付行为与覆盖边界</h2><div class="card"><p>全仓检查自动收集所选货主实仓下全部虚仓的库存记录与待处理单据商品；库存记录为零、冻结、已占用或商品停用均不按可售状态排除。加工组件与供应商拒收收回等待处理商品纳入清单。</p><p>默认标注“OMS清单覆盖”，不能据此排除仓库独有商品。可导入人工确认完整的仓库SKU清单进行补查，记录来源；当前未声称已接入仓库实时全量枚举。</p><p>后台逐商品取得完整批次。失败、缺失字段和缺失SKU保持未知；部分失败不标为整仓完成。停止等待当前商品结束，继续保留成功快照；失败重试只重新查询失败商品。全仓结果须先创建选中商品的最新复查，再沿用原独立调整审核及库存版本校验。</p></div><h2>保留任务</h2><div class="table-wrap"><table><thead><tr><th>场景</th><th>任务单号</th><th>ID</th><th>当前状态</th><th>商品数</th><th>实物差异行</th><th>字段/冻结待核查行</th></tr></thead><tbody><tr><td>OMS清单全仓检查</td><td>DZ8363c9444cbd49db97e128b7ff8c327b</td><td>10</td><td>COMPLETED</td><td>17</td><td>3</td><td>14</td></tr><tr><td>导入仓库完整清单并重试失败</td><td>DZb3e88a1dc57248cd81ccbbb96a66f7de</td><td>34</td><td>COMPLETED</td><td>19</td><td>4</td><td>15</td></tr><tr><td>页面提交、停止后继续</td><td>DZ0ea613e5d7aa404dac1590087bacae25</td><td>196</td><td>COMPLETED</td><td>19</td><td>4</td><td>15</td></tr><tr><td>选中商品最新复查</td><td>DZ4f4a6bcb166e408da43004cc267f3844</td><td>66</td><td>COMPLETED</td><td>1</td><td>0</td><td>0</td></tr></tbody></table></div><h2>详细接口场景与实际结果</h2><article><b class="pass">01 通过</b><p>按原验收实仓全盘检查；无需传SKU，自动合并两个虚仓，保留零库存与占用记录。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;task&quot;: 10,
+  &quot;sku_count&quot;: 17,
+  &quot;result_rows&quot;: 19,
+  &quot;covers_all_oms_stock_skus&quot;: true,
+  &quot;coverage&quot;: &quot;OMS清单，不声称发现仓库独有商品&quot;
+}</pre></details></article><article><b class="pass">02 通过</b><p>仓库未返回部分商品的库存。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;unknown_rows&quot;: 13,
+  &quot;wms_quantity&quot;: null,
+  &quot;difference&quot;: null,
+  &quot;conclusion&quot;: &quot;未知，不推断为零或缺货&quot;
+}</pre></details></article><article><b class="pass">03 通过</b><p>核对保留的frozen商品最新仓库事实；旧验收后已恢复为冻结0，不能沿用旧截图当成本次预期。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;row&quot;: {
+    &quot;key&quot;: &quot;WC_20261026105220_12\u001fWC_BATCH_frozen\u001fZP&quot;,
+    &quot;sku_sn&quot;: &quot;WC_20261026105220_12&quot;,
+    &quot;batch_code&quot;: &quot;WC_BATCH_frozen&quot;,
+    &quot;inventory_type&quot;: &quot;ZP&quot;,
+    &quot;oms_physical&quot;: 10,
+    &quot;oms_held&quot;: 0,
+    &quot;wms_physical&quot;: 10,
+    &quot;wms_frozen&quot;: 0,
+    &quot;status&quot;: &quot;MATCHED&quot;,
+    &quot;sources&quot;: [
+      {
+        &quot;store_code&quot;: &quot;WCV_source_20261026105220&quot;,
+        &quot;batch_id&quot;: 451,
+        &quot;unit_cost&quot;: 2.5,
+        &quot;physical&quot;: 10,
+        &quot;free&quot;: 10
+      }
+    ],
+    &quot;wms_unfrozen&quot;: 10,
+    &quot;difference&quot;: 0,
+    &quot;frozen_difference&quot;: 0,
+    &quot;stock_unit&quot;: &quot;件&quot;,
+    &quot;goods_name&quot;: &quot;[库存对账调拨TEST] frozen&quot;,
+    &quot;child_id&quot;: 22,
+    &quot;pending_documents&quot;: [],
+    &quot;result_id&quot;: 14
+  },
+  &quot;conclusion&quot;: &quot;本次实物10、冻结0，正确为一致；冻结与业务占用分列，差异保护另由后端回归覆盖&quot;
+}</pre></details></article><article><b class="pass">04 通过</b><p>分页查看全仓结果并按异常类型定位。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;page_size&quot;: 2,
+  &quot;total&quot;: 19,
+  &quot;distinct_pages&quot;: true
+}</pre></details></article><article><b class="pass">05 通过</b><p>仓库新增一个OMS无记录的商品实物7件，另一个商品回传非法负数。导入本仓完整SKU清单后检查。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;task&quot;: 34,
+  &quot;coverage&quot;: &quot;OMS_WMS_LIST&quot;,
+  &quot;failed&quot;: {
+    &quot;rows&quot;: [
+      {
+        &quot;sku_sn&quot;: &quot;WC_FULL_BAD_20261027154514&quot;,
+        &quot;status&quot;: &quot;QUERY_FAILED&quot;,
+        &quot;wms_physical&quot;: null,
+        &quot;difference&quot;: null,
+        &quot;sources&quot;: [],
+        &quot;error&quot;: &quot;仓库数量须为有效整数，缺失不能按零处理&quot;,
+        &quot;child_id&quot;: 64,
+        &quot;pending_documents&quot;: [],
+        &quot;result_id&quot;: 39
+      }
+    ],
+    &quot;total&quot;: 1
+  },
+  &quot;conclusion&quot;: &quot;发现仓库独有商品；单商品查询失败使整仓显示部分失败&quot;
+}</pre></details></article><article><b class="pass">06 通过</b><p>修正失败商品仓库回传后，只重试失败商品。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;task&quot;: 34,
+  &quot;successful_rows_unchanged&quot;: true,
+  &quot;remaining_failed&quot;: 0,
+  &quot;warehouse_only_row&quot;: {
+    &quot;key&quot;: &quot;WC_FULL_ONLY_20261027154514\u001fFULL_BATCH\u001fZP&quot;,
+    &quot;sku_sn&quot;: &quot;WC_FULL_ONLY_20261027154514&quot;,
+    &quot;batch_code&quot;: &quot;FULL_BATCH&quot;,
+    &quot;inventory_type&quot;: &quot;ZP&quot;,
+    &quot;oms_physical&quot;: 0,
+    &quot;oms_held&quot;: 0,
+    &quot;sources&quot;: [],
+    &quot;wms_physical&quot;: 7,
+    &quot;wms_frozen&quot;: 3,
+    &quot;wms_unfrozen&quot;: 4,
+    &quot;status&quot;: &quot;PHYSICAL_DIFFERENCE&quot;,
+    &quot;difference&quot;: 7,
+    &quot;frozen_difference&quot;: 3,
+    &quot;stock_unit&quot;: &quot;&quot;,
+    &quot;goods_name&quot;: null,
+    &quot;catalog_missing&quot;: true,
+    &quot;child_id&quot;: 65,
+    &quot;pending_documents&quot;: [],
+    &quot;result_id&quot;: 40
+  }
+}</pre></details></article><article><b class="pass">07 通过</b><p>从全仓异常结果选一个商品创建最新复查。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;new_task&quot;: 66,
+  &quot;source_task&quot;: 34,
+  &quot;scope&quot;: {
+    &quot;stores&quot;: [
+      &quot;WCV_source2_20261026105220&quot;,
+      &quot;WCV_source_20261026105220&quot;
+    ],
+    &quot;skus&quot;: [
+      &quot;WC_20261026105220_12&quot;
+    ],
+    &quot;batch_code&quot;: &quot;&quot;
+  },
+  &quot;can_adjust&quot;: false,
+  &quot;conclusion&quot;: &quot;新独立快照；保留库存版本与原有调整审核防护&quot;
+}</pre></details></article><article><b class="pass">08 通过</b><p>尝试直接用全仓结果申请实物调整。</p><details><summary>查看本次实际结果与数量证据</summary><pre>{
+  &quot;rejected&quot;: true,
+  &quot;reason&quot;: &quot;须先创建选定商品的最新复查&quot;
+}</pre></details></article><h2>库存核实</h2><div class="card"><p>检查前后逐项比较全部QM公司商品库存、仓库库存、批次数量与版本、库存流水数量/最大ID，以及受保护退款、采购退仓、队列策略、全局任务开关和原验收清单；全部相同。表内数字依次为：总库存 / 可用 / 预占 / 已分配 / 冻结。</p><p>仓库独有测试商品的WMS实物为7，其中冻结3，OMS本仓实物为0，明确显示差额+7。检查后OMS仍未为该商品自动创建库存或记账。</p></div><div class="table-wrap"><table><thead><tr><th>原验收SKU</th><th>前总</th><th>前可用</th><th>前预占</th><th>前分配</th><th>前冻结</th><th>后总</th><th>后可用</th><th>后预占</th><th>后分配</th><th>后冻结</th></tr></thead><tbody><tr><td>WC_20261026105220_01</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_02</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_03</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_04</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_05</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_06</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_07</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_08</td><td>5</td><td>3</td><td>0</td><td>0</td><td>2</td><td>5</td><td>3</td><td>0</td><td>0</td><td>2</td></tr><tr><td>WC_20261026105220_09</td><td>5</td><td>3</td><td>0</td><td>0</td><td>2</td><td>5</td><td>3</td><td>0</td><td>0</td><td>2</td></tr><tr><td>WC_20261026105220_10</td><td>10</td><td>3</td><td>0</td><td>7</td><td>0</td><td>10</td><td>3</td><td>0</td><td>7</td><td>0</td></tr><tr><td>WC_20261026105220_11</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_12</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_13</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_14</td><td>10</td><td>9</td><td>0</td><td>1</td><td>0</td><td>10</td><td>9</td><td>0</td><td>1</td><td>0</td></tr><tr><td>WC_20261026105220_15</td><td>10</td><td>8</td><td>0</td><td>2</td><td>0</td><td>10</td><td>8</td><td>0</td><td>2</td><td>0</td></tr><tr><td>WC_20261026105220_16</td><td>12</td><td>12</td><td>0</td><td>0</td><td>0</td><td>12</td><td>12</td><td>0</td><td>0</td><td>0</td></tr><tr><td>WC_20261026105220_17</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div><h2>页面验收</h2><div class="card"><p class="pass">✓ 默认全仓检查，隐藏强制手填SKU的步骤</p><p class="pass">✓ 选仓后显示真实货主、实仓和两个聚合虚仓</p><p class="pass">✓ 指定商品支持粘贴、去重计数并保留前导零</p><p class="pass">✓ 复用当前货主实仓的库存SKU搜索，不要求商品处于销售状态</p><p class="pass">✓ 导入仓库完整清单后显示SKU数、来源和覆盖确认；明确不是自动仓库全量枚举</p><p class="pass">✓ 页面停止等待当前商品完成，继续操作沿用原任务和已成功快照</p><p class="pass">✓ 关闭页面后后台继续；返回显示真实商品总数、成功/失败、检查窗口及覆盖来源</p><p class="pass">✓ 仓库独有商品明确显示OMS0、WMS7、差额+7；WMS冻结3独立展示</p><p class="pass">✓ 导出使用当前筛选，仅导出所选SKU，编码保留字符串格式</p><p class="pass">✓ 商品快照可追溯虚仓、仓库交互并返回全仓任务，禁止使用旧子快照直接调整</p><p class="pass">✓ 失败子任务保留原仓库查询交互，修复后只重试该商品</p><p>供应链待办同步验证：查询结果只指向主任务，不混入SKU子快照。</p></div><details><summary>01-selected-scope.png</summary><a href="01-selected-scope.png" target="_blank"><img src="01-selected-scope.png" loading="lazy"></a></details><details><summary>02-full-scope.png</summary><a href="02-full-scope.png" target="_blank"><img src="02-full-scope.png" loading="lazy"></a></details><details><summary>03-stopped-task.png</summary><a href="03-stopped-task.png" target="_blank"><img src="03-stopped-task.png" loading="lazy"></a></details><details><summary>04-full-task.png</summary><a href="04-full-task.png" target="_blank"><img src="04-full-task.png" loading="lazy"></a></details><details><summary>05-exact-difference.png</summary><a href="05-exact-difference.png" target="_blank"><img src="05-exact-difference.png" loading="lazy"></a></details><details><summary>06-sku-snapshot.png</summary><a href="06-sku-snapshot.png" target="_blank"><img src="06-sku-snapshot.png" loading="lazy"></a></details><h2>权限与性能</h2><div class="card"><p>独立只读账号可以查询和导出；新建、停止、重试、复查及调整五种写入均被服务端权限拒绝，未新增检查任务。</p><p>每次最多收集100条库存记录、查询5种商品；同货主实仓查询通道并发为1。无sleep等待，不持有库存业务锁。结果按异常优先索引分页，进度随结果同事务增量维护，避免每轮全仓汇总。</p><p>单SKU仓库分页100行、最多5000行；仓库导入清单最多20000个SKU；单次筛选导出最多100000行，超限明确提示。详情不返回整仓结果大数组，列表/详情/结果查询不产生新的WMS请求。</p><p class="muted">本地19种商品任务，单用户抽样，包含网关认证；不作为大仓压测结论</p></div><div class="table-wrap"><table><thead><tr><th>查询</th><th>5次耗时（毫秒）</th><th>中位数（毫秒）</th></tr></thead><tbody><tr><td>/supplychain/warehouseControl/reconciliations</td><td>[19.7, 28.1, 15.5, 15.2, 42.9]</td><td>19.7</td></tr><tr><td>/supplychain/warehouseControl/reconciliations/34</td><td>[14.7, 14.6, 14.4, 15.6, 17.0]</td><td>14.7</td></tr><tr><td>/supplychain/warehouseControl/reconciliations/34/results?status=ABNORMAL&amp;pageSize=20</td><td>[40.3, 26.9, 29.4, 14.9, 16.9]</td><td>26.9</td></tr></tbody></table></div><h2>证据文件</h2><div class="card"><p><a href="regression.json">regression.json</a></p><p><a href="browser-check.json">browser-check.json</a></p><p><a href="permissions-performance.json">permissions-performance.json</a></p><p><a href="verification.json">verification.json</a></p><p><a href="仓库完整商品清单.csv">仓库完整商品清单.csv</a></p><p><a href="筛选结果.csv">筛选结果.csv</a></p></div></main></html>

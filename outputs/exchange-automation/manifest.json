@@ -1109,7 +1109,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:36:31.379903"
+      "completed_at": "2026-10-25T00:36:31.379903",
+      "demand_ledger": "9862026102423590601\t986202610242359060101\tEXAUTO_2026102423590601A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:54\t986202610242359060101\tEXAUTO_2026102423590601B\t2\t0\t2\t2\tRESERVED"
     },
     "02": {
       "key": "02",
@@ -3214,7 +3215,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:37:30.312429"
+      "completed_at": "2026-10-25T00:37:30.312429",
+      "demand_ledger": "9862026102423590602\t986202610242359060201\tEXAUTO_2026102423590602A\t4\t0\t4\t4\tRESERVED\nEXCHANGE:53\t986202610242359060201\tEXAUTO_2026102423590602B\t2\t0\t2\t2\tRESERVED\nEXCHANGE:65\t986202610242359060201\tEXAUTO_2026102423590602B\t2\t0\t2\t2\tRESERVED"
     },
     "04": {
       "key": "04",
@@ -4175,7 +4177,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:32:43.585332"
+      "completed_at": "2026-10-25T00:32:43.585332",
+      "demand_ledger": "9862026102423590604\t986202610242359060401\tEXAUTO_2026102423590604A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:55\t986202610242359060401\tEXAUTO_2026102423590604B\t2\t0\t2\t2\tRESERVED"
     },
     "05": {
       "key": "05",
@@ -4630,6 +4633,7 @@
               "stock_reference": "EXCHANGE:56",
               "business_type": "SALE",
               "exchange_id": 56,
+              "owner_code": "SAASQM01",
               "source_shipment_line_id": 186,
               "order_line_id": 265,
               "allocation_id": 186,
@@ -4798,12 +4802,12 @@
       "automatic_flows": [
         {
           "task": {
-            "state": "PENDING",
-            "node": "DISPATCH",
-            "last_code": "DISPATCH_PENDING",
-            "last_message": "继续核对原仓库请求；不重新创建未知结果的发货单",
-            "wait_since": "2026-10-25 00:09:41",
-            "next_attempt": "2026-10-25 00:10:50",
+            "state": "DONE",
+            "node": "FINISHED",
+            "last_code": "LOCAL_ENDED",
+            "last_message": "本地换货已结束，原库存及收发事实保留",
+            "wait_since": "2026-10-25 00:10:56",
+            "next_attempt": null,
             "policy_revision": 1,
             "work_version": 4
           },
@@ -4811,7 +4815,9 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:10:56.556052"
+      "completed_at": "2026-10-25T00:10:56.556052",
+      "demand_ledger": "9862026102423590605\t986202610242359060501\tEXAUTO_2026102423590605A\t2\t2\t0\t0\tCANCELLED\nEXCHANGE:56\t986202610242359060501\tEXAUTO_2026102423590605B\t2\t0\t2\t2\tRESERVED",
+      "unshipped_review_evidence": "AUTO_EXCHANGE_APPROVE\tAUTO_APPROVED\t自动换货规则"
     },
     "06": {
       "key": "06",
@@ -6916,7 +6922,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:49:13.595592"
+      "completed_at": "2026-10-25T00:49:13.595592",
+      "demand_ledger": "9862026102423590606\t986202610242359060601\tEXAUTO_2026102423590606A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:63\t986202610242359060601\tEXAUTO_2026102423590606B\t2\t0\t2\t2\tRESERVED\nEXCHANGE:67\t986202610242359060601\tEXAUTO_2026102423590606A\t2\t0\t2\t2\tRESERVED"
     },
     "07": {
       "key": "07",
@@ -8375,7 +8382,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:38:31.602710"
+      "completed_at": "2026-10-25T00:38:31.602710",
+      "demand_ledger": "9862026102423590607\t986202610242359060701\tEXAUTO_2026102423590607A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:64\t986202610242359060701\tEXAUTO_2026102423590607B\t2\t0\t2\t2\tRESERVED"
     },
     "08": {
       "key": "08",
@@ -8766,6 +8774,7 @@
               "stock_reference": "",
               "business_type": "SALE",
               "exchange_id": null,
+              "owner_code": "SAASQM01",
               "source_shipment_line_id": 181,
               "order_line_id": 260,
               "allocation_id": 181,
@@ -8852,7 +8861,8 @@
         }
       ],
       "result": "PASS_EXPECTED_MANUAL",
-      "completed_at": "2026-10-25T00:10:48.262127"
+      "completed_at": "2026-10-25T00:10:48.262127",
+      "demand_ledger": "9862026102423590608\t986202610242359060801\tEXAUTO_2026102423590608A\t2\t0\t2\t2\tRESERVED"
     },
     "09": {
       "key": "09",
@@ -10050,7 +10060,23 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:36:40.384663"
+      "completed_at": "2026-10-25T00:36:40.384663",
+      "duplicate_source_tasks": [
+        {
+          "id": 4062,
+          "state": "PENDING"
+        },
+        {
+          "id": 4052,
+          "state": "PENDING"
+        },
+        {
+          "id": 4063,
+          "state": "PENDING"
+        }
+      ],
+      "duplicate_source_verified": true,
+      "demand_ledger": "9862026102423590609\t986202610242359060901\tEXAUTO_2026102423590609A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:58\t986202610242359060901\tEXAUTO_2026102423590609B\t2\t0\t2\t2\tRESERVED"
     },
     "10": {
       "key": "10",
@@ -10809,7 +10835,8 @@
         }
       ],
       "result": "PASS_EXPECTED_MANUAL",
-      "completed_at": "2026-10-25T00:33:21.239530"
+      "completed_at": "2026-10-25T00:33:21.239530",
+      "demand_ledger": "9862026102423590610\t986202610242359061001\tEXAUTO_2026102423590610A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:61\t986202610242359061001\tEXAUTO_2026102423590610B\t2\t0\t2\t0\tRESERVED"
     },
     "11": {
       "key": "11",
@@ -11513,12 +11540,12 @@
       "automatic_flows": [
         {
           "task": {
-            "state": "PENDING",
-            "node": "RETURN",
-            "last_code": "WAIT_RETURN",
-            "last_message": "等待原退回商品完整实收入账；平台状态不代替仓库实际收货",
-            "wait_since": "2026-10-25 00:11:38",
-            "next_attempt": "2026-10-25 00:32:58",
+            "state": "DONE",
+            "node": "STOP",
+            "last_code": "PLATFORM_STOPPED",
+            "last_message": "平台申请已结束，原未发履约截停及库存释放已核对，实收实发事实保留",
+            "wait_since": "2026-10-25 00:33:34",
+            "next_attempt": null,
             "policy_revision": 1,
             "work_version": 10
           },
@@ -11540,7 +11567,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:33:05.033156"
+      "completed_at": "2026-10-25T00:33:05.033156",
+      "demand_ledger": "9862026102423590611\t986202610242359061101\tEXAUTO_2026102423590611A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:62\t986202610242359061101\tEXAUTO_2026102423590611B\t2\t2\t0\t0\tCANCELLED"
     },
     "12": {
       "key": "12",
@@ -12688,7 +12716,10 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T00:48:39.010905"
+      "completed_at": "2026-10-25T00:48:39.010905",
+      "demand_ledger": "9862026102423590612\t986202610242359061201\tEXAUTO_2026102423590612A\t2\t0\t2\t2\tRESERVED\nEXCHANGE:57\t986202610242359061201\tEXAUTO_2026102423590612B\t2\t2\t0\t0\tCANCELLED\nEXCHANGE:57:2\t986202610242359061201\tEXAUTO_2026102423590612B\t2\t0\t2\t2\tRESERVED",
+      "return_documents": "THXB070E65986D2936FCE28BEC348A0DF\t2\t2\t2",
+      "round_evidence": "1\tTERMINATED\t2\t\n2\tPROCESSING\t2\t自动换货规则"
     },
     "03": {
       "key": "03",
@@ -14574,7 +14605,8 @@
         }
       ],
       "result": "PASS",
-      "completed_at": "2026-10-25T09:50:53.979928"
+      "completed_at": "2026-10-25T09:50:53.979928",
+      "demand_ledger": "862026102423590603\t86202610242359060301\tEXAUTO_2026102423590603R3A\t4\t0\t4\t4\tRESERVED\nEXCHANGE:69\t86202610242359060301\tEXAUTO_2026102423590603R3B\t2\t0\t2\t2\tRESERVED"
     }
   },
   "boundary": "local SIMULATION platform, signed TEST WMS; global jobs and existing shop settings unchanged",
@@ -15676,5 +15708,8 @@
   ],
   "fixture_revisions": {
     "03": 3
-  }
+  },
+  "queue_policy_unchanged": true,
+  "global_exchange_job": "1",
+  "audited_at": "2026-10-25T09:58:17.421496"
 }
